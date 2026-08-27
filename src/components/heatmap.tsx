@@ -25,14 +25,14 @@ export function Heatmap({ sessions }: { sessions: SessionRow[] }) {
   return (
     <TooltipProvider delayDuration={80}>
       <div className="overflow-x-auto pb-1">
-        <div className="flex gap-[3px]">
+        <div className="flex gap-0.75">
           {weeks.map((week, wi) => (
-            <div key={wi} className="flex flex-col gap-[3px]">
+            <div key={wi} className="flex flex-col gap-0.75">
               {week.map((cell) => (
                 <Tooltip key={cell.date}>
                   <TooltipTrigger asChild>
                     <div
-                      className={`h-[11px] w-[11px] rounded-[2px] ${LEVEL_STYLE[level(cell.minutes)]}`}
+                      className={`h-2.75 w-2.75 rounded-[2px] ${LEVEL_STYLE[level(cell.minutes)]}`}
                     />
                   </TooltipTrigger>
                   <TooltipContent>
@@ -49,7 +49,7 @@ export function Heatmap({ sessions }: { sessions: SessionRow[] }) {
       <div className="mt-3 flex items-center gap-2">
         <span className="label-mono">less</span>
         {LEVEL_STYLE.map((s, i) => (
-          <div key={i} className={`h-[11px] w-[11px] rounded-[2px] ${s}`} />
+          <div key={i} className={`h-2.75 w-2.75 rounded-[2px] ${s}`} />
         ))}
         <span className="label-mono">more</span>
       </div>
