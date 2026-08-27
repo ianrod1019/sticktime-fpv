@@ -44,7 +44,5 @@ export function ProtectedRoute({
 
   if (loading) return loadingFallback;
   if (!user || !isAuthorized) return null;
-
   return <>{children}</>;
 }
-
