@@ -2,8 +2,8 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Plane, Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
+import { useAuth } from "@/context/auth-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,41 +27,41 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { user, signIn: signInWithPassword, signUp: registerPilot } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [callsign, setCallsign] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/dashboard", replace: true });
-    });
-  }, [navigate]);
+    if (user) navigate({ to: "/dashboard", replace: true });
+  }, [navigate, user]);
 
-  async function signIn(e: React.FormEvent) {
+  async function signIn(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setBusy(false);
-    if (error) return toast.error(error.message);
-    navigate({ to: "/dashboard", replace: true });
+    try {
+      await signInWithPassword(email, password);
+      navigate({ to: "/dashboard", replace: true });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Sign in failed.");
+    } finally {
+      setBusy(false);
+    }
   }
 
-  async function signUp(e: React.FormEvent) {
+  async function signUp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setBusy(true);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/dashboard`,
-        data: { callsign, display_name: callsign },
-      },
-    });
-    setBusy(false);
-    if (error) return toast.error(error.message);
-    toast.success("Account created. Welcome aboard, pilot.");
-    navigate({ to: "/dashboard", replace: true });
+    try {
+      await registerPilot({ email, password, callsign, displayName: callsign });
+      toast.success("Account created. Welcome aboard, pilot.");
+      navigate({ to: "/dashboard", replace: true });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Sign up failed.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function google() {
