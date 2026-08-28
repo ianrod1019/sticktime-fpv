@@ -30,7 +30,7 @@ const NAV = [
 ] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const { profile, isPro } = usePilot();
+  const { profile } = usePilot();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -71,17 +71,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             <span className="truncate font-mono text-xs">
               {profile?.callsign || profile?.display_name || "Pilot"}
             </span>
-            <Badge variant={isPro ? "default" : "secondary"} className="text-[10px]">
-              {isPro ? "PRO" : "FREE"}
+            <Badge variant="secondary" className="text-[10px]">
+              PILOT
             </Badge>
           </div>
-          {!isPro && (
-            <Link to="/settings" className="mt-2 block">
-              <Button size="sm" className="w-full">
-                <Zap className="mr-1 h-3 w-3" /> Go Pro
-              </Button>
-            </Link>
-          )}
           <Button variant="ghost" size="sm" className="mt-2 w-full" onClick={signOut}>
             <LogOut className="mr-1 h-3 w-3" /> Sign out
           </Button>

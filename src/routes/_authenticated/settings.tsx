@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Check, Download, LockKeyhole, Palette, Sparkles } from "lucide-react";
+import { Check, Download, LockKeyhole, Palette } from "lucide-react";
 import { PageHeader } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +26,7 @@ const accentLabels: Record<Accent, string> = {
 };
 
 function Settings() {
-  const { profile, email, isPro, updateProfile } = usePilot();
+  const { profile, email, updateProfile } = usePilot();
   const [goal, setGoal] = useState(String(profile?.weekly_goal_hours ?? 5));
   const [privateProfile, setPrivateProfile] = useState(profile?.is_private ?? false);
 
@@ -92,7 +92,6 @@ function Settings() {
               <h2 className="mt-2 text-xl font-semibold">{profile?.callsign || "Pilot"}</h2>
               <p className="text-sm text-muted-foreground">{email}</p>
             </div>
-            <Badge variant={isPro ? "default" : "secondary"}>{isPro ? "PRO PILOT" : "FREE"}</Badge>
           </div>
           <div className="mt-6 space-y-5">
             <div className="space-y-2">
@@ -157,22 +156,14 @@ function Settings() {
                 <Download className="mr-2 h-4 w-4" />
                 CSV
               </Button>
-              <Button variant="outline" disabled={!isPro} onClick={() => exportData("sql")}>
+              <Button variant="outline" onClick={() => exportData("sql")}>
                 <Download className="mr-2 h-4 w-4" />
-                SQL {!isPro && "(Pro)"}
+                SQL
               </Button>
             </div>
           </div>
         </section>
       </div>
-      {!isPro && (
-        <div className="mt-4 hud-panel flex items-center gap-3 p-4">
-          <Sparkles className="h-5 w-5 text-primary" />
-          <p className="text-sm">
-            Upgrade to Pro for unlimited parts, team creation, advanced analytics, and SQL exports.
-          </p>
-        </div>
-      )}
     </>
   );
 }
