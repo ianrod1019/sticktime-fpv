@@ -472,8 +472,11 @@ function Garage() {
               </div>
             </div>
           );
-        })}
-      </div>
+              })}
+            </div>
+          </section>
+        );
+      })}
     </>
   );
 }
