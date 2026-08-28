@@ -1,8 +1,16 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Plane, Timer, Wrench, Flame, Trophy, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AuthModal } from "@/components/auth-modal";
+import { z } from "zod";
+
+const authSchema = z.object({
+  showAuth: z.boolean().optional(),
+  mode: z.enum(["login", "signup"]).optional(),
+});
 
 export const Route = createFileRoute("/")({
+  validateSearch: (search) => authSchema.parse(search),
   head: () => ({
     meta: [
       { title: "StickTime FPV — FPV flight hour & fleet tracking" },
@@ -10,12 +18,6 @@ export const Route = createFileRoute("/")({
         name: "description",
         content:
           "Log simulator and real-world FPV airtime in 5-minute blocks, track quad maintenance health, and build your flying streak.",
-      },
-      { property: "og:title", content: "StickTime FPV — FPV flight hour & fleet tracking" },
-      {
-        property: "og:description",
-        content:
-          "Log simulator and real-world FPV airtime, track quad maintenance health, and build your flying streak.",
       },
     ],
   }),
@@ -32,14 +34,21 @@ const FEATURES = [
 ];
 
 function Landing() {
+  const { showAuth, mode } = Route.useSearch();
+  const navigate = useNavigate();
+
+  const closeAuth = () => {
+    navigate({ to: "/", search: { showAuth: undefined, mode: undefined } });
+  };
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
         <div className="flex items-center gap-2">
           <Plane className="h-5 w-5 text-primary" />
           <span className="font-display text-lg font-bold">StickTime FPV</span>
         </div>
-        <Link to="/auth">
+        <Link to="/" search={{ showAuth: true, mode: "login" }}>
           <Button variant="outline" size="sm">
             Sign in
           </Button>
@@ -56,10 +65,10 @@ function Landing() {
           time seriously — from your first hover to your hundredth race.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
-          <Link to="/auth">
+          <Link to="/" search={{ showAuth: true, mode: "signup" }}>
             <Button size="lg">Start your logbook</Button>
           </Link>
-          <Link to="/auth">
+          <Link to="/" search={{ showAuth: true, mode: "login" }}>
             <Button size="lg" variant="outline">
               I already fly here
             </Button>
@@ -80,6 +89,14 @@ function Landing() {
       <footer className="border-t border-border px-6 py-8 text-center text-xs text-muted-foreground">
         StickTime FPV — built for the quad-obsessed.
       </footer>
+
+      {showAuth && (
+        <AuthModal 
+          isOpen={true} 
+          onClose={closeAuth} 
+          initialMode={mode || "login"} 
+        />
+      )}
     </div>
   );
 }

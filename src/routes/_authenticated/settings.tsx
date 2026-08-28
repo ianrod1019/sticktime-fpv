@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Check, Download, LockKeyhole, Palette } from "lucide-react";
 import { PageHeader } from "@/components/app-shell";
@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
 import { usePilot } from "@/hooks/use-pilot";
 import { ACCENTS, downloadFile, toCsv, toSqlInserts, type Accent } from "@/lib/fpv";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,8 +26,21 @@ const accentLabels: Record<Accent, string> = {
 
 function Settings() {
   const { profile, email, updateProfile } = usePilot();
-  const [goal, setGoal] = useState(String(profile?.weekly_goal_hours ?? 5));
-  const [privateProfile, setPrivateProfile] = useState(profile?.is_private ?? false);
+  
+  // Pilot profile states
+  const [goal, setGoal] = useState("5");
+  const [privateProfile, setPrivateProfile] = useState(false);
+
+  useEffect(() => {
+    if (profile) {
+      if (profile.weekly_goal_hours !== undefined && profile.weekly_goal_hours !== null) {
+        setGoal(String(profile.weekly_goal_hours));
+      }
+      if (profile.is_private !== undefined) {
+        setPrivateProfile(profile.is_private);
+      }
+    }
+  }, [profile]);
 
   async function saveProfile() {
     try {
@@ -36,133 +48,158 @@ function Settings() {
         weekly_goal_hours: Math.max(0.5, Number(goal) || 5),
         is_private: privateProfile,
       });
-      toast.success("Pilot settings saved");
+      toast.success("Pilot profile saved successfully");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not save settings");
+      toast.error(error instanceof Error ? error.message : "Could not save profile");
     }
   }
 
   async function setAccent(accent: Accent) {
     try {
       await updateProfile.mutateAsync({ accent_color: accent });
+      toast.success(`Theme accent set to ${accentLabels[accent]}`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not update accent");
     }
   }
 
   async function exportData(kind: "csv" | "sql") {
-    const [sessions, gear, parts, records] = await Promise.all([
-      supabase.from("sessions").select("*"),
-      supabase.from("gear").select("*"),
-      supabase.from("gear_parts").select("*"),
-      supabase.from("personal_records").select("*"),
-    ]);
-    const tables = [
-      ["sessions", sessions.data ?? []],
-      ["gear", gear.data ?? []],
-      ["gear_parts", parts.data ?? []],
-      ["personal_records", records.data ?? []],
-    ] as const;
-    const content =
-      kind === "csv"
-        ? tables
-            .map(([table, rows]) => `# ${table}\n${toCsv(rows as Record<string, unknown>[])}`)
-            .join("\n\n")
-        : tables
-            .map(
-              ([table, rows]) =>
-                `-- ${table}\n${toSqlInserts(table, rows as Record<string, unknown>[])}`,
-            )
-            .join("\n\n");
-    downloadFile(`sticktime-export.${kind}`, content, kind === "csv" ? "text/csv" : "text/sql");
-    toast.success(`${kind.toUpperCase()} export ready`);
+    try {
+      const [sessions, gear, parts, records] = await Promise.all([
+        supabase.from("sessions").select("*"),
+        supabase.from("gear").select("*"),
+        supabase.from("gear_parts").select("*"),
+        supabase.from("personal_records").select("*"),
+      ]);
+      const tables = [
+        ["sessions", sessions.data ?? []],
+        ["gear", gear.data ?? []],
+        ["gear_parts", parts.data ?? []],
+        ["personal_records", records.data ?? []],
+      ] as const;
+      const content =
+        kind === "csv"
+          ? tables
+              .map(([table, rows]) => `# ${table}\n${toCsv(rows as Record<string, unknown>[])}`)
+              .join("\n\n")
+          : tables
+              .map(
+                ([table, rows]) =>
+                  `-- ${table}\n${toSqlInserts(table, rows as Record<string, unknown>[])}`,
+              )
+              .join("\n\n");
+      downloadFile(`sticktime-export.${kind}`, content, kind === "csv" ? "text/csv" : "text/sql");
+      toast.success(`${kind.toUpperCase()} export ready`);
+    } catch (err) {
+      toast.error("Failed to export data");
+    }
   }
 
   return (
     <>
       <PageHeader
-        title="Pilot settings"
-        subtitle="Tune your cockpit, privacy, and data portability."
+        title={<span className="text-foreground">Pilot <span className="text-orange-500">Settings</span></span>}
+        subtitle="Tune your cockpit lighting, privacy, and data portability."
       />
-      <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
-        <section className="hud-panel p-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="label-mono">Profile controls</span>
-              <h2 className="mt-2 text-xl font-semibold">{profile?.callsign || "Pilot"}</h2>
-              <p className="text-sm text-muted-foreground">{email}</p>
-            </div>
-          </div>
-          <div className="mt-6 space-y-5">
-            <div className="space-y-2">
-              <Label htmlFor="goal">Weekly flight goal (hours)</Label>
-              <Input
-                id="goal"
-                type="number"
-                min="0.5"
-                step="0.5"
-                value={goal}
-                onChange={(e) => setGoal(e.target.value)}
-              />
-            </div>
-            <div className="flex items-center justify-between gap-4 border-t border-border pt-4">
+      <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
+        <div className="space-y-8">
+          {/* Profile & Goals */}
+          <section className="hud-panel p-6 relative overflow-hidden group hover:border-orange-500/40 transition-colors shadow-lg">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-bl-full pointer-events-none" />
+            <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium">Private pilot profile</p>
-                <p className="text-sm text-muted-foreground">
-                  Hide your public callsign and profile details.
-                </p>
+                <span className="label-mono text-orange-400">Profile controls</span>
+                <h2 className="mt-2 text-xl font-semibold">{profile?.callsign || email || "Pilot"}</h2>
+                <p className="text-sm text-muted-foreground">{email}</p>
               </div>
-              <Switch
-                checked={privateProfile}
-                onCheckedChange={setPrivateProfile}
-                aria-label="Private pilot profile"
-              />
             </div>
-            <Button onClick={saveProfile} disabled={updateProfile.isPending}>
-              <Check className="mr-2 h-4 w-4" />
-              Save settings
-            </Button>
-          </div>
-        </section>
+            <div className="mt-6 space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="goal">Weekly flight goal (hours)</Label>
+                <Input
+                  id="goal"
+                  type="number"
+                  min="0.5"
+                  step="0.5"
+                  value={goal}
+                  onChange={(e) => setGoal(e.target.value)}
+                />
+              </div>
+              <div className="flex items-center justify-between gap-4 border-t border-border pt-5">
+                <div>
+                  <p className="font-medium">Private pilot profile</p>
+                  <p className="text-sm text-muted-foreground">
+                    Hide your public callsign and profile details from leaderboards.
+                  </p>
+                </div>
+                <Switch
+                  checked={privateProfile}
+                  onCheckedChange={setPrivateProfile}
+                  aria-label="Private pilot profile"
+                />
+              </div>
+              <div className="pt-2">
+                <Button 
+                  onClick={saveProfile} 
+                  disabled={updateProfile?.isPending} 
+                  className="bg-orange-500 hover:bg-orange-600 text-white"
+                >
+                  <Check className="mr-2 h-4 w-4" />
+                  Save profile
+                </Button>
+              </div>
+            </div>
+          </section>
+        </div>
 
-        <section className="hud-panel p-5">
-          <div className="flex items-center gap-2">
-            <Palette className="h-4 w-4 text-primary" />
-            <span className="label-mono">Accent signal</span>
-          </div>
-          <div className="mt-5 grid grid-cols-2 gap-2">
-            {ACCENTS.map((accent) => (
-              <Button
-                key={accent}
-                variant={profile?.accent_color === accent ? "default" : "outline"}
-                className="justify-start"
-                onClick={() => setAccent(accent)}
-              >
-                <span className="mr-2 h-3 w-3 rounded-full bg-primary" />
-                {accentLabels[accent]}
-              </Button>
-            ))}
-          </div>
-          <div className="mt-6 border-t border-border pt-5">
+        <div className="space-y-8">
+          {/* Accent Signal */}
+          <section className="hud-panel p-6 relative overflow-hidden group hover:border-orange-500/40 transition-colors shadow-lg">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-bl-full pointer-events-none" />
             <div className="flex items-center gap-2">
-              <LockKeyhole className="h-4 w-4 text-primary" />
-              <span className="label-mono">Data export</span>
+              <Palette className="h-4 w-4 text-orange-500" />
+              <span className="label-mono text-orange-400">Accent signal</span>
             </div>
             <p className="mt-2 text-sm text-muted-foreground">
-              Take your logbook with you in portable formats.
+              Choose your cockpit lighting and theme signal color.
             </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Button variant="outline" onClick={() => exportData("csv")}>
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              {ACCENTS.map((accent) => (
+                <Button
+                  key={accent}
+                  variant={profile?.accent_color === accent ? "default" : "outline"}
+                  className={`justify-start ${profile?.accent_color === accent ? "bg-orange-500 hover:bg-orange-600 text-white" : "border-orange-500/20 hover:border-orange-500/50"}`}
+                  onClick={() => setAccent(accent)}
+                >
+                  <span className={`mr-2 h-3 w-3 rounded-full ${accent === "ember" ? "bg-orange-500" : accent === "lime" ? "bg-lime-500" : accent === "cyan" ? "bg-cyan-500" : accent === "magenta" ? "bg-pink-500" : "bg-amber-500"}`} />
+                  {accentLabels[accent]}
+                </Button>
+              ))}
+            </div>
+          </section>
+
+          {/* Data Export */}
+          <section className="hud-panel p-6 relative overflow-hidden group hover:border-orange-500/40 transition-colors shadow-lg">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-bl-full pointer-events-none" />
+            <div className="flex items-center gap-2">
+              <LockKeyhole className="h-4 w-4 text-orange-500" />
+              <span className="label-mono text-orange-400">Data export</span>
+            </div>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Take your logbook, gear, and pilot records with you in portable formats.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Button variant="outline" className="border-orange-500/30 text-orange-400 hover:bg-orange-500/10 hover:text-orange-300" onClick={() => exportData("csv")}>
                 <Download className="mr-2 h-4 w-4" />
-                CSV
+                CSV Export
               </Button>
-              <Button variant="outline" onClick={() => exportData("sql")}>
+              <Button variant="outline" className="border-orange-500/30 text-orange-400 hover:bg-orange-500/10 hover:text-orange-300" onClick={() => exportData("sql")}>
                 <Download className="mr-2 h-4 w-4" />
-                SQL
+                SQL Inserts
               </Button>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
     </>
   );

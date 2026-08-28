@@ -1,140 +1,77 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
-import type { Session, User } from "@supabase/supabase-js";
+import { createContext, useContext, useEffect, useState } from "react";
+import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
-import type { Database } from "@/integrations/supabase/types";
 
-type AppRole = Database["public"]["Enums"]["app_role"];
-
-type SignUpInput = {
-  email: string;
-  password: string;
-  callsign?: string;
-  displayName?: string;
-};
-
-type AuthContextValue = {
+interface AuthContextType {
   user: User | null;
   session: Session | null;
-  roles: AppRole[];
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (input: SignUpInput) => Promise<void>;
   signOut: () => Promise<void>;
-  hasRole: (role: AppRole) => boolean;
-  hasAnyRole: (allowedRoles: AppRole[]) => boolean;
-};
-
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
-
-async function fetchUserRoles(userId: string): Promise<AppRole[]> {
-  const { data, error } = await supabase.from("user_roles").select("role").eq("user_id", userId);
-  if (error) throw error;
-  return data.map((entry) => entry.role);
 }
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  session: null,
+  loading: true,
+  signOut: async () => {},
+});
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [roles, setRoles] = useState<AppRole[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const syncAuthState = useCallback(async (nextSession: Session | null) => {
-    setSession(nextSession);
-    const nextUser = nextSession?.user ?? null;
-    setUser(nextUser);
-
-    if (!nextUser) {
-      setRoles([]);
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const nextRoles = await fetchUserRoles(nextUser.id);
-      setRoles(nextRoles);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    let cancelled = false;
+    let mounted = true;
 
-    supabase.auth.getSession().then(async ({ data }) => {
-      if (cancelled) return;
-      await syncAuthState(data.session);
-    });
+    async function getInitialSession() {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error("Error getting session:", error);
+        }
+        if (mounted) {
+          setSession(session);
+          setUser(session?.user ?? null);
+        }
+      } catch (err) {
+        console.error("Exception in getInitialSession:", err);
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    }
 
-    const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      void syncAuthState(nextSession);
-    });
+    getInitialSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (mounted) {
+          setSession(session);
+          setUser(session?.user ?? null);
+          setLoading(false);
+        }
+      }
+    );
 
     return () => {
-      cancelled = true;
-      data.subscription.unsubscribe();
+      mounted = false;
+      subscription.unsubscribe();
     };
-  }, [syncAuthState]);
-
-  const signIn = useCallback(async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
   }, []);
 
-  const signUp = useCallback(async ({ email, password, callsign, displayName }: SignUpInput) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/dashboard`,
-        data: {
-          callsign,
-          display_name: displayName ?? callsign ?? email.split("@")[0],
-        },
-      },
-    });
-    if (error) throw error;
-  }, []);
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    setSession(null);
+  };
 
-  const signOut = useCallback(async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
-  }, []);
-
-  const hasRole = useCallback((role: AppRole) => roles.includes(role), [roles]);
-
-  const hasAnyRole = useCallback(
-    (allowedRoles: AppRole[]) => allowedRoles.some((role) => roles.includes(role)),
-    [roles],
+  return (
+    <AuthContext.Provider value={{ user, session, loading, signOut }}>
+      {children}
+    </AuthContext.Provider>
   );
+};
 
-  const value = useMemo<AuthContextValue>(
-    () => ({
-      user,
-      session,
-      roles,
-      loading,
-      signIn,
-      signUp,
-      signOut,
-      hasRole,
-      hasAnyRole,
-    }),
-    [hasAnyRole, hasRole, loading, roles, session, signIn, signOut, signUp, user],
-  );
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within an AuthProvider.");
-  return context;
-}
+export const useAuth = () => useContext(AuthContext);
