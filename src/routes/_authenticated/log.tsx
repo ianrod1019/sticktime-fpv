@@ -89,6 +89,8 @@ function LogPage() {
 
   const sessions = data?.sessions ?? [];
   const gear = data?.gear ?? [];
+  const drones = gear.filter((g) => g.gear_type === "quad");
+  const controllers = gear.filter((g) => g.gear_type === "transmitter");
   const locations = data?.locations ?? [];
   const tracks = (data?.tracks ?? []).filter((t) => t.kind === type);
 
