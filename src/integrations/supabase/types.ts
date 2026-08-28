@@ -311,6 +311,7 @@ export type Database = {
       sessions: {
         Row: {
           battery_notes: string | null
+          controller_id: string | null
           crashes: number
           created_at: string
           duration_minutes: number
@@ -331,6 +332,7 @@ export type Database = {
         }
         Insert: {
           battery_notes?: string | null
+          controller_id?: string | null
           crashes?: number
           created_at?: string
           duration_minutes: number
@@ -351,6 +353,7 @@ export type Database = {
         }
         Update: {
           battery_notes?: string | null
+          controller_id?: string | null
           crashes?: number
           created_at?: string
           duration_minutes?: number
@@ -370,6 +373,13 @@ export type Database = {
           weather?: Json | null
         }
         Relationships: [
+          {
+            foreignKeyName: "sessions_controller_id_fkey"
+            columns: ["controller_id"]
+            isOneToOne: false
+            referencedRelation: "gear"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "sessions_gear_id_fkey"
             columns: ["gear_id"]

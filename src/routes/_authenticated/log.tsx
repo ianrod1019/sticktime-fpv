@@ -59,6 +59,7 @@ function LogPage() {
   const [flownOn, setFlownOn] = useState(toDateKey(new Date()));
   const [duration, setDuration] = useState(20);
   const [gearId, setGearId] = useState<string>("none");
+  const [controllerId, setControllerId] = useState<string>("none");
   const [locationId, setLocationId] = useState<string>("none");
   const [trackId, setTrackId] = useState<string>("none");
   const [platform, setPlatform] = useState<string>(SIM_PLATFORMS[0]!);
@@ -88,6 +89,8 @@ function LogPage() {
 
   const sessions = data?.sessions ?? [];
   const gear = data?.gear ?? [];
+  const drones = gear.filter((g) => g.gear_type === "quad");
+  const controllers = gear.filter((g) => g.gear_type === "transmitter");
   const locations = data?.locations ?? [];
   const tracks = (data?.tracks ?? []).filter((t) => t.kind === type);
 
@@ -103,6 +106,7 @@ function LogPage() {
         flown_on: flownOn,
         duration_minutes: duration,
         gear_id: type === "real" && gearId !== "none" ? gearId : null,
+        controller_id: controllerId !== "none" ? controllerId : null,
         location_id: type === "real" && locationId !== "none" ? locationId : null,
         track_id: trackId !== "none" ? trackId : null,
         sim_platform: type === "sim" ? platform : null,
@@ -293,20 +297,25 @@ function LogPage() {
                 ) : (
                   <>
                     <div className="space-y-2">
-                      <Label>Rig</Label>
+                      <Label>Drone</Label>
                       <Select value={gearId} onValueChange={setGearId}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Pick a rig" />
+                          <SelectValue placeholder="Pick a drone" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="none">No rig</SelectItem>
-                          {gear.map((g) => (
+                          <SelectItem value="none">No drone</SelectItem>
+                          {drones.map((g) => (
                             <SelectItem key={g.id} value={g.id}>
                               {g.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
+                      {drones.length === 0 && (
+                        <p className="text-xs text-muted-foreground">
+                          Add a drone in the garage to track airtime per airframe.
+                        </p>
+                      )}
                     </div>
                     <div className="space-y-2">
                       <Label>Location</Label>
@@ -368,6 +377,29 @@ function LogPage() {
                     </div>
                   </>
                 )}
+
+                <div className="space-y-2">
+                  <Label>Controller</Label>
+                  <Select value={controllerId} onValueChange={setControllerId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Pick a controller" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">No controller</SelectItem>
+                      {controllers.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {controllers.length === 0 && (
+                    <p className="text-xs text-muted-foreground">
+                      Add a radio under "Controller / radio" in the garage to pick it here.
+                    </p>
+                  )}
+                </div>
+
 
                 <div className="space-y-2">
                   <Label>Track / scenario</Label>

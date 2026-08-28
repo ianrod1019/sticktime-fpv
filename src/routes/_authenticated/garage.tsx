@@ -44,7 +44,39 @@ export const Route = createFileRoute("/_authenticated/garage")({
 });
 
 const GEAR_TYPES = ["quad", "transmitter", "goggles", "battery", "other"] as const;
+type GearType = (typeof GEAR_TYPES)[number];
+
+const TYPE_LABELS: Record<GearType, string> = {
+  quad: "Drone / quad",
+  transmitter: "Controller / radio",
+  goggles: "Goggles",
+  battery: "Battery",
+  other: "Other gear",
+};
+
+const GEAR_GROUPS: { key: string; title: string; blurb: string; types: GearType[] }[] = [
+  {
+    key: "drones",
+    title: "Drones",
+    blurb: "Airframes that accumulate flight time.",
+    types: ["quad"],
+  },
+  {
+    key: "controllers",
+    title: "Controllers & radios",
+    blurb: "Transmitters you pick separately when logging a session.",
+    types: ["transmitter"],
+  },
+  {
+    key: "other",
+    title: "Other equipment",
+    blurb: "Goggles, batteries and everything else.",
+    types: ["goggles", "battery", "other"],
+  },
+];
+
 const FREE_PART_LIMIT = 5;
+
 
 function Garage() {
   const queryClient = useQueryClient();
@@ -160,6 +192,22 @@ function Garage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["garage"] }),
   });
 
+  const removeGear = useMutation({
+    mutationFn: async (id: string) => {
+      await supabase.from("sessions").update({ gear_id: null }).eq("gear_id", id);
+      await supabase.from("sessions").update({ controller_id: null }).eq("controller_id", id);
+      await supabase.from("gear_parts").delete().eq("gear_id", id);
+      await supabase.from("maintenance_logs").delete().eq("gear_id", id);
+      const { error } = await supabase.from("gear").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Removed from the garage");
+      queryClient.invalidateQueries();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   return (
     <>
       <PageHeader
@@ -190,7 +238,7 @@ function Garage() {
                     <SelectContent>
                       {GEAR_TYPES.map((t) => (
                         <SelectItem key={t} value={t}>
-                          {t}
+                          {TYPE_LABELS[t]}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -226,8 +274,19 @@ function Garage() {
         </div>
       )}
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        {gear.map((g) => {
+      {GEAR_GROUPS.map((group) => {
+        const items = gear.filter((g) => group.types.includes(g.gear_type as GearType));
+        if (items.length === 0) return null;
+        return (
+          <section key={group.key} className="mb-8">
+            <div className="mb-3">
+              <h2 className="font-display text-sm font-semibold uppercase tracking-wide">
+                {group.title}
+              </h2>
+              <p className="text-xs text-muted-foreground">{group.blurb}</p>
+            </div>
+            <div className="grid gap-4 lg:grid-cols-2">
+              {items.map((g) => {
           const servicePct = Math.min(
             100,
             Math.round((g.minutes_since_service / Math.max(g.service_interval_minutes, 1)) * 100),
@@ -238,15 +297,33 @@ function Garage() {
             <div key={g.id} className="hud-panel p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h2 className="text-lg font-semibold">{g.name}</h2>
+                  <h3 className="text-lg font-semibold">{g.name}</h3>
                   <p className="text-xs text-muted-foreground">
                     {g.brand ? `${g.brand} · ` : ""}
-                    {g.gear_type}
+                    {TYPE_LABELS[g.gear_type as GearType]}
                   </p>
                 </div>
-                <Badge variant={servicePct >= 100 ? "destructive" : "secondary"}>
-                  {servicePct >= 100 ? "Service due" : `${servicePct}% to service`}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Badge variant={servicePct >= 100 ? "destructive" : "secondary"}>
+                    {servicePct >= 100 ? "Service due" : `${servicePct}% to service`}
+                  </Badge>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label={`Remove ${g.name}`}
+                    onClick={() => {
+                      if (
+                        window.confirm(
+                          `Remove "${g.name}" from your garage? Its components and maintenance history will be deleted.`,
+                        )
+                      ) {
+                        removeGear.mutate(g.id);
+                      }
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
 
               <div className="mt-4 grid grid-cols-3 gap-3 text-center">
@@ -395,8 +472,11 @@ function Garage() {
               </div>
             </div>
           );
-        })}
-      </div>
+              })}
+            </div>
+          </section>
+        );
+      })}
     </>
   );
 }
