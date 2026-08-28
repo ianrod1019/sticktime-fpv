@@ -44,7 +44,39 @@ export const Route = createFileRoute("/_authenticated/garage")({
 });
 
 const GEAR_TYPES = ["quad", "transmitter", "goggles", "battery", "other"] as const;
+type GearType = (typeof GEAR_TYPES)[number];
+
+const TYPE_LABELS: Record<GearType, string> = {
+  quad: "Drone / quad",
+  transmitter: "Controller / radio",
+  goggles: "Goggles",
+  battery: "Battery",
+  other: "Other gear",
+};
+
+const GEAR_GROUPS: { key: string; title: string; blurb: string; types: GearType[] }[] = [
+  {
+    key: "drones",
+    title: "Drones",
+    blurb: "Airframes that accumulate flight time.",
+    types: ["quad"],
+  },
+  {
+    key: "controllers",
+    title: "Controllers & radios",
+    blurb: "Transmitters you pick separately when logging a session.",
+    types: ["transmitter"],
+  },
+  {
+    key: "other",
+    title: "Other equipment",
+    blurb: "Goggles, batteries and everything else.",
+    types: ["goggles", "battery", "other"],
+  },
+];
+
 const FREE_PART_LIMIT = 5;
+
 
 function Garage() {
   const queryClient = useQueryClient();
