@@ -192,6 +192,22 @@ function Garage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["garage"] }),
   });
 
+  const removeGear = useMutation({
+    mutationFn: async (id: string) => {
+      await supabase.from("sessions").update({ gear_id: null }).eq("gear_id", id);
+      await supabase.from("sessions").update({ controller_id: null }).eq("controller_id", id);
+      await supabase.from("gear_parts").delete().eq("gear_id", id);
+      await supabase.from("maintenance_logs").delete().eq("gear_id", id);
+      const { error } = await supabase.from("gear").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Removed from the garage");
+      queryClient.invalidateQueries();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   return (
     <>
       <PageHeader
