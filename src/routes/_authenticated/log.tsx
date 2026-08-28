@@ -297,20 +297,25 @@ function LogPage() {
                 ) : (
                   <>
                     <div className="space-y-2">
-                      <Label>Rig</Label>
+                      <Label>Drone</Label>
                       <Select value={gearId} onValueChange={setGearId}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Pick a rig" />
+                          <SelectValue placeholder="Pick a drone" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="none">No rig</SelectItem>
-                          {gear.map((g) => (
+                          <SelectItem value="none">No drone</SelectItem>
+                          {drones.map((g) => (
                             <SelectItem key={g.id} value={g.id}>
                               {g.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
+                      {drones.length === 0 && (
+                        <p className="text-xs text-muted-foreground">
+                          Add a drone in the garage to track airtime per airframe.
+                        </p>
+                      )}
                     </div>
                     <div className="space-y-2">
                       <Label>Location</Label>
