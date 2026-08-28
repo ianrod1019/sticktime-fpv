@@ -379,6 +379,29 @@ function LogPage() {
                 )}
 
                 <div className="space-y-2">
+                  <Label>Controller</Label>
+                  <Select value={controllerId} onValueChange={setControllerId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Pick a controller" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">No controller</SelectItem>
+                      {controllers.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {controllers.length === 0 && (
+                    <p className="text-xs text-muted-foreground">
+                      Add a radio under "Controller / radio" in the garage to pick it here.
+                    </p>
+                  )}
+                </div>
+
+
+                <div className="space-y-2">
                   <Label>Track / scenario</Label>
                   <Select value={trackId} onValueChange={setTrackId}>
                     <SelectTrigger>
