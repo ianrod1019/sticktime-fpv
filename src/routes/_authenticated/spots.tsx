@@ -1,165 +1,349 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { MapPin, Route as RouteIcon } from "lucide-react";
+import { Plus, MapPin, Trash2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { SIM_PLATFORMS } from "@/lib/fpv";
 
 export const Route = createFileRoute("/_authenticated/spots")({
-  head: () => ({ meta: [{ title: "Spots — StickTime FPV" }] }),
+  head: () => ({
+    meta: [
+      { title: "Spots & tracks — StickTime FPV" },
+      {
+        name: "description",
+        content: "Map your flying locations and the tracks or sim scenarios you fly there.",
+      },
+      { property: "og:title", content: "Spots & tracks — StickTime FPV" },
+      {
+        property: "og:description",
+        content: "Map your flying locations and the tracks or sim scenarios you fly there.",
+      },
+    ],
+  }),
   component: Spots,
 });
+
 function Spots() {
   const queryClient = useQueryClient();
+  const [locOpen, setLocOpen] = useState(false);
   const [name, setName] = useState("");
   const [city, setCity] = useState("");
-  const [platform, setPlatform] = useState("");
-  const [mode, setMode] = useState<"location" | "track">("location");
+  const [country, setCountry] = useState("");
+  const [lat, setLat] = useState("");
+  const [lng, setLng] = useState("");
+  const [locNotes, setLocNotes] = useState("");
+
+  const [trackOpen, setTrackOpen] = useState(false);
+  const [tName, setTName] = useState("");
+  const [tKind, setTKind] = useState<"real" | "sim">("real");
+  const [tLocation, setTLocation] = useState("none");
+  const [tPlatform, setTPlatform] = useState(SIM_PLATFORMS[0]!);
+  const [tNotes, setTNotes] = useState("");
+
   const { data } = useQuery({
     queryKey: ["spots"],
     queryFn: async () => {
       const [locations, tracks] = await Promise.all([
-        supabase.from("locations").select("*"),
-        supabase.from("tracks").select("*"),
+        supabase.from("locations").select("*").order("name"),
+        supabase.from("tracks").select("*").order("name"),
       ]);
       return { locations: locations.data ?? [], tracks: tracks.data ?? [] };
     },
   });
-  const save = useMutation({
+
+  const locations = data?.locations ?? [];
+  const tracks = data?.tracks ?? [];
+
+  const addLocation = useMutation({
     mutationFn: async () => {
-      const { data: user } = await supabase.auth.getUser();
-      if (!user.user) throw new Error("Not signed in");
-      const result =
-        mode === "location"
-          ? await supabase
-              .from("locations")
-              .insert({ user_id: user.user.id, name, city: city || null })
-          : await supabase
-              .from("tracks")
-              .insert({
-                user_id: user.user.id,
-                name,
-                kind: "real",
-                sim_platform: platform || null,
-              });
-      if (result.error) throw result.error;
+      const { data: u } = await supabase.auth.getUser();
+      const { error } = await supabase.from("locations").insert({
+        user_id: u.user!.id,
+        name,
+        city: city || null,
+        country: country || null,
+        latitude: lat ? Number(lat) : null,
+        longitude: lng ? Number(lng) : null,
+        notes: locNotes || null,
+      });
+      if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Entry saved");
+      toast.success("Spot saved");
+      setLocOpen(false);
       setName("");
       setCity("");
-      setPlatform("");
+      setCountry("");
+      setLat("");
+      setLng("");
+      setLocNotes("");
       queryClient.invalidateQueries({ queryKey: ["spots"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
+  const addTrack = useMutation({
+    mutationFn: async () => {
+      const { data: u } = await supabase.auth.getUser();
+      const { error } = await supabase.from("tracks").insert({
+        user_id: u.user!.id,
+        name: tName,
+        kind: tKind,
+        location_id: tKind === "real" && tLocation !== "none" ? tLocation : null,
+        sim_platform: tKind === "sim" ? tPlatform : null,
+        layout_notes: tNotes || null,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Track saved");
+      setTrackOpen(false);
+      setTName("");
+      setTNotes("");
+      queryClient.invalidateQueries({ queryKey: ["spots"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const removeLocation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("locations").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["spots"] }),
+  });
+
+  const removeTrack = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("tracks").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["spots"] }),
+  });
+
   return (
     <>
       <PageHeader
         title="Spots & tracks"
-        subtitle="Keep physical flying locations separate from layouts and simulator scenarios."
+        subtitle="Locations are physical places. Tracks are the layouts and scenarios you fly on them."
       />
-      <div className="grid gap-4 lg:grid-cols-3">
-        <section className="hud-panel p-5 lg:col-span-1">
-          <span className="label-mono">Add entry</span>
-          <div className="mt-4 space-y-4">
-            <div className="grid grid-cols-2 gap-2">
-              <Button
-                variant={mode === "location" ? "default" : "outline"}
-                onClick={() => setMode("location")}
-              >
-                Location
+
+      <Tabs defaultValue="locations">
+        <TabsList>
+          <TabsTrigger value="locations">Locations</TabsTrigger>
+          <TabsTrigger value="tracks">Tracks & scenarios</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="locations" className="mt-4 space-y-4">
+          <Dialog open={locOpen} onOpenChange={setLocOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="mr-1 h-4 w-4" /> Add location
               </Button>
-              <Button
-                variant={mode === "track" ? "default" : "outline"}
-                onClick={() => setMode("track")}
-              >
-                Track
-              </Button>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="spot-name">Name</Label>
-              <Input
-                id="spot-name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Riverside bando"
-              />
-            </div>
-            {mode === "location" ? (
-              <Input
-                placeholder="City / area"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-              />
-            ) : (
-              <Input
-                placeholder="Simulator platform"
-                value={platform}
-                onChange={(e) => setPlatform(e.target.value)}
-              />
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>New location</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="lname">Name</Label>
+                  <Input id="lname" value={name} onChange={(e) => setName(e.target.value)} placeholder="Old quarry bando" />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="lcity">City</Label>
+                    <Input id="lcity" value={city} onChange={(e) => setCity(e.target.value)} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lcountry">Country</Label>
+                    <Input id="lcountry" value={country} onChange={(e) => setCountry(e.target.value)} />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="llat">Latitude</Label>
+                    <Input id="llat" value={lat} onChange={(e) => setLat(e.target.value)} placeholder="41.8781" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="llng">Longitude</Label>
+                    <Input id="llng" value={lng} onChange={(e) => setLng(e.target.value)} placeholder="-87.6298" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lnotes">Notes</Label>
+                  <Textarea id="lnotes" value={locNotes} onChange={(e) => setLocNotes(e.target.value)} placeholder="Permission needed, no flying before 9am" />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button onClick={() => addLocation.mutate()} disabled={!name}>
+                  Save spot
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {locations.map((l) => (
+              <div key={l.id} className="hud-panel p-5">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h2 className="flex items-center gap-2 text-base font-semibold">
+                      <MapPin className="h-4 w-4 text-primary" />
+                      {l.name}
+                    </h2>
+                    <p className="text-xs text-muted-foreground">
+                      {[l.city, l.country].filter(Boolean).join(", ") || "No region set"}
+                    </p>
+                  </div>
+                  <Button variant="ghost" size="icon" onClick={() => removeLocation.mutate(l.id)} aria-label="Delete location">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+                {l.latitude && l.longitude && (
+                  <p className="mt-2 font-mono text-[11px] text-muted-foreground">
+                    {Number(l.latitude).toFixed(4)}, {Number(l.longitude).toFixed(4)}
+                  </p>
+                )}
+                {l.notes && <p className="mt-2 text-sm text-muted-foreground">{l.notes}</p>}
+                <p className="mt-3 label-mono">
+                  {tracks.filter((t) => t.location_id === l.id).length} tracks
+                </p>
+              </div>
+            ))}
+            {locations.length === 0 && (
+              <p className="text-sm text-muted-foreground">No spots yet.</p>
             )}
-            <Button
-              className="w-full"
-              disabled={!name || save.isPending}
-              onClick={() => save.mutate()}
-            >
-              Save entry
-            </Button>
           </div>
-        </section>
-        <section className="hud-panel p-5 lg:col-span-2">
-          <div className="grid gap-6 sm:grid-cols-2">
-            <div>
-              <span className="label-mono">Physical locations</span>
-              <div className="mt-4 space-y-3">
-                {(data?.locations ?? []).map((location) => (
-                  <div
-                    key={location.id}
-                    className="flex items-center justify-between border-b border-border pb-3"
-                  >
-                    <div>
-                      <p className="font-medium">{location.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {location.city || "Coordinates not set"}
-                      </p>
-                    </div>
-                    <MapPin className="h-4 w-4 text-primary" />
+        </TabsContent>
+
+        <TabsContent value="tracks" className="mt-4 space-y-4">
+          <Dialog open={trackOpen} onOpenChange={setTrackOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="mr-1 h-4 w-4" /> Add track
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>New track or scenario</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="tname">Name</Label>
+                  <Input id="tname" value={tName} onChange={(e) => setTName(e.target.value)} placeholder="Figure 8 gates" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Kind</Label>
+                  <Select value={tKind} onValueChange={(v) => setTKind(v as "real" | "sim")}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="real">Real world</SelectItem>
+                      <SelectItem value="sim">Simulator</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {tKind === "real" ? (
+                  <div className="space-y-2">
+                    <Label>Location</Label>
+                    <Select value={tLocation} onValueChange={setTLocation}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">Unassigned</SelectItem>
+                        {locations.map((l) => (
+                          <SelectItem key={l.id} value={l.id}>
+                            {l.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
-                ))}
-                {!data?.locations?.length && (
-                  <p className="text-sm text-muted-foreground">No locations yet.</p>
+                ) : (
+                  <div className="space-y-2">
+                    <Label>Simulator</Label>
+                    <Select value={tPlatform} onValueChange={setTPlatform}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {SIM_PLATFORMS.map((p) => (
+                          <SelectItem key={p} value={p}>
+                            {p}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+                <div className="space-y-2">
+                  <Label htmlFor="tnotes">Layout notes</Label>
+                  <Textarea id="tnotes" value={tNotes} onChange={(e) => setTNotes(e.target.value)} />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button onClick={() => addTrack.mutate()} disabled={!tName}>
+                  Save track
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {tracks.map((t) => (
+              <div key={t.id} className="hud-panel p-5">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h2 className="text-base font-semibold">{t.name}</h2>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      <Badge variant="secondary">{t.kind === "sim" ? "Simulator" : "Real world"}</Badge>
+                      {t.sim_platform && <Badge variant="outline">{t.sim_platform}</Badge>}
+                      {t.location_id && (
+                        <Badge variant="outline">
+                          {locations.find((l) => l.id === t.location_id)?.name ?? "Spot"}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="icon" onClick={() => removeTrack.mutate(t.id)} aria-label="Delete track">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+                {t.layout_notes && (
+                  <p className="mt-2 text-sm text-muted-foreground">{t.layout_notes}</p>
                 )}
               </div>
-            </div>
-            <div>
-              <span className="label-mono">Tracks & scenarios</span>
-              <div className="mt-4 space-y-3">
-                {(data?.tracks ?? []).map((track) => (
-                  <div
-                    key={track.id}
-                    className="flex items-center justify-between border-b border-border pb-3"
-                  >
-                    <div>
-                      <p className="font-medium">{track.name}</p>
-                      <Badge variant="secondary">{track.sim_platform || "Real world"}</Badge>
-                    </div>
-                    <RouteIcon className="h-4 w-4 text-primary" />
-                  </div>
-                ))}
-                {!data?.tracks?.length && (
-                  <p className="text-sm text-muted-foreground">No tracks yet.</p>
-                )}
-              </div>
-            </div>
+            ))}
+            {tracks.length === 0 && <p className="text-sm text-muted-foreground">No tracks yet.</p>}
           </div>
-        </section>
-      </div>
+        </TabsContent>
+      </Tabs>
     </>
   );
 }
