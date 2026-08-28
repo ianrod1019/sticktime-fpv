@@ -59,6 +59,7 @@ function LogPage() {
   const [flownOn, setFlownOn] = useState(toDateKey(new Date()));
   const [duration, setDuration] = useState(20);
   const [gearId, setGearId] = useState<string>("none");
+  const [controllerId, setControllerId] = useState<string>("none");
   const [locationId, setLocationId] = useState<string>("none");
   const [trackId, setTrackId] = useState<string>("none");
   const [platform, setPlatform] = useState<string>(SIM_PLATFORMS[0]!);
