@@ -238,7 +238,7 @@ function Garage() {
                     <SelectContent>
                       {GEAR_TYPES.map((t) => (
                         <SelectItem key={t} value={t}>
-                          {t}
+                          {TYPE_LABELS[t]}
                         </SelectItem>
                       ))}
                     </SelectContent>
