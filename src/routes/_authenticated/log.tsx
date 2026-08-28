@@ -106,6 +106,7 @@ function LogPage() {
         flown_on: flownOn,
         duration_minutes: duration,
         gear_id: type === "real" && gearId !== "none" ? gearId : null,
+        controller_id: controllerId !== "none" ? controllerId : null,
         location_id: type === "real" && locationId !== "none" ? locationId : null,
         track_id: trackId !== "none" ? trackId : null,
         sim_platform: type === "sim" ? platform : null,
