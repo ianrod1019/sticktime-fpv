@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      billing_customers: {
+        Row: {
+          created_at: string
+          stripe_customer_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          stripe_customer_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          stripe_customer_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       gear: {
         Row: {
           brand: string | null
@@ -255,7 +276,6 @@ export type Database = {
           display_name: string | null
           id: string
           is_private: boolean
-          stripe_customer_id: string | null
           subscription_tier: string
           updated_at: string
           weekly_goal_hours: number
@@ -269,7 +289,6 @@ export type Database = {
           display_name?: string | null
           id: string
           is_private?: boolean
-          stripe_customer_id?: string | null
           subscription_tier?: string
           updated_at?: string
           weekly_goal_hours?: number
@@ -283,7 +302,6 @@ export type Database = {
           display_name?: string | null
           id?: string
           is_private?: boolean
-          stripe_customer_id?: string | null
           subscription_tier?: string
           updated_at?: string
           weekly_goal_hours?: number
