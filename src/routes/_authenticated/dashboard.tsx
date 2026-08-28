@@ -60,7 +60,7 @@ function StatCard({
 }
 
 function Dashboard() {
-  const { profile, isPro } = usePilot();
+  const { profile } = usePilot();
 
   const { data } = useQuery({
     queryKey: ["dashboard"],
@@ -216,7 +216,6 @@ function Dashboard() {
       <div className="mt-4 hud-panel p-5">
         <div className="flex items-center justify-between">
           <span className="label-mono">Rig usage (hours)</span>
-          {!isPro && <span className="text-xs text-muted-foreground">Pro unlocks deeper analytics</span>}
         </div>
         <div className="mt-4 h-64">
           {rigUsage.length === 0 ? (

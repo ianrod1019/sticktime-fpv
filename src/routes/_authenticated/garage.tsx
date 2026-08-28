@@ -75,12 +75,10 @@ const GEAR_GROUPS: { key: string; title: string; blurb: string; types: GearType[
   },
 ];
 
-const FREE_PART_LIMIT = 5;
 
 
 function Garage() {
   const queryClient = useQueryClient();
-  const { isPro } = usePilot();
   const [gearOpen, setGearOpen] = useState(false);
   const [name, setName] = useState("");
   const [gearType, setGearType] = useState<(typeof GEAR_TYPES)[number]>("quad");
@@ -137,9 +135,6 @@ function Garage() {
 
   const addPart = useMutation({
     mutationFn: async (gearId: string) => {
-      if (!isPro && parts.length >= FREE_PART_LIMIT) {
-        throw new Error(`Free tier tracks ${FREE_PART_LIMIT} parts — go Pro for unlimited.`);
-      }
       const { data: u } = await supabase.auth.getUser();
       const { error } = await supabase.from("gear_parts").insert({
         user_id: u.user!.id,

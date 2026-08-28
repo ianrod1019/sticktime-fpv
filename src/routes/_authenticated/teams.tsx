@@ -91,7 +91,6 @@ function Teams() {
             <Button disabled={!name || create.isPending} onClick={() => create.mutate()}>
               Create team
             </Button>
-            <p className="text-xs text-muted-foreground">Team creation requires Pro Pilot.</p>
           </div>
         </section>
         <section className="hud-panel p-5">
