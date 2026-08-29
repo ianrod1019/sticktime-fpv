@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthProvider } from "@/context/auth-context";
+import { AccentProvider } from "@/components/accent-provider";
 
 import appCss from "../styles.css?url";
 
@@ -136,8 +137,10 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Outlet />
-        <Toaster position="top-right" />
+        <AccentProvider>
+          <Outlet />
+          <Toaster position="top-right" />
+        </AccentProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
