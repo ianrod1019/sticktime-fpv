@@ -1,121 +1,182 @@
-@import "tailwindcss";
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * StickTime FPV design system — carbon-fiber HUD dark theme.
+ * Accent color is swappable at runtime via [data-accent] on <html>.
+ * All colors are oklch semantic tokens. Never hardcode colors in components.
+ */
+
+@theme inline {
+  --font-display: "Chakra Petch", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-sim: var(--sim);
+  --color-real: var(--real);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --shadow-glow: 0 0 0 1px var(--primary-soft), 0 12px 40px -18px var(--primary);
+  --shadow-panel: 0 20px 50px -30px oklch(0 0 0 / 0.9);
+}
+
+:root {
+  --radius: 0.5rem;
+
+  /* Accent (default: ember) */
+  --primary: oklch(0.72 0.19 45);
+  --primary-foreground: oklch(0.16 0.02 250);
+  --primary-soft: oklch(0.72 0.19 45 / 0.28);
+
+  --background: oklch(0.16 0.014 250);
+  --foreground: oklch(0.95 0.006 250);
+  --card: oklch(0.2 0.016 252);
+  --card-foreground: oklch(0.95 0.006 250);
+  --popover: oklch(0.19 0.016 252);
+  --popover-foreground: oklch(0.95 0.006 250);
+  --secondary: oklch(0.26 0.018 252);
+  --secondary-foreground: oklch(0.93 0.006 250);
+  --muted: oklch(0.24 0.016 252);
+  --muted-foreground: oklch(0.68 0.015 250);
+  --accent: oklch(0.28 0.02 252);
+  --accent-foreground: oklch(0.96 0.006 250);
+  --destructive: oklch(0.62 0.2 22);
+  --destructive-foreground: oklch(0.98 0.005 250);
+  --success: oklch(0.75 0.16 155);
+  --warning: oklch(0.8 0.15 85);
+  --sim: oklch(0.7 0.14 240);
+  --real: var(--primary);
+  --border: oklch(0.31 0.018 252);
+  --input: oklch(0.31 0.018 252);
+  --ring: var(--primary);
+
+  --chart-1: var(--primary);
+  --chart-2: oklch(0.7 0.14 240);
+  --chart-3: oklch(0.75 0.16 155);
+  --chart-4: oklch(0.8 0.15 85);
+  --chart-5: oklch(0.68 0.16 320);
+
+  --sidebar: oklch(0.18 0.015 252);
+  --sidebar-foreground: oklch(0.9 0.006 250);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: oklch(0.26 0.018 252);
+  --sidebar-accent-foreground: oklch(0.96 0.006 250);
+  --sidebar-border: oklch(0.28 0.018 252);
+  --sidebar-ring: var(--primary);
+}
+
+[data-accent="lime"] {
+  --primary: oklch(0.84 0.2 130);
+  --primary-foreground: oklch(0.18 0.02 150);
+  --primary-soft: oklch(0.84 0.2 130 / 0.25);
+}
+[data-accent="cyan"] {
+  --primary: oklch(0.79 0.14 205);
+  --primary-foreground: oklch(0.16 0.02 230);
+  --primary-soft: oklch(0.79 0.14 205 / 0.25);
+}
+[data-accent="magenta"] {
+  --primary: oklch(0.7 0.22 340);
+  --primary-foreground: oklch(0.98 0.005 340);
+  --primary-soft: oklch(0.7 0.22 340 / 0.25);
+}
+[data-accent="amber"] {
+  --primary: oklch(0.84 0.17 88);
+  --primary-foreground: oklch(0.2 0.03 80);
+  --primary-soft: oklch(0.84 0.17 88 / 0.25);
+}
 
 @layer base {
-  :root {
-    --background: 220 20% 97%;
-    --foreground: 220 25% 10%;
-    --card: 0 0% 100%;
-    --card-foreground: 220 25% 10%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 10%;
-    --primary: 24 95% 53%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 220 14% 90%;
-    --secondary-foreground: 220 25% 15%;
-    --muted: 220 14% 94%;
-    --muted-foreground: 220 10% 40%;
-    --accent: 24 95% 53%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 220 13% 85%;
-    --input: 220 13% 85%;
-    --ring: 24 95% 53%;
-    --radius: 0.5rem;
+  * {
+    border-color: var(--color-border);
   }
 
-  .dark {
-    --background: 222 24% 7%;
-    --foreground: 210 20% 96%;
-    --card: 222 22% 10%;
-    --card-foreground: 210 20% 96%;
-    --popover: 222 22% 10%;
-    --popover-foreground: 210 20% 96%;
-    --primary: 24 95% 53%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 220 15% 16%;
-    --secondary-foreground: 210 20% 90%;
-    --muted: 220 15% 15%;
-    --muted-foreground: 215 15% 65%;
-    --accent: 24 95% 53%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 220 15% 18%;
-    --input: 220 15% 18%;
-    --ring: 24 95% 53%;
+  html {
+    color-scheme: dark;
   }
 
-  /* Dynamic Accent Theme Variations */
-  html[data-accent="ember"] {
-    --primary: 24 95% 53%;
-    --accent: 24 95% 53%;
-    --ring: 24 95% 53%;
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    background-image:
+      radial-gradient(1100px 520px at 12% -8%, var(--primary-soft), transparent 65%),
+      linear-gradient(oklch(1 0 0 / 0.018) 1px, transparent 1px),
+      linear-gradient(90deg, oklch(1 0 0 / 0.018) 1px, transparent 1px);
+    background-size:
+      auto,
+      44px 44px,
+      44px 44px;
+    background-attachment: fixed;
   }
 
-  html[data-accent="lime"] {
-    --primary: 84 81% 44%;
-    --accent: 84 81% 44%;
-    --ring: 84 81% 44%;
-  }
-
-  html[data-accent="cyan"] {
-    --primary: 189 94% 43%;
-    --accent: 189 94% 43%;
-    --ring: 189 94% 43%;
-  }
-
-  html[data-accent="magenta"] {
-    --primary: 326 100% 59%;
-    --accent: 326 100% 59%;
-    --ring: 326 100% 59%;
-  }
-
-  html[data-accent="amber"] {
-    --primary: 38 92% 50%;
-    --accent: 38 92% 50%;
-    --ring: 38 92% 50%;
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
   }
 }
 
-body {
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
-  font-family: 'IBM Plex Sans', sans-serif;
+@utility hud-panel {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-panel);
 }
 
-h1, h2, h3, h4, h5, h6, .font-heading {
-  font-family: 'Chakra Petch', sans-serif;
+@utility text-glow {
+  text-shadow: 0 0 24px var(--primary-soft);
 }
 
-code, pre, .font-mono {
-  font-family: 'JetBrains Mono', monospace;
-}
-
-.hud-panel {
-  background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--card) / 0.8) 100%);
-  border: 1px solid hsl(var(--border));
-  border-radius: var(--radius);
-  position: relative;
-}
-
-.hud-panel::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: hsl(var(--primary));
-  opacity: 0.8;
-  border-top-left-radius: var(--radius);
-  border-bottom-left-radius: var(--radius);
-}
-
-.label-mono {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.75rem;
-  letter-spacing: 0.05em;
+@utility label-mono {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: hsl(var(--muted-foreground));
+  color: var(--muted-foreground);
 }

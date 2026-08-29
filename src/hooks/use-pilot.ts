@@ -7,31 +7,16 @@ export function usePilot() {
   const queryClient = useQueryClient();
 
   const { data: profile, isLoading } = useQuery({
-    queryKey: ["pilot_settings", user?.id],
+    queryKey: ["profile", user?.id],
     queryFn: async () => {
       if (!user) return null;
-      let { data, error } = await supabase
-        .from("pilot_settings")
+      const { data, error } = await supabase
+        .from("profiles")
         .select("*")
-        .eq("user_id", user.id)
+        .eq("id", user.id)
         .maybeSingle();
 
       if (error) throw error;
-
-      // If no settings exist yet, auto-insert one
-      if (!data) {
-        const defaultCallsign = user.email ? user.email.split("@")[0] : "Pilot";
-        const { data: inserted, error: insertError } = await supabase
-          .from("pilot_settings")
-          .insert({ user_id: user.id, callsign: defaultCallsign })
-          .select()
-          .single();
-
-        if (!insertError && inserted) {
-          data = inserted;
-        }
-      }
-
       return data;
     },
     enabled: !!user,
@@ -41,9 +26,9 @@ export function usePilot() {
     mutationFn: async (updates: Record<string, any>) => {
       if (!user) throw new Error("No user logged in");
       const { data, error } = await supabase
-        .from("pilot_settings")
-        .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq("user_id", user.id)
+        .from("profiles")
+        update(updates)
+        .eq("id", user.id)
         .select()
         .single();
 
@@ -51,7 +36,7 @@ export function usePilot() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["pilot_settings", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["profile", user?.id] });
     },
   });
 
