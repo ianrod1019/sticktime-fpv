@@ -38,9 +38,9 @@ import {
 export const Route = createFileRoute("/_authenticated/log")({
   head: () => ({
     meta: [
-      { title: "Timecards — StickTime FPV" },
+      { title: "Flight Logs — StickTime FPV" },
       { name: "description", content: "Log simulator and real-world FPV sessions in 5-minute blocks." },
-      { property: "og:title", content: "Timecards — StickTime FPV" },
+      { property: "og:title", content: "Flight Logs — StickTime FPV" },
       {
         property: "og:description",
         content: "Log simulator and real-world FPV sessions in 5-minute blocks.",
@@ -61,7 +61,6 @@ function LogPage() {
   const [gearId, setGearId] = useState<string>("none");
   const [controllerId, setControllerId] = useState<string>("none");
   const [locationId, setLocationId] = useState<string>("none");
-  const [trackId, setTrackId] = useState<string>("none");
   const [platform, setPlatform] = useState<string>(SIM_PLATFORMS[0]!);
   const [packs, setPacks] = useState(0);
   const [crashes, setCrashes] = useState(0);
@@ -72,27 +71,31 @@ function LogPage() {
   const { data } = useQuery({
     queryKey: ["log-data"],
     queryFn: async () => {
-      const [sessions, gear, locations, tracks] = await Promise.all([
+      const [sessions, gear, locations] = await Promise.all([
         supabase.from("sessions").select("*").order("flown_on", { ascending: false }).limit(400),
-        supabase.from("gear").select("id,name,gear_type,total_minutes,minutes_since_service,pack_count,crash_count").eq("retired", false),
+        supabase.from("gear").select("id,name,gear_type,brand,total_minutes,minutes_since_service,pack_count,crash_count,retired"),
         supabase.from("locations").select("id,name,latitude,longitude"),
-        supabase.from("tracks").select("id,name,kind,location_id"),
       ]);
       return {
         sessions: (sessions.data ?? []) as unknown as SessionRow[],
         gear: gear.data ?? [],
         locations: locations.data ?? [],
-        tracks: tracks.data ?? [],
       };
     },
   });
 
   const sessions = data?.sessions ?? [];
   const gear = data?.gear ?? [];
-  const drones = gear.filter((g) => g.gear_type === "quad");
-  const controllers = gear.filter((g) => g.gear_type === "transmitter");
+  const activeGear = gear.filter((g) => !g.retired);
+  const drones = activeGear.filter((g) => g.gear_type === "quad");
+  // Check both exact match and lowercased string matching for 'transmitter' or 'controller'
+  const controllers = activeGear.filter(
+    (g) =>
+      g.gear_type === "transmitter" ||
+      g.gear_type.toLowerCase() === "controller" ||
+      g.gear_type.toLowerCase().includes("trans")
+  );
   const locations = data?.locations ?? [];
-  const tracks = (data?.tracks ?? []).filter((t) => t.kind === type);
 
   const createSession = useMutation({
     mutationFn: async () => {
@@ -108,7 +111,7 @@ function LogPage() {
         gear_id: type === "real" && gearId !== "none" ? gearId : null,
         controller_id: controllerId !== "none" ? controllerId : null,
         location_id: type === "real" && locationId !== "none" ? locationId : null,
-        track_id: trackId !== "none" ? trackId : null,
+        track_id: null,
         sim_platform: type === "sim" ? platform : null,
         packs_flown: type === "real" ? packs : 0,
         crashes,
@@ -118,7 +121,7 @@ function LogPage() {
       });
       if (error) throw error;
 
-      // Roll gear counters and the maintenance clock forward.
+      // Roll gear counters and maintenance clock forward for real-world drone
       if (type === "real" && gearId !== "none") {
         const rig = gear.find((g) => g.id === gearId);
         if (rig) {
@@ -133,9 +136,22 @@ function LogPage() {
             .eq("id", gearId);
         }
       }
+
+      // Roll controller total minutes forward for BOTH real world and simulator sessions if a controller is selected
+      if (controllerId !== "none") {
+        const ctrl = gear.find((g) => g.id === controllerId);
+        if (ctrl) {
+          await supabase
+            .from("gear")
+            .update({
+              total_minutes: ctrl.total_minutes + duration,
+            })
+            .eq("id", controllerId);
+        }
+      }
     },
     onSuccess: () => {
-      toast.success("Session logged");
+      toast.success("Session logged successfully");
       setOpen(false);
       setNotes("");
       setBatteryNotes("");
@@ -179,36 +195,44 @@ function LogPage() {
     return (
       <div className="hud-panel mt-4 divide-y divide-border">
         <div className="flex items-center justify-between p-4">
-          <span className="label-mono">{kind === "sim" ? "Simulator" : "Real world"} timecard</span>
+          <span className="label-mono">{kind === "sim" ? "Simulator" : "Real world"} flight log</span>
           <span className="font-mono text-sm text-primary">{formatHours(total)}</span>
         </div>
         {rows.length === 0 && (
           <p className="p-6 text-sm text-muted-foreground">No sessions yet. Log your first block.</p>
         )}
-        {rows.map((s) => (
-          <div key={s.id} className="flex items-center justify-between gap-4 p-4">
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="font-mono text-sm">{s.flown_on}</span>
-                <Badge variant="secondary" className="font-mono text-[10px]">
-                  {s.duration_minutes} min
-                </Badge>
-                {s.sim_platform && <Badge variant="outline">{s.sim_platform}</Badge>}
-                {s.packs_flown > 0 && <Badge variant="outline">{s.packs_flown} packs</Badge>}
-                {s.crashes > 0 && <Badge variant="outline">{s.crashes} crashes</Badge>}
+        {rows.map((s) => {
+          const associatedController = gear.find((g) => g.id === s.controller_id);
+          return (
+            <div key={s.id} className="flex items-center justify-between gap-4 p-4">
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-mono text-sm">{s.flown_on}</span>
+                  <Badge variant="secondary" className="font-mono text-[10px]">
+                    {s.duration_minutes} min
+                  </Badge>
+                  {s.sim_platform && <Badge variant="outline">{s.sim_platform}</Badge>}
+                  {associatedController && (
+                    <Badge variant="outline" className="border-orange-500/30 text-orange-400">
+                      Radio: {associatedController.name}
+                    </Badge>
+                  )}
+                  {s.packs_flown > 0 && <Badge variant="outline">{s.packs_flown} packs</Badge>}
+                  {s.crashes > 0 && <Badge variant="outline">{s.crashes} crashes</Badge>}
+                </div>
+                {s.notes && <p className="mt-1 truncate text-sm text-muted-foreground">{s.notes}</p>}
               </div>
-              {s.notes && <p className="mt-1 truncate text-sm text-muted-foreground">{s.notes}</p>}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => removeSession.mutate(s.id)}
+                aria-label="Delete session"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => removeSession.mutate(s.id)}
-              aria-label="Delete session"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-        ))}
+          );
+        })}
       </div>
     );
   }
@@ -216,7 +240,7 @@ function LogPage() {
   return (
     <>
       <PageHeader
-        title="Timecard manager"
+        title="Flight Logs"
         subtitle="Manual entry in 5-minute blocks — sim and real world tracked separately."
         action={
           <Dialog open={open} onOpenChange={setOpen}>
@@ -379,43 +403,28 @@ function LogPage() {
                 )}
 
                 <div className="space-y-2">
-                  <Label>Controller</Label>
+                  <Label>Controller / Radio</Label>
                   <Select value={controllerId} onValueChange={setControllerId}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Pick a controller" />
+                      <SelectValue placeholder="Select transmitter" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">No controller</SelectItem>
                       {controllers.map((c) => (
                         <SelectItem key={c.id} value={c.id}>
-                          {c.name}
+                          {c.name} {c.brand ? `(${c.brand})` : ""}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                   {controllers.length === 0 && (
-                    <p className="text-xs text-muted-foreground">
-                      Add a radio under "Controller / radio" in the garage to pick it here.
-                    </p>
+                    <div className="p-3 mt-1 rounded-lg bg-orange-500/10 border border-orange-500/20 text-xs text-orange-300 space-y-1">
+                      <p className="font-semibold">No transmitters found in your garage.</p>
+                      <p className="text-muted-foreground">
+                        Make sure you added equipment under the <strong className="text-foreground">Controllers & Radios</strong> category in the Garage and that they are not marked as retired.
+                      </p>
+                    </div>
                   )}
-                </div>
-
-
-                <div className="space-y-2">
-                  <Label>Track / scenario</Label>
-                  <Select value={trackId} onValueChange={setTrackId}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Pick a track" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">No track</SelectItem>
-                      {tracks.map((t) => (
-                        <SelectItem key={t.id} value={t.id}>
-                          {t.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
                 </div>
 
                 <div className="space-y-2">

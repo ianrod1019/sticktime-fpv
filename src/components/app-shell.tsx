@@ -6,12 +6,9 @@ import {
   LayoutDashboard,
   Timer,
   Wrench,
-  MapPin,
-  Trophy,
   Users,
   Settings,
   LogOut,
-  Zap,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { usePilot } from "@/hooks/use-pilot";
@@ -21,10 +18,8 @@ import { cn } from "@/lib/utils";
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/log", label: "Timecards", icon: Timer },
+  { to: "/log", label: "Flight Logs", icon: Timer },
   { to: "/garage", label: "Garage", icon: Wrench },
-  { to: "/spots", label: "Spots", icon: MapPin },
-  { to: "/records", label: "Records", icon: Trophy },
   { to: "/teams", label: "Teams", icon: Users },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;

@@ -15,9 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedGarageRouteImport } from './routes/_authenticated/garage'
 import { Route as AuthenticatedLogRouteImport } from './routes/_authenticated/log'
-import { Route as AuthenticatedRecordsRouteImport } from './routes/_authenticated/records'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
-import { Route as AuthenticatedSpotsRouteImport } from './routes/_authenticated/spots'
 import { Route as AuthenticatedTeamsRouteImport } from './routes/_authenticated/teams'
 
 const IndexRoute = IndexRouteImport.update({
@@ -49,19 +47,9 @@ const AuthenticatedLogRoute = AuthenticatedLogRouteImport.update({
   path: '/log',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedRecordsRoute = AuthenticatedRecordsRouteImport.update({
-  id: '/records',
-  path: '/records',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedSpotsRoute = AuthenticatedSpotsRouteImport.update({
-  id: '/spots',
-  path: '/spots',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedTeamsRoute = AuthenticatedTeamsRouteImport.update({
@@ -76,9 +64,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/garage': typeof AuthenticatedGarageRoute
   '/log': typeof AuthenticatedLogRoute
-  '/records': typeof AuthenticatedRecordsRoute
   '/settings': typeof AuthenticatedSettingsRoute
-  '/spots': typeof AuthenticatedSpotsRoute
   '/teams': typeof AuthenticatedTeamsRoute
 }
 export interface FileRoutesByTo {
@@ -87,9 +73,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/garage': typeof AuthenticatedGarageRoute
   '/log': typeof AuthenticatedLogRoute
-  '/records': typeof AuthenticatedRecordsRoute
   '/settings': typeof AuthenticatedSettingsRoute
-  '/spots': typeof AuthenticatedSpotsRoute
   '/teams': typeof AuthenticatedTeamsRoute
 }
 export interface FileRoutesById {
@@ -100,34 +84,15 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/garage': typeof AuthenticatedGarageRoute
   '/_authenticated/log': typeof AuthenticatedLogRoute
-  '/_authenticated/records': typeof AuthenticatedRecordsRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
-  '/_authenticated/spots': typeof AuthenticatedSpotsRoute
   '/_authenticated/teams': typeof AuthenticatedTeamsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
-    | '/auth'
-    | '/dashboard'
-    | '/garage'
-    | '/log'
-    | '/records'
-    | '/settings'
-    | '/spots'
-    | '/teams'
+    '/' | '/auth' | '/dashboard' | '/garage' | '/log' | '/settings' | '/teams'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/auth'
-    | '/dashboard'
-    | '/garage'
-    | '/log'
-    | '/records'
-    | '/settings'
-    | '/spots'
-    | '/teams'
+  to: '/' | '/auth' | '/dashboard' | '/garage' | '/log' | '/settings' | '/teams'
   id:
     | '__root__'
     | '/'
@@ -136,9 +101,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/garage'
     | '/_authenticated/log'
-    | '/_authenticated/records'
     | '/_authenticated/settings'
-    | '/_authenticated/spots'
     | '/_authenticated/teams'
   fileRoutesById: FileRoutesById
 }
@@ -192,25 +155,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLogRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/records': {
-      id: '/_authenticated/records'
-      path: '/records'
-      fullPath: '/records'
-      preLoaderRoute: typeof AuthenticatedRecordsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/settings': {
       id: '/_authenticated/settings'
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/spots': {
-      id: '/_authenticated/spots'
-      path: '/spots'
-      fullPath: '/spots'
-      preLoaderRoute: typeof AuthenticatedSpotsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/teams': {
@@ -227,9 +176,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedGarageRoute: typeof AuthenticatedGarageRoute
   AuthenticatedLogRoute: typeof AuthenticatedLogRoute
-  AuthenticatedRecordsRoute: typeof AuthenticatedRecordsRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
-  AuthenticatedSpotsRoute: typeof AuthenticatedSpotsRoute
   AuthenticatedTeamsRoute: typeof AuthenticatedTeamsRoute
 }
 
@@ -237,9 +184,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedGarageRoute: AuthenticatedGarageRoute,
   AuthenticatedLogRoute: AuthenticatedLogRoute,
-  AuthenticatedRecordsRoute: AuthenticatedRecordsRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
-  AuthenticatedSpotsRoute: AuthenticatedSpotsRoute,
   AuthenticatedTeamsRoute: AuthenticatedTeamsRoute,
 }
 

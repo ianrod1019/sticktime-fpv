@@ -1,34 +1,99 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/context/auth-context";
+
+export interface PilotProfile {
+  id: string;
+  user_id: string;
+  weekly_goal_hours: number;
+  is_private: boolean;
+  callsign: string;
+  bio: string;
+  subscription_tier: string;
+  created_at: string;
+  updated_at: string;
+}
 
 export function usePilot() {
-  const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  const { data: profile, isLoading } = useQuery({
-    queryKey: ["profile", user?.id],
+  const { data: session } = useQuery({
+    queryKey: ["auth-session"],
     queryFn: async () => {
-      if (!user) return null;
-      const { data, error } = await supabase
-        .from("profiles")
+      const { data } = await supabase.auth.getSession();
+      return data.session;
+    },
+  });
+
+  const userId = session?.user?.id;
+  const email = session?.user?.email;
+
+  const { data: profile, isLoading } = useQuery({
+    queryKey: ["pilot-settings", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      if (!userId) return null;
+      let { data, error } = await supabase
+        .from("pilot_settings")
         .select("*")
-        .eq("id", user.id)
+        .eq("user_id", userId)
         .maybeSingle();
 
-      if (error) throw error;
-      return data;
+      if (error) {
+        console.error("Error fetching pilot settings:", error);
+      }
+
+      if (!data) {
+        // Initialize default profile row if not exists
+        const newRecord = {
+          user_id: userId,
+          weekly_goal_hours: 5,
+          is_private: false,
+          callsign: email ? email.split("@")[0] : "Pilot",
+          bio: "",
+          subscription_tier: "free",
+        };
+        const { data: inserted, error: insertError } = await supabase
+          .from("pilot_settings")
+          .insert(newRecord)
+          .select()
+          .single();
+
+        if (!insertError && inserted) {
+          data = inserted;
+        } else {
+          // Fallback object if insert fails due to RLS or other constraints
+          data = {
+            id: userId,
+            user_id: userId,
+            weekly_goal_hours: 5,
+            is_private: false,
+            callsign: email ? email.split("@")[0] : "Pilot",
+            bio: "",
+            subscription_tier: "free",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          };
+        }
+      }
+
+      return data as PilotProfile;
     },
-    enabled: !!user,
   });
 
   const updateProfile = useMutation({
-    mutationFn: async (updates: Record<string, any>) => {
-      if (!user) throw new Error("No user logged in");
+    mutationFn: async (updates: Partial<PilotProfile>) => {
+      if (!userId) throw new Error("Not authenticated");
+
+      const payload = {
+        ...updates,
+        user_id: userId,
+        updated_at: new Date().toISOString(),
+      };
+
+      // Upsert into pilot_settings
       const { data, error } = await supabase
-        .from("profiles")
-        update(updates)
-        .eq("id", user.id)
+        .from("pilot_settings")
+        .upsert(payload, { onConflict: "user_id" })
         .select()
         .single();
 
@@ -36,14 +101,14 @@ export function usePilot() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["profile", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["pilot-settings", userId] });
     },
   });
 
   return {
-    user,
-    userId: user?.id,
-    email: user?.email,
+    session,
+    userId,
+    email,
     profile,
     isLoading,
     updateProfile,
