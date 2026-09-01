@@ -180,3 +180,30 @@
   text-transform: uppercase;
   color: var(--muted-foreground);
 }
+
+/* Pure Slide Keyframes (No opacity changes or fade effects, slowed down to 0.75s) */
+@keyframes pureSlideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes pureSlideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-pure-slide-right {
+  animation: pureSlideInRight 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-pure-slide-left {
+  animation: pureSlideInLeft 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

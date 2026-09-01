@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { toast } from "sonner";
-import { Plus, Trash2, CloudSun, Timer, Monitor } from "lucide-react";
+import { useState, useRef } from "react";
+import { Plus, Trash2, Timer, Monitor } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -30,7 +28,6 @@ import {
   DURATION_BLOCKS,
   SIM_PLATFORMS,
   formatHours,
-  fetchWeather,
   toDateKey,
   type SessionRow,
 } from "@/lib/fpv";
@@ -50,52 +47,58 @@ export const Route = createFileRoute("/_authenticated/log")({
   component: LogPage,
 });
 
-type Weather = { temperature_2m: number; wind_speed_10m: number; wind_gusts_10m: number } | null;
-
 function LogPage() {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [type, setType] = useState<"sim" | "real">("real");
+  const [activeTab, setActiveTab] = useState<"real" | "sim">("real");
+  const prevTabRef = useRef<"real" | "sim">("real");
   const [flownOn, setFlownOn] = useState(toDateKey(new Date()));
   const [duration, setDuration] = useState(20);
   const [gearId, setGearId] = useState<string>("none");
   const [controllerId, setControllerId] = useState<string>("none");
-  const [locationId, setLocationId] = useState<string>("none");
+  const [gogglesId, setGogglesId] = useState<string>("none");
   const [platform, setPlatform] = useState<string>(SIM_PLATFORMS[0]!);
   const [packs, setPacks] = useState(0);
   const [crashes, setCrashes] = useState(0);
   const [batteryNotes, setBatteryNotes] = useState("");
   const [notes, setNotes] = useState("");
-  const [weather, setWeather] = useState<Weather>(null);
 
   const { data } = useQuery({
     queryKey: ["log-data"],
     queryFn: async () => {
-      const [sessions, gear, locations] = await Promise.all([
+      const [sessions, gear] = await Promise.all([
         supabase.from("sessions").select("*").order("flown_on", { ascending: false }).limit(400),
-        supabase.from("gear").select("id,name,gear_type,brand,total_minutes,minutes_since_service,pack_count,crash_count,retired"),
-        supabase.from("locations").select("id,name,latitude,longitude"),
+        supabase.from("gear").select("id,name,gear_type,brand,total_minutes,minutes_since_service,pack_count,crash_count"),
       ]);
       return {
         sessions: (sessions.data ?? []) as unknown as SessionRow[],
         gear: gear.data ?? [],
-        locations: locations.data ?? [],
       };
     },
   });
 
   const sessions = data?.sessions ?? [];
   const gear = data?.gear ?? [];
-  const activeGear = gear.filter((g) => !g.retired);
-  const drones = activeGear.filter((g) => g.gear_type === "quad");
-  // Check both exact match and lowercased string matching for 'transmitter' or 'controller'
-  const controllers = activeGear.filter(
+  const drones = gear.filter((g) => g.gear_type === "quad");
+  const controllers = gear.filter(
     (g) =>
       g.gear_type === "transmitter" ||
       g.gear_type.toLowerCase() === "controller" ||
       g.gear_type.toLowerCase().includes("trans")
   );
-  const locations = data?.locations ?? [];
+  const gogglesList = gear.filter(
+    (g) =>
+      g.gear_type === "goggles" ||
+      g.gear_type.toLowerCase().includes("goggle") ||
+      g.gear_type.toLowerCase().includes("box")
+  );
+
+  const handleTabChange = (newTab: "real" | "sim") => {
+    if (newTab === activeTab) return;
+    prevTabRef.current = activeTab;
+    setActiveTab(newTab);
+  };
 
   const createSession = useMutation({
     mutationFn: async () => {
@@ -110,13 +113,14 @@ function LogPage() {
         duration_minutes: duration,
         gear_id: type === "real" && gearId !== "none" ? gearId : null,
         controller_id: controllerId !== "none" ? controllerId : null,
-        location_id: type === "real" && locationId !== "none" ? locationId : null,
+        goggles_id: gogglesId !== "none" ? gogglesId : null,
+        location_id: null,
         track_id: null,
         sim_platform: type === "sim" ? platform : null,
         packs_flown: type === "real" ? packs : 0,
         crashes,
         battery_notes: batteryNotes || null,
-        weather: weather ? (weather as unknown as Record<string, number>) : null,
+        weather: null,
         notes: notes || null,
       });
       if (error) throw error;
@@ -137,7 +141,7 @@ function LogPage() {
         }
       }
 
-      // Roll controller total minutes forward for BOTH real world and simulator sessions if a controller is selected
+      // Roll controller total minutes forward if selected
       if (controllerId !== "none") {
         const ctrl = gear.find((g) => g.id === controllerId);
         if (ctrl) {
@@ -149,62 +153,120 @@ function LogPage() {
             .eq("id", controllerId);
         }
       }
+
+      // Roll goggles total minutes forward if selected
+      if (gogglesId !== "none") {
+        const gog = gear.find((g) => g.id === gogglesId);
+        if (gog) {
+          await supabase
+            .from("gear")
+            .update({
+              total_minutes: gog.total_minutes + duration,
+            })
+            .eq("id", gogglesId);
+        }
+      }
     },
     onSuccess: () => {
-      toast.success("Session logged successfully");
       setOpen(false);
+      setActiveTab(type);
       setNotes("");
       setBatteryNotes("");
       setPacks(0);
       setCrashes(0);
-      setWeather(null);
       queryClient.invalidateQueries();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => {
+      import("sonner").then(({ toast }) => toast.error(e.message));
+    },
   });
 
   const removeSession = useMutation({
     mutationFn: async (id: string) => {
+      const sessionToDelete = sessions.find((s) => s.id === id);
+      if (sessionToDelete) {
+        const dur = sessionToDelete.duration_minutes;
+        const packsFlown = sessionToDelete.packs_flown || 0;
+        const crashesCount = sessionToDelete.crashes || 0;
+
+        // Deduct time and packs/crashes from drone (gear_id) if present
+        if (sessionToDelete.gear_id) {
+          const rig = gear.find((g) => g.id === sessionToDelete.gear_id);
+          if (rig) {
+            await supabase
+              .from("gear")
+              .update({
+                total_minutes: Math.max(0, rig.total_minutes - dur),
+                minutes_since_service: Math.max(0, rig.minutes_since_service - dur),
+                pack_count: Math.max(0, rig.pack_count - packsFlown),
+                crash_count: Math.max(0, rig.crash_count - crashesCount),
+              })
+              .eq("id", sessionToDelete.gear_id);
+          }
+        }
+
+        // Deduct time from controller if present
+        if (sessionToDelete.controller_id) {
+          const ctrl = gear.find((g) => g.id === sessionToDelete.controller_id);
+          if (ctrl) {
+            await supabase
+              .from("gear")
+              .update({
+                total_minutes: Math.max(0, ctrl.total_minutes - dur),
+              })
+              .eq("id", sessionToDelete.controller_id);
+          }
+        }
+
+        // Deduct time from goggles if present
+        if (sessionToDelete.goggles_id) {
+          const gog = gear.find((g) => g.id === sessionToDelete.goggles_id);
+          if (gog) {
+            await supabase
+              .from("gear")
+              .update({
+                total_minutes: Math.max(0, gog.total_minutes - dur),
+              })
+              .eq("id", sessionToDelete.goggles_id);
+          }
+        }
+      }
+
       const { error } = await supabase.from("sessions").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Session removed");
       queryClient.invalidateQueries();
+    },
+    onError: (e: Error) => {
+      import("sonner").then(({ toast }) => toast.error(e.message));
     },
   });
 
-  async function grabWeather() {
-    const loc = locations.find((l) => l.id === locationId);
-    if (!loc?.latitude || !loc?.longitude) {
-      toast.error("Pick a location with coordinates first");
-      return;
-    }
-    try {
-      const current = await fetchWeather(Number(loc.latitude), Number(loc.longitude));
-      setWeather(current as Weather);
-      toast.success("Conditions archived");
-    } catch {
-      toast.error("Weather lookup failed");
-    }
-  }
-
-  function renderList(kind: "sim" | "real") {
+  function renderListContent(kind: "sim" | "real") {
     const rows = sessions.filter((s) => s.session_type === kind);
     const total = rows.reduce((a, s) => a + s.duration_minutes, 0);
+    const isSim = kind === "sim";
+
     return (
-      <div className="hud-panel mt-4 divide-y divide-border">
-        <div className="flex items-center justify-between p-4">
-          <span className="label-mono">{kind === "sim" ? "Simulator" : "Real world"} flight log</span>
-          <span className="font-mono text-sm text-primary">{formatHours(total)}</span>
+      <div className="hud-panel divide-y divide-border overflow-hidden">
+        <div className="flex items-center justify-between p-4 bg-muted/40">
+          <div className="flex items-center gap-2">
+            {isSim ? <Monitor className="h-4 w-4 text-sim" /> : <Timer className="h-4 w-4 text-primary" />}
+            <span className="label-mono font-semibold">{isSim ? "Simulator" : "Real world"} flight log</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="font-mono text-sm text-primary">{formatHours(total)}</span>
+          </div>
         </div>
         {rows.length === 0 && (
           <p className="p-6 text-sm text-muted-foreground">No sessions yet. Log your first block.</p>
         )}
         {rows.map((s) => {
           const associatedController = gear.find((g) => g.id === s.controller_id);
+          const associatedGoggles = gear.find((g) => g.id === s.goggles_id);
           return (
-            <div key={s.id} className="flex items-center justify-between gap-4 p-4">
+            <div key={s.id} className="flex items-center justify-between gap-4 p-4 hover:bg-muted/20 transition-colors">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-mono text-sm">{s.flown_on}</span>
@@ -215,6 +277,11 @@ function LogPage() {
                   {associatedController && (
                     <Badge variant="outline" className="border-orange-500/30 text-orange-400">
                       Radio: {associatedController.name}
+                    </Badge>
+                  )}
+                  {associatedGoggles && (
+                    <Badge variant="outline" className="border-cyan-500/30 text-cyan-400">
+                      Goggles: {associatedGoggles.name}
                     </Badge>
                   )}
                   {s.packs_flown > 0 && <Badge variant="outline">{s.packs_flown} packs</Badge>}
@@ -237,8 +304,10 @@ function LogPage() {
     );
   }
 
+  const goingRight = activeTab === "sim";
+
   return (
-    <>
+    <div>
       <PageHeader
         title="Flight Logs"
         subtitle="Manual entry in 5-minute blocks — sim and real world tracked separately."
@@ -319,143 +388,148 @@ function LogPage() {
                     </Select>
                   </div>
                 ) : (
-                  <>
-                    <div className="space-y-2">
-                      <Label>Drone</Label>
-                      <Select value={gearId} onValueChange={setGearId}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Pick a drone" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="none">No drone</SelectItem>
-                          {drones.map((g) => (
-                            <SelectItem key={g.id} value={g.id}>
-                              {g.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {drones.length === 0 && (
-                        <p className="text-xs text-muted-foreground">
-                          Add a drone in the garage to track airtime per airframe.
-                        </p>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Location</Label>
-                      <Select value={locationId} onValueChange={setLocationId}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Pick a spot" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="none">No location</SelectItem>
-                          {locations.map((l) => (
-                            <SelectItem key={l.id} value={l.id}>
-                              {l.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="space-y-2">
-                        <Label htmlFor="packs">Packs flown</Label>
-                        <Input
-                          id="packs"
-                          type="number"
-                          min={0}
-                          value={packs}
-                          onChange={(e) => setPacks(Number(e.target.value))}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="crashes">Crashes</Label>
-                        <Input
-                          id="crashes"
-                          type="number"
-                          min={0}
-                          value={crashes}
-                          onChange={(e) => setCrashes(Number(e.target.value))}
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="batt">Battery health notes</Label>
-                      <Input
-                        id="batt"
-                        placeholder="Pack 3 puffed, storage charged"
-                        value={batteryNotes}
-                        onChange={(e) => setBatteryNotes(e.target.value)}
-                      />
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Button type="button" variant="outline" size="sm" onClick={grabWeather}>
-                        <CloudSun className="mr-1 h-4 w-4" /> Archive conditions
-                      </Button>
-                      {weather && (
-                        <span className="font-mono text-xs text-muted-foreground">
-                          {weather.temperature_2m}°C · {weather.wind_speed_10m} km/h (gust{" "}
-                          {weather.wind_gusts_10m})
-                        </span>
-                      )}
-                    </div>
-                  </>
+                  <div className="space-y-2">
+                    <Label>Drone</Label>
+                    <Select value={gearId} onValueChange={setGearId}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Pick a drone" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">No drone</SelectItem>
+                        {drones.map((g) => (
+                          <SelectItem key={g.id} value={g.id}>
+                            {g.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {drones.length === 0 && (
+                      <p className="text-xs text-muted-foreground">
+                        Add a drone in the garage to track airtime per airframe.
+                      </p>
+                    )}
+                  </div>
                 )}
 
-                <div className="space-y-2">
-                  <Label>Controller / Radio</Label>
-                  <Select value={controllerId} onValueChange={setControllerId}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select transmitter" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">No controller</SelectItem>
-                      {controllers.map((c) => (
-                        <SelectItem key={c.id} value={c.id}>
-                          {c.name} {c.brand ? `(${c.brand})` : ""}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {controllers.length === 0 && (
-                    <div className="p-3 mt-1 rounded-lg bg-orange-500/10 border border-orange-500/20 text-xs text-orange-300 space-y-1">
-                      <p className="font-semibold">No transmitters found in your garage.</p>
-                      <p className="text-muted-foreground">
-                        Make sure you added equipment under the <strong className="text-foreground">Controllers & Radios</strong> category in the Garage and that they are not marked as retired.
-                      </p>
-                    </div>
-                  )}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label>Radio Controller</Label>
+                    <Select value={controllerId} onValueChange={setControllerId}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Pick a controller" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">None</SelectItem>
+                        {controllers.map((c) => (
+                          <SelectItem key={c.id} value={c.id}>
+                            {c.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Goggles</Label>
+                    <Select value={gogglesId} onValueChange={setGogglesId}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Pick goggles" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">None</SelectItem>
+                        {gogglesList.map((g) => (
+                          <SelectItem key={g.id} value={g.id}>
+                            {g.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
+
+                {type === "real" && (
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="packs">Packs Flown</Label>
+                      <Input
+                        id="packs"
+                        type="number"
+                        min={0}
+                        value={packs}
+                        onChange={(e) => setPacks(Number(e.target.value))}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="crashes">Crashes</Label>
+                      <Input
+                        id="crashes"
+                        type="number"
+                        min={0}
+                        value={crashes}
+                        onChange={(e) => setCrashes(Number(e.target.value))}
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <div className="space-y-2">
                   <Label htmlFor="notes">Notes</Label>
                   <Textarea
                     id="notes"
+                    placeholder="How did it fly? Any tuning notes?"
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Dialled in the split-S line..."
                   />
                 </div>
-              </div>
 
-              <DialogFooter>
-                <Button onClick={() => createSession.mutate()} disabled={createSession.isPending}>
-                  Save session
-                </Button>
-              </DialogFooter>
+                <DialogFooter>
+                  <Button onClick={() => createSession.mutate()} disabled={createSession.isPending}>
+                    Save Session
+                  </Button>
+                </DialogFooter>
+              </div>
             </DialogContent>
           </Dialog>
         }
       />
 
-      <Tabs defaultValue="real">
-        <TabsList>
-          <TabsTrigger value="real">Real world</TabsTrigger>
-          <TabsTrigger value="sim">Simulator</TabsTrigger>
-        </TabsList>
-        <TabsContent value="real">{renderList("real")}</TabsContent>
-        <TabsContent value="sim">{renderList("sim")}</TabsContent>
-      </Tabs>
-    </>
+      <div className="mt-6 flex flex-col gap-4">
+        <div className="hud-panel p-1.5 flex max-w-sm relative">
+          <div
+            className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-primary/20 border border-primary/40 rounded-md transition-transform duration-300 ease-out ${
+              activeTab === "sim" ? "translate-x-[calc(100%+6px)]" : "translate-x-0"
+            }`}
+          />
+          <button
+            type="button"
+            onClick={() => handleTabChange("real")}
+            className={`flex-1 relative z-10 py-2.5 px-4 text-xs font-mono font-bold uppercase tracking-wider rounded transition-colors flex items-center justify-center gap-2 ${
+              activeTab === "real" ? "text-primary" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Timer className="h-4 w-4" /> Real World
+          </button>
+          <button
+            type="button"
+            onClick={() => handleTabChange("sim")}
+            className={`flex-1 relative z-10 py-2.5 px-4 text-xs font-mono font-bold uppercase tracking-wider rounded transition-colors flex items-center justify-center gap-2 ${
+              activeTab === "sim" ? "text-primary" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Monitor className="h-4 w-4" /> Simulator
+          </button>
+        </div>
+
+        <div className="overflow-hidden relative w-full">
+          <div
+            key={activeTab}
+            className={`w-full ${
+              goingRight ? "animate-pure-slide-right" : "animate-pure-slide-left"
+            }`}
+          >
+            {renderListContent(activeTab)}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
