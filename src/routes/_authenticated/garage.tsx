@@ -60,7 +60,7 @@ const GEAR_SECTIONS: {
   {
     key: "quad",
     title: "Drones & Quads",
-    blurb: "Airframes that accumulate flight time, crash counters and component wear.",
+    blurb: "Airframes that accumulate flight time, crash counters, cell count, connector type and component wear.",
     icon: Cpu,
   },
   {
@@ -78,7 +78,7 @@ const GEAR_SECTIONS: {
   {
     key: "battery",
     title: "Battery Sets",
-    blurb: "LiPo / Li-Ion battery sets, pack counts, storage voltages and individual pack management.",
+    blurb: "LiPo / Li-Ion battery sets, pack counts, cell count, connector types and individual pack management.",
     icon: BatteryChargingRef,
   },
   {
@@ -120,6 +120,9 @@ function Garage() {
   const [serviceMode, setServiceMode] = useState<"interval" | "needed">("interval");
   const [interval, setIntervalMinutes] = useState(600);
   const [packCount, setPackCount] = useState(4); // For battery sets
+  const [cells, setCells] = useState<number>(6); // For batteries / quads
+  
+  const [connectorType, setConnectorType] = useState<string>("XT60");
 
   // ID of the gear currently hovered over the delete button or undergoing deletion
   const [hoveredDeleteGearId, setHoveredDeleteGearId] = useState<string | null>(null);
@@ -157,12 +160,16 @@ function Garage() {
   const parts = data?.parts ?? [];
   const logs = data?.logs ?? [];
 
+  const showCellsAndConnector = gearType === "battery" || gearType === "quad";
+
   const addGear = useMutation({
     mutationFn: async () => {
       const { data: u } = await supabase.auth.getUser();
       const isBatt = gearType === "battery";
       const finalInterval = isBatt || serviceMode === "needed" ? 0 : interval;
       const finalPackCount = isBatt ? packCount : 0;
+      const finalCells = showCellsAndConnector ? cells : 0;
+      const finalConnector = showCellsAndConnector ? connectorType : "";
 
       const { error } = await supabase.from("gear").insert({
         user_id: u.user!.id,
@@ -171,6 +178,8 @@ function Garage() {
         brand: brand || null,
         service_interval_minutes: finalInterval,
         pack_count: finalPackCount,
+        cells: finalCells,
+        connector_type: finalConnector || null,
       });
       if (error) throw error;
     },
@@ -182,6 +191,8 @@ function Garage() {
       setServiceMode("interval");
       setIntervalMinutes(600);
       setPackCount(4);
+      setCells(6);
+      setConnectorType("XT60");
       queryClient.invalidateQueries({ queryKey: ["garage"] });
     },
     onError: (e: Error) => toast.error(e.message),
@@ -194,12 +205,16 @@ function Garage() {
       brand,
       serviceInterval,
       packCount,
+      cells,
+      connectorType,
     }: {
       gearId: string;
       name: string;
       brand: string;
       serviceInterval: number;
       packCount: number;
+      cells: number;
+      connectorType: string;
     }) => {
       const { error } = await supabase
         .from("gear")
@@ -208,6 +223,8 @@ function Garage() {
           brand: brand || null,
           service_interval_minutes: serviceInterval,
           pack_count: packCount,
+          cells,
+          connector_type: connectorType || null,
         })
         .eq("id", gearId);
       if (error) throw error;
@@ -379,7 +396,7 @@ function Garage() {
                   <span className="w-2 h-2 rounded-full bg-orange-500"></span> Add equipment to garage
                 </DialogTitle>
               </DialogHeader>
-              <div className="space-y-4 py-2">
+              <div className="space-y-4 py-2 max-h-[70vh] overflow-y-auto pr-1">
                 <div className="space-y-2">
                   <Label htmlFor="gname">Name</Label>
                   <Input
@@ -417,6 +434,48 @@ function Garage() {
                     placeholder="e.g. CNHL, Tattu, Radiomaster, DJI, TBS"
                   />
                 </div>
+
+                {showCellsAndConnector && (
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-2">
+                        <Label htmlFor="cells">Cell Count (S)</Label>
+                        <Select value={String(cells)} onValueChange={(v) => setCells(Number(v))}>
+                          <SelectTrigger id="cells">
+                            <SelectValue placeholder="Cells" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1">1S</SelectItem>
+                            <SelectItem value="2">2S</SelectItem>
+                            <SelectItem value="3">3S</SelectItem>
+                            <SelectItem value="4">4S</SelectItem>
+                            <SelectItem value="5">5S</SelectItem>
+                            <SelectItem value="6">6S</SelectItem>
+                            <SelectItem value="8">8S</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="connectorType">Connector</Label>
+                        <Select value={connectorType} onValueChange={setConnectorType}>
+                          <SelectTrigger id="connectorType">
+                            <SelectValue placeholder="Connector" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="XT30">XT30</SelectItem>
+                            <SelectItem value="XT60">XT60</SelectItem>
+                            <SelectItem value="XT90">XT90</SelectItem>
+                            <SelectItem value="PH2.0">PH2.0</SelectItem>
+                            <SelectItem value="BT2.0">BT2.0</SelectItem>
+                            <SelectItem value="BT3.0">BT3.0</SelectItem>
+                            <SelectItem value="XN69">XN69</SelectItem>
+                            <SelectItem value="A30">A30</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {gearType === "battery" ? (
                   <div className="space-y-2">
@@ -575,8 +634,8 @@ function Garage() {
                           parts={gParts}
                           logs={gLogs}
                           onDeleteGear={handleDeleteClick}
-                          onUpdateGear={(gearId, name, brand, serviceInterval, packCount) =>
-                            updateGear.mutate({ gearId, name, brand, serviceInterval, packCount })
+                          onUpdateGear={(gearId, name, brand, serviceInterval, packCount, cells, connectorType) =>
+                            updateGear.mutate({ gearId, name, brand, serviceInterval, packCount, cells, connectorType })
                           }
                           onUpdatePackCount={(gearId, newCount) =>
                             updatePackCount.mutate({ gearId, newCount })

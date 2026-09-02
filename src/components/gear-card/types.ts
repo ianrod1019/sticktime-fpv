@@ -27,6 +27,8 @@ export interface GearItem {
   total_minutes: number;
   pack_count: number;
   crash_count: number;
+  cells?: number | null;
+  connector_type?: string | null;
   created_at?: string;
 }
 
