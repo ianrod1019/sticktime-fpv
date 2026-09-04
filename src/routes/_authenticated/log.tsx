@@ -33,6 +33,11 @@ import {
 } from "@/lib/fpv";
 
 export const Route = createFileRoute("/_authenticated/log")({
+  validateSearch: (search: Record<string, unknown>): { tab?: "real" | "sim" } => {
+    return {
+      tab: search.tab === "sim" || search.tab === "real" ? search.tab : undefined,
+    };
+  },
   head: () => ({
     meta: [
       { title: "Flight Logs — StickTime FPV" },
@@ -50,10 +55,15 @@ export const Route = createFileRoute("/_authenticated/log")({
 function LogPage() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const search = Route.useSearch();
+  
   const [open, setOpen] = useState(false);
   const [type, setType] = useState<"sim" | "real">("real");
-  const [activeTab, setActiveTab] = useState<"real" | "sim">("real");
-  const prevTabRef = useRef<"real" | "sim">("real");
+  
+  const initialTab = search.tab === "sim" ? "sim" : "real";
+  const [activeTab, setActiveTab] = useState<"real" | "sim">(initialTab);
+  const prevTabRef = useRef<"real" | "sim">(initialTab);
+
   const [flownOn, setFlownOn] = useState(toDateKey(new Date()));
   const [duration, setDuration] = useState(20);
   const [gearId, setGearId] = useState<string>("none");
@@ -105,7 +115,11 @@ function LogPage() {
     if (newTab === activeTab) return;
     prevTabRef.current = activeTab;
     setActiveTab(newTab);
-    navigate({ to: "/_authenticated/log", search: { tab: newTab }, replace: true }).catch(() => {});
+    navigate({ 
+      to: "/log", 
+      search: { tab: newTab }, 
+      replace: true 
+    }).catch(() => {});
   };
 
   const createSession = useMutation({
