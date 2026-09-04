@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { Plus, Trash2, Timer, Monitor } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/app-shell";
@@ -49,6 +49,7 @@ export const Route = createFileRoute("/_authenticated/log")({
 
 function LogPage() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [type, setType] = useState<"sim" | "real">("real");
   const [activeTab, setActiveTab] = useState<"real" | "sim">("real");
@@ -78,7 +79,13 @@ function LogPage() {
     },
   });
 
-  const sessions = data?.sessions ?? [];
+  const [localSessions, setLocalSessions] = useState<SessionRow[] | null>(null);
+
+  const sessions = useMemo(() => {
+    if (localSessions !== null) return localSessions;
+    return data?.sessions ?? [];
+  }, [localSessions, data?.sessions]);
+
   const gear = data?.gear ?? [];
   const drones = gear.filter((g) => g.gear_type === "quad");
   const controllers = gear.filter(
@@ -98,6 +105,7 @@ function LogPage() {
     if (newTab === activeTab) return;
     prevTabRef.current = activeTab;
     setActiveTab(newTab);
+    navigate({ to: "/_authenticated/log", search: { tab: newTab }, replace: true }).catch(() => {});
   };
 
   const createSession = useMutation({
@@ -105,6 +113,29 @@ function LogPage() {
       const { data: userData } = await supabase.auth.getUser();
       const uid = userData.user?.id;
       if (!uid) throw new Error("Not signed in");
+
+      const newRow: Partial<SessionRow> = {
+        id: `local-${Date.now()}`,
+        user_id: uid,
+        session_type: type,
+        flown_on: flownOn,
+        duration_minutes: duration,
+        gear_id: type === "real" && gearId !== "none" ? gearId : null,
+        controller_id: controllerId !== "none" ? controllerId : null,
+        goggles_id: gogglesId !== "none" ? gogglesId : null,
+        location_id: null,
+        track_id: null,
+        sim_platform: type === "sim" ? platform : null,
+        packs_flown: type === "real" ? packs : 0,
+        crashes,
+        battery_notes: batteryNotes || null,
+        weather: null,
+        notes: notes || null,
+        created_at: new Date().toISOString(),
+      };
+
+      const currentList = localSessions ?? data?.sessions ?? [];
+      setLocalSessions([newRow as SessionRow, ...currentList]);
 
       const { error } = await supabase.from("sessions").insert({
         user_id: uid,
@@ -125,7 +156,6 @@ function LogPage() {
       });
       if (error) throw error;
 
-      // Roll gear counters and maintenance clock forward for real-world drone
       if (type === "real" && gearId !== "none") {
         const rig = gear.find((g) => g.id === gearId);
         if (rig) {
@@ -141,7 +171,6 @@ function LogPage() {
         }
       }
 
-      // Roll controller total minutes forward if selected
       if (controllerId !== "none") {
         const ctrl = gear.find((g) => g.id === controllerId);
         if (ctrl) {
@@ -154,7 +183,6 @@ function LogPage() {
         }
       }
 
-      // Roll goggles total minutes forward if selected
       if (gogglesId !== "none") {
         const gog = gear.find((g) => g.id === gogglesId);
         if (gog) {
@@ -174,22 +202,26 @@ function LogPage() {
       setBatteryNotes("");
       setPacks(0);
       setCrashes(0);
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({ queryKey: ["log-data"] });
+      setTimeout(() => setLocalSessions(null), 500);
     },
     onError: (e: Error) => {
+      setLocalSessions(null);
       import("sonner").then(({ toast }) => toast.error(e.message));
     },
   });
 
   const removeSession = useMutation({
     mutationFn: async (id: string) => {
+      const currentList = localSessions ?? data?.sessions ?? [];
+      setLocalSessions(currentList.filter((s) => s.id !== id));
+
       const sessionToDelete = sessions.find((s) => s.id === id);
-      if (sessionToDelete) {
+      if (sessionToDelete && !id.startsWith("local-")) {
         const dur = sessionToDelete.duration_minutes;
         const packsFlown = sessionToDelete.packs_flown || 0;
         const crashesCount = sessionToDelete.crashes || 0;
 
-        // Deduct time and packs/crashes from drone (gear_id) if present
         if (sessionToDelete.gear_id) {
           const rig = gear.find((g) => g.id === sessionToDelete.gear_id);
           if (rig) {
@@ -205,7 +237,6 @@ function LogPage() {
           }
         }
 
-        // Deduct time from controller if present
         if (sessionToDelete.controller_id) {
           const ctrl = gear.find((g) => g.id === sessionToDelete.controller_id);
           if (ctrl) {
@@ -218,7 +249,6 @@ function LogPage() {
           }
         }
 
-        // Deduct time from goggles if present
         if (sessionToDelete.goggles_id) {
           const gog = gear.find((g) => g.id === sessionToDelete.goggles_id);
           if (gog) {
@@ -230,15 +260,17 @@ function LogPage() {
               .eq("id", sessionToDelete.goggles_id);
           }
         }
-      }
 
-      const { error } = await supabase.from("sessions").delete().eq("id", id);
-      if (error) throw error;
+        const { error } = await supabase.from("sessions").delete().eq("id", id);
+        if (error) throw error;
+      }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({ queryKey: ["log-data"] });
+      setTimeout(() => setLocalSessions(null), 500);
     },
     onError: (e: Error) => {
+      setLocalSessions(null);
       import("sonner").then(({ toast }) => toast.error(e.message));
     },
   });

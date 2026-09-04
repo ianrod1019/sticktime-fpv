@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/auth-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +18,7 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { refreshRoleAndTier } = useAuth();
 
   const handleGoogleAuth = async () => {
     setLoading(true);
@@ -29,10 +31,11 @@ function AuthPage() {
         },
       });
       if (error) throw error;
-    } catch (error: any) {
-      console.error("Google Auth Error:", error);
-      setErrorDetails(error.message || "Google authentication failed");
-      toast.error(error.message || "Google authentication failed");
+    } catch (err: unknown) {
+      const errorObj = err as Error;
+      console.error("Google Auth Error:", errorObj);
+      setErrorDetails(errorObj.message || "Google authentication failed");
+      toast.error(errorObj.message || "Google authentication failed");
       setLoading(false);
     }
   };
@@ -53,7 +56,8 @@ function AuthPage() {
 
         if (error) throw error;
         
-        if (data.session) {
+        if (data.session?.user) {
+          await refreshRoleAndTier();
           toast.success("Account created and logged in successfully!");
           navigate({ to: "/dashboard" });
         } else {
@@ -67,16 +71,18 @@ function AuthPage() {
 
         if (error) throw error;
         
-        if (data.session) {
-          toast.success("Welcome back!");
+        if (data.session?.user) {
+          await refreshRoleAndTier();
+          toast.success("Welcome back! Role and permissions verified.");
           navigate({ to: "/dashboard" });
         } else {
           throw new Error("No session returned upon sign in.");
         }
       }
-    } catch (error: any) {
-      console.error(`${type} error:`, error);
-      const msg = error.message || "Authentication failed. Please check your credentials.";
+    } catch (err: unknown) {
+      const errorObj = err as Error;
+      console.error(`${type} error:`, errorObj);
+      const msg = errorObj.message || "Authentication failed. Please check your credentials.";
       setErrorDetails(msg);
       toast.error(msg);
     } finally {

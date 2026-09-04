@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useRoleVerification } from "@/lib/role-verification";
 
 export interface PilotProfile {
   id: string;
@@ -7,9 +8,22 @@ export interface PilotProfile {
   weekly_goal_hours: number;
   is_private: boolean;
   callsign: string;
+  display_name?: string | null;
   bio: string;
-  subscription_tier: string;
+  tier: string;
+  role?: string;
+  accent_color?: string;
+  avatar_url?: string | null;
   created_at: string;
+  updated_at: string;
+}
+
+export interface PilotSettings {
+  user_id: string;
+  weekly_goal_hours: number;
+  is_private: boolean;
+  callsign: string;
+  bio: string;
   updated_at: string;
 }
 
@@ -27,56 +41,70 @@ export function usePilot() {
   const userId = session?.user?.id;
   const email = session?.user?.email;
 
+  // Use centralized role verification strictly for own user id
+  const { data: roleData } = useRoleVerification(userId);
+
+  // Fetch combined profile data strictly for own user id
   const { data: profile, isLoading } = useQuery({
     queryKey: ["pilot-settings", userId],
     enabled: !!userId,
     queryFn: async () => {
       if (!userId) return null;
-      let { data, error } = await supabase
-        .from("pilot_settings")
-        .select("*")
-        .eq("user_id", userId)
-        .maybeSingle();
 
-      if (error) {
-        console.error("Error fetching pilot settings:", error);
+      let [{ data: settingsData, error: settingsError }, { data: profilesData, error: profilesError }] = await Promise.all([
+        supabase.from("pilot_settings").select("*").eq("user_id", userId).maybeSingle(),
+        supabase.from("profiles").select("id, role, tier, accent_color, avatar_url, display_name, created_at").eq("id", userId).maybeSingle(),
+      ]);
+
+      if (settingsError) {
+        console.error("Error fetching pilot_settings:", settingsError);
+      }
+      if (profilesError) {
+        console.error("Error fetching profiles:", profilesError);
       }
 
-      if (!data) {
-        // Initialize default profile row if not exists
-        const newRecord = {
+      if (!settingsData) {
+        const defaultCallsign = email ? email.split("@")[0] : "Pilot";
+        const newSettings = {
           user_id: userId,
           weekly_goal_hours: 5,
           is_private: false,
-          callsign: email ? email.split("@")[0] : "Pilot",
+          callsign: defaultCallsign,
           bio: "",
-          subscription_tier: "free",
         };
         const { data: inserted, error: insertError } = await supabase
           .from("pilot_settings")
-          .insert(newRecord)
+          .insert(newSettings)
           .select()
           .single();
 
         if (!insertError && inserted) {
-          data = inserted;
+          settingsData = inserted;
         } else {
-          // Fallback object if insert fails due to RLS or other constraints
-          data = {
-            id: userId,
-            user_id: userId,
-            weekly_goal_hours: 5,
-            is_private: false,
-            callsign: email ? email.split("@")[0] : "Pilot",
-            bio: "",
-            subscription_tier: "free",
-            created_at: new Date().toISOString(),
+          settingsData = {
+            ...newSettings,
             updated_at: new Date().toISOString(),
           };
         }
       }
 
-      return data as PilotProfile;
+      const merged: PilotProfile = {
+        id: userId,
+        user_id: userId,
+        weekly_goal_hours: settingsData?.weekly_goal_hours ?? 5,
+        is_private: settingsData?.is_private ?? false,
+        callsign: settingsData?.callsign ?? (email ? email.split("@")[0] : "Pilot"),
+        display_name: profilesData?.display_name ?? settingsData?.callsign ?? (email ? email.split("@")[0] : "Pilot"),
+        bio: settingsData?.bio ?? "",
+        tier: profilesData?.tier ?? "free",
+        role: profilesData?.role ?? "user",
+        accent_color: profilesData?.accent_color ?? "#6366f1",
+        avatar_url: profilesData?.avatar_url ?? null,
+        created_at: profilesData?.created_at ?? new Date().toISOString(),
+        updated_at: settingsData?.updated_at ?? new Date().toISOString(),
+      };
+
+      return merged;
     },
   });
 
@@ -84,13 +112,22 @@ export function usePilot() {
     mutationFn: async (updates: Partial<PilotProfile>) => {
       if (!userId) throw new Error("Not authenticated");
 
+      const allowedUpdates: Partial<PilotSettings> = {};
+      if (updates.weekly_goal_hours !== undefined) allowedUpdates.weekly_goal_hours = updates.weekly_goal_hours;
+      if (updates.is_private !== undefined) allowedUpdates.is_private = updates.is_private;
+      if (updates.callsign !== undefined) allowedUpdates.callsign = updates.callsign;
+      if (updates.bio !== undefined) allowedUpdates.bio = updates.bio;
+
+      if (Object.keys(allowedUpdates).length === 0) {
+        return profile;
+      }
+
       const payload = {
-        ...updates,
+        ...allowedUpdates,
         user_id: userId,
         updated_at: new Date().toISOString(),
       };
 
-      // Upsert into pilot_settings
       const { data, error } = await supabase
         .from("pilot_settings")
         .upsert(payload, { onConflict: "user_id" })
@@ -112,5 +149,8 @@ export function usePilot() {
     profile,
     isLoading,
     updateProfile,
+    role: roleData?.role,
+    tier: roleData?.tier,
+    isAdminOrDev: roleData?.isAdminOrDev ?? false,
   };
 }
