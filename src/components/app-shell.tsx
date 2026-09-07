@@ -21,7 +21,7 @@ const BASE_NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/log", label: "Flight Logs", icon: Timer },
   { to: "/garage", label: "Garage", icon: Wrench },
-  { to: "/teams", label: "Teams", icon: Users },
+  { to: "/squadron", label: "Squadrons", icon: Users },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
@@ -74,42 +74,40 @@ export function PageHeader({
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { profile } = usePilot();
-  const { user, signOut: authSignOut } = useAuth();
+  const { user, isAdminOrDev: authIsAdminOrDev, signOut: authSignOut } = useAuth();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-  const [isAdminAllowed, setIsAdminAllowed] = useState<boolean>(false);
+  const [isAdminAllowed, setIsAdminAllowed] = useState<boolean>(authIsAdminOrDev);
+  const [isClientReady, setIsClientReady] = useState<boolean>(false);
+  const [isCheckingAdmin, setIsCheckingAdmin] = useState<boolean>(true);
+
+  const isAdminRoute = pathname.startsWith("/admin");
 
   useEffect(() => {
+    setIsClientReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (authIsAdminOrDev) {
+      setIsAdminAllowed(true);
+      setIsCheckingAdmin(false);
+      return;
+    }
+
     let isMounted = true;
 
     async function checkAdminStatus() {
       if (!user?.id) {
-        if (isMounted) setIsAdminAllowed(false);
+        if (isMounted) {
+          setIsAdminAllowed(false);
+          setIsCheckingAdmin(false);
+        }
         return;
       }
 
-      const roleCacheKey = `sticktime_user_role_${user.id}`;
-      const cacheTimestampKey = `${roleCacheKey}_ts`;
-      const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
-
       try {
-        const cachedRole = sessionStorage.getItem(roleCacheKey);
-        const cachedTimestamp = sessionStorage.getItem(cacheTimestampKey);
-        const now = Date.now();
-
-        if (cachedRole !== null && cachedTimestamp !== null) {
-          const age = now - Number(cachedTimestamp);
-          if (age < CACHE_TTL_MS) {
-            if (isMounted) {
-              const roleLower = cachedRole.toLowerCase();
-              setIsAdminAllowed(roleLower === "admin" || roleLower === "dev");
-            }
-            return;
-          }
-        }
-
-        let resolvedRole = "user";
+        let allowed = false;
 
         const { data, error } = await supabase
           .from("profiles")
@@ -118,26 +116,36 @@ export function AppShell({ children }: { children: ReactNode }) {
           .maybeSingle();
 
         if (!error && data?.role) {
-          resolvedRole = data.role;
-        } else {
-          const { data: rpcData, error: rpcError } = await supabase.rpc("check_is_admin");
-          if (!rpcError && rpcData === true) {
-            resolvedRole = "admin";
+          const r = data.role.toLowerCase();
+          if (r === "admin" || r === "dev") {
+            allowed = true;
           }
         }
 
-        const roleLower = resolvedRole.toLowerCase();
-        const allowed = roleLower === "admin" || roleLower === "dev";
+        if (!allowed) {
+          const { data: rpcData, error: rpcError } = await supabase.rpc("check_is_admin");
+          if (!rpcError && rpcData === true) {
+            allowed = true;
+          }
+        }
 
         if (isMounted) {
           setIsAdminAllowed(allowed);
+          setIsCheckingAdmin(false);
         }
 
-        sessionStorage.setItem(roleCacheKey, resolvedRole);
-        sessionStorage.setItem(cacheTimestampKey, String(now));
+        if (isAdminRoute && !allowed) {
+          navigate({ to: "/dashboard", replace: true });
+        }
       } catch (err) {
-        console.error("Admin check error:", err);
-        if (isMounted) setIsAdminAllowed(false);
+        console.error("Admin check error in AppShell:", err);
+        if (isMounted) {
+          setIsAdminAllowed(authIsAdminOrDev);
+          setIsCheckingAdmin(false);
+        }
+        if (isAdminRoute && !authIsAdminOrDev) {
+          navigate({ to: "/dashboard", replace: true });
+        }
       }
     }
 
@@ -146,12 +154,25 @@ export function AppShell({ children }: { children: ReactNode }) {
     return () => {
       isMounted = false;
     };
-  }, [user?.id]);
+  }, [user?.id, pathname, navigate, isAdminRoute, authIsAdminOrDev]);
 
   async function signOut() {
     sessionStorage.clear();
     await authSignOut();
     navigate({ to: "/auth", replace: true });
+  }
+
+  const effectiveAdmin = isAdminAllowed || authIsAdminOrDev || (profile?.role && ["admin", "dev"].includes(profile.role.toLowerCase()));
+
+  if (isAdminRoute && isCheckingAdmin && !effectiveAdmin) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <p className="font-mono text-xs text-muted-foreground tracking-wider uppercase">Verifying Security Clearance...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -180,8 +201,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             </Link>
           ))}
 
-          {/* 🛡️ ADMIN PANEL (DESKTOP SIDEBAR - ALIGNED NEXT TO SETTINGS) */}
-          {isAdminAllowed && (
+          {/* ADMIN PANEL (DESKTOP SIDEBAR) */}
+          {isClientReady && effectiveAdmin && (
             <Link
               to="/admin"
               className={cn(
@@ -201,7 +222,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               {profile?.callsign || profile?.display_name || "Pilot"}
             </span>
             <Badge variant="default" className="text-[10px]">
-              {profile?.role?.toUpperCase() || "PILOT"}
+              {profile?.role?.toUpperCase() || (effectiveAdmin ? "ADMIN" : "PILOT")}
             </Badge>
           </div>
           <Button variant="ghost" size="sm" className="w-full text-xs text-muted-foreground hover:text-foreground" onClick={signOut}>
@@ -242,8 +263,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             </Link>
           ))}
 
-          {/* 🛡️ ADMIN PANEL (MOBILE NAV - ALIGNED NEXT TO SETTINGS) */}
-          {isAdminAllowed && (
+          {/* ADMIN PANEL (MOBILE NAV) */}
+          {isClientReady && effectiveAdmin && (
             <Link
               to="/admin"
               className={cn(

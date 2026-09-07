@@ -12,12 +12,18 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedGarageRouteImport } from './routes/_authenticated/garage'
 import { Route as AuthenticatedLogRouteImport } from './routes/_authenticated/log'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedTeamsRouteImport } from './routes/_authenticated/teams'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as AuthenticatedAdmin_lookupUuidRouteImport } from './routes/_authenticated/admin_lookup.$uuid'
+import { Route as AuthenticatedSquadronIndexRouteImport } from './routes/_authenticated/squadron/index'
+import { Route as AuthenticatedSquadronSquadronIdRouteImport } from './routes/_authenticated/squadron/$squadronId'
+import { Route as AuthenticatedTeamsTeamIdRouteImport } from './routes/_authenticated/teams/$teamId'
+import { Route as AuthenticatedSquadronManageUuidRouteImport } from './routes/_authenticated/squadron/manage.$uuid'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -33,7 +39,7 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
@@ -63,38 +69,90 @@ const AuthenticatedTeamsRoute = AuthenticatedTeamsRouteImport.update({
   path: '/teams',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdmin_lookupUuidRoute =
+  AuthenticatedAdmin_lookupUuidRouteImport.update({
+    id: '/admin_lookup/$uuid',
+    path: '/admin_lookup/$uuid',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSquadronIndexRoute =
+  AuthenticatedSquadronIndexRouteImport.update({
+    id: '/squadron/',
+    path: '/squadron/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSquadronSquadronIdRoute =
+  AuthenticatedSquadronSquadronIdRouteImport.update({
+    id: '/squadron/$squadronId',
+    path: '/squadron/$squadronId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedTeamsTeamIdRoute =
+  AuthenticatedTeamsTeamIdRouteImport.update({
+    id: '/$teamId',
+    path: '/$teamId',
+    getParentRoute: () => AuthenticatedTeamsRoute,
+  } as any)
+const AuthenticatedSquadronManageUuidRoute =
+  AuthenticatedSquadronManageUuidRouteImport.update({
+    id: '/squadron/manage/$uuid',
+    path: '/squadron/manage/$uuid',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/garage': typeof AuthenticatedGarageRoute
   '/log': typeof AuthenticatedLogRoute
   '/settings': typeof AuthenticatedSettingsRoute
-  '/teams': typeof AuthenticatedTeamsRoute
+  '/teams': typeof AuthenticatedTeamsRouteWithChildren
+  '/admin_lookup/$uuid': typeof AuthenticatedAdmin_lookupUuidRoute
+  '/squadron/$squadronId': typeof AuthenticatedSquadronSquadronIdRoute
+  '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/squadron/': typeof AuthenticatedSquadronIndexRoute
+  '/squadron/manage/$uuid': typeof AuthenticatedSquadronManageUuidRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/garage': typeof AuthenticatedGarageRoute
   '/log': typeof AuthenticatedLogRoute
   '/settings': typeof AuthenticatedSettingsRoute
-  '/teams': typeof AuthenticatedTeamsRoute
+  '/teams': typeof AuthenticatedTeamsRouteWithChildren
+  '/admin_lookup/$uuid': typeof AuthenticatedAdmin_lookupUuidRoute
+  '/squadron/$squadronId': typeof AuthenticatedSquadronSquadronIdRoute
+  '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
+  '/squadron': typeof AuthenticatedSquadronIndexRoute
+  '/squadron/manage/$uuid': typeof AuthenticatedSquadronManageUuidRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/garage': typeof AuthenticatedGarageRoute
   '/_authenticated/log': typeof AuthenticatedLogRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
-  '/_authenticated/teams': typeof AuthenticatedTeamsRoute
+  '/_authenticated/teams': typeof AuthenticatedTeamsRouteWithChildren
+  '/_authenticated/admin_lookup/$uuid': typeof AuthenticatedAdmin_lookupUuidRoute
+  '/_authenticated/squadron/$squadronId': typeof AuthenticatedSquadronSquadronIdRoute
+  '/_authenticated/teams/$teamId': typeof AuthenticatedTeamsTeamIdRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/squadron/': typeof AuthenticatedSquadronIndexRoute
+  '/_authenticated/squadron/manage/$uuid': typeof AuthenticatedSquadronManageUuidRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -107,16 +165,27 @@ export interface FileRouteTypes {
     | '/log'
     | '/settings'
     | '/teams'
+    | '/admin_lookup/$uuid'
+    | '/squadron/$squadronId'
+    | '/teams/$teamId'
+    | '/admin/'
+    | '/squadron/'
+    | '/squadron/manage/$uuid'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
-    | '/admin'
     | '/dashboard'
     | '/garage'
     | '/log'
     | '/settings'
     | '/teams'
+    | '/admin_lookup/$uuid'
+    | '/squadron/$squadronId'
+    | '/teams/$teamId'
+    | '/admin'
+    | '/squadron'
+    | '/squadron/manage/$uuid'
   id:
     | '__root__'
     | '/'
@@ -128,6 +197,12 @@ export interface FileRouteTypes {
     | '/_authenticated/log'
     | '/_authenticated/settings'
     | '/_authenticated/teams'
+    | '/_authenticated/admin_lookup/$uuid'
+    | '/_authenticated/squadron/$squadronId'
+    | '/_authenticated/teams/$teamId'
+    | '/_authenticated/admin/'
+    | '/_authenticated/squadron/'
+    | '/_authenticated/squadron/manage/$uuid'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -163,7 +238,7 @@ declare module '@tanstack/react-router' {
       id: '/_authenticated/admin'
       path: '/admin'
       fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dashboard': {
@@ -201,25 +276,100 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTeamsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin_lookup/$uuid': {
+      id: '/_authenticated/admin_lookup/$uuid'
+      path: '/admin_lookup/$uuid'
+      fullPath: '/admin_lookup/$uuid'
+      preLoaderRoute: typeof AuthenticatedAdmin_lookupUuidRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/squadron/': {
+      id: '/_authenticated/squadron/'
+      path: '/squadron'
+      fullPath: '/squadron/'
+      preLoaderRoute: typeof AuthenticatedSquadronIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/squadron/$squadronId': {
+      id: '/_authenticated/squadron/$squadronId'
+      path: '/squadron/$squadronId'
+      fullPath: '/squadron/$squadronId'
+      preLoaderRoute: typeof AuthenticatedSquadronSquadronIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/teams/$teamId': {
+      id: '/_authenticated/teams/$teamId'
+      path: '/$teamId'
+      fullPath: '/teams/$teamId'
+      preLoaderRoute: typeof AuthenticatedTeamsTeamIdRouteImport
+      parentRoute: typeof AuthenticatedTeamsRoute
+    }
+    '/_authenticated/squadron/manage/$uuid': {
+      id: '/_authenticated/squadron/manage/$uuid'
+      path: '/squadron/manage/$uuid'
+      fullPath: '/squadron/manage/$uuid'
+      preLoaderRoute: typeof AuthenticatedSquadronManageUuidRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
+  {
+    AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  }
+
+const AuthenticatedAdminRouteRouteWithChildren =
+  AuthenticatedAdminRouteRoute._addFileChildren(
+    AuthenticatedAdminRouteRouteChildren,
+  )
+
+interface AuthenticatedTeamsRouteChildren {
+  AuthenticatedTeamsTeamIdRoute: typeof AuthenticatedTeamsTeamIdRoute
+}
+
+const AuthenticatedTeamsRouteChildren: AuthenticatedTeamsRouteChildren = {
+  AuthenticatedTeamsTeamIdRoute: AuthenticatedTeamsTeamIdRoute,
+}
+
+const AuthenticatedTeamsRouteWithChildren =
+  AuthenticatedTeamsRoute._addFileChildren(AuthenticatedTeamsRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedGarageRoute: typeof AuthenticatedGarageRoute
   AuthenticatedLogRoute: typeof AuthenticatedLogRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
-  AuthenticatedTeamsRoute: typeof AuthenticatedTeamsRoute
+  AuthenticatedTeamsRoute: typeof AuthenticatedTeamsRouteWithChildren
+  AuthenticatedAdmin_lookupUuidRoute: typeof AuthenticatedAdmin_lookupUuidRoute
+  AuthenticatedSquadronSquadronIdRoute: typeof AuthenticatedSquadronSquadronIdRoute
+  AuthenticatedSquadronIndexRoute: typeof AuthenticatedSquadronIndexRoute
+  AuthenticatedSquadronManageUuidRoute: typeof AuthenticatedSquadronManageUuidRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedGarageRoute: AuthenticatedGarageRoute,
   AuthenticatedLogRoute: AuthenticatedLogRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
-  AuthenticatedTeamsRoute: AuthenticatedTeamsRoute,
+  AuthenticatedTeamsRoute: AuthenticatedTeamsRouteWithChildren,
+  AuthenticatedAdmin_lookupUuidRoute: AuthenticatedAdmin_lookupUuidRoute,
+  AuthenticatedSquadronSquadronIdRoute: AuthenticatedSquadronSquadronIdRoute,
+  AuthenticatedSquadronIndexRoute: AuthenticatedSquadronIndexRoute,
+  AuthenticatedSquadronManageUuidRoute: AuthenticatedSquadronManageUuidRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

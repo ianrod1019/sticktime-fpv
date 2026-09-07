@@ -36,10 +36,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchRoleAndTier = useCallback(async (userId: string) => {
     try {
-      // STRICTLY check own user id on public.profiles using column 'tier' and 'role'
+      // 1. Query profiles table
       const { data, error } = await supabase
         .from("profiles")
-        .select("role, tier")
+        .select("role, tier, subscription_tier")
         .eq("id", userId)
         .maybeSingle();
 
@@ -47,17 +47,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.error("Error fetching role/tier for user:", userId, error);
       }
 
+      let resolvedRole = "user";
+      let resolvedTier = "free";
+
       if (data) {
-        const role = (data.role || "user").toLowerCase();
-        const tier = (data.tier || "free").toLowerCase();
-        setUserRole(role);
-        setUserTier(tier);
-        setIsAdminOrDev(role === "admin" || role === "dev");
-      } else {
-        setUserRole("user");
-        setUserTier("free");
-        setIsAdminOrDev(false);
+        resolvedRole = (data.role || "user").toLowerCase();
+        resolvedTier = (data.tier || data.subscription_tier || "free").toLowerCase();
       }
+
+      // 2. Fallback check via RPC if role is still user
+      if (resolvedRole === "user") {
+        try {
+          const { data: rpcData, error: rpcError } = await supabase.rpc("check_is_admin");
+          if (!rpcError && rpcData === true) {
+            resolvedRole = "admin";
+          }
+        } catch (rpcErr) {
+          console.warn("check_is_admin RPC failed in auth-context:", rpcErr);
+        }
+      }
+
+      const isAdm = resolvedRole === "admin" || resolvedRole === "dev";
+      setUserRole(resolvedRole);
+      setUserTier(resolvedTier);
+      setIsAdminOrDev(isAdm);
+
+      // Cache locally for instant reads
+      try {
+        sessionStorage.setItem(`sticktime_user_role_${userId}`, resolvedRole);
+        sessionStorage.setItem(`sticktime_user_role_ts_${userId}`, String(Date.now()));
+      } catch {}
     } catch (err) {
       console.error("Exception fetching role/tier:", err);
       setUserRole("user");
@@ -77,19 +96,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     let mounted = true;
 
-    async function getInitialSession() {
+    async function initializeAuth() {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
+        const { data: { session: activeSession }, error } = await supabase.auth.getSession();
+        
         if (error) {
-          console.error("Error getting session:", error);
+          console.error("Error getting initial session:", error);
         }
-        if (mounted && session?.user) {
-          setSession(session);
-          setUser(session.user);
-          await fetchRoleAndTier(session.user.id);
+
+        if (mounted) {
+          if (activeSession?.user) {
+            setSession(activeSession);
+            setUser(activeSession.user);
+            await fetchRoleAndTier(activeSession.user.id);
+          } else {
+            setSession(null);
+            setUser(null);
+          }
         }
       } catch (err) {
-        console.error("Exception in getInitialSession:", err);
+        console.error("Exception in initializeAuth:", err);
       } finally {
         if (mounted) {
           setLoading(false);
@@ -97,22 +123,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     }
 
-    getInitialSession();
+    initializeAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        if (mounted) {
-          setSession(session);
-          setUser(session?.user ?? null);
-          if (session?.user) {
-            await fetchRoleAndTier(session.user.id);
-          } else {
-            setUserRole(null);
-            setUserTier(null);
-            setIsAdminOrDev(false);
-          }
-          setLoading(false);
+      async (event, currentSession) => {
+        if (!mounted) return;
+
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
+
+        if (currentSession?.user) {
+          await fetchRoleAndTier(currentSession.user.id);
+        } else {
+          setUserRole(null);
+          setUserTier(null);
+          setIsAdminOrDev(false);
         }
+        setLoading(false);
       }
     );
 
@@ -123,13 +150,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [fetchRoleAndTier]);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    setSession(null);
-    setUserRole(null);
-    setUserTier(null);
-    setIsAdminOrDev(false);
-    queryClient.clear();
+    try {
+      sessionStorage.clear();
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.error("Error signing out:", err);
+    } finally {
+      setUser(null);
+      setSession(null);
+      setUserRole(null);
+      setUserTier(null);
+      setIsAdminOrDev(false);
+      queryClient.clear();
+    }
   };
 
   return (

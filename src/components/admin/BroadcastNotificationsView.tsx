@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Send, Radio, Megaphone, Trash2, CheckCircle2 } from "lucide-react";
+import { Bell, Send, Radio, Megaphone, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 
 export interface NotificationItem {
@@ -52,10 +52,18 @@ export function BroadcastNotificationsView() {
       });
 
       if (error) throw error;
+
+      // Record admin audit log
+      await supabase.from("admin_audit_logs").insert({
+        actor_id: userData.user.id,
+        action: "broadcast_notification",
+        payload: { title, target_tier: targetTier },
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-broadcast-notifications"] });
-      toast.success("Broadcast push notification sent successfully!", {
+      queryClient.invalidateQueries({ queryKey: ["admin-audit-logs-list"] });
+      toast.success("Broadcast push notification sent & logged successfully!", {
         icon: <CheckCircle2 className="h-4 w-4 text-emerald-400" />,
       });
       setTitle("");
@@ -78,14 +86,13 @@ export function BroadcastNotificationsView() {
 
   return (
     <div className="grid gap-6 lg:grid-cols-3">
-      {/* Compose Notification Card */}
       <Card className="border-border bg-card/60 lg:col-span-1">
         <CardHeader>
           <CardTitle className="text-base font-mono flex items-center gap-2">
             <Megaphone className="h-5 w-5 text-primary" /> Broadcast Push Alert
           </CardTitle>
           <CardDescription>
-            Dispatch critical safety bulletins, firmware patch notes, or tier-specific announcements.
+            Dispatch critical safety bulletins, maintenance announcements, or tier-specific banners.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -106,9 +113,9 @@ export function BroadcastNotificationsView() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">Notification Title</label>
+              <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">Announcement Title</label>
               <Input
-                placeholder="e.g. Critical Firmware Safety Advisory"
+                placeholder="e.g. Critical Safety Advisory / Maintenance"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
@@ -117,7 +124,7 @@ export function BroadcastNotificationsView() {
             <div className="space-y-2">
               <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">Message Body</label>
               <Textarea
-                placeholder="Enter alert details, maintenance schedule, or safety instructions..."
+                placeholder="Enter global broadcast details or banner text..."
                 rows={4}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
@@ -136,7 +143,6 @@ export function BroadcastNotificationsView() {
         </CardContent>
       </Card>
 
-      {/* Broadcast History & Stream */}
       <Card className="border-border bg-card/60 lg:col-span-2">
         <CardHeader>
           <CardTitle className="text-base font-mono flex items-center gap-2">

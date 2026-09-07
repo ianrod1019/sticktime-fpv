@@ -1,133 +1,234 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Users } from "lucide-react";
+import { Users, Plus, Key, ArrowRight } from "lucide-react";
 import { PageHeader } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/teams")({
-  head: () => ({ meta: [{ title: "Teams — StickTime FPV" }] }),
+  head: () => ({ meta: [{ title: "Squads & Teams — StickTime FPV" }] }),
   component: Teams,
 });
+
 function Teams() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [code, setCode] = useState("");
-  const { data } = useQuery({
-    queryKey: ["teams"],
+
+  const { data: user } = useQuery({
+    queryKey: ["current-user"],
     queryFn: async () => {
-      const { data: user } = await supabase.auth.getUser();
-      if (!user.user) return [];
-      const { data: memberships } = await supabase
-        .from("team_members")
-        .select("team_id")
-        .eq("user_id", user.user.id);
-      const ids = (memberships ?? []).map((m) => m.team_id);
-      const result = ids.length
-        ? await supabase.from("teams").select("*").in("id", ids)
-        : await supabase.from("teams").select("*").eq("owner_id", user.user.id);
-      return result.data ?? [];
+      const { data } = await supabase.auth.getUser();
+      return data.user;
     },
   });
-  const create = useMutation({
+
+  const { data: myTeams = [], isLoading: isLoadingTeams } = useQuery({
+    queryKey: ["my-teams", user?.id],
+    enabled: !!user?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("team_members")
+        .select(`
+          team_role,
+          teams (
+            id,
+            name,
+            description,
+            created_at,
+            owner_id
+          )
+        `)
+        .eq("user_id", user!.id);
+
+      if (error) throw error;
+      return data?.map((m) => ({ ...m.teams, team_role: m.team_role })) || [];
+    },
+  });
+
+  const createTeam = useMutation({
     mutationFn: async () => {
-      const { data: user } = await supabase.auth.getUser();
-      if (!user.user) throw new Error("Not signed in");
+      if (!user) throw new Error("Not signed in");
       const { data: team, error } = await supabase
         .from("teams")
-        .insert({ name, owner_id: user.user.id })
+        .insert({ name, description, owner_id: user.id })
         .select("id")
         .single();
+
       if (error) throw error;
-      const member = await supabase
+
+      const memberInsert = await supabase
         .from("team_members")
-        .insert({ team_id: team.id, user_id: user.user.id, team_role: "team_admin" });
-      if (member.error) throw member.error;
+        .insert({ team_id: team.id, user_id: user.id, team_role: "owner" });
+
+      if (memberInsert.error) throw memberInsert.error;
+
+      const randomCode = Math.random().toString(36).substring(2, 9).toUpperCase();
+      const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+      
+      await supabase.from("team_invite_codes").insert({
+        team_id: team.id,
+        code: randomCode,
+        created_by: user.id,
+        expires_at: expiresAt,
+      });
+
+      return team.id;
     },
-    onSuccess: () => {
-      toast.success("Team created");
+    onSuccess: (teamId) => {
+      toast.success("Squad created successfully!");
       setName("");
-      queryClient.invalidateQueries({ queryKey: ["teams"] });
+      setDescription("");
+      queryClient.invalidateQueries({ queryKey: ["my-teams"] });
+      navigate({ to: "/squadron/$squadronId", params: { squadronId: teamId } });
     },
     onError: (e: Error) => toast.error(e.message),
   });
-  const join = useMutation({
+
+  const joinTeam = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.rpc("join_team_with_code", { _code: code });
+      const { data, error } = await supabase.rpc("join_team_with_code", { _code: code.trim() });
       if (error) throw error;
+      return data;
     },
-    onSuccess: () => {
-      toast.success("Joined team");
+    onSuccess: (teamId: string) => {
+      toast.success("Successfully joined squad!");
       setCode("");
-      queryClient.invalidateQueries({ queryKey: ["teams"] });
+      queryClient.invalidateQueries({ queryKey: ["my-teams"] });
+      if (teamId) {
+        navigate({ to: "/squadron/$squadronId", params: { squadronId: teamId } });
+      }
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
   return (
     <>
       <PageHeader
-        title="Team portal"
-        subtitle="Collaborate in private squad spaces with rotating entry codes."
+        title="Squad Portal"
+        subtitle="Collaborate in private FPV squad spaces, maintain squad gear, and log squad flight sessions."
       />
-      <div className="grid gap-4 lg:grid-cols-2">
-        <section className="hud-panel p-5">
-          <div className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-primary" />
-            <span className="label-mono">Create a squad</span>
+
+      <div className="max-w-6xl mx-auto space-y-6">
+        {/* Active Squads Section (if any) */}
+        {!isLoadingTeams && myTeams.length > 0 && (
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold tracking-wider uppercase text-muted-foreground">
+              Your Active Squads
+            </h3>
+            <div className="grid gap-4 md:grid-cols-2">
+              {myTeams.map((team: any) => (
+                <div key={team.id} className="hud-panel p-6 flex flex-col justify-between border-primary/40 bg-card/60 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full pointer-events-none" />
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-5 w-5 text-primary" />
+                        <h2 className="text-xl font-bold tracking-tight">{team.name}</h2>
+                      </div>
+                      <span className="text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary font-medium capitalize border border-primary/20">
+                        {team.team_role}
+                      </span>
+                    </div>
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-6">
+                      {team.description || "No description provided for this squad."}
+                    </p>
+                  </div>
+                  <Button
+                    onClick={() => navigate({ to: "/squadron/$squadronId", params: { squadronId: team.id } })}
+                    className="w-full gap-2 mt-4 cursor-pointer"
+                  >
+                    Enter Squad HQ
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="mt-4 space-y-3">
-            <Label htmlFor="team-name">Team name</Label>
-            <Input
-              id="team-name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Night Shift FPV"
-            />
-            <Button disabled={!name || create.isPending} onClick={() => create.mutate()}>
-              Create team
+        )}
+
+        {/* Create and Join Grid */}
+        <div className="grid gap-6 md:grid-cols-2 items-stretch">
+          {/* Create Team Card */}
+          <section className="hud-panel p-6 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <Plus className="h-5 w-5 text-primary" />
+                <h2 className="text-lg font-bold">Create New Squad</h2>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="team-name">Squad Name</Label>
+                  <Input
+                    id="team-name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Night Shift FPV Racers"
+                    className="mt-1.5"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="team-desc">Description (Optional)</Label>
+                  <Input
+                    id="team-desc"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Weekend freestyle sessions"
+                    className="mt-1.5"
+                  />
+                </div>
+              </div>
+            </div>
+            <Button
+              disabled={!name.trim() || createTeam.isPending}
+              onClick={() => createTeam.mutate()}
+              className="w-full gap-2 mt-8"
+            >
+              <Plus className="h-4 w-4" />
+              {createTeam.isPending ? "Creating Squad..." : "Create Squad"}
             </Button>
-          </div>
-        </section>
-        <section className="hud-panel p-5">
-          <span className="label-mono">Join with entry code</span>
-          <div className="mt-4 flex gap-2">
-            <Input
-              placeholder="7-day code"
-              value={code}
-              onChange={(e) => setCode(e.target.value.toUpperCase())}
-            />
+          </section>
+
+          {/* Join Team Card */}
+          <section className="hud-panel p-6 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <Key className="h-5 w-5 text-primary" />
+                <h2 className="text-lg font-bold">Join with Entry Code</h2>
+              </div>
+              <p className="text-sm text-muted-foreground mb-6">
+                Enter a valid 7-day squad invite code shared by your squad leader or team admin to instantly access the squad hangar and shared flight logs.
+              </p>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="invite-code">Squad Invite Code</Label>
+                  <Input
+                    id="invite-code"
+                    placeholder="e.g. FPV7X9Q"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value.toUpperCase())}
+                    className="mt-1.5 font-mono text-center tracking-widest uppercase text-xl h-12"
+                    maxLength={10}
+                  />
+                </div>
+              </div>
+            </div>
             <Button
               variant="outline"
-              disabled={!code || join.isPending}
-              onClick={() => join.mutate()}
+              disabled={!code.trim() || joinTeam.isPending}
+              onClick={() => joinTeam.mutate()}
+              className="w-full mt-8 gap-2 h-11"
             >
-              Join
+              {joinTeam.isPending ? "Joining Squad..." : "Join Squad"}
             </Button>
-          </div>
-        </section>
-      </div>
-      <div className="mt-4 grid gap-4 sm:grid-cols-2">
-        {(data ?? []).map((team) => (
-          <div key={team.id} className="hud-panel p-5">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">{team.name}</h2>
-              <Badge variant="secondary">Member</Badge>
-            </div>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Shared logs and gear stay scoped to this squad.
-            </p>
-          </div>
-        ))}
-        {!data?.length && (
-          <p className="text-sm text-muted-foreground">
-            Create or join a team to see your shared flight space.
-          </p>
-        )}
+          </section>
+        </div>
       </div>
     </>
   );
