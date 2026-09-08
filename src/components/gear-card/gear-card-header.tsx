@@ -80,7 +80,7 @@ export function GearCardHeader({
         </h3>
         <p className="text-[11px] text-muted-foreground truncate mt-0.5">
           {gear.brand ? (
-            <span className="text-orange-400 font-medium">{gear.brand}</span>
+            <span className="text-primary font-medium">{gear.brand}</span>
           ) : (
             ""
           )}
@@ -93,7 +93,7 @@ export function GearCardHeader({
         {!isBattery && isAsNeeded && (
           <Badge
             variant="outline"
-            className="text-[10px] px-2 py-0 border-orange-500/30 text-orange-400 mr-1"
+            className="text-[10px] px-2 py-0 border-primary/30 text-primary mr-1"
           >
             As needed
           </Badge>
@@ -104,11 +104,11 @@ export function GearCardHeader({
 
         {/* Inline Confirmation or Trash Button */}
         {isConfirmingDelete ? (
-          <div className="flex items-center gap-1 bg-red-500/15 border border-red-500/40 rounded-md p-0.5 animate-in fade-in zoom-in-95 duration-150">
+          <div className="flex items-center gap-1 bg-destructive/15 border border-destructive/40 rounded-md p-0.5 animate-in fade-in zoom-in-95 duration-150">
             <Button
               variant="ghost"
               size="sm"
-              className="h-6 px-2 text-[10px] font-medium bg-red-600 text-white hover:bg-red-700 hover:text-white rounded"
+              className="h-6 px-2 text-[10px] font-medium bg-destructive text-destructive-foreground hover:bg-destructive/80 hover:text-destructive-foreground rounded"
               onClick={handleExecuteDelete}
               disabled={isDeleting}
             >
@@ -129,7 +129,7 @@ export function GearCardHeader({
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7 transition-all duration-200 ease-out text-muted-foreground hover:text-red-400 hover:bg-red-500/20 hover:border-red-500/40 active:bg-red-500/30 active:scale-[0.95] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed border border-transparent"
+            className="h-7 w-7 transition-all duration-200 ease-out text-muted-foreground hover:text-destructive hover:bg-destructive/20 hover:border-destructive/40 active:bg-destructive/30 active:scale-[0.95] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed border border-transparent"
             aria-label={`Remove ${gear.name}`}
             disabled={isDeleting}
             onMouseEnter={() => onHoverDelete(gear.id)}
@@ -140,7 +140,7 @@ export function GearCardHeader({
             }}
             onClick={handleStartDeletePrompt}
           >
-            <Trash2 className="h-3.5 w-3.5 transition-colors text-red-500" style={{ color: "#ef4444" }} />
+            <Trash2 className="h-3.5 w-3.5 transition-colors text-destructive" />
           </Button>
         )}
       </div>

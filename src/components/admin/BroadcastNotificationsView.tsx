@@ -64,7 +64,7 @@ export function BroadcastNotificationsView() {
       queryClient.invalidateQueries({ queryKey: ["admin-broadcast-notifications"] });
       queryClient.invalidateQueries({ queryKey: ["admin-audit-logs-list"] });
       toast.success("Broadcast push notification sent & logged successfully!", {
-        icon: <CheckCircle2 className="h-4 w-4 text-emerald-400" />,
+        icon: <CheckCircle2 className="h-4 w-4 text-success" />,
       });
       setTitle("");
       setMessage("");

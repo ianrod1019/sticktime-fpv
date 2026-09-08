@@ -16,7 +16,7 @@ type ProtectedRouteProps = {
 export function ProtectedRoute({
   children,
   allowedRoles,
-  fallbackPath = "/auth",
+  fallbackPath = "/",
   unauthorizedPath = "/dashboard",
   loadingFallback = (
     <main className="flex min-h-screen items-center justify-center px-4">

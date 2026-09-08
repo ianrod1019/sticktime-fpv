@@ -1,0 +1,19 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "mcp": {
+    "postgrest": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@supabase/mcp-server-postgrest@0.0.11",
+        "--apiUrl",
+        "https://https://xmbnzzzqepygeyiniijd.supabase.co.supabase.co/rest/v1",
+        "--apiKey",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhtYm56enpxZXB5Z2V5aW5paWpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NDk2OTcsImV4cCI6MjEwMzQyNTY5N30",
+        "--schema",
+        "public"
+      ]
+    }
+  }
+}

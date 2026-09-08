@@ -84,16 +84,16 @@ export function GearCard({
 
   return (
     <div
-      className={`hud-panel relative p-5 flex flex-col justify-between transition-all duration-300 bg-card/60 backdrop-blur-md border-orange-500/20 hover:border-orange-500/40 hover:shadow-lg hover:shadow-orange-500/5 ${
+      className={`hud-panel relative p-5 flex flex-col justify-between transition-all duration-300 bg-card/60 backdrop-blur-md border-primary/10 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 ${
         isDeleting ? "animate-subtle-shake opacity-60 pointer-events-none" : ""
-      } ${needsService ? "border-amber-500/50 shadow-amber-500/10" : ""}`}
+      } ${needsService ? "border-warning/50 shadow-warning/10" : ""}`}
     >
       <div>
         {/* Header Badge & Actions */}
         <div className="flex items-start justify-between gap-2 mb-3">
           <div className="space-y-1">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[10px] font-mono tracking-wider uppercase px-2 py-0.5 rounded bg-orange-500/10 text-orange-400 border border-orange-500/20 font-semibold">
+              <span className="text-[10px] font-mono tracking-wider uppercase px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-semibold">
                 {gear.gear_type === "quad"
                   ? "Drone"
                   : gear.gear_type === "transmitter"
@@ -110,12 +110,12 @@ export function GearCard({
                 </span>
               )}
               {showCellsAndConnector && gear.cells ? (
-                <span className="text-[10px] font-mono tracking-wider uppercase px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-semibold">
+                <span className="text-[10px] font-mono tracking-wider uppercase px-2 py-0.5 rounded bg-warning/10 text-warning border border-warning/20 font-semibold">
                   {gear.cells}S
                 </span>
               ) : null}
               {showCellsAndConnector && gear.connector_type ? (
-                <span className="text-[10px] font-mono tracking-wider uppercase px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-semibold">
+                <span className="text-[10px] font-mono tracking-wider uppercase px-2 py-0.5 rounded bg-sim/10 text-sim border border-sim/20 font-semibold">
                   {gear.connector_type}
                 </span>
               ) : null}
@@ -136,8 +136,8 @@ export function GearCard({
               size="icon"
               className={`h-7 w-7 transition-all duration-200 ease-out border ${
                 isHoveredDelete
-                  ? "bg-red-500 text-white border-red-600 scale-105 shadow-md shadow-red-500/30"
-                  : "text-muted-foreground hover:text-red-400 hover:bg-red-500/20 hover:border-red-500/40 border-transparent"
+                   ? "bg-destructive text-destructive-foreground border-destructive/60 scale-105 shadow-md shadow-destructive/10"
+                   : "text-muted-foreground hover:text-destructive hover:bg-destructive/20 hover:border-destructive/40 border-transparent"
               }`}
               onClick={() => onDeleteGear(gear.id, gear.name)}
               onMouseEnter={() => onHoverDelete(gear.id)}
@@ -161,25 +161,25 @@ export function GearCard({
 
         {/* Maintenance / Airtime progress if not battery */}
         {!isBattery && serviceInterval < 999999 && (
-          <div className="mt-4 space-y-2 pt-3 border-t border-orange-500/10">
+           <div className="mt-4 space-y-2 pt-3 border-t border-primary/10">
             <div className="flex justify-between items-center text-xs">
               <span className="text-muted-foreground font-medium flex items-center gap-1.5">
-                <Wrench className="h-3.5 w-3.5 text-orange-400" /> Maintenance Health
+                <Wrench className="h-3.5 w-3.5 text-primary" /> Maintenance Health
               </span>
               <span className="font-mono font-bold text-foreground">
                 {minutesSince} / {serviceInterval} min ({percentUsed}%)
               </span>
             </div>
-            <div className="w-full bg-secondary/50 rounded-full h-2 overflow-hidden border border-orange-500/20">
+            <div className="w-full bg-secondary/50 rounded-full h-2 overflow-hidden border border-primary/20">
               <div
                 className={`h-full transition-all duration-500 ${
-                  needsService ? "bg-amber-500" : percentUsed > 80 ? "bg-amber-400" : "bg-orange-500"
+                  needsService ? "bg-warning" : percentUsed > 80 ? "bg-warning" : "bg-success"
                 }`}
                 style={{ width: `${percentUsed}%` }}
               />
             </div>
             {needsService && (
-              <div className="flex items-center gap-1.5 text-[11px] text-amber-400 font-medium bg-amber-500/10 px-2 py-1 rounded border border-amber-500/20">
+              <div className="flex items-center gap-1.5 text-[11px] text-warning font-medium bg-warning/10 px-2 py-1 rounded border border-warning/20">
                 <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
                 <span>Service recommended (interval reached)</span>
               </div>
@@ -189,9 +189,9 @@ export function GearCard({
 
         {/* Total airtime stat for quads */}
         {isQuad && (
-          <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground bg-secondary/30 px-3 py-1.5 rounded-md border border-orange-500/10">
+          <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground bg-secondary/30 px-3 py-1.5 rounded-md border border-primary/10">
             <span className="flex items-center gap-1.5">
-              <Activity className="h-3.5 w-3.5 text-orange-400" /> Total Flight Time
+              <Activity className="h-3.5 w-3.5 text-primary" /> Total Flight Time
             </span>
             <span className="font-mono font-semibold text-foreground">
               {gear.total_minutes || 0} mins ({Math.round((gear.total_minutes || 0) / 60 * 10) / 10} hrs)
@@ -200,9 +200,9 @@ export function GearCard({
         )}
 
         {/* Components / Upgrades section */}
-        <div className="mt-4 pt-3 border-t border-orange-500/10 space-y-2">
+        <div className="mt-4 pt-3 border-t border-primary/10 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-mono font-medium tracking-wider uppercase text-orange-400">
+            <span className="text-[11px] font-mono font-medium tracking-wider uppercase text-primary">
               {isTransmitter || isGoggles ? "Accessories & Modules" : "Installed Components"} ({parts.length})
             </span>
             <Dialog open={partOpen} onOpenChange={setPartOpen}>
@@ -210,12 +210,12 @@ export function GearCard({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-6 px-2 text-[11px] text-orange-400 hover:text-orange-300 hover:bg-orange-500/10"
+                  className="h-6 px-2 text-[11px] text-primary hover:text-primary/80 hover:bg-primary/10"
                 >
                   <Plus className="h-3 w-3 mr-0.5" /> Add
                 </Button>
               </DialogTrigger>
-              <DialogContent className="border-orange-500/30 bg-background/95 backdrop-blur-xl">
+              <DialogContent className="border-primary/30 bg-background/95 backdrop-blur-xl">
                 <DialogHeader>
                   <DialogTitle className="text-foreground font-display">
                     Add component to {gear.name}
@@ -293,7 +293,7 @@ export function GearCard({
                   <Button
                     onClick={handleAddPartSubmit}
                     disabled={!newPartName.trim()}
-                    className="bg-orange-500 hover:bg-orange-600 text-white"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
                   >
                     Add Component
                   </Button>
@@ -307,12 +307,12 @@ export function GearCard({
               {parts.map((p) => (
                 <span
                   key={p.id}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs bg-secondary/50 border border-orange-500/20 text-foreground group/part"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs bg-secondary/50 border border-primary/20 text-foreground group/part"
                 >
                   <span className="font-medium">{p.name}</span>
                   <button
                     onClick={() => onRemovePart(p.id)}
-                    className="text-muted-foreground hover:text-red-400 transition-colors ml-0.5"
+                    className="text-muted-foreground hover:text-destructive transition-colors ml-0.5"
                     title="Remove component"
                   >
                     ×
@@ -328,9 +328,9 @@ export function GearCard({
 
       {/* Maintenance Logs footer */}
       {!isBattery && (
-        <div className="mt-5 pt-3 border-t border-orange-500/10">
+        <div className="mt-5 pt-3 border-t border-primary/10">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-mono font-medium tracking-wider uppercase text-orange-400">
+            <span className="text-[11px] font-mono font-medium tracking-wider uppercase text-primary">
               Maintenance History ({logs.length})
             </span>
             <Dialog open={logOpen} onOpenChange={setLogOpen}>
@@ -338,12 +338,12 @@ export function GearCard({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="h-6 px-2 text-[11px] border-orange-500/30 text-orange-400 hover:bg-orange-500/10"
+                  className="h-6 px-2 text-[11px] border-primary/30 text-primary hover:bg-primary/10"
                 >
                   <Wrench className="h-3 w-3 mr-1" /> Log Service
                 </Button>
               </DialogTrigger>
-              <DialogContent className="border-orange-500/30 bg-background/95 backdrop-blur-xl">
+              <DialogContent className="border-primary/30 bg-background/95 backdrop-blur-xl">
                 <DialogHeader>
                   <DialogTitle className="text-foreground font-display">
                     Log Maintenance for {gear.name}
@@ -375,7 +375,7 @@ export function GearCard({
                   <Button
                     onClick={handleAddLogSubmit}
                     disabled={!logDesc.trim()}
-                    className="bg-orange-500 hover:bg-orange-600 text-white"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
                   >
                     Save & Reset Clock
                   </Button>
@@ -389,7 +389,7 @@ export function GearCard({
               {logs.slice(0, 3).map((l) => (
                 <div
                   key={l.id}
-                  className="flex items-center justify-between text-xs bg-secondary/30 px-2.5 py-1.5 rounded border border-orange-500/10"
+                  className="flex items-center justify-between text-xs bg-secondary/30 px-2.5 py-1.5 rounded border border-primary/10"
                 >
                   <div className="min-w-0 pr-2">
                     <p className="font-medium text-foreground truncate">{l.description}</p>
@@ -398,7 +398,7 @@ export function GearCard({
                         <Calendar className="h-2.5 w-2.5" /> {new Date(l.performed_on).toLocaleDateString()}
                       </span>
                       {l.cost ? (
-                        <span className="flex items-center gap-0.5 text-emerald-400 font-mono">
+                        <span className="flex items-center gap-0.5 text-success font-mono">
                           <DollarSign className="h-2.5 w-2.5" /> {l.cost.toFixed(2)}
                         </span>
                       ) : null}
@@ -406,7 +406,7 @@ export function GearCard({
                   </div>
                   <button
                     onClick={() => onRemoveLog(l.id)}
-                    className="text-muted-foreground hover:text-red-400 p-1 shrink-0"
+                    className="text-muted-foreground hover:text-destructive p-1 shrink-0"
                     title="Remove log"
                   >
                     ×

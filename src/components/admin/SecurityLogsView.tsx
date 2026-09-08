@@ -105,9 +105,9 @@ export function SecurityLogsView() {
       return data;
     },
     onSuccess: async () => {
-      toast.warning("Security event logged! Refreshing session token...", {
-        icon: <RefreshCcw className="h-4 w-4 text-amber-400 animate-spin" />
-      });
+toast.warning("Security event logged! Refreshing session token...", {
+      icon: <RefreshCcw className="h-4 w-4 text-warning animate-spin" />
+    });
 
       const { error: refreshError } = await supabase.auth.refreshSession();
       if (refreshError) {
@@ -147,7 +147,7 @@ export function SecurityLogsView() {
             <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Real-time Feed Status</CardTitle>
           </CardHeader>
           <CardContent className="flex items-center gap-2">
-            <div className={`h-2.5 w-2.5 rounded-full ${isSubscribed ? "bg-emerald-500 animate-pulse" : "bg-amber-500"}`} />
+            <div className={`h-2.5 w-2.5 rounded-full ${isSubscribed ? "bg-success animate-pulse" : "bg-warning"}`} />
             <span className="text-sm font-mono font-semibold">
               {isSubscribed ? "LIVE TELEMETRY ACTIVE" : "POLLING BACKUP"}
             </span>
@@ -350,7 +350,7 @@ export function SecurityLogsView() {
                 </div>
 
                 <div className="pt-2 border-t border-border/50">
-                  <div className="flex items-center gap-2 text-xs text-amber-400 bg-amber-500/10 p-2.5 rounded border border-amber-500/20">
+                  <div className="flex items-center gap-2 text-xs text-warning bg-warning/10 px-2 py-1 rounded border border-warning/20">
                     <Lock className="h-4 w-4 shrink-0" />
                     <span>This event was blocked by system middleware. No data was compromised.</span>
                   </div>

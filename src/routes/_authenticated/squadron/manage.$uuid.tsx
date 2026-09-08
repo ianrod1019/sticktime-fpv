@@ -192,7 +192,7 @@ function SquadronManagePage() {
                   onClick={() => handleCopyCode(inviteCode.code)}
                   className="h-8 w-8 text-muted-foreground hover:text-foreground"
                 >
-                  {copiedCode ? <Check className="h-4 w-4 text-emerald-400" /> : <Copy className="h-4 w-4" />}
+                  {copiedCode ? <Check className="h-4 w-4 text-success" /> : <Copy className="h-4 w-4" />}
                 </Button>
               </div>
               <p className="text-[11px] text-muted-foreground text-center">

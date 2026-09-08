@@ -17,13 +17,13 @@ export function GearCardBatteries({
   const [isPacksCollapsed, setIsPacksCollapsed] = useState(false);
 
   return (
-    <div className="mt-4 pt-3 border-t border-orange-500/10">
+    <div className="mt-4 pt-3 border-t border-primary/10">
       <div className="flex items-center justify-between mb-2">
         <div
           className="flex items-center gap-1.5 cursor-pointer select-none"
           onClick={() => setIsPacksCollapsed(!isPacksCollapsed)}
         >
-          <span className="text-[11px] font-mono font-medium tracking-wider uppercase flex items-center gap-1 text-orange-400">
+          <span className="text-[11px] font-mono font-medium tracking-wider uppercase flex items-center gap-1 text-primary">
             Individual Packs ({gear.pack_count})
             {isPacksCollapsed ? (
               <ChevronDown className="h-3 w-3 inline" />
@@ -42,7 +42,7 @@ export function GearCardBatteries({
                 onUpdatePackCount(gear.id, gear.pack_count - 1);
               }
             }}
-            className="h-6 px-2 text-[11px] text-orange-400 hover:text-orange-300 hover:bg-orange-500/10"
+            className="h-6 px-2 text-[11px] text-primary hover:text-primary/80 hover:bg-primary/10"
             title="Remove pack"
           >
             <Minus className="h-3 w-3 mr-0.5" /> Pack
@@ -56,7 +56,7 @@ export function GearCardBatteries({
                 onUpdatePackCount(gear.id, gear.pack_count + 1);
               }
             }}
-            className="h-6 px-2 text-[11px] text-orange-400 hover:text-orange-300 hover:bg-orange-500/10"
+            className="h-6 px-2 text-[11px] text-primary hover:text-primary/80 hover:bg-primary/10"
             title="Add pack"
           >
             <Plus className="h-3 w-3 mr-0.5" /> Pack
@@ -73,14 +73,14 @@ export function GearCardBatteries({
         }}
       >
         {gear.pack_count > 0 ? (
-          <div className="space-y-1.5 pt-1 pr-1 max-h-[120px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-secondary/20 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-orange-500/50 hover:[&::-webkit-scrollbar-thumb]:bg-orange-500">
+          <div className="space-y-1.5 pt-1 pr-1 max-h-[120px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-secondary/20 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/50 hover:[&::-webkit-scrollbar-thumb]:bg-primary">
             {Array.from({ length: gear.pack_count }).map((_, idx) => (
               <div
                 key={idx}
-                className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-md border text-xs bg-secondary/30 border-orange-500/10"
+                className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-md border text-xs bg-secondary/30 border-primary/10"
               >
                 <div className="flex items-center gap-2 min-w-0">
-                  <BatteryCharging className="h-3.5 w-3.5 text-orange-400 shrink-0" />
+                  <BatteryCharging className="h-3.5 w-3.5 text-primary shrink-0" />
                   <span className="truncate font-medium text-foreground">
                     Pack #{idx + 1} ({gear.name})
                   </span>
@@ -95,7 +95,7 @@ export function GearCardBatteries({
                         onUpdatePackCount(gear.id, gear.pack_count - 1);
                       }
                     }}
-                    className="h-5 w-5 text-muted-foreground hover:text-red-400 hover:bg-red-500/20 rounded"
+                    className="h-5 w-5 text-muted-foreground hover:text-destructive hover:bg-destructive/20 rounded"
                     title="Retire / Remove this individual pack"
                   >
                     <X className="h-3 w-3" />

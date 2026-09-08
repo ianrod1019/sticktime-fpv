@@ -78,13 +78,13 @@ export function GearCardLogs({
   };
 
   return (
-    <div className="mt-4 pt-3 border-t border-orange-500/10">
+    <div className="mt-4 pt-3 border-t border-primary/10">
       <div className="flex items-center justify-between mb-2">
         <div
           className="flex items-center gap-1.5 cursor-pointer select-none"
           onClick={() => setIsLogsCollapsed(!isLogsCollapsed)}
         >
-          <span className="text-[11px] font-mono font-medium tracking-wider uppercase flex items-center gap-1 text-orange-400">
+          <span className="text-[11px] font-mono font-medium tracking-wider uppercase flex items-center gap-1 text-primary">
             Maintenance Log ({logs.length})
             {isLogsCollapsed ? (
               <ChevronDown className="h-3 w-3 inline" />
@@ -109,15 +109,15 @@ export function GearCardLogs({
               variant="ghost"
               size="sm"
               disabled={isDeleting}
-              className="h-6 px-2 text-[11px] text-orange-400 hover:text-orange-300 hover:bg-orange-500/10"
+              className="h-6 px-2 text-[11px] text-primary hover:text-primary/80 hover:bg-primary/10"
             >
               <Plus className="mr-0.5 h-3 w-3" /> Log
             </Button>
           </DialogTrigger>
-          <DialogContent className="border-orange-500/30 bg-background/95 backdrop-blur-xl">
+          <DialogContent className="border-primary/30 bg-background/95 backdrop-blur-xl">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-foreground font-display">
-                <span className="w-2 h-2 rounded-full bg-orange-500"></span>
+                <span className="w-2 h-2 rounded-full bg-primary"></span>
                 Add maintenance entry
               </DialogTitle>
             </DialogHeader>
@@ -157,7 +157,7 @@ export function GearCardLogs({
                   setLogCost("");
                 }}
                 disabled={!logDescription}
-                className="bg-orange-500 hover:bg-orange-600 text-white w-full sm:w-auto"
+                className="bg-primary hover:bg-primary/80 text-primary-foreground w-full sm:w-auto"
               >
                 Save log
               </Button>
@@ -175,7 +175,7 @@ export function GearCardLogs({
         }}
       >
         {logs.length > 0 ? (
-          <div className="space-y-1.5 pt-1 pr-1 max-h-[150px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-secondary/20 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-orange-500/50 hover:[&::-webkit-scrollbar-thumb]:bg-orange-500">
+          <div className="space-y-1.5 pt-1 pr-1 max-h-[150px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-secondary/20 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/50 hover:[&::-webkit-scrollbar-thumb]:bg-primary">
             {logs
               .slice()
               .sort((a, b) => new Date(b.performed_on).getTime() - new Date(a.performed_on).getTime())
@@ -198,30 +198,30 @@ export function GearCardLogs({
                       isLogDeleting
                         ? "opacity-0 scale-95 translate-x-2 pointer-events-none"
                         : isLogActiveHighlight
-                        ? "bg-card/90 border-red-500/60 shadow-sm shadow-red-500/10 animate-subtle-shake ring-1 ring-red-500/40"
-                        : "bg-secondary/30 border-orange-500/10"
+                        ? "bg-card/90 border-destructive/60 shadow-sm shadow-destructive/10 animate-subtle-shake ring-1 ring-destructive/40"
+                        : "bg-secondary/30 border-primary/10"
                     }`}
                   >
                     <div className="min-w-0 flex-1 truncate">
                       <p className={`font-medium ${
-                        isLogActiveHighlight ? "text-red-400" : "text-foreground"
+                        isLogActiveHighlight ? "text-destructive" : "text-foreground"
                       }`}>
                         {log.description}
                       </p>
                       <div className="flex items-center gap-2 mt-0.5 text-[10px] text-muted-foreground">
                         <span>{date}</span>
                         {log.cost && log.cost > 0 && (
-                          <span className="text-orange-400 font-mono">${log.cost.toFixed(2)}</span>
+                          <span className="text-primary font-mono">${log.cost.toFixed(2)}</span>
                         )}
                       </div>
                     </div>
 
                     {isLogConfirming ? (
-                      <div className="flex items-center gap-1 bg-red-500/15 border border-red-500/40 rounded px-1 py-0.5 animate-in fade-in zoom-in-95 duration-150 shrink-0">
+                      <div className="flex items-center gap-1 bg-destructive/15 border border-destructive/40 rounded px-1 py-0.5 animate-in fade-in zoom-in-95 duration-150 shrink-0">
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-5 px-1.5 text-[9px] font-medium bg-red-600 text-white hover:bg-red-700 hover:text-white rounded"
+                          className="h-5 px-1.5 text-[9px] font-medium bg-destructive text-destructive-foreground hover:bg-destructive/80 hover:text-destructive-foreground rounded"
                           onClick={(e) => handleExecuteLogDelete(e, log.id)}
                         >
                           <Check className="h-2.5 w-2.5 mr-0.5" /> Confirm
@@ -249,9 +249,9 @@ export function GearCardLogs({
                         }}
                         onClick={(e) => handleStartLogDeletePrompt(e, log.id)}
                         aria-label="Remove log entry"
-                        className="h-6 w-6 transition-all duration-200 ease-out text-muted-foreground hover:text-red-400 hover:bg-red-500/20 hover:border-red-500/40 active:scale-[0.95] shrink-0 border border-transparent"
+                        className="h-6 w-6 transition-all duration-200 ease-out text-muted-foreground hover:text-destructive hover:bg-destructive/20 hover:border-destructive/40 active:scale-[0.95] shrink-0 border border-transparent"
                       >
-                        <Trash2 className="h-3 w-3 text-red-500" style={{ color: "#ef4444" }} />
+                        <Trash2 className="h-3 w-3 text-destructive" />
                       </Button>
                     )}
                   </div>

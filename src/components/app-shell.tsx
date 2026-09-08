@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { useState, useEffect } from "react";
 import {
   LayoutDashboard,
+  Plane,
   Timer,
   Wrench,
   Users,
@@ -18,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 
 const BASE_NAV = [
+  { to: "/", label: "Home", icon: Plane },
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/log", label: "Flight Logs", icon: Timer },
   { to: "/garage", label: "Garage", icon: Wrench },
@@ -159,7 +161,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   async function signOut() {
     sessionStorage.clear();
     await authSignOut();
-    navigate({ to: "/auth", replace: true });
+    navigate({ to: "/", replace: true });
   }
 
   const effectiveAdmin = isAdminAllowed || authIsAdminOrDev || (profile?.role && ["admin", "dev"].includes(profile.role.toLowerCase()));
@@ -178,8 +180,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen lg:flex">
       {/* Desktop Sidebar Navigation */}
-      <aside className="hidden w-60 shrink-0 flex-col border-r border-sidebar-border bg-sidebar p-4 lg:flex">
-        <Link to="/dashboard" className="mb-8 flex items-center gap-2.5 px-2 group">
+      <aside className="hidden w-60 shrink-0 flex-col border-r border-sidebar-border bg-sidebar p-4 sticky top-0 h-screen lg:flex">
+        <Link to="/" className="mb-8 flex items-center gap-2.5 px-2 group">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary border border-primary/20 group-hover:bg-primary/20 transition-colors">
             <DroneIcon className="h-5 w-5" />
           </div>
@@ -234,7 +236,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="flex-1">
         {/* Mobile Header */}
         <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-background/85 px-4 py-3 backdrop-blur lg:hidden">
-          <Link to="/dashboard" className="flex items-center gap-2.5 group">
+          <Link to="/" className="flex items-center gap-2.5 group">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary border border-primary/20">
               <DroneIcon className="h-4 w-4" />
             </div>
@@ -248,7 +250,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </header>
 
         {/* Mobile Nav Bar */}
-        <nav className="flex gap-1 overflow-x-auto border-b border-border px-2 py-2 lg:hidden">
+        <nav className="sticky top-0 z-30 flex gap-1 overflow-x-auto border-b border-border px-2 py-2 lg:hidden">
           {BASE_NAV.map(({ to, label, icon: Icon }) => (
             <Link
               key={to}

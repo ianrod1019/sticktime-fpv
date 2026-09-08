@@ -1,26 +1,36 @@
 import { heatmapDays, type SessionRow } from "@/lib/fpv";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
-function level(minutes: number) {
-  if (minutes === 0) return 0;
-  if (minutes < 20) return 1;
-  if (minutes < 45) return 2;
-  if (minutes < 90) return 3;
-  return 4;
-}
-
 const LEVEL_STYLE = [
-  "bg-muted/60",
-  "bg-primary/25",
-  "bg-primary/45",
-  "bg-primary/70",
-  "bg-primary",
+  "bg-muted/40 border border-border/60",
+  "bg-primary/15 border border-primary/20",
+  "bg-primary/30 border border-primary/35",
+  "bg-primary/55 border border-primary/60 shadow-[0_0_8px_-2px_var(--color-primary)]",
+  "bg-primary border border-primary/80 shadow-[0_0_14px_-3px_var(--color-primary)]",
 ];
+
+function levelFor(minutes: number, thresholds: number[]) {
+  if (minutes === 0) return 0;
+  for (let i = 0; i < thresholds.length; i++) {
+    if (minutes <= thresholds[i]) return i + 1;
+  }
+  return thresholds.length;
+}
 
 export function Heatmap({ sessions }: { sessions: SessionRow[] }) {
   const cells = heatmapDays(sessions);
   const weeks: { date: string; minutes: number }[][] = [];
   for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+
+  const maxMinutes = Math.max(0, ...cells.map((c) => c.minutes));
+  const thresholds = [0, 0, 0, 0];
+  if (maxMinutes > 0) {
+    const step = maxMinutes / 4;
+    thresholds[0] = Math.round(step);
+    thresholds[1] = Math.round(step * 2);
+    thresholds[2] = Math.round(step * 3);
+    thresholds[3] = maxMinutes;
+  }
 
   return (
     <TooltipProvider delayDuration={80}>
@@ -32,7 +42,7 @@ export function Heatmap({ sessions }: { sessions: SessionRow[] }) {
                 <Tooltip key={cell.date}>
                   <TooltipTrigger asChild>
                     <div
-                      className={`h-2.75 w-2.75 rounded-[2px] ${LEVEL_STYLE[level(cell.minutes)]}`}
+                      className={`h-2.75 w-2.75 rounded-[2px] ${LEVEL_STYLE[levelFor(cell.minutes, thresholds)]} hover:shadow-[0_0_16px_-2px_var(--color-primary)] transition-shadow duration-200`}
                     />
                   </TooltipTrigger>
                   <TooltipContent>

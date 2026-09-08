@@ -354,7 +354,7 @@ export function AdminPilotsTable() {
                               </span>
                               <div className="flex items-center gap-1.5">
                                 {isAdminOrDev ? (
-                                  <Badge variant="default" className="font-mono text-[9px] gap-1 bg-amber-500/20 text-amber-300 border-amber-500/40 w-fit">
+                                  <Badge variant="default" className="font-mono text-[9px] gap-1 bg-warning/20 text-warning border-warning/40 w-fit">
                                     <Shield className="h-2.5 w-2.5" /> {roleLower.toUpperCase()}
                                   </Badge>
                                 ) : (
@@ -395,21 +395,21 @@ export function AdminPilotsTable() {
                                 <Badge variant="destructive" className="font-mono text-[10px] gap-1 w-fit">
                                   <ShieldAlert className="h-3 w-3" /> Banned
                                 </Badge>
-                                {p.ban_until && (
-                                  <Badge variant="outline" className="font-mono text-[9px] text-amber-300 border-amber-500/40 gap-1">
+{p.ban_until && (
+                  <Badge variant="outline" className="font-mono text-[9px] text-warning border-warning/40 gap-1">
                                     <Calendar className="h-2.5 w-2.5" /> Until {new Date(p.ban_until).toLocaleDateString()}
                                   </Badge>
                                 )}
                               </div>
-                              <div className="flex items-center gap-1 text-[11px] text-amber-400 bg-amber-500/10 px-2 py-1 rounded border border-amber-500/25 max-w-xs">
-                                <Lock className="h-3 w-3 shrink-0 text-amber-400" />
+                              <div className="flex items-center gap-1 text-[11px] text-warning bg-primary/10 px-2 py-1 rounded border border-primary/10">
+                                <Lock className="h-3 w-3 shrink-0 text-warning" />
                                 <span className="truncate" title={`Admin-Only Ban Reason: ${p.ban_reason}`}>
                                   <b>Reason:</b> {p.ban_reason || "No reason specified"}
                                 </span>
                               </div>
                             </div>
                           ) : (
-                            <Badge variant="secondary" className="font-mono text-[10px] gap-1 text-emerald-400 bg-emerald-500/10 border-emerald-500/30">
+                            <Badge variant="secondary" className="font-mono text-[10px] gap-1 text-success bg-success/10 border-success/30">
                               <ShieldCheck className="h-3 w-3" /> Active
                             </Badge>
                           )}
@@ -421,7 +421,7 @@ export function AdminPilotsTable() {
                                 <Button
                                   size="sm"
                                   variant="ghost"
-                                  className="h-8 w-8 p-0 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
+                                  className="h-8 w-8 p-0 text-success hover:text-success/80 hover:bg-success/10"
                                   onClick={() => handleSaveEdit(p.id)}
                                   disabled={updateProfileMutation.isPending}
                                 >

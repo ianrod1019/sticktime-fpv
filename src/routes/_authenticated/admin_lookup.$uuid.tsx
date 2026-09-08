@@ -21,7 +21,7 @@ export const Route = createFileRoute("/_authenticated/admin_lookup/$uuid")({
   beforeLoad: async () => {
     const { data: userData } = await supabase.auth.getUser();
     if (!userData.user) {
-      throw redirect({ to: "/auth" });
+      throw redirect({ to: "/" });
     }
 
     // Strict admin/developer check
@@ -171,7 +171,7 @@ function AdminUserLookupComponent() {
         >
           <ArrowLeft className="h-4 w-4" /> Back to Admin Control Center
         </Button>
-        <Badge variant="outline" className="border-emerald-500/40 text-emerald-400 bg-emerald-500/10 font-mono text-xs">
+        <Badge variant="outline" className="border-success/40 text-success bg-success/10 font-mono text-xs">
           Token Verified: {search.token ? search.token.slice(0, 8) + "..." : "Active"}
         </Badge>
       </div>
@@ -227,7 +227,7 @@ function AdminUserLookupComponent() {
             </div>
             <div className="space-y-1">
               <span className="text-muted-foreground">Security Role:</span>
-              <p className="uppercase text-emerald-400 font-bold">{targetProfile?.role || directoryUser?.role || "admin"}</p>
+              <p className="uppercase text-success font-bold">{targetProfile?.role || directoryUser?.role || "admin"}</p>
             </div>
             <div className="pt-2 border-t border-border/50">
               <span className="text-muted-foreground block mb-1">Total Actions Recorded:</span>
@@ -243,7 +243,7 @@ function AdminUserLookupComponent() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
                 <CardTitle className="font-mono text-sm flex items-center gap-2">
-                  <ShieldCheck className="h-4 w-4 text-emerald-400" /> Admin Action Audit Trail
+                  <ShieldCheck className="h-4 w-4 text-success" /> Admin Action Audit Trail
                 </CardTitle>
                 <CardDescription>Showing actions performed and exact timestamps (session events excluded).</CardDescription>
               </div>

@@ -81,7 +81,7 @@ export function GearCardEditDialog({ gear, onUpdateGear, isDeleting }: GearCardE
 
   const handleSave = () => {
     if (!name.trim()) return;
-    const finalInterval = isBattery || serviceMode === "needed" ? 9999999 : interval;
+    const finalInterval = isBattery || serviceMode === "needed" ? 0 : interval;
     const finalPackCount = isBattery ? packCount : gear.pack_count || 0;
     const finalCells = showCellsAndConnector ? cells : 0;
     const finalConnector = showCellsAndConnector ? connectorType : "";
@@ -96,17 +96,17 @@ export function GearCardEditDialog({ gear, onUpdateGear, isDeleting }: GearCardE
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7 transition-all duration-200 ease-out text-muted-foreground hover:text-orange-400 hover:bg-orange-500/20 hover:border-orange-500/40 active:scale-[0.95] border border-transparent"
+          className="h-7 w-7 transition-all duration-200 ease-out text-muted-foreground hover:text-primary hover:bg-primary/20 hover:border-primary/40 active:scale-[0.95] border border-transparent"
           aria-label={`Edit ${gear.name}`}
           disabled={isDeleting}
         >
           <Pencil className="h-3.5 w-3.5" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="border-orange-500/30 bg-background/95 backdrop-blur-xl">
+      <DialogContent className="border-primary/30 bg-background/95 backdrop-blur-xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-foreground font-display">
-            <span className="w-2 h-2 rounded-full bg-orange-500"></span> Edit Equipment
+            <span className="w-2 h-2 rounded-full bg-primary"></span> Edit Equipment
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-2 max-h-[70vh] overflow-y-auto pr-1">
@@ -224,7 +224,7 @@ export function GearCardEditDialog({ gear, onUpdateGear, isDeleting }: GearCardE
           <Button
             onClick={handleSave}
             disabled={!name.trim()}
-            className="bg-orange-500 hover:bg-orange-600 text-white w-full sm:w-auto"
+            className="bg-primary hover:bg-primary/80 text-primary-foreground w-full sm:w-auto"
           >
             Save changes
           </Button>

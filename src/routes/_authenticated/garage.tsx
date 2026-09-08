@@ -379,21 +379,21 @@ function Garage() {
       <PageHeader
         title={
           <span className="text-foreground">
-            Gear <span className="text-orange-500">Garage</span>
+            Gear <span className="text-primary">Garage</span>
           </span>
         }
         subtitle="Manage your complete fleet across quads, transmitters, goggles, battery sets and equipment."
         action={
           <Dialog open={gearOpen} onOpenChange={setGearOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-orange-500 hover:bg-orange-600 text-white font-medium shadow-lg shadow-orange-500/20">
+              <Button className="bg-primary hover:bg-primary/80 text-primary-foreground font-medium shadow-lg shadow-primary/20">
                 <Plus className="mr-1.5 h-4 w-4" /> Add gear
               </Button>
             </DialogTrigger>
-            <DialogContent className="border-orange-500/30 bg-background/95 backdrop-blur-xl">
+            <DialogContent className="border-primary/30 bg-background/95">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2 text-foreground font-display">
-                  <span className="w-2 h-2 rounded-full bg-orange-500"></span> Add equipment to garage
+                  <span className="w-2 h-2 rounded-full bg-primary"></span> Add equipment to garage
                 </DialogTitle>
               </DialogHeader>
               <div className="space-y-4 py-2 max-h-[70vh] overflow-y-auto pr-1">
@@ -528,7 +528,7 @@ function Garage() {
                 <Button
                   onClick={() => addGear.mutate()}
                   disabled={!name}
-                  className="bg-orange-500 hover:bg-orange-600 text-white w-full sm:w-auto"
+                  className="bg-primary hover:bg-primary/80 text-primary-foreground w-full sm:w-auto"
                 >
                   Add to garage
                 </Button>
@@ -539,8 +539,8 @@ function Garage() {
       />
 
       {gear.length === 0 && (
-        <div className="hud-panel p-12 text-center text-sm text-muted-foreground border-orange-500/20 max-w-xl mx-auto my-12">
-          <div className="w-12 h-12 rounded-full bg-orange-500/10 text-orange-400 flex items-center justify-center mx-auto mb-4 border border-orange-500/20">
+        <div className="hud-panel p-12 text-center text-sm text-muted-foreground border-primary/20 max-w-xl mx-auto my-12">
+          <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-4 border border-primary/20">
             <Cpu className="h-6 w-6" />
           </div>
           <p className="font-display font-semibold text-foreground text-lg mb-1">
@@ -550,7 +550,7 @@ function Garage() {
             Register your quads, radio transmitters, FPV goggles, battery sets or field gear to track
             telemetry, airtime, and maintenance intervals.
           </p>
-          <Button onClick={() => setGearOpen(true)} className="bg-orange-500 hover:bg-orange-600 text-white">
+          <Button onClick={() => setGearOpen(true)} className="bg-primary hover:bg-primary/80 text-primary-foreground">
             <Plus className="mr-1.5 h-4 w-4" /> Add your first piece of gear
           </Button>
         </div>
@@ -565,18 +565,18 @@ function Garage() {
           return (
             <section key={section.key} className="space-y-4">
               <div
-                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-orange-500/20 pb-3 cursor-pointer select-none group pt-2"
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-primary/20 pb-3 cursor-pointer select-none group pt-2"
                 onClick={() => toggleSectionCollapse(section.key)}
               >
                 <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-orange-500/10 text-orange-400 border border-orange-500/20 shadow-sm group-hover:bg-orange-500/20 transition-colors">
+                  <div className="p-2.5 rounded-xl bg-primary/10 text-primary border border-primary/20 shadow-sm group-hover:bg-primary/20 transition-colors">
                     <IconComponent className="h-5 w-5" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2.5">
                       <h2 className="font-display text-base font-bold uppercase tracking-wider text-foreground flex items-center gap-2">
                         {section.title}
-                        <span className="text-orange-400">
+                        <span className="text-primary">
                           {isSectionCollapsed ? (
                             <ChevronDown className="h-4 w-4 inline" />
                           ) : (
@@ -584,7 +584,7 @@ function Garage() {
                           )}
                         </span>
                       </h2>
-                      <span className="px-2 py-0.5 rounded-full text-xs font-mono bg-orange-500/10 text-orange-400 border border-orange-500/20 font-semibold">
+                      <span className="px-2 py-0.5 rounded-full text-xs font-mono bg-primary/10 text-primary border border-primary/20 font-semibold">
                         {items.length}
                       </span>
                     </div>
@@ -599,7 +599,7 @@ function Garage() {
                       setGearType(section.key);
                       setGearOpen(true);
                     }}
-                    className="border-orange-500/30 text-orange-400 hover:bg-orange-500/10 hover:text-orange-300 text-xs self-start sm:self-auto font-medium"
+                    className="border-primary/30 text-primary hover:bg-primary/10 hover:text-primary/90 text-xs self-start sm:self-auto font-medium"
                   >
                     <Plus className="mr-1 h-3.5 w-3.5" /> Add {TYPE_LABELS[section.key].toLowerCase()}
                   </Button>
@@ -617,7 +617,7 @@ function Garage() {
                 }}
               >
                 {items.length === 0 ? (
-                  <div className="hud-panel p-8 text-center text-xs text-muted-foreground/70 border-dashed border-orange-500/20 bg-card/20 rounded-xl my-2">
+                  <div className="hud-panel p-8 text-center text-xs text-muted-foreground/70 border-dashed border-primary/20 bg-card/20 rounded-xl my-2">
                     No {TYPE_LABELS[section.key].toLowerCase()} registered yet. Click the button above
                     to add your equipment.
                   </div>

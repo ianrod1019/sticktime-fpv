@@ -32,7 +32,8 @@ export const DURATION_BLOCKS = Array.from({ length: 48 }, (_, i) => (i + 1) * 5)
 export function formatHours(minutes: number): string {
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
-  return `${h}h ${String(m).padStart(2, "0")}m`;
+  if (m === 0) return `${h}h`;
+  return `${h}h ${m}mins`;
 }
 
 export function toDateKey(d: Date): string {

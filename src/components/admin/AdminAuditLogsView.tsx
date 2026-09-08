@@ -139,7 +139,7 @@ export function AdminAuditLogsView() {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <CardTitle className="font-mono flex items-center gap-2">
-              <ShieldCheck className="h-5 w-5 text-emerald-400" /> Administrator Audit Activity
+              <ShieldCheck className="h-5 w-5 text-success" /> Administrator Audit Activity
             </CardTitle>
             <CardDescription>
               Select any administrator account below (filtered strictly by admin/dev roles with joined auth emails) to review their audit trail.
@@ -186,7 +186,7 @@ export function AdminAuditLogsView() {
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <Badge variant="outline" className="border-emerald-500/40 text-emerald-400 bg-emerald-500/5 font-mono text-[10px] uppercase">
+                    <Badge variant="outline" className="border-success/40 text-success bg-success/5 font-mono text-[10px] uppercase">
                       <Shield className="h-3 w-3 mr-1" /> {admin.role}
                     </Badge>
                     <span className="text-xs font-mono text-muted-foreground">

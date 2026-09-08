@@ -6,8 +6,9 @@
 
 /*
  * StickTime FPV design system — carbon-fiber HUD dark theme.
- * Accent color is swappable at runtime via [data-accent] on <html>.
- * All colors are oklch semantic tokens. Never hardcode colors in components.
+ * Strict dark-mode palette with deep matte black/charcoal background
+ * and high-vis aviation orange for primary actions and accents.
+ * All colors are semantic tokens mapped to Tailwind classes.
  */
 
 @theme inline {
@@ -58,75 +59,57 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  --shadow-glow: 0 0 0 1px var(--primary-soft), 0 12px 40px -18px var(--primary);
   --shadow-panel: 0 20px 50px -30px oklch(0 0 0 / 0.9);
 }
 
 :root {
   --radius: 0.5rem;
 
-  /* Accent (default: ember) */
-  --primary: oklch(0.72 0.19 45);
-  --primary-foreground: oklch(0.16 0.02 250);
-  --primary-soft: oklch(0.72 0.19 45 / 0.28);
-
-  --background: oklch(0.16 0.014 250);
-  --foreground: oklch(0.95 0.006 250);
-  --card: oklch(0.2 0.016 252);
-  --card-foreground: oklch(0.95 0.006 250);
-  --popover: oklch(0.19 0.016 252);
-  --popover-foreground: oklch(0.95 0.006 250);
-  --secondary: oklch(0.26 0.018 252);
-  --secondary-foreground: oklch(0.93 0.006 250);
-  --muted: oklch(0.24 0.016 252);
-  --muted-foreground: oklch(0.68 0.015 250);
-  --accent: oklch(0.28 0.02 252);
-  --accent-foreground: oklch(0.96 0.006 250);
-  --destructive: oklch(0.62 0.2 22);
+  /* Background: dark charcoal (#1a1a1e) */
+  --background: oklch(0.18 0 0);
+  --foreground: oklch(0.9 0.02 240);
+  /* Card/container: slightly lighter dark gray with thin low-contrast border */
+  --card: oklch(0.21 0 0);
+  --card-foreground: oklch(0.9 0.02 240);
+  --popover: oklch(0.23 0 0);
+  --popover-foreground: oklch(0.9 0.02 240);
+  --secondary: oklch(0.25 0 0);
+  --secondary-foreground: oklch(0.88 0.02 240);
+  --muted: oklch(0.24 0 0);
+  --muted-foreground: oklch(0.65 0.02 250);
+  --accent: oklch(0.27 0 0);
+  --accent-foreground: oklch(0.9 0.02 240);
+  --destructive: oklch(0.6 0.2 25);
   --destructive-foreground: oklch(0.98 0.005 250);
-  --success: oklch(0.75 0.16 155);
-  --warning: oklch(0.8 0.15 85);
-  --sim: oklch(0.7 0.14 240);
+  --success: oklch(0.7 0.15 155);
+  --warning: oklch(0.78 0.14 85);
+
+  /* Primary: high-vis aviation orange */
+  --primary: oklch(0.72 0.19 35);
+  --primary-foreground: oklch(0.12 0.02 30);
+  --primary-soft: oklch(0.72 0.19 35 / 0.28);
+
+  --sim: oklch(0.65 0.14 240);
   --real: var(--primary);
-  --border: oklch(0.31 0.018 252);
-  --input: oklch(0.31 0.018 252);
+  /* Thin, sharp, low-contrast border for surface separation */
+  --border: oklch(0.28 0 0);
+  --input: oklch(0.28 0 0);
   --ring: var(--primary);
 
   --chart-1: var(--primary);
-  --chart-2: oklch(0.7 0.14 240);
-  --chart-3: oklch(0.75 0.16 155);
-  --chart-4: oklch(0.8 0.15 85);
+  --chart-2: oklch(0.65 0.14 240);
+  --chart-3: oklch(0.7 0.15 155);
+  --chart-4: oklch(0.78 0.14 85);
   --chart-5: oklch(0.68 0.16 320);
 
-  --sidebar: oklch(0.18 0.015 252);
-  --sidebar-foreground: oklch(0.9 0.006 250);
+  --sidebar: oklch(0.19 0 0);
+  --sidebar-foreground: oklch(0.85 0.02 240);
   --sidebar-primary: var(--primary);
   --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: oklch(0.26 0.018 252);
-  --sidebar-accent-foreground: oklch(0.96 0.006 250);
-  --sidebar-border: oklch(0.28 0.018 252);
+  --sidebar-accent: oklch(0.26 0 0);
+  --sidebar-accent-foreground: oklch(0.88 0.02 240);
+  --sidebar-border: oklch(0.26 0 0);
   --sidebar-ring: var(--primary);
-}
-
-[data-accent="lime"] {
-  --primary: oklch(0.84 0.2 130);
-  --primary-foreground: oklch(0.18 0.02 150);
-  --primary-soft: oklch(0.84 0.2 130 / 0.25);
-}
-[data-accent="cyan"] {
-  --primary: oklch(0.79 0.14 205);
-  --primary-foreground: oklch(0.16 0.02 230);
-  --primary-soft: oklch(0.79 0.14 205 / 0.25);
-}
-[data-accent="magenta"] {
-  --primary: oklch(0.7 0.22 340);
-  --primary-foreground: oklch(0.98 0.005 340);
-  --primary-soft: oklch(0.7 0.22 340 / 0.25);
-}
-[data-accent="amber"] {
-  --primary: oklch(0.84 0.17 88);
-  --primary-foreground: oklch(0.2 0.03 80);
-  --primary-soft: oklch(0.84 0.17 88 / 0.25);
 }
 
 @layer base {
@@ -142,15 +125,9 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
-    background-image:
-      radial-gradient(1100px 520px at 12% -8%, var(--primary-soft), transparent 65%),
-      linear-gradient(oklch(1 0 0 / 0.018) 1px, transparent 1px),
-      linear-gradient(90deg, oklch(1 0 0 / 0.018) 1px, transparent 1px);
-    background-size:
-      auto,
-      44px 44px,
-      44px 44px;
-    background-attachment: fixed;
+    background-image: none;
+    background-size: initial;
+    background-attachment: initial;
   }
 
   h1,
@@ -169,8 +146,24 @@
   box-shadow: var(--shadow-panel);
 }
 
-@utility text-glow {
-  text-shadow: 0 0 24px var(--primary-soft);
+@utility technical-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+@utility terminal {
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+@utility bento-grid {
+  display: grid;
+  gap: 1px;
+  background-color: var(--border);
 }
 
 @utility label-mono {
@@ -179,6 +172,64 @@
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted-foreground);
+}
+
+@utility btn-primary {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+@utility btn-primary-hover {
+  background-color: var(--primary) / 0.9;
+}
+
+@utility badge-primary {
+  background-color: var(--primary) / 0.1;
+  color: var(--primary);
+  border-color: var(--primary) / 0.2;
+}
+
+@utility badge-success {
+  background-color: var(--success) / 0.1;
+  color: var(--success);
+  border-color: var(--success) / 0.2;
+}
+
+@utility badge-warning {
+  background-color: var(--warning) / 0.1;
+  color: var(--warning);
+  border-color: var(--warning) / 0.2;
+}
+
+@utility badge-destructive {
+  background-color: var(--destructive) / 0.1;
+  color: var(--destructive);
+  border-color: var(--destructive) / 0.2;
+}
+
+@utility indicator-primary {
+  background-color: var(--primary);
+}
+
+@utility indicator-success {
+  background-color: var(--success);
+}
+
+@utility indicator-warning {
+  background-color: var(--warning);
+}
+
+@utility indicator-destructive {
+  background-color: var(--destructive);
+}
+
+@utility scrollbar-primary {
+  scrollbar-color: var(--primary) / 0.5 var(--secondary);
+}
+
+@utility focus-primary {
+  outline-color: var(--primary);
+  ring-color: var(--primary);
 }
 
 /* Pure Slide Keyframes (No opacity changes or fade effects, slowed down to 0.75s) */

@@ -81,17 +81,17 @@ function Settings() {
   return (
     <>
       <PageHeader
-        title={<span className="text-foreground">Pilot <span className="text-orange-500">Settings</span></span>}
+        title={<span className="text-foreground">Pilot <span className="text-primary">Settings</span></span>}
         subtitle="Tune your cockpit privacy and data portability."
       />
       <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
         <div className="space-y-8">
           {/* Profile & Goals */}
-          <section className="hud-panel p-6 relative overflow-hidden group hover:border-orange-500/40 transition-colors shadow-lg">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-bl-full pointer-events-none" />
+          <section className="hud-panel p-6 relative overflow-hidden group hover:border-primary/40 transition-colors shadow-lg">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full pointer-events-none" />
             <div className="flex items-center justify-between">
               <div>
-                <span className="label-mono text-orange-400">Profile controls</span>
+                <span className="label-mono text-primary">Profile controls</span>
                 <h2 className="mt-2 text-xl font-semibold">{profile?.callsign || email || "Pilot"}</h2>
                 <p className="text-sm text-muted-foreground">{email}</p>
               </div>
@@ -125,7 +125,7 @@ function Settings() {
                 <Button 
                   onClick={saveProfile} 
                   disabled={updateProfile?.isPending} 
-                  className="bg-orange-500 hover:bg-orange-600 text-white"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
                 >
                   <Check className="mr-2 h-4 w-4" />
                   Save profile
@@ -137,21 +137,21 @@ function Settings() {
 
         <div className="space-y-8">
           {/* Data Export */}
-          <section className="hud-panel p-6 relative overflow-hidden group hover:border-orange-500/40 transition-colors shadow-lg">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-bl-full pointer-events-none" />
+          <section className="hud-panel p-6 relative overflow-hidden group hover:border-primary/40 transition-colors shadow-lg">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full pointer-events-none" />
             <div className="flex items-center gap-2">
-              <LockKeyhole className="h-4 w-4 text-orange-500" />
-              <span className="label-mono text-orange-400">Data export</span>
+              <LockKeyhole className="h-4 w-4 text-primary" />
+              <span className="label-mono text-primary">Data export</span>
             </div>
             <p className="mt-2 text-sm text-muted-foreground">
               Take your logbook, gear, and pilot records with you in portable formats.
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
-              <Button variant="outline" className="border-orange-500/30 text-orange-400 hover:bg-orange-500/10 hover:text-orange-300" onClick={() => exportData("csv")}>
+              <Button variant="outline" className="border-primary/30 text-primary hover:bg-primary/10 hover:text-primary/90" onClick={() => exportData("csv")}>
                 <Download className="mr-2 h-4 w-4" />
                 CSV Export
               </Button>
-              <Button variant="outline" className="border-orange-500/30 text-orange-400 hover:bg-orange-500/10 hover:text-orange-300" onClick={() => exportData("sql")}>
+              <Button variant="outline" className="border-primary/30 text-primary hover:bg-primary/10 hover:text-primary/90" onClick={() => exportData("sql")}>
                 <Download className="mr-2 h-4 w-4" />
                 SQL Inserts
               </Button>

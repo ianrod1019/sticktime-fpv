@@ -52,26 +52,26 @@ export function GearCard({
   const servicePct = isAsNeeded ? 0 : Math.min(100, Math.round((gear.minutes_since_service / gear.service_interval_minutes) * 100));
 
   return (
-    <div
-      style={{
-        transitionProperty: "all",
-        transitionDuration: "400ms",
-        transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
-        maxHeight: isDeleting ? "0px" : "1000px",
-        opacity: isDeleting ? 0 : 1,
-        transform: isDeleting ? "scale(0.92) translateY(-16px)" : "scale(1) translateY(0)",
-        marginTop: isDeleting ? "0px" : undefined,
-        marginBottom: isDeleting ? "0px" : undefined,
-        paddingTop: isDeleting ? "0px" : undefined,
-        paddingBottom: isDeleting ? "0px" : undefined,
-        overflow: "hidden",
-      }}
-      className={`relative group bg-card/50 border rounded-xl p-4 ${
-        isHoveredDelete && !isDeleting
-          ? "border-red-500/40 bg-red-500/5 shadow-lg shadow-red-500/10 ring-1 ring-red-500/20"
-          : "border-orange-500/10 hover:border-orange-500/30"
-      } ${isDeleting ? "!border-transparent !p-0 !m-0 !shadow-none" : ""}`}
-    >
+      <div
+        style={{
+          transitionProperty: "all",
+          transitionDuration: "400ms",
+          transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+          maxHeight: isDeleting ? "0px" : "1000px",
+          opacity: isDeleting ? 0 : 1,
+          transform: isDeleting ? "scale(0.92) translateY(-16px)" : "scale(1) translateY(0)",
+          marginTop: isDeleting ? "0px" : undefined,
+          marginBottom: isDeleting ? "0px" : undefined,
+          paddingTop: isDeleting ? "0px" : undefined,
+          paddingBottom: isDeleting ? "0px" : undefined,
+          overflow: "hidden",
+        }}
+        className={`relative group bg-card/50 border rounded-xl p-4 ${
+          isHoveredDelete && !isDeleting
+            ? "border-destructive/40 bg-destructive/5 shadow-lg shadow-destructive/10 ring-1 ring-destructive/20"
+            : "border-primary/10 hover:border-primary/30"
+        } ${isDeleting ? "!border-transparent !p-0 !m-0 !shadow-none" : ""}`}
+      >
       <div className={`transition-opacity duration-200 ${isDeleting ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
         {/* Header */}
         <GearCardHeader

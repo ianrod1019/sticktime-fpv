@@ -97,13 +97,13 @@ export function GearCardParts({
     : "Components";
 
   return (
-    <div className="mt-4 pt-3 border-t border-orange-500/10">
+    <div className="mt-4 pt-3 border-t border-primary/10">
       <div className="flex items-center justify-between mb-2">
         <div
           className="flex items-center gap-1.5 cursor-pointer select-none"
           onClick={() => setIsUpgradesCollapsed(!isUpgradesCollapsed)}
         >
-          <span className="text-[11px] font-mono font-medium tracking-wider uppercase flex items-center gap-1 text-orange-400">
+          <span className="text-[11px] font-mono font-medium tracking-wider uppercase flex items-center gap-1 text-primary">
             {sectionLabel} ({parts.length})
             {isUpgradesCollapsed ? (
               <ChevronDown className="h-3 w-3 inline" />
@@ -136,15 +136,15 @@ export function GearCardParts({
               variant="ghost"
               size="sm"
               disabled={isDeleting}
-              className="h-6 px-2 text-[11px] text-orange-400 hover:text-orange-300 hover:bg-orange-500/10"
+              className="h-6 px-2 text-[11px] text-primary hover:text-primary/80 hover:bg-primary/10"
             >
               <Plus className="mr-0.5 h-3 w-3" /> Add
             </Button>
           </DialogTrigger>
-          <DialogContent className="border-orange-500/30 bg-background/95 backdrop-blur-xl">
+          <DialogContent className="border-primary/30 bg-background/95">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-foreground font-display">
-                <span className="w-2 h-2 rounded-full bg-orange-500"></span>
+                <span className="w-2 h-2 rounded-full bg-primary"></span>
                 {isTransmitter
                   ? "Add controller upgrade"
                   : isGoggles
@@ -169,12 +169,12 @@ export function GearCardParts({
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {CONTROLLER_CATEGORIES.map((cat) => (
-                          <SelectItem key={cat.value} value={cat.value}>
-                            <span className="text-orange-500 font-medium mr-1.5">▪</span>
-                            {cat.label}
-                          </SelectItem>
-                        ))}
+{CONTROLLER_CATEGORIES.map((cat) => (
+                           <SelectItem key={cat.value} value={cat.value}>
+                             <span className="text-primary font-medium mr-1.5">▪</span>
+                             {cat.label}
+                           </SelectItem>
+                         ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -216,12 +216,12 @@ export function GearCardParts({
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {GOGGLES_CATEGORIES.map((cat) => (
-                          <SelectItem key={cat.value} value={cat.value}>
-                            <span className="text-orange-500 font-medium mr-1.5">▪</span>
-                            {cat.label}
-                          </SelectItem>
-                        ))}
+{GOGGLES_CATEGORIES.map((cat) => (
+                           <SelectItem key={cat.value} value={cat.value}>
+                             <span className="text-primary font-medium mr-1.5">▪</span>
+                             {cat.label}
+                           </SelectItem>
+                         ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -279,7 +279,7 @@ export function GearCardParts({
                   setPartDescription("");
                 }}
                 disabled={!partName}
-                className="bg-orange-500 hover:bg-orange-600 text-white w-full sm:w-auto"
+                className="bg-primary hover:bg-primary/80 text-primary-foreground w-full sm:w-auto"
               >
                 {isTransmitter || isGoggles ? "Save upgrade" : "Track part"}
               </Button>
@@ -297,7 +297,7 @@ export function GearCardParts({
         }}
       >
         {parts.length > 0 ? (
-          <div className="space-y-1.5 pt-1 pr-1 max-h-[110px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-secondary/20 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-orange-500/50 hover:[&::-webkit-scrollbar-thumb]:bg-orange-500">
+          <div className="space-y-1.5 pt-1 pr-1 max-h-[110px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-secondary/20 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/50 hover:[&::-webkit-scrollbar-thumb]:bg-primary">
             {parts.map((p) => {
               const isCustomMeta = isTransmitter || isGoggles;
               const isPartConfirming = confirmingPartId === p.id;
@@ -312,8 +312,8 @@ export function GearCardParts({
                     isPartDeleting
                       ? "opacity-0 scale-95 translate-x-2 pointer-events-none"
                       : isPartActiveHighlight
-                      ? "bg-card/90 border-red-500/60 shadow-sm shadow-red-500/10 animate-subtle-shake ring-1 ring-red-500/40"
-                      : "bg-secondary/30 border-orange-500/10"
+? "bg-card/90 border-destructive/60 shadow-sm shadow-destructive/10 animate-subtle-shake ring-1 ring-destructive/40"
+                        : "bg-secondary/30 border-primary/10"
                   }`}
                 >
                   <div className="min-w-0 flex-1 truncate">
@@ -323,8 +323,8 @@ export function GearCardParts({
                           variant="outline"
                           className={`text-[9px] uppercase font-mono px-1 py-0 ${
                             isPartActiveHighlight
-                              ? "border-red-500/30 text-red-400 bg-red-500/10"
-                              : "border-orange-500/30 text-orange-400"
+                              ? "border-destructive/30 text-destructive bg-destructive/10"
+                              : "border-primary/30 text-primary"
                           }`}
                         >
                           {p.category}
@@ -332,7 +332,7 @@ export function GearCardParts({
                       )}
                       <span
                         className={`truncate font-medium ${
-                          isPartActiveHighlight ? "text-red-400" : "text-foreground"
+                          isPartActiveHighlight ? "text-destructive" : "text-foreground"
                         }`}
                       >
                         {p.name}
@@ -345,7 +345,7 @@ export function GearCardParts({
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-5 px-1.5 text-[9px] font-medium bg-red-600 text-white hover:bg-red-700 hover:text-white rounded"
+                        className="h-5 px-1.5 text-[9px] font-medium bg-destructive text-destructive-foreground hover:bg-destructive/80 hover:text-destructive-foreground rounded"
                         onClick={(e) => handleExecutePartDelete(e, p.id)}
                       >
                         <Check className="h-2.5 w-2.5 mr-0.5" /> Confirm
@@ -375,7 +375,7 @@ export function GearCardParts({
                       aria-label="Remove part"
                       className="h-6 w-6 transition-all duration-200 ease-out text-muted-foreground hover:text-red-400 hover:bg-red-500/20 hover:border-red-500/40 active:scale-[0.95] shrink-0 border border-transparent"
                     >
-                      <Trash2 className="h-3 w-3 text-red-500" style={{ color: "#ef4444" }} />
+                      <Trash2 className="h-3 w-3 text-destructive" />
                     </Button>
                   )}
                 </div>

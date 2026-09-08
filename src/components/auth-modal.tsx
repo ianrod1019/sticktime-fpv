@@ -23,7 +23,7 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
 
   if (!isOpen) return null;
 
-  const handleGoogleAuth = async () => {
+const handleGoogleAuth = async () => {
     setLoading(true);
     setErrorDetails(null);
     setIsTriggerError(false);
@@ -31,7 +31,7 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`,
+          redirectTo: `${window.location.origin}/`,
         },
       });
       if (error) throw error;
@@ -86,7 +86,7 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
           if (loginData?.session) {
             toast.success("Account created and automatically logged in!");
             onClose();
-            navigate({ to: "/dashboard" });
+            navigate({ to: "/" });
             return;
           }
         }
@@ -94,7 +94,7 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
         if (data.session) {
           toast.success("Account created and logged in!");
           onClose();
-          navigate({ to: "/dashboard" });
+          navigate({ to: "/" });
         } else {
           // Fallback if session is still null (e.g. project config strictly enforces email verification)
           // Attempt a direct sign in or notify success
@@ -102,7 +102,7 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
           const { error: retryError } = await supabase.auth.signInWithPassword({ email, password });
           if (!retryError) {
             onClose();
-            navigate({ to: "/dashboard" });
+            navigate({ to: "/" });
           } else {
             setMode("login");
             toast.info("Please log in with your new account.");
@@ -122,7 +122,7 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
         if (data.session) {
           toast.success("Logged in successfully!");
           onClose();
-          navigate({ to: "/dashboard" });
+          navigate({ to: "/" });
         } else {
           throw new Error("No active session established.");
         }

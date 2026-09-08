@@ -25,11 +25,11 @@ export function GearCardStats({
     <div className="grid grid-cols-2 gap-2 text-xs">
       {/* Flight / Operating Time */}
       <div
-        className={`bg-muted/30 border border-orange-500/10 rounded-lg p-2.5 flex items-center gap-2.5 ${
+        className={`bg-muted/30 border border-primary/10 rounded-lg p-2.5 flex items-center gap-2.5 ${
           isFullWidthFlightTime ? "col-span-2" : ""
         }`}
       >
-        <div className="p-1.5 rounded-md bg-orange-500/10 text-orange-400">
+        <div className="p-1.5 rounded-md bg-primary/10 text-primary">
           <Clock className="w-4 h-4" />
         </div>
         <div>
@@ -44,8 +44,8 @@ export function GearCardStats({
 
       {/* Service Wear / Interval or Battery Pack Count */}
       {isBattery ? (
-        <div className="bg-muted/30 border border-orange-500/10 rounded-lg p-2.5 flex items-center gap-2.5">
-          <div className="p-1.5 rounded-md bg-emerald-500/10 text-emerald-400">
+        <div className="bg-muted/30 border border-primary/10 rounded-lg p-2.5 flex items-center gap-2.5">
+          <div className="p-1.5 rounded-md bg-success/10 text-success">
             <BatteryCharging className="w-4 h-4" />
           </div>
           <div>
@@ -59,14 +59,14 @@ export function GearCardStats({
         /* As needed items do not show the service wear box */
         null
       ) : (
-        <div className="bg-muted/30 border border-orange-500/10 rounded-lg p-2.5 flex items-center gap-2.5">
+        <div className="bg-muted/30 border border-primary/10 rounded-lg p-2.5 flex items-center gap-2.5">
           <div
             className={`p-1.5 rounded-md ${
               servicePct >= 100
-                ? "bg-red-500/20 text-red-400 animate-pulse"
+                ? "bg-destructive/20 text-destructive animate-pulse"
                 : servicePct >= 80
-                ? "bg-orange-500/20 text-orange-400"
-                : "bg-emerald-500/20 text-emerald-400"
+                ? "bg-warning/20 text-warning"
+                : "bg-success/20 text-success"
             }`}
           >
             <Shield className="w-4 h-4" />
@@ -77,9 +77,9 @@ export function GearCardStats({
               <span
                 className={`font-mono ${
                   servicePct >= 100
-                    ? "text-red-400 font-bold"
+                    ? "text-destructive font-bold"
                     : servicePct >= 80
-                    ? "text-orange-400 font-bold"
+                    ? "text-warning font-bold"
                     : "text-muted-foreground"
                 }`}
               >
@@ -90,10 +90,10 @@ export function GearCardStats({
               <div
                 className={`h-full transition-all duration-500 ${
                   servicePct >= 100
-                    ? "bg-red-500"
+                    ? "bg-destructive"
                     : servicePct >= 80
-                    ? "bg-orange-500"
-                    : "bg-emerald-500"
+                    ? "bg-warning"
+                    : "bg-success"
                 }`}
                 style={{ width: `${Math.min(100, servicePct)}%` }}
               />
@@ -104,9 +104,9 @@ export function GearCardStats({
 
       {/* Crash Count (Quads only) */}
       {isQuad && (
-        <div className="col-span-2 bg-muted/30 border border-orange-500/10 rounded-lg p-2.5 flex items-center justify-between">
+        <div className="col-span-2 bg-muted/30 border border-primary/10 rounded-lg p-2.5 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 rounded-md bg-red-500/10 text-red-400">
+            <div className="p-1.5 rounded-md bg-destructive/10 text-destructive">
               <Flame className="w-4 h-4" />
             </div>
             <div>

@@ -55,10 +55,10 @@ export function GearCardServiceDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="border-orange-500/30 bg-background/95 backdrop-blur-xl max-w-md">
+      <DialogContent className="border-primary/30 bg-background/95 max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-foreground font-display">
-            <Wrench className="h-5 w-5 text-orange-500" />
+            <Wrench className="h-5 w-5 text-primary" />
             Service {gear.name}
           </DialogTitle>
           <DialogDescription>
@@ -90,7 +90,7 @@ export function GearCardServiceDialog({
             />
           </div>
 
-          <div className="flex items-center gap-2 p-2 rounded-md bg-secondary/30 border border-orange-500/10">
+          <div className="flex items-center gap-2 p-2 rounded-md bg-secondary/30 border border-primary/10">
             <input
               type="checkbox"
               id="full-reset"
@@ -99,7 +99,7 @@ export function GearCardServiceDialog({
                 setIsFullReset(e.target.checked);
                 if (e.target.checked) setServiceMinutes(gear.service_interval_minutes.toString());
               }}
-              className="h-4 w-4 rounded border-orange-500 text-orange-600 focus:ring-orange-500"
+              className="h-4 w-4 rounded border-primary text-primary focus:ring-primary"
             />
             <Label htmlFor="full-reset" className="text-sm cursor-pointer">
               Full service reset (set to {gear.service_interval_minutes} min)
@@ -111,7 +111,7 @@ export function GearCardServiceDialog({
           <Button
             onClick={handleService}
             disabled={isDeleting || isFullReset || !serviceMinutes || parseInt(serviceMinutes, 10) <= 0}
-            className="bg-orange-500 hover:bg-orange-600 text-white w-full"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground w-full"
           >
             {isFullReset ? "Full reset" : "Log service"}
           </Button>

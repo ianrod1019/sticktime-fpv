@@ -321,12 +321,12 @@ function LogPage() {
                   </Badge>
                   {s.sim_platform && <Badge variant="outline">{s.sim_platform}</Badge>}
                   {associatedController && (
-                    <Badge variant="outline" className="border-orange-500/30 text-orange-400">
+                    <Badge variant="outline" className="border-primary/30 text-primary">
                       Radio: {associatedController.name}
                     </Badge>
                   )}
                   {associatedGoggles && (
-                    <Badge variant="outline" className="border-cyan-500/30 text-cyan-400">
+                    <Badge variant="outline" className="border-primary/30 text-primary">
                       Goggles: {associatedGoggles.name}
                     </Badge>
                   )}

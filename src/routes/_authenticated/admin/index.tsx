@@ -25,7 +25,7 @@ function AdminPanelComponent() {
         subtitle="Global pilot accounts, immutable admin audit logs, security telemetry, and broadcasts."
         action={
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="gap-1.5 border-emerald-500/40 bg-emerald-500/10 text-emerald-400 font-mono">
+            <Badge variant="outline" className="gap-1.5 border-success/40 bg-success/10 text-success font-mono">
               <Shield className="h-3.5 w-3.5" /> SECURE ADMIN ACCESS
             </Badge>
           </div>
