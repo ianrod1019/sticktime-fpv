@@ -42,7 +42,7 @@ The application is built in Lovable with a full backend architecture that can la
 
   - **Personal Records (PRs):** Log best lap times/scores for specific tracks or simulator maps.
 
-  - **Export Hub:** Comprehensive data export options (CSV/SQL).
+  - **Export Hub:** Comprehensive CSV data exports of your whole logbook.
 
 ## 3. Flight Logging & Timecard Manager
 

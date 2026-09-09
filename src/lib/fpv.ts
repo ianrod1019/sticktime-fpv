@@ -112,24 +112,6 @@ export function toCsv(rows: Record<string, unknown>[]): string {
   return [headers.join(","), ...rows.map((r) => headers.map((h) => escape(r[h])).join(","))].join("\n");
 }
 
-export function toSqlInserts(table: string, rows: Record<string, unknown>[]): string {
-  if (rows.length === 0) return `-- no rows in ${table}\n`;
-  const headers = Object.keys(rows[0]!);
-  const lit = (v: unknown) => {
-    if (v === null || v === undefined) return "NULL";
-    if (typeof v === "number") return String(v);
-    if (typeof v === "boolean") return v ? "TRUE" : "FALSE";
-    const s = typeof v === "object" ? JSON.stringify(v) : String(v);
-    return `'${s.replace(/'/g, "''")}'`;
-  };
-  return rows
-    .map(
-      (r) =>
-        `INSERT INTO ${table} (${headers.join(", ")}) VALUES (${headers.map((h) => lit(r[h])).join(", ")});`,
-    )
-    .join("\n");
-}
-
 export function downloadFile(filename: string, content: string, mime: string) {
   const blob = new Blob([content], { type: mime });
   const url = URL.createObjectURL(blob);

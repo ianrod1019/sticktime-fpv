@@ -221,11 +221,11 @@ function Landing() {
                 <Plane className="h-6 w-6 text-primary" />
                 <div>
                   <h3 className="font-semibold text-foreground">Export Anything</h3>
-                  <p className="text-muted-foreground text-sm">CSV and SQL dumps of your whole logbook, any time</p>
+                  <p className="text-muted-foreground text-sm">CSV exports of your whole logbook, any time</p>
                 </div>
               </div>
               <div className="border-t border-border/20 pt-4">
-                <p className="text-muted-foreground">Own your data completely. Export your entire flight logbook as CSV for spreadsheets or SQL for custom analysis whenever you need it. No vendor lock-in, no restrictions - just pure, accessible data that belongs to you.</p>
+                <p className="text-muted-foreground">Own your data completely. Export your entire flight logbook as CSV for spreadsheets whenever you need it. No vendor lock-in, no restrictions - just pure, accessible data that belongs to you.</p>
               </div>
             </article>
           </div>
