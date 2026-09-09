@@ -65,13 +65,15 @@ export const PrivacyPolicy: React.FC = () => {
               </p>
             </div>
             <div>
-              <h3 className="text-xl font-medium text-zinc-200 mb-2">
-                Drone Telemetry
-              </h3>
-              <p className="text-zinc-400">
-                Flight data including GPS coordinates, altitude, speed, battery
-                levels, and telemetry logs from your drones.
-              </p>
+<h3 className="text-xl font-medium text-zinc-200 mb-2">
+                 Drone Telemetry
+               </h3>
+               <p className="text-zinc-400">
+                 Flight data including GPS coordinates, altitude, speed, battery
+                 levels, telemetry logs, flight duration, gear usage statistics,
+                 controller and goggles information, weather data, and pilot
+                 notes.
+               </p>
             </div>
             <div>
               <h3 className="text-xl font-medium text-zinc-200 mb-2">
@@ -154,9 +156,7 @@ export const PrivacyPolicy: React.FC = () => {
                 Encryption
               </h3>
               <p className="text-zinc-400">
-                All data in transit is encrypted using TLS 1.3. At rest,
-                information is secured with AES-256 encryption via Supabase and
-                Cloudflare CDN.
+                All data in transit and at rest is securely encrypted using industry-standard protocols to protect your personal information and flight data.
               </p>
             </div>
             <div>
@@ -172,46 +172,38 @@ export const PrivacyPolicy: React.FC = () => {
           </div>
         </section>
 
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4">
-            User Rights &amp; Data Deletion
-          </h2>
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-xl font-medium text-zinc-200 mb-2">
-                Data Access
-              </h3>
-              <p className="text-zinc-400">
-                You can request copies of your personal data at any time through
-                our support channel.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-xl font-medium text-zinc-200 mb-2">
-                Data Deletion
-              </h3>
-              <p className="text-zinc-400">
-                Request permanent deletion of your account and associated data
-                by contacting support@stick.time.
-              </p>
-            </div>
-          </div>
-        </section>
+<section className="mb-12">
+           <h2 className="text-2xl font-semibold mb-4">
+             User Rights &amp; Data Deletion
+           </h2>
+           <div className="space-y-4">
+             <div>
+               <h3 className="text-xl font-medium text-zinc-200 mb-2">
+                 Data Access
+               </h3>
+               <p className="text-zinc-400">
+                 You can request copies of your personal data at any time through
+                 our support channel.
+               </p>
+             </div>
+             <div>
+               <h3 className="text-xl font-medium text-zinc-200 mb-2">
+                 Data Deletion
+               </h3>
+               <p className="text-zinc-400">
+                 Request permanent deletion of your account and associated data
+                 by contacting support.
+               </p>
+             </div>
+           </div>
+         </section>
 
-        <section className="border-t border-zinc-800 pt-8">
-          <h2 className="text-2xl font-semibold mb-4">Contact Information</h2>
-          <p className="text-zinc-400 text-sm">
-            For questions or concerns regarding this Privacy Policy, please
-            contact us at{" "}
-            <a
-              href="mailto:support@stick.time"
-              className="text-primary hover:underline"
-            >
-              support@stick.time
-            </a>
-            .
-          </p>
-        </section>
+         <section className="border-t border-zinc-800 pt-8">
+           <h2 className="text-2xl font-semibold mb-4">Governing Law &amp; Oklahoma Jurisdiction</h2>
+           <p className="text-zinc-400 text-sm mb-4">
+             StickTime FPV is operated from the State of Oklahoma. These Privacy Policy terms and any disputes arising herefrom shall be governed by and construed in accordance with the laws of the State of Oklahoma, without regard to its conflict of law provisions.
+           </p>
+         </section>
       </main>
     </div>
   );

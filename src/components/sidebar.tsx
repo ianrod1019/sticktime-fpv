@@ -70,7 +70,7 @@ export function SidebarNavigation({
           </Link>
         ))}
 
-{isClientReady && effectiveAdmin && (
+        {isClientReady && effectiveAdmin && (
           <Link
             to="/admin"
             className={cn(
@@ -81,17 +81,17 @@ export function SidebarNavigation({
             <ShieldCheck className="h-4 w-4 shrink-0 text-primary" />
           </Link>
         )}
-
-        <Link
-          to="/settings"
-          className={cn(
-            "flex items-center justify-center rounded-md px-3 py-2 transition-colors",
-            pathname === "/settings" && "bg-sidebar-accent text-primary font-semibold"
-          )}
-        >
-          <Settings className="h-4 w-4 shrink-0 text-sidebar-foreground/70" />
-        </Link>
       </nav>
+
+      <Link
+        to="/settings"
+        className={cn(
+          "flex items-center justify-center rounded-md px-3 py-2 transition-colors",
+          pathname === "/settings" && "bg-sidebar-accent text-primary font-semibold"
+        )}
+      >
+        <Settings className="h-4 w-4 shrink-0 text-sidebar-foreground/70" />
+      </Link>
 
       <button
         type="button"

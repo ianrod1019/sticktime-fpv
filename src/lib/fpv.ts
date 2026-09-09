@@ -4,6 +4,8 @@ export type SessionRow = {
   flown_on: string;
   duration_minutes: number;
   gear_id: string | null;
+  controller_id: string | null;
+  goggles_id: string | null;
   location_id: string | null;
   track_id: string | null;
   sim_platform: string | null;

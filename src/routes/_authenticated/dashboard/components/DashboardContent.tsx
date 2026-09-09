@@ -10,13 +10,15 @@ import {
   BarChart,
   Bar,
 } from "recharts";
-import { Flame, Timer, Gauge, Battery, Cpu } from "lucide-react";
+import { Flame, Timer, Gauge, Battery, Cpu, Plus } from "lucide-react";
+import { useState } from "react";
 import { Heatmap } from "@/components/heatmap";
 import { Progress } from "@/components/ui/progress";
 import { PageHeader } from "@/components/app-shell";
 import { computeStreak, formatHours, type SessionRow } from "@/lib/fpv";
 import { StatCard } from "./StatCard";
 import { RatioBar } from "./RatioBar";
+import { QuickAddSessionLogger } from "./QuickAddSessionLogger";
 
 interface DashboardContentProps {
   simMinutes: number;
@@ -73,21 +75,39 @@ export function DashboardContent({
   const heatmapSessions = (heatmapData?.map((d) => ({ flown_on: d.date, duration_minutes: d.minutes })) ?? []) as SessionRow[];
 
   const fallbackMonths = Array.from({length: 12}, (_, i) => {
-                   const d = new Date();
-                   d.setMonth(d.getMonth() - i);
-                   const month = d.getMonth() + 1;
-                   return {
-                     month: `${String(month).padStart(2, '0')}-${d.getFullYear()}`,
-                     sim: 0,
-                     real: 0,
-                   };
-                 }).reverse();
+                    const d = new Date();
+                    d.setMonth(d.getMonth() - i);
+                    const month = d.getMonth() + 1;
+                    return {
+                      month: `${String(month).padStart(2, '0')}-${d.getFullYear()}`,
+                      sim: 0,
+                      real: 0,
+                    };
+                  }).reverse();
+
+  const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
+
+  const handleQuickAddSubmit = (session: SessionRow) => {
+    // In a real implementation, we would save this to the database
+    // For now, we'll just close the form and show a success message
+    setIsQuickAddOpen(false);
+    // TODO: Implement actual session saving
+    console.log("Quick add session:", session);
+  };
 
   return (
     <>
       <PageHeader
         title={`Welcome back${profile?.callsign ? `, ${profile.callsign}` : ""}`}
         subtitle="Your airtime at a glance."
+        action={
+          <button
+            onClick={() => setIsQuickAddOpen(true)}
+            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+          >
+            <Plus className="mr-1 h-4 w-4" /> Quick Log
+          </button>
+        }
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -155,39 +175,39 @@ export function DashboardContent({
             <span className="label-mono">Monthly volume (hours)</span>
             <div className="mt-2">
 <ResponsiveContainer width="100%" height={280}>
-                <AreaChart data={monthlyData.length > 0 ? monthlyData : fallbackMonths}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                  <XAxis dataKey="month" stroke="var(--muted-foreground)" fontSize={11} />
-                  <YAxis stroke="var(--muted-foreground)" fontSize={11} />
-                  <RTooltip
-                    contentStyle={{
-                      background: "var(--popover)",
-                      border: "1px solid var(--border)",
-                      borderRadius: 8,
-                    }}
-                    formatter={(value) => formatHours(value as number)}
-                  />
-                  <Legend />
-                  <Area
-                    dataKey="sim"
-                    stackId="a"
-                    fill="var(--sim)"
-                    stroke="var(--sim)"
-                    strokeWidth={2}
-                    type="monotone"
-                    fillOpacity={0.6}
-                  />
-                  <Area
-                    dataKey="real"
-                    stackId="a"
-                    fill="var(--primary)"
-                    stroke="var(--primary)"
-                    strokeWidth={2}
-                    type="monotone"
-                    fillOpacity={0.6}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+    <AreaChart data={monthlyData.length > 0 ? monthlyData : fallbackMonths}>
+      <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+      <XAxis dataKey="month" stroke="var(--muted-foreground)" fontSize={11} />
+      <YAxis stroke="var(--muted-foreground)" fontSize={11} />
+      <RTooltip
+        contentStyle={{
+          background: "var(--popover)",
+          border: "1px solid var(--border)",
+          borderRadius: 8,
+        }}
+        formatter={(value) => formatHours(value as number)}
+      />
+      <Legend />
+      <Area
+        dataKey="sim"
+        stackId="a"
+        fill="var(--sim)"
+        stroke="var(--sim)"
+        strokeWidth={2}
+        type="monotone"
+        fillOpacity={0.6}
+      />
+      <Area
+        dataKey="real"
+        stackId="a"
+        fill="var(--primary)"
+        stroke="var(--primary)"
+        strokeWidth={2}
+        type="monotone"
+        fillOpacity={0.6}
+      />
+    </AreaChart>
+  </ResponsiveContainer>
             </div>
           </div>
         </div>
@@ -227,6 +247,12 @@ export function DashboardContent({
           )}
         </div>
       </div>
+
+      <QuickAddSessionLogger
+        open={isQuickAddOpen}
+        onOpenChange={setIsQuickAddOpen}
+        onSubmit={handleQuickAddSubmit}
+      />
     </>
   );
 }

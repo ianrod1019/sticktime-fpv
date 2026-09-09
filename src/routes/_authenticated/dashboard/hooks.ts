@@ -48,7 +48,7 @@ export function useRecentSessions(userId: string | null) {
       if (!userId) return [];
       const { data, error } = await supabase
         .from("sessions")
-        .select("id, session_type, flown_on, duration_minutes, gear_id, packs_flown")
+        .select("id, session_type, flown_on, duration_minutes, gear_id, controller_id, goggles_id, location_id, track_id, sim_platform, packs_flown, crashes, battery_notes, weather, rating, notes")
         .eq("user_id", userId)
         .order("flown_on", { ascending: false });
       if (error) throw error;
