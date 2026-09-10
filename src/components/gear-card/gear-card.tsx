@@ -3,7 +3,7 @@ import { GearItem, GearPart, MaintenanceLog } from "./types";
 import { GearCardHeader } from "./gear-card-header";
 import { GearCardStats } from "./gear-card-stats";
 import { GearCardBatteries } from "./gear-card-batteries";
-import { BatteryHealthDashboard } from "./battery-health-dashboard";
+import { BatteryHealthDashboard } from "./battery-health-dashboard.tsx";
 import { GearCardParts } from "./gear-card-parts";
 import { GearCardLogs } from "./gear-card-logs";
 import { GearCardServiceDialog } from "./gear-card-service-dialog";
