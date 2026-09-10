@@ -171,7 +171,7 @@ function Garage() {
           connector_type: finalConnector || null,
           purchase_cost: purchaseCost,
           purchase_date: null,
-          current_value: 0,
+          current_value: purchaseCost,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },
@@ -182,23 +182,23 @@ function Garage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const updateGear = useMutation({
-    mutationFn: async ({ gearId, name, brand, serviceInterval, packCount, cells, connectorType }: { gearId: string; name: string; brand: string; serviceInterval: number; packCount: number; cells: number; connectorType: string }) => {
-      const table = await getTableNameForGearId(gearId);
-      if (!table) throw new Error("Gear not found");
-      const { error } = await db_request({
-        mode: "query",
-        schema: "personal_gear",
-        table: table,
-        operation: "update",
-        data: { name, brand: brand || null, service_interval_minutes: serviceInterval, pack_count: packCount, cells, connector_type: connectorType || null, purchase_cost: purchaseCost, current_value: currentValue },
-        filters: { id: gearId },
-      });
-      if (error) throw error;
-    },
-    onSuccess: () => { toast.success("Gear updated successfully"); queryClient.invalidateQueries({ queryKey: ["hanger"] }); },
-    onError: (e: Error) => toast.error(e.message),
-  });
+const updateGear = useMutation({
+     mutationFn: async ({ gearId, name, brand, serviceInterval, packCount, cells, connectorType, purchaseCost, currentValue }: { gearId: string; name: string; brand: string; serviceInterval: number; packCount: number; cells: number; connectorType: string; purchaseCost: number; currentValue: number }) => {
+       const table = await getTableNameForGearId(gearId);
+       if (!table) throw new Error("Gear not found");
+       const { error } = await db_request({
+         mode: "query",
+         schema: "personal_gear",
+         table: table,
+         operation: "update",
+         data: { name, brand: brand || null, service_interval_minutes: serviceInterval, pack_count: packCount, cells, connector_type: connectorType || null, purchase_cost: purchaseCost, current_value: currentValue },
+         filters: { id: gearId },
+       });
+       if (error) throw error;
+     },
+     onSuccess: () => { toast.success("Gear updated successfully"); queryClient.invalidateQueries({ queryKey: ["hanger"] }); },
+     onError: (e: Error) => toast.error(e.message),
+   });
 
   const updatePackCount = useMutation({
     mutationFn: async ({ gearId, newCount }: { gearId: string; newCount: number }) => {

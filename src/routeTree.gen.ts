@@ -22,6 +22,7 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedTeamsRouteImport } from './routes/_authenticated/teams'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdmin_lookupUuidRouteImport } from './routes/_authenticated/admin_lookup.$uuid'
+import { Route as AuthenticatedAnalyticsIndexRouteImport } from './routes/_authenticated/analytics/index'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
 import { Route as AuthenticatedSquadronIndexRouteImport } from './routes/_authenticated/squadron/index'
 import { Route as AuthenticatedSquadronSquadronIdRouteImport } from './routes/_authenticated/squadron/$squadronId'
@@ -94,6 +95,12 @@ const AuthenticatedAdmin_lookupUuidRoute =
     path: '/admin_lookup/$uuid',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAnalyticsIndexRoute =
+  AuthenticatedAnalyticsIndexRouteImport.update({
+    id: '/analytics/',
+    path: '/analytics/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDashboardIndexRoute =
   AuthenticatedDashboardIndexRouteImport.update({
     id: '/dashboard/',
@@ -140,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/squadron/$squadronId': typeof AuthenticatedSquadronSquadronIdRoute
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/analytics/': typeof AuthenticatedAnalyticsIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/squadron/': typeof AuthenticatedSquadronIndexRoute
   '/squadron/manage/$uuid': typeof AuthenticatedSquadronManageUuidRoute
@@ -158,6 +166,7 @@ export interface FileRoutesByTo {
   '/squadron/$squadronId': typeof AuthenticatedSquadronSquadronIdRoute
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/analytics': typeof AuthenticatedAnalyticsIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/squadron': typeof AuthenticatedSquadronIndexRoute
   '/squadron/manage/$uuid': typeof AuthenticatedSquadronManageUuidRoute
@@ -179,6 +188,7 @@ export interface FileRoutesById {
   '/_authenticated/squadron/$squadronId': typeof AuthenticatedSquadronSquadronIdRoute
   '/_authenticated/teams/$teamId': typeof AuthenticatedTeamsTeamIdRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/analytics/': typeof AuthenticatedAnalyticsIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/squadron/': typeof AuthenticatedSquadronIndexRoute
   '/_authenticated/squadron/manage/$uuid': typeof AuthenticatedSquadronManageUuidRoute
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/squadron/$squadronId'
     | '/teams/$teamId'
     | '/admin/'
+    | '/analytics/'
     | '/dashboard/'
     | '/squadron/'
     | '/squadron/manage/$uuid'
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/squadron/$squadronId'
     | '/teams/$teamId'
     | '/admin'
+    | '/analytics'
     | '/dashboard'
     | '/squadron'
     | '/squadron/manage/$uuid'
@@ -238,6 +250,7 @@ export interface FileRouteTypes {
     | '/_authenticated/squadron/$squadronId'
     | '/_authenticated/teams/$teamId'
     | '/_authenticated/admin/'
+    | '/_authenticated/analytics/'
     | '/_authenticated/dashboard/'
     | '/_authenticated/squadron/'
     | '/_authenticated/squadron/manage/$uuid'
@@ -343,6 +356,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdmin_lookupUuidRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/analytics/': {
+      id: '/_authenticated/analytics/'
+      path: '/analytics'
+      fullPath: '/analytics/'
+      preLoaderRoute: typeof AuthenticatedAnalyticsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard/': {
       id: '/_authenticated/dashboard/'
       path: '/dashboard'
@@ -416,6 +436,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedTeamsRoute: typeof AuthenticatedTeamsRouteWithChildren
   AuthenticatedAdmin_lookupUuidRoute: typeof AuthenticatedAdmin_lookupUuidRoute
   AuthenticatedSquadronSquadronIdRoute: typeof AuthenticatedSquadronSquadronIdRoute
+  AuthenticatedAnalyticsIndexRoute: typeof AuthenticatedAnalyticsIndexRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
   AuthenticatedSquadronIndexRoute: typeof AuthenticatedSquadronIndexRoute
   AuthenticatedSquadronManageUuidRoute: typeof AuthenticatedSquadronManageUuidRoute
@@ -431,6 +452,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedTeamsRoute: AuthenticatedTeamsRouteWithChildren,
   AuthenticatedAdmin_lookupUuidRoute: AuthenticatedAdmin_lookupUuidRoute,
   AuthenticatedSquadronSquadronIdRoute: AuthenticatedSquadronSquadronIdRoute,
+  AuthenticatedAnalyticsIndexRoute: AuthenticatedAnalyticsIndexRoute,
   AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   AuthenticatedSquadronIndexRoute: AuthenticatedSquadronIndexRoute,
   AuthenticatedSquadronManageUuidRoute: AuthenticatedSquadronManageUuidRoute,
