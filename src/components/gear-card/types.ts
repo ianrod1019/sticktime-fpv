@@ -77,7 +77,6 @@ export interface GearItem {
   total_minutes: number;
   pack_count: number;
   crash_count: number;
-  retired?: boolean;
   last_service_notes?: string | null;
 }
 

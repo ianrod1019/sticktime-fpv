@@ -63,6 +63,8 @@ function Garage() {
   const [packCount, setPackCount] = useState(4);
   const [cells, setCells] = useState<number>(6);
   const [connectorType, setConnectorType] = useState<string>("XT60");
+  const [purchaseCost, setPurchaseCost] = useState<number>(0);
+  const [currentValue, setCurrentValue] = useState<number>(0);
   const [hoveredDeleteGearId, setHoveredDeleteGearId] = useState<string | null>(null);
   const [deletingGearId, setDeletingGearId] = useState<string | null>(null);
   const [collapsedSections, setCollapsedSections] = useState<Record<GearType, boolean>>({ quad: false, transmitter: false, goggles: false, battery: false, other: false });
@@ -167,7 +169,7 @@ function Garage() {
           pack_count: finalPackCount,
           cells: finalCells,
           connector_type: finalConnector || null,
-          purchase_cost: 0,
+          purchase_cost: purchaseCost,
           purchase_date: null,
           current_value: 0,
           created_at: new Date().toISOString(),
@@ -189,7 +191,7 @@ function Garage() {
         schema: "personal_gear",
         table: table,
         operation: "update",
-        data: { name, brand: brand || null, service_interval_minutes: serviceInterval, pack_count: packCount, cells, connector_type: connectorType || null },
+        data: { name, brand: brand || null, service_interval_minutes: serviceInterval, pack_count: packCount, cells, connector_type: connectorType || null, purchase_cost: purchaseCost, current_value: currentValue },
         filters: { id: gearId },
       });
       if (error) throw error;
@@ -478,6 +480,19 @@ function Garage() {
                   </>
                 )}
               </div>
+              {/* Cost Tracking Inputs */}
+              <div className="space-y-3 pt-2 border-t border-border">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="purchase-cost">Purchase Cost ($)</Label>
+                    <Input id="purchase-cost" type="number" min={0} step={0.01} value={String(purchaseCost)} onChange={(e) => setPurchaseCost(Number(e.target.value))} placeholder="0.00" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="current-value">Current Value ($)</Label>
+                    <Input id="current-value" type="number" min={0} step={0.01} value={String(currentValue)} onChange={(e) => setCurrentValue(Number(e.target.value))} placeholder="0.00" />
+                  </div>
+                </div>
+              </div>
               <DialogFooter><Button onClick={() => addGear.mutate()} disabled={!name} className="bg-primary hover:bg-primary/80 text-primary-foreground w-full sm:w-auto">Add to hanger</Button></DialogFooter>
             </DialogContent>
           </Dialog>
@@ -522,7 +537,7 @@ function Garage() {
                       const gParts = parts.filter((p) => p.gear_id === g.id);
                       const gLogs = logs.filter((l) => l.gear_id === g.id);
                       return (
-                        <GearCard key={g.id} gear={g} parts={gParts} logs={gLogs} onDeleteGear={handleDeleteClick} onUpdateGear={(gearId, name, brand, serviceInterval, packCount, cells, connectorType) => updateGear.mutate({ gearId, name, brand, serviceInterval, packCount, cells, connectorType })} onUpdatePackCount={(gearId, newCount) => updatePackCount.mutate({ gearId, newCount })} onAddPart={(gearId, partName, category, description) => addPart.mutate({ gearId, partName, category, description })} onRemovePart={(partId) => removePart.mutate(partId)} onAddLog={(gearId, description, cost) => addLog.mutate({ gearId, description, cost })} onRemoveLog={(logId) => removeLog.mutate(logId)} onService={(gearId, minutes, notes) => serviceGear.mutate({ gearId, minutes, notes })} isDeleting={deletingGearId === g.id} isHoveredDelete={hoveredDeleteGearId === g.id} onHoverDelete={(id) => setHoveredDeleteGearId(id)} />
+                        <GearCard key={g.id} gear={g} parts={gParts} logs={gLogs} onDeleteGear={handleDeleteClick} onUpdateGear={(gearId, name, brand, serviceInterval, packCount, cells, connectorType, purchaseCost, currentValue) => updateGear.mutate({ gearId, name, brand, serviceInterval, packCount, cells, connectorType, purchaseCost, currentValue })} onUpdatePackCount={(gearId, newCount) => updatePackCount.mutate({ gearId, newCount })} onAddPart={(gearId, partName, category, description) => addPart.mutate({ gearId, partName, category, description })} onRemovePart={(partId) => removePart.mutate(partId)} onAddLog={(gearId, description, cost) => addLog.mutate({ gearId, description, cost })} onRemoveLog={(logId) => removeLog.mutate(logId)} onService={(gearId, minutes, notes) => serviceGear.mutate({ gearId, minutes, notes })} isDeleting={deletingGearId === g.id} isHoveredDelete={hoveredDeleteGearId === g.id} onHoverDelete={(id) => setHoveredDeleteGearId(id)} />
                       );
                     })}
                   </div>

@@ -94,7 +94,7 @@ export function useActiveRigs(userId: string | null) {
       if (sessionsResult.error) throw sessionsResult.error;
       const sessionGearIds = (sessionsResult.data as { gear_id: string }[]).map(row => row.gear_id).filter((id): id is string => id !== null);
 
-      // Fetch user's drones that are not retired (retired=false or retired IS NULL for legacy records)
+      // Fetch user's drones
       const dronesResult = await db_request({
         mode: "query",
         table: "drones",
@@ -102,7 +102,6 @@ export function useActiveRigs(userId: string | null) {
         selectColumns: "id",
         filters: {
           user_id: userId,
-          retired: { $eq: false },
         },
       });
       if (dronesResult.error) throw dronesResult.error;
@@ -141,7 +140,7 @@ export function useCurrentStreak(userId: string | null) {
   });
 }
 
-/** Calculates total flight minutes for the current week (Monday to today).
+/** Calculates total flight minutes for the current week (Monday to Sunday).
  * Returns minutes for consistency with other dashboard calculations. */
 export function useWeeklyGoal(userId: string | null) {
   return useQuery({
@@ -152,8 +151,12 @@ export function useWeeklyGoal(userId: string | null) {
       // Calculate the most recent Monday
       const weekStart = new Date(now);
       weekStart.setDate(weekStart.getDate() - ((weekStart.getDay() + 6) % 7));
+      // Calculate Sunday at 23:59:59 of the same week
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 6);
+      weekEnd.setHours(23, 59, 59, 999);
       const weekStartStr = `${weekStart.getFullYear()}-${String(weekStart.getMonth() + 1).padStart(2, "0")}-${String(weekStart.getDate()).padStart(2, "0")}`;
-      const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+      const weekEndStr = `${weekEnd.getFullYear()}-${String(weekEnd.getMonth() + 1).padStart(2, "0")}-${String(weekEnd.getDate()).padStart(2, "0")} ${String(weekEnd.getHours()).padStart(2, "0")}:${String(weekEnd.getMinutes()).padStart(2, "0")}:${String(weekEnd.getSeconds()).padStart(2, "0")}`;
 
       const result = await db_request({
         mode: "query",
@@ -161,7 +164,7 @@ export function useWeeklyGoal(userId: string | null) {
         selectColumns: "flown_on,duration_minutes",
         filters: {
           user_id: userId,
-          flown_on: { $gte: weekStartStr, $lte: todayStr },
+          flown_on: { $gte: weekStartStr, $lte: weekEndStr },
         },
       });
       if (result.error) throw result.error;
