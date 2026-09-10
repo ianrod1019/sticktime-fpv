@@ -15,7 +15,7 @@ import { useState } from "react";
 import { Heatmap } from "@/components/heatmap";
 import { Progress } from "@/components/ui/progress";
 import { PageHeader } from "@/components/app-shell";
-import { computeStreak, formatHours, type SessionRow } from "@/lib/fpv";
+import { formatHours, type SessionRow } from "@/lib/fpv";
 import { StatCard } from "./StatCard";
 import { RatioBar } from "./RatioBar";
 import { QuickAddSessionLogger } from "./QuickAddSessionLogger";
@@ -43,6 +43,7 @@ interface DashboardContentProps {
   }>;
   activeRigs: number;
   profile: { callsign?: string; weekly_goal_hours?: number } | null;
+  streak: { sim: number; real: number; combined: number };
 }
 
 export function DashboardContent({
@@ -58,18 +59,12 @@ export function DashboardContent({
   rigUsage,
   activeRigs,
   profile,
+  streak,
 }: DashboardContentProps) {
   const goalHours = profile?.weekly_goal_hours ?? 5;
-
-  const weekStart = new Date();
-  weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-  const weekMinutes = recentSessions
-    .filter((s) => new Date(`${s.flown_on}T00:00:00`) >= weekStart)
-    .reduce((a, s) => a + s.duration_minutes, 0);
-  const goalPct = Math.min(100, Math.round((weekMinutes / 60 / Math.max(goalHours, 0.1)) * 100));
+  // Removed weekly goal calculations and UI since they are not needed.
 
   const packs = totalPacks;
-  const streak = computeStreak(recentSessions);
   const activeDrones = activeRigs;
 
   const heatmapSessions = (heatmapData?.map((d) => ({ flown_on: d.date, duration_minutes: d.minutes })) ?? []) as SessionRow[];
@@ -120,8 +115,8 @@ export function DashboardContent({
         <StatCard
           icon={Flame}
           label="Current streak"
-          value={`${streak} ${streak === 1 ? "day" : "days"}`}
-          hint="Consecutive days flown"
+          value={`${streak.combined} ${streak.combined === 1 ? "day" : "days"}`}
+          hint={`Sim: ${streak.sim}d, Real: ${streak.real}d`}
         />
         <StatCard icon={Battery} label="Packs flown" value={String(packs)} hint="Real-world packs" />
         <StatCard
@@ -132,18 +127,7 @@ export function DashboardContent({
         />
       </div>
 
-      <div className="mt-4 hud-panel p-5">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <span className="label-mono">Weekly goal</span>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {formatHours(weekMinutes)} of {goalHours}h this week
-            </p>
-          </div>
-          <Gauge className="h-4 w-4 text-primary" />
-        </div>
-        <Progress value={goalPct} className="mt-4" />
-      </div>
+      {/* Weekly goal section removed */}
 
       <div className="mt-4 hud-panel p-5">
         <span className="label-mono">Consistency grid — last 12 months</span>

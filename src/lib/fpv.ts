@@ -57,6 +57,75 @@ export function computeStreak(sessions: Pick<SessionRow, "flown_on">[]): number 
   return streak;
 }
 
+/** Consecutive days (ending today or yesterday) with sessions flown in each mode.
+ * Returns an object with streaks for 'sim' and 'real' modes, plus a 'combined' streak
+ * for days flown in either mode. */
+export function computeStreakByMode(sessions: Pick<SessionRow, "flown_on" | "session_type">[]): {
+  sim: number;
+  real: number;
+  combined: number;
+} {
+  // Group sessions by date and mode to know what was flown each day
+  const dayModes = new Map<string, Set<'sim' | 'real'>>();
+
+  for (const s of sessions) {
+    const day = s.flown_on;
+    const mode = s.session_type;
+    if (!dayModes.has(day)) {
+      dayModes.set(day, new Set());
+    }
+    dayModes.get(day)!.add(mode as 'sim' | 'real');
+  }
+
+  const getStreakForMode = (mode: 'sim' | 'real'): number => {
+    const daysWithMode = new Set<string>();
+    for (const [day, modes] of dayModes.entries()) {
+      if (modes.has(mode)) {
+        daysWithMode.add(day);
+      }
+    }
+
+    if (daysWithMode.size === 0) return 0;
+
+    const cursor = new Date();
+    const cursorKey = toDateKey(cursor);
+    if (!daysWithMode.has(cursorKey)) {
+      cursor.setDate(cursor.getDate() - 1);
+    }
+
+    let streak = 0;
+    while (daysWithMode.has(toDateKey(cursor))) {
+      streak += 1;
+      cursor.setDate(cursor.getDate() - 1);
+    }
+    return streak;
+  };
+
+  const getCombinedStreak = (): number => {
+    const daysWithAnyMode = new Set<string>(dayModes.keys());
+    if (daysWithAnyMode.size === 0) return 0;
+
+    const cursor = new Date();
+    const cursorKey = toDateKey(cursor);
+    if (!daysWithAnyMode.has(cursorKey)) {
+      cursor.setDate(cursor.getDate() - 1);
+    }
+
+    let streak = 0;
+    while (daysWithAnyMode.has(toDateKey(cursor))) {
+      streak += 1;
+      cursor.setDate(cursor.getDate() - 1);
+    }
+    return streak;
+  };
+
+  return {
+    sim: getStreakForMode('sim'),
+    real: getStreakForMode('real'),
+    combined: getCombinedStreak()
+  };
+}
+
 export function heatmapDays(sessions: SessionRow[], weeks = 53) {
   const totals = new Map<string, number>();
   for (const s of sessions) {

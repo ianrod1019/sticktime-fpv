@@ -66,17 +66,19 @@ export interface GearItem {
   name: string;
   gear_type: "quad" | "transmitter" | "goggles" | "battery" | "other";
   brand?: string | null;
-  service_interval_minutes: number;
-  minutes_since_service: number;
-  total_minutes: number;
-  pack_count: number;
-  crash_count: number;
   cells?: number | null;
   connector_type?: string | null;
   purchase_cost?: number;
   purchase_date?: string | null;
   current_value?: number;
   created_at?: string;
+  service_interval_minutes: number;
+  minutes_since_service: number;
+  total_minutes: number;
+  pack_count: number;
+  crash_count: number;
+  retired?: boolean;
+  last_service_notes?: string | null;
 }
 
 export interface GearPart {

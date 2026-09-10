@@ -127,6 +127,13 @@ export async function db_request<T = any>({
         Object.entries(allFilters).forEach(([key, value]) => {
           if (Array.isArray(value)) {
             query = query.in(key, value);
+          } else if (typeof value === 'object' && value !== null) {
+            // Support range operators: $gte, $gt, $lte, $lt
+            if (value.$gte !== undefined) query = query.gte(key, value.$gte);
+            if (value.$gt !== undefined) query = query.gt(key, value.$gt);
+            if (value.$lte !== undefined) query = query.lte(key, value.$lte);
+            if (value.$lt !== undefined) query = query.lt(key, value.$lt);
+            if (value.$eq !== undefined) query = query.eq(key, value.$eq);
           } else {
             query = query.eq(key, value);
           }
@@ -199,11 +206,20 @@ export async function db_request<T = any>({
         }
         let query = fromBuilder.update(data);
         query = applyFilters(query, filters);
-        const { data: updateResult, error: updateError } = await query.select();
-        if (updateError) {
-          return { data: null, error: updateError };
+        if (head || single) {
+          query = query.limit(1);
+          const { data: updateResult, error: updateError } = await query.single();
+          if (updateError) {
+            return { data: null, error: updateError };
+          }
+          return { data: updateResult as T, error: null };
+        } else {
+          const { data: updateResult, error: updateError } = await query.select();
+          if (updateError) {
+            return { data: null, error: updateError };
+          }
+          return { data: updateResult as T, error: null };
         }
-        return { data: updateResult as T, error: null };
       }
 
       case "delete": {
@@ -212,11 +228,20 @@ export async function db_request<T = any>({
         }
         let query = fromBuilder.delete();
         query = applyFilters(query, filters);
-        const { data: deleteResult, error: deleteError } = await query.select();
-        if (deleteError) {
-          return { data: null, error: deleteError };
+        if (head || single) {
+          query = query.limit(1);
+          const { data: deleteResult, error: deleteError } = await query.single();
+          if (deleteError) {
+            return { data: null, error: deleteError };
+          }
+          return { data: deleteResult as T, error: null };
+        } else {
+          const { data: deleteResult, error: deleteError } = await query.select();
+          if (deleteError) {
+            return { data: null, error: deleteError };
+          }
+          return { data: deleteResult as T, error: null };
         }
-        return { data: deleteResult, error: null };
       }
 
       case "count": {
