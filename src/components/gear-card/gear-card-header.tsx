@@ -13,7 +13,7 @@ interface GearCardHeaderProps {
   isDeleting: boolean;
   onHoverDelete: (id: string | null) => void;
   onDeleteGear: (id: string, name: string) => void;
-  onUpdateGear: (gearId: string, name: string, brand: string, serviceInterval: number, packCount: number) => void;
+  onUpdateGear: (gearId: string, name: string, brand: string, serviceInterval: number, packCount: number, cells: number, connectorType: string, purchaseCost: number, currentValue: number) => void;
 }
 
 export function GearCardHeader({

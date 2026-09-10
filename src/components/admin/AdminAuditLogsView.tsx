@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { db_request } from "@/lib/db_request";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -51,9 +52,13 @@ export function AdminAuditLogsView() {
 
       if (profilesList.length === 0) {
         // Fallback query to profiles (id, role, tier/subscription_tier)
-        const { data: fallbackProfiles, error: fallbackErr } = await supabase
-          .from("profiles")
-          .select("*");
+        const { data: fallbackProfiles, error: fallbackErr } = await db_request({
+          mode: "query",
+          table: "profiles",
+          operation: "select",
+          selectColumns: "*",
+          requireAdmin: true,
+        });
 
         if (fallbackErr) throw fallbackErr;
 
@@ -81,10 +86,14 @@ export function AdminAuditLogsView() {
       const targetAdmins = filteredAdmins.length > 0 ? filteredAdmins : profilesList;
 
       // Get audit counts for each actor
-      const { data: auditLogs, error: auditError } = await supabase
-        .from("admin_audit_logs")
-        .select("actor_id")
-        .limit(2000);
+      const { data: auditLogs, error: auditError } = await db_request({
+        mode: "query",
+        table: "admin_audit_logs",
+        operation: "select",
+        selectColumns: "actor_id",
+        limit: 2000,
+        requireAdmin: true,
+      });
 
       if (auditError) console.warn("Could not fetch audit logs count:", auditError);
 

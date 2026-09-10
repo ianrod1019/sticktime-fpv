@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { db_request } from "@/lib/db_request";
 
 export const Route = createFileRoute("/_authenticated/teams")({
   head: () => ({ meta: [{ title: "Squads & Teams — StickTime FPV" }] }),
@@ -33,9 +34,11 @@ function Teams() {
     queryKey: ["my-teams", user?.id],
     enabled: !!user?.id,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("team_members")
-        .select(`
+      const { data, error } = await db_request({
+        mode: "query",
+        table: "team_members",
+        operation: "select",
+        selectColumns: `
           team_role,
           teams (
             id,
@@ -44,8 +47,9 @@ function Teams() {
             created_at,
             owner_id
           )
-        `)
-        .eq("user_id", user!.id);
+        `,
+        filters: { user_id: user!.id },
+      });
 
       if (error) throw error;
       return data?.map((m) => ({ ...m.teams, team_role: m.team_role })) || [];
@@ -55,28 +59,37 @@ function Teams() {
   const createTeam = useMutation({
     mutationFn: async () => {
       if (!user) throw new Error("Not signed in");
-      const { data: team, error } = await supabase
-        .from("teams")
-        .insert({ name, description, owner_id: user.id })
-        .select("id")
-        .single();
+      const { data: team, error } = await db_request({
+        mode: "query",
+        table: "teams",
+        operation: "upsert",
+        data: { name, description, owner_id: user.id },
+        single: true,
+      });
 
       if (error) throw error;
 
-      const memberInsert = await supabase
-        .from("team_members")
-        .insert({ team_id: team.id, user_id: user.id, team_role: "owner" });
-
-      if (memberInsert.error) throw memberInsert.error;
+      await db_request({
+        mode: "query",
+        table: "team_members",
+        operation: "insert",
+        data: { team_id: team.id, user_id: user.id, team_role: "owner" },
+      });
 
       const randomCode = Math.random().toString(36).substring(2, 9).toUpperCase();
       const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
       
-      await supabase.from("team_invite_codes").insert({
-        team_id: team.id,
-        code: randomCode,
-        created_by: user.id,
-        expires_at: expiresAt,
+      await db_request({
+        mode: "query",
+        schema: "public",
+        table: "team_invite_codes",
+        operation: "insert",
+        data: {
+          team_id: team.id,
+          code: randomCode,
+          created_by: user.id,
+          expires_at: expiresAt,
+        },
       });
 
       return team.id;

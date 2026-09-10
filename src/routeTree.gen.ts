@@ -14,7 +14,9 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
-import { Route as AuthenticatedGarageRouteImport } from './routes/_authenticated/garage'
+import { Route as AuthenticatedBatteryHealthRouteImport } from './routes/_authenticated/battery-health'
+import { Route as AuthenticatedHangerRouteImport } from './routes/_authenticated/hanger'
+import { Route as AuthenticatedLedgerRouteImport } from './routes/_authenticated/ledger'
 import { Route as AuthenticatedLogRouteImport } from './routes/_authenticated/log'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedTeamsRouteImport } from './routes/_authenticated/teams'
@@ -50,9 +52,20 @@ const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedGarageRoute = AuthenticatedGarageRouteImport.update({
-  id: '/garage',
-  path: '/garage',
+const AuthenticatedBatteryHealthRoute =
+  AuthenticatedBatteryHealthRouteImport.update({
+    id: '/battery-health',
+    path: '/battery-health',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedHangerRoute = AuthenticatedHangerRouteImport.update({
+  id: '/hanger',
+  path: '/hanger',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLedgerRoute = AuthenticatedLedgerRouteImport.update({
+  id: '/ledger',
+  path: '/ledger',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedLogRoute = AuthenticatedLogRouteImport.update({
@@ -117,7 +130,9 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
-  '/garage': typeof AuthenticatedGarageRoute
+  '/battery-health': typeof AuthenticatedBatteryHealthRoute
+  '/hanger': typeof AuthenticatedHangerRoute
+  '/ledger': typeof AuthenticatedLedgerRoute
   '/log': typeof AuthenticatedLogRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/teams': typeof AuthenticatedTeamsRouteWithChildren
@@ -133,7 +148,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
-  '/garage': typeof AuthenticatedGarageRoute
+  '/battery-health': typeof AuthenticatedBatteryHealthRoute
+  '/hanger': typeof AuthenticatedHangerRoute
+  '/ledger': typeof AuthenticatedLedgerRoute
   '/log': typeof AuthenticatedLogRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/teams': typeof AuthenticatedTeamsRouteWithChildren
@@ -152,7 +169,9 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
-  '/_authenticated/garage': typeof AuthenticatedGarageRoute
+  '/_authenticated/battery-health': typeof AuthenticatedBatteryHealthRoute
+  '/_authenticated/hanger': typeof AuthenticatedHangerRoute
+  '/_authenticated/ledger': typeof AuthenticatedLedgerRoute
   '/_authenticated/log': typeof AuthenticatedLogRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/teams': typeof AuthenticatedTeamsRouteWithChildren
@@ -171,7 +190,9 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/admin'
-    | '/garage'
+    | '/battery-health'
+    | '/hanger'
+    | '/ledger'
     | '/log'
     | '/settings'
     | '/teams'
@@ -187,7 +208,9 @@ export interface FileRouteTypes {
     | '/'
     | '/privacy'
     | '/terms'
-    | '/garage'
+    | '/battery-health'
+    | '/hanger'
+    | '/ledger'
     | '/log'
     | '/settings'
     | '/teams'
@@ -205,7 +228,9 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/_authenticated/admin'
-    | '/_authenticated/garage'
+    | '/_authenticated/battery-health'
+    | '/_authenticated/hanger'
+    | '/_authenticated/ledger'
     | '/_authenticated/log'
     | '/_authenticated/settings'
     | '/_authenticated/teams'
@@ -262,11 +287,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/garage': {
-      id: '/_authenticated/garage'
-      path: '/garage'
-      fullPath: '/garage'
-      preLoaderRoute: typeof AuthenticatedGarageRouteImport
+    '/_authenticated/battery-health': {
+      id: '/_authenticated/battery-health'
+      path: '/battery-health'
+      fullPath: '/battery-health'
+      preLoaderRoute: typeof AuthenticatedBatteryHealthRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/hanger': {
+      id: '/_authenticated/hanger'
+      path: '/hanger'
+      fullPath: '/hanger'
+      preLoaderRoute: typeof AuthenticatedHangerRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/ledger': {
+      id: '/_authenticated/ledger'
+      path: '/ledger'
+      fullPath: '/ledger'
+      preLoaderRoute: typeof AuthenticatedLedgerRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/log': {
@@ -369,7 +408,9 @@ const AuthenticatedTeamsRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
-  AuthenticatedGarageRoute: typeof AuthenticatedGarageRoute
+  AuthenticatedBatteryHealthRoute: typeof AuthenticatedBatteryHealthRoute
+  AuthenticatedHangerRoute: typeof AuthenticatedHangerRoute
+  AuthenticatedLedgerRoute: typeof AuthenticatedLedgerRoute
   AuthenticatedLogRoute: typeof AuthenticatedLogRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedTeamsRoute: typeof AuthenticatedTeamsRouteWithChildren
@@ -382,7 +423,9 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
-  AuthenticatedGarageRoute: AuthenticatedGarageRoute,
+  AuthenticatedBatteryHealthRoute: AuthenticatedBatteryHealthRoute,
+  AuthenticatedHangerRoute: AuthenticatedHangerRoute,
+  AuthenticatedLedgerRoute: AuthenticatedLedgerRoute,
   AuthenticatedLogRoute: AuthenticatedLogRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedTeamsRoute: AuthenticatedTeamsRouteWithChildren,

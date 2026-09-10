@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { usePilot } from "@/hooks/use-pilot";
 import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
+import { db_request, DbRequestResult } from "@/lib/db_request";
 import { supabase } from "@/integrations/supabase/client";
 import { SidebarNavigation } from "@/components/sidebar";
 
@@ -66,11 +67,14 @@ export function AppShell({ children }: { children: ReactNode }) {
       try {
         let allowed = false;
 
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", user.id)
-          .maybeSingle();
+        const { data, error }: DbRequestResult<any> = await db_request({
+          mode: "query",
+          table: "profiles",
+          operation: "select",
+          selectColumns: "role",
+          filters: { id: user.id },
+          head: true,
+        });
 
         if (!error && data?.role) {
           const r = data.role.toLowerCase();
@@ -132,7 +136,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     );
   }
 
-return (
+  return (
      <div className="min-h-screen md:flex relative">
        <div className="fixed left-0 inset-y-0 w-20 bg-sidebar border-r border-sidebar-border p-4 z-20">
          <SidebarNavigation

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { db_request } from "@/lib/db_request";
 
 export const Route = createFileRoute("/_authenticated/squadron/")({
   head: () => ({ meta: [{ title: `Squadron Portal — StickTime FPV` }] }),
@@ -35,24 +36,30 @@ function SquadronPortalPage() {
     queryKey: ["user-squadrons", user?.id],
     enabled: !!user?.id,
     queryFn: async () => {
-      const { data: memberships, error: memberError } = await supabase
-        .from("team_members")
-        .select("team_id, team_role, joined_at")
-        .eq("user_id", user!.id);
+      const { data: memberships, error: memberError } = await db_request({
+        mode: "query",
+        table: "team_members",
+        operation: "select",
+        selectColumns: "team_id, team_role, joined_at",
+        filters: { user_id: user!.id },
+      });
 
       if (memberError) throw memberError;
       if (!memberships || memberships.length === 0) return [];
 
-      const teamIds = memberships.map((m) => m.team_id);
-      const { data: teams, error: teamsError } = await supabase
-        .from("teams")
-        .select("*")
-        .in("id", teamIds);
+      const teamIds = memberships.map((m: any) => m.team_id);
+      const { data: teams, error: teamsError } = await db_request({
+        mode: "query",
+        table: "teams",
+        operation: "select",
+        selectColumns: "*",
+        filters: { id: teamIds },
+      });
 
       if (teamsError) throw teamsError;
 
-      return teams.map((team) => {
-        const membership = memberships.find((m) => m.team_id === team.id);
+      return (teams || []).map((team: any) => {
+        const membership = memberships.find((m: any) => m.team_id === team.id);
         return {
           ...team,
           userRole: membership?.team_role || "member",
@@ -71,17 +78,30 @@ function SquadronPortalPage() {
 
       if (error) {
         // Fallback manual insert if RPC fails
-        const teamRes = await supabase
-          .from("teams")
-          .insert([{ name, description, owner_id: user!.id }])
-          .select()
-          .single();
-        if (teamRes.error) throw teamRes.error;
-        
-        await supabase.from("team_members").insert([
-          { team_id: teamRes.data.id, user_id: user!.id, team_role: "owner" }
-        ]);
-        return teamRes.data;
+        const teamResult = await db_request({
+          mode: "query",
+          table: "teams",
+          operation: "upsert",
+          data: { name, description, owner_id: user!.id },
+          single: true,
+        });
+
+        if (teamResult.error) throw teamResult.error;
+
+        const memberResult = await db_request({
+          mode: "query",
+          table: "team_members",
+          operation: "insert",
+          data: {
+            team_id: teamResult.data?.id,
+            user_id: user!.id,
+            team_role: "owner",
+          },
+        });
+
+        if (memberResult.error) throw memberResult.error;
+
+        return teamResult.data?.id;
       }
       return data;
     },

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { db_request } from "@/lib/db_request";
 
 export interface UserRoleTier {
   role: string;
@@ -26,11 +27,14 @@ export function useRoleAndTier(userId: string | undefined) {
     queryFn: async () => {
       if (!userId) throw new Error("No user ID provided");
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id, role, tier")
-        .eq("id", userId)
-        .maybeSingle();
+      const { data, error } = await db_request({
+        mode: "query",
+        table: "profiles",
+        operation: "select",
+        selectColumns: "id, role, tier",
+        filters: { id: userId },
+        head: true,
+      });
 
       if (error) throw error;
       if (!data) throw new Error("Profile not found");
@@ -57,11 +61,14 @@ export function useAdminStatus(userId: string | undefined) {
     queryFn: async () => {
       if (!userId) throw new Error("No user ID provided");
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id, role")
-        .eq("id", userId)
-        .maybeSingle();
+      const { data, error } = await db_request({
+        mode: "query",
+        table: "profiles",
+        operation: "select",
+        selectColumns: "id, role",
+        filters: { id: userId },
+        head: true,
+      });
 
       if (error) throw error;
       if (!data) throw new Error("Profile not found");
@@ -132,11 +139,14 @@ export function requirePro(role: string | undefined, tier: string | undefined): 
 }
 
 export async function verifyAdminAccess(userId: string): Promise<boolean> {
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("id, role")
-    .eq("id", userId)
-    .maybeSingle();
+  const { data, error } = await db_request({
+    mode: "query",
+    table: "profiles",
+    operation: "select",
+    selectColumns: "id, role",
+    filters: { id: userId },
+    head: true,
+  });
 
   if (error || !data) return false;
 

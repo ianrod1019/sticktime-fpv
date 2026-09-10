@@ -9,8 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { usePilot } from "@/hooks/use-pilot";
 import { downloadFile, toCsv } from "@/lib/fpv";
-import { supabase } from "@/integrations/supabase/client";
-
+import { db_request } from "@/lib/db_request";
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({ meta: [{ title: "Settings — StickTime FPV" }] }),
   component: Settings,
@@ -48,16 +47,43 @@ function Settings() {
 
   async function exportData() {
     try {
-      const [sessions, gear, parts, records] = await Promise.all([
-        supabase.from("sessions").select("*"),
-        supabase.from("gear").select("*"),
-        supabase.from("gear_parts").select("*"),
-        supabase.from("personal_records").select("*"),
+      const [sessions, batteries, drones, transmitters, goggles, otherGear, batteryParts, droneParts, transmitterParts, gogglesParts, otherParts, records] = await Promise.all([
+        db_request({ mode: "query", table: "sessions", operation: "select" }),
+        db_request({ mode: "query", schema: "personal_gear", table: "batteries", operation: "select" }),
+        db_request({ mode: "query", schema: "personal_gear", table: "drones", operation: "select" }),
+        db_request({ mode: "query", schema: "personal_gear", table: "transmitters", operation: "select" }),
+        db_request({ mode: "query", schema: "personal_gear", table: "goggles", operation: "select" }),
+        db_request({ mode: "query", schema: "personal_gear", table: "other_gear", operation: "select" }),
+        db_request({ mode: "query", schema: "personal_gear", table: "battery_parts", operation: "select" }),
+        db_request({ mode: "query", schema: "personal_gear", table: "drone_parts", operation: "select" }),
+        db_request({ mode: "query", schema: "personal_gear", table: "transmitter_parts", operation: "select" }),
+        db_request({ mode: "query", schema: "personal_gear", table: "goggles_parts", operation: "select" }),
+        db_request({ mode: "query", schema: "personal_gear", table: "other_parts", operation: "select" }),
+        db_request({ mode: "query", table: "personal_records", operation: "select" }),
       ]);
+
+      // Combine all gear tables into one gear array
+      const gear = [
+        ...(batteries.data ?? []),
+        ...(drones.data ?? []),
+        ...(transmitters.data ?? []),
+        ...(goggles.data ?? []),
+        ...(otherGear.data ?? []),
+      ];
+
+      // Combine all parts tables into one parts array
+      const parts = [
+        ...(batteryParts.data ?? []),
+        ...(droneParts.data ?? []),
+        ...(transmitterParts.data ?? []),
+        ...(gogglesParts.data ?? []),
+        ...(otherParts.data ?? []),
+      ];
+
       const tables = [
         ["sessions", sessions.data ?? []],
-        ["gear", gear.data ?? []],
-        ["gear_parts", parts.data ?? []],
+        ["gear", gear],
+        ["gear_parts", parts],
         ["personal_records", records.data ?? []],
       ] as const;
       const content =

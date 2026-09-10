@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { db_request } from "@/lib/db_request";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface AuthContextType {
@@ -37,11 +38,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const fetchRoleAndTier = useCallback(async (userId: string) => {
     try {
       // 1. Query profiles table
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("role, tier, subscription_tier")
-        .eq("id", userId)
-        .maybeSingle();
+      const { data, error } = await db_request({
+        mode: "query",
+        table: "profiles",
+        operation: "select",
+        selectColumns: "role, tier, subscription_tier",
+        filters: { id: userId },
+        head: true,
+      });
 
       if (error) {
         console.error("Error fetching role/tier for user:", userId, error);

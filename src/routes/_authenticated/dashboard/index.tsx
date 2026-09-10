@@ -7,7 +7,7 @@ import { useDashboardHeatmap } from "./hooks";
 import { useRecentSessions } from "./hooks";
 import { useActiveRigs, useRigUsage } from "./hooks";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { db_request } from "@/lib/db_request";
 
 export const Route = createFileRoute("/_authenticated/dashboard/")({
   head: () => ({
@@ -38,9 +38,37 @@ function Dashboard() {
   const { data: gearData } = useQuery({
     queryKey: ["gear", user],
     queryFn: async () => {
-      const { data, error } = await supabase.from("gear").select("id,name,gear_type,total_minutes,is_as_needed");
-      if (error) throw error;
-      return data ?? [];
+      if (!user) return [];
+
+      const [
+        { data: batteries, error: batteriesError },
+        { data: drones, error: dronesError },
+        { data: transmitters, error: transmittersError },
+        { data: goggles, error: gogglesError },
+        { data: otherGear, error: otherGearError },
+      ] = await Promise.all([
+        db_request({ mode: "query", schema: "personal_gear", table: "batteries", operation: "select", selectColumns: "id,name,total_minutes,is_as_needed", filters: { user_id: user } }) as Promise<{ data: Array<{ id: string; name: string; total_minutes: number; is_as_needed: boolean }>; error: Error | null }>,
+        db_request({ mode: "query", schema: "personal_gear", table: "drones", operation: "select", selectColumns: "id,name,total_minutes,is_as_needed", filters: { user_id: user } }) as Promise<{ data: Array<{ id: string; name: string; total_minutes: number; is_as_needed: boolean }>; error: Error | null }>,
+        db_request({ mode: "query", schema: "personal_gear", table: "transmitters", operation: "select", selectColumns: "id,name,total_minutes,is_as_needed", filters: { user_id: user } }) as Promise<{ data: Array<{ id: string; name: string; total_minutes: number; is_as_needed: boolean }>; error: Error | null }>,
+        db_request({ mode: "query", schema: "personal_gear", table: "goggles", operation: "select", selectColumns: "id,name,total_minutes,is_as_needed", filters: { user_id: user } }) as Promise<{ data: Array<{ id: string; name: string; total_minutes: number; is_as_needed: boolean }>; error: Error | null }>,
+        db_request({ mode: "query", schema: "personal_gear", table: "other_gear", operation: "select", selectColumns: "id,name,total_minutes,is_as_needed", filters: { user_id: user } }) as Promise<{ data: Array<{ id: string; name: string; total_minutes: number; is_as_needed: boolean }>; error: Error | null }>,
+      ]);
+
+      if (batteriesError) throw batteriesError;
+      if (dronesError) throw dronesError;
+      if (transmittersError) throw transmittersError;
+      if (gogglesError) throw gogglesError;
+      if (otherGearError) throw otherGearError;
+
+      const gear = [
+        ...(batteries ?? []).map((item) => ({ ...item, gear_type: "battery" as const })),
+        ...(drones ?? []).map((item) => ({ ...item, gear_type: "quad" as const })),
+        ...(transmitters ?? []).map((item) => ({ ...item, gear_type: "transmitter" as const })),
+        ...(goggles ?? []).map((item) => ({ ...item, gear_type: "goggles" as const })),
+        ...(otherGear ?? []).map((item) => ({ ...item, gear_type: "other" as const })),
+      ];
+
+      return gear;
     },
   });
 
@@ -67,7 +95,7 @@ function Dashboard() {
       monthlyData={monthlyData ?? []}
       rigUsage={rigUsageData}
       activeRigs={activeRigs}
-      profile={profile}
+      profile={profile ?? null}
     />
   );
 }

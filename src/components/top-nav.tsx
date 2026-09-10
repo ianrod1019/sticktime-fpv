@@ -48,6 +48,7 @@ export function TopNav() {
           <Link to="/pricing" className="text-foreground hover:text-primary transition-colors font-mono text-sm">Pricing</Link>
           <Link to="/terms" className="text-foreground hover:text-primary transition-colors font-mono text-sm">Terms</Link>
           <Link to="/privacy" className="text-foreground hover:text-primary transition-colors font-mono text-sm">Privacy</Link>
+          <Link to="/battery-health" className="text-foreground hover:text-primary transition-colors font-mono text-sm">Battery Health</Link>
         </div>
       </div>
       <div className="flex items-center gap-2">

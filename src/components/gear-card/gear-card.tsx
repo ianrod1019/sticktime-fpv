@@ -3,6 +3,7 @@ import { GearItem, GearPart, MaintenanceLog } from "./types";
 import { GearCardHeader } from "./gear-card-header";
 import { GearCardStats } from "./gear-card-stats";
 import { GearCardBatteries } from "./gear-card-batteries";
+import { BatteryHealthDashboard } from "./battery-health-dashboard";
 import { GearCardParts } from "./gear-card-parts";
 import { GearCardLogs } from "./gear-card-logs";
 import { GearCardServiceDialog } from "./gear-card-service-dialog";
@@ -12,7 +13,7 @@ interface GearCardProps {
   parts: GearPart[];
   logs: MaintenanceLog[];
   onDeleteGear: (id: string, name: string) => void;
-  onUpdateGear: (gearId: string, name: string, brand: string, serviceInterval: number, packCount: number) => void;
+  onUpdateGear: (gearId: string, name: string, brand: string, serviceInterval: number, packCount: number, cells: number, connectorType: string, purchaseCost: number, currentValue: number) => void;
   onAddPart: (gearId: string, partName: string, category: string, description: string) => void;
   onRemovePart: (partId: string) => void;
   onAddLog: (gearId: string, description: string, cost: string) => void;
@@ -97,13 +98,19 @@ export function GearCard({
           />
 
           {/* Battery Packs Section */}
-          {isBattery && (
+        {isBattery && (
+          <div className="space-y-4">
             <GearCardBatteries
               gear={gear}
               onUpdatePackCount={onUpdatePackCount}
               isDeleting={isDeleting}
             />
-          )}
+            <BatteryHealthDashboard
+              gearId={gear.id}
+              packCount={gear.pack_count}
+            />
+          </div>
+        )}
 
           {/* Parts/Upgrades Section */}
           {(isTransmitter || isGoggles || isQuad || isOther) && (

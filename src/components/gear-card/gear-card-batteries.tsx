@@ -6,7 +6,7 @@ import { GearItem } from "./types";
 interface GearCardBatteriesProps {
   gear: GearItem;
   isDeleting: boolean;
-  onUpdatePackCount?: (gearId: string, newCount: number) => void;
+  onUpdatePackCount?: ((gearId: string, newCount: number) => void) | undefined;
 }
 
 export function GearCardBatteries({

@@ -1,5 +1,6 @@
 export type SessionRow = {
   id: string;
+  user_id?: string;
   session_type: "sim" | "real";
   flown_on: string;
   duration_minutes: number;

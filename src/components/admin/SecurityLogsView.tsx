@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { db_request } from "@/lib/db_request";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -45,11 +46,15 @@ export function SecurityLogsView() {
     queryFn: async () => {
       const { data, error } = await supabase.rpc("admin_get_security_logs");
       if (error) {
-        const { data: directData, error: directErr } = await supabase
-          .from("security_logs")
-          .select("*")
-          .order("created_at", { ascending: false })
-          .limit(100);
+        const { data: directData, error: directErr } = await db_request({
+          mode: "query",
+          table: "security_logs",
+          operation: "select",
+          selectColumns: "*",
+          orderBy: { column: "created_at", ascending: false },
+          limit: 100,
+          requireAdmin: true,
+        });
         
         if (directErr) throw directErr;
         setSecurityLogs(directData || []);

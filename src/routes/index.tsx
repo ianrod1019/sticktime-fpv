@@ -77,8 +77,8 @@ function Landing() {
               Every pack. Every sim run. <span className="text-primary">Counted.</span>
             </h1>
             <p className="mt-6 text-lg text-muted-foreground max-w-xl">
-              StickTime is the logbook, gear garage and analytics dashboard for pilots who take stick
-              time seriously — from your first hover to your hundredth race.
+            StickTime is the logbook, gear hanger and analytics dashboard for pilots who take stick
+            time seriously — from your first hover to your hundredth race.
             </p>
             <div className="mt-8 flex gap-4">
               <Link to="/" search={{ showAuth: true, mode: "signup" }}>

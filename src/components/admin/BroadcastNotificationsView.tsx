@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { db_request } from "@/lib/db_request";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,11 +29,14 @@ export function BroadcastNotificationsView() {
   const { data: notifications, isLoading } = useQuery({
     queryKey: ["admin-broadcast-notifications"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("notifications")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(50);
+      const { data, error } = await db_request({
+        mode: "query",
+        table: "notifications",
+        operation: "select",
+        selectColumns: "*",
+        orderBy: { column: "created_at", ascending: false },
+        limit: 50,
+      });
 
       if (error) throw error;
       return (data || []) as NotificationItem[];
@@ -44,20 +48,30 @@ export function BroadcastNotificationsView() {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) throw new Error("Not authenticated");
 
-      const { error } = await supabase.from("notifications").insert({
-        title,
-        message,
-        target_tier: targetTier,
-        sender_id: userData.user.id,
+      const { error } = await db_request({
+        mode: "query",
+        table: "notifications",
+        operation: "insert",
+        data: {
+          title,
+          message,
+          target_tier: targetTier,
+          sender_id: userData.user.id,
+        },
       });
 
       if (error) throw error;
 
       // Record admin audit log
-      await supabase.from("admin_audit_logs").insert({
-        actor_id: userData.user.id,
-        action: "broadcast_notification",
-        payload: { title, target_tier: targetTier },
+      await db_request({
+        mode: "query",
+        table: "admin_audit_logs",
+        operation: "insert",
+        data: {
+          actor_id: userData.user.id,
+          action: "broadcast_notification",
+          payload: { title, target_tier: targetTier },
+        },
       });
     },
     onSuccess: () => {

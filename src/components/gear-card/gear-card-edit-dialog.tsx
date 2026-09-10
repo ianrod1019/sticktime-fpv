@@ -29,43 +29,77 @@ interface GearCardEditDialogProps {
     serviceInterval: number,
     packCount: number,
     cells: number,
-    connectorType: string
+    connectorType: string,
+    purchaseCost: number,
+    currentValue: number,
   ) => void;
   isDeleting: boolean;
 }
 
-const PRESET_CONNECTORS = ["XT30", "XT60", "XT90", "PH2.0", "BT2.0", "BT3.0", "XN69", "A30"];
+const PRESET_CONNECTORS = [
+  "XT30",
+  "XT60",
+  "XT90",
+  "PH2.0",
+  "BT2.0",
+  "BT3.0",
+  "XN69",
+  "A30",
+];
 
-export function GearCardEditDialog({ gear, onUpdateGear, isDeleting }: GearCardEditDialogProps) {
+export function GearCardEditDialog({
+  gear,
+  onUpdateGear,
+  isDeleting,
+}: GearCardEditDialogProps) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(gear.name);
   const [brand, setBrand] = useState(gear.brand || "");
   const [serviceMode, setServiceMode] = useState<"interval" | "needed">(
-    gear.service_interval_minutes >= 999999 || gear.service_interval_minutes <= 0 ? "needed" : "interval"
+    gear.service_interval_minutes >= 999999 ||
+      gear.service_interval_minutes <= 0
+      ? "needed"
+      : "interval",
   );
   const [interval, setIntervalMinutes] = useState(
-    gear.service_interval_minutes > 0 && gear.service_interval_minutes < 999999 ? gear.service_interval_minutes : 600
+    gear.service_interval_minutes > 0 && gear.service_interval_minutes < 999999
+      ? gear.service_interval_minutes
+      : 600,
   );
   const [packCount, setPackCount] = useState(gear.pack_count || 4);
   const [cells, setCells] = useState<number>(gear.cells || 4);
-  
+  const [purchaseCost, setPurchaseCost] = useState<number>(
+    gear.purchase_cost ?? 0,
+  );
+  const [currentValue, setCurrentValue] = useState<number>(
+    gear.current_value ?? gear.purchase_cost ?? 0,
+  );
+
   const initialConn = gear.connector_type || "XT60";
   const isInitialPreset = PRESET_CONNECTORS.includes(initialConn);
-  const [connectorType, setConnectorType] = useState<string>(isInitialPreset ? initialConn : "XT60");
+  const [connectorType, setConnectorType] = useState<string>(
+    isInitialPreset ? initialConn : "XT60",
+  );
 
   // Synchronize internal state whenever gear prop changes or dialog re-opens
   useEffect(() => {
     if (open) {
       setName(gear.name);
       setBrand(gear.brand || "");
-      const isAsNeeded = gear.service_interval_minutes >= 999999 || gear.service_interval_minutes <= 0;
+      const isAsNeeded =
+        gear.service_interval_minutes >= 999999 ||
+        gear.service_interval_minutes <= 0;
       setServiceMode(isAsNeeded ? "needed" : "interval");
       setIntervalMinutes(
-        !isAsNeeded && gear.service_interval_minutes > 0 ? gear.service_interval_minutes : 600
+        !isAsNeeded && gear.service_interval_minutes > 0
+          ? gear.service_interval_minutes
+          : 600,
       );
       setPackCount(gear.pack_count || 4);
       setCells(gear.cells || (gear.gear_type === "battery" ? 6 : 4));
-      
+      setPurchaseCost(gear.purchase_cost ?? 0);
+      setCurrentValue(gear.current_value ?? gear.purchase_cost ?? 0);
+
       const conn = gear.connector_type || "XT60";
       if (PRESET_CONNECTORS.includes(conn)) {
         setConnectorType(conn);
@@ -85,8 +119,18 @@ export function GearCardEditDialog({ gear, onUpdateGear, isDeleting }: GearCardE
     const finalPackCount = isBattery ? packCount : gear.pack_count || 0;
     const finalCells = showCellsAndConnector ? cells : 0;
     const finalConnector = showCellsAndConnector ? connectorType : "";
-    
-    onUpdateGear(gear.id, name.trim(), brand.trim(), finalInterval, finalPackCount, finalCells, finalConnector);
+
+    onUpdateGear(
+      gear.id,
+      name.trim(),
+      brand.trim(),
+      finalInterval,
+      finalPackCount,
+      finalCells,
+      finalConnector,
+      purchaseCost,
+      currentValue,
+    );
     setOpen(false);
   };
 
@@ -106,7 +150,8 @@ export function GearCardEditDialog({ gear, onUpdateGear, isDeleting }: GearCardE
       <DialogContent className="border-primary/30 bg-background/95 backdrop-blur-xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-foreground font-display">
-            <span className="w-2 h-2 rounded-full bg-primary"></span> Edit Equipment
+            <span className="w-2 h-2 rounded-full bg-primary"></span> Edit
+            Equipment
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-2 max-h-[70vh] overflow-y-auto pr-1">
@@ -120,7 +165,9 @@ export function GearCardEditDialog({ gear, onUpdateGear, isDeleting }: GearCardE
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor={`edit-brand-${gear.id}`}>Brand / Manufacturer</Label>
+            <Label htmlFor={`edit-brand-${gear.id}`}>
+              Brand / Manufacturer
+            </Label>
             <Input
               id={`edit-brand-${gear.id}`}
               value={brand}
@@ -133,7 +180,9 @@ export function GearCardEditDialog({ gear, onUpdateGear, isDeleting }: GearCardE
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label htmlFor={`edit-cells-${gear.id}`}>Cell Count (S)</Label>
+                  <Label htmlFor={`edit-cells-${gear.id}`}>
+                    Cell Count (S)
+                  </Label>
                   <Select
                     value={String(cells)}
                     onValueChange={(v) => setCells(Number(v))}
@@ -179,7 +228,9 @@ export function GearCardEditDialog({ gear, onUpdateGear, isDeleting }: GearCardE
 
           {isBattery ? (
             <div className="space-y-2">
-              <Label htmlFor={`edit-packs-${gear.id}`}>Packs in this Battery Set</Label>
+              <Label htmlFor={`edit-packs-${gear.id}`}>
+                Packs in this Battery Set
+              </Label>
               <Input
                 id={`edit-packs-${gear.id}`}
                 type="number"
@@ -195,20 +246,28 @@ export function GearCardEditDialog({ gear, onUpdateGear, isDeleting }: GearCardE
                 <Label>Maintenance Schedule</Label>
                 <Select
                   value={serviceMode}
-                  onValueChange={(v) => setServiceMode(v as "interval" | "needed")}
+                  onValueChange={(v) =>
+                    setServiceMode(v as "interval" | "needed")
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="interval">Custom service interval (minutes)</SelectItem>
-                    <SelectItem value="needed">Service as needed (no fixed schedule)</SelectItem>
+                    <SelectItem value="interval">
+                      Custom service interval (minutes)
+                    </SelectItem>
+                    <SelectItem value="needed">
+                      Service as needed (no fixed schedule)
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               {serviceMode === "interval" && (
                 <div className="space-y-2">
-                  <Label htmlFor={`edit-interval-${gear.id}`}>Service interval (minutes)</Label>
+                  <Label htmlFor={`edit-interval-${gear.id}`}>
+                    Service interval (minutes)
+                  </Label>
                   <Input
                     id={`edit-interval-${gear.id}`}
                     type="number"
@@ -219,6 +278,44 @@ export function GearCardEditDialog({ gear, onUpdateGear, isDeleting }: GearCardE
               )}
             </>
           )}
+
+          <div className="space-y-3 pt-2 border-t border-border">
+            <div className="flex items-center gap-2">
+              <Label className="text-sm font-semibold">
+                Cost Tracking (Pro Feature)
+              </Label>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label htmlFor={`edit-purchase-cost-${gear.id}`}>
+                  Purchase Cost ($)
+                </Label>
+                <Input
+                  id={`edit-purchase-cost-${gear.id}`}
+                  type="number"
+                  min={0}
+                  step={0.01}
+                  value={String(purchaseCost)}
+                  onChange={(e) => setPurchaseCost(Number(e.target.value))}
+                  placeholder="0.00"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor={`edit-current-value-${gear.id}`}>
+                  Current Value ($)
+                </Label>
+                <Input
+                  id={`edit-current-value-${gear.id}`}
+                  type="number"
+                  min={0}
+                  step={0.01}
+                  value={String(currentValue)}
+                  onChange={(e) => setCurrentValue(Number(e.target.value))}
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
+          </div>
         </div>
         <DialogFooter>
           <Button

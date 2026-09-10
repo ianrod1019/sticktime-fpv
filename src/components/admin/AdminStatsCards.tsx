@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { db_request } from "@/lib/db_request";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Wrench, Activity } from "lucide-react";
 
@@ -7,7 +7,14 @@ export function AdminStatsCards() {
   const { data: profilesCount } = useQuery({
     queryKey: ["admin-profiles-count"],
     queryFn: async () => {
-      const { count, error } = await supabase.from("profiles").select("*", { count: "exact", head: true });
+      const { count, error } = await db_request({
+        mode: "query",
+        schema: "public",
+        table: "profiles",
+        operation: "count",
+        count: "exact",
+        requireAdmin: true,
+      });
       if (error) return 0;
       return count || 0;
     },
@@ -16,16 +23,34 @@ export function AdminStatsCards() {
   const { data: gearCount } = useQuery({
     queryKey: ["admin-gear-count"],
     queryFn: async () => {
-      const { count, error } = await supabase.from("gear").select("*", { count: "exact", head: true });
-      if (error) return 0;
-      return count || 0;
+      const gearTables = ["batteries", "drones", "transmitters", "goggles", "other_gear"];
+      const promises = gearTables.map(async (table) => {
+        const { count } = await db_request({
+          mode: "query",
+          schema: "personal_gear",
+          table,
+          operation: "count",
+          count: "exact",
+        });
+        return count ?? 0;
+      });
+      const counts = await Promise.all(promises);
+      const total = counts.reduce((sum, count) => sum + count, 0);
+      return total;
     },
   });
 
   const { data: sessionsCount } = useQuery({
     queryKey: ["admin-sessions-count"],
     queryFn: async () => {
-      const { count, error } = await supabase.from("sessions").select("*", { count: "exact", head: true });
+      const { count, error } = await db_request({
+        mode: "query",
+        schema: "public",
+        table: "sessions",
+        operation: "count",
+        count: "exact",
+        requireAdmin: true,
+      });
       if (error) return 0;
       return count || 0;
     },

@@ -164,8 +164,8 @@ function SquadronHQPage() {
               <div className="p-4 rounded-lg bg-card/40 border border-border/60">
                 <h3 className="font-semibold text-sm mb-1">Squadron Hangar Gear</h3>
                 <p className="text-xs text-muted-foreground">Browse shared quads, spare props, and VTX gear across squadron pilots.</p>
-                <Button variant="outline" size="sm" className="mt-4 w-full" onClick={() => navigate({ to: "/garage" })}>
-                  View Fleet
+                <Button variant="outline" size="sm" className="mt-4 w-full" onClick={() => navigate({ to: "/hanger" })}>
+                View Fleet
                 </Button>
               </div>
               <div className="p-4 rounded-lg bg-card/40 border border-border/60">

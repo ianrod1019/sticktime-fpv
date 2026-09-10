@@ -3,6 +3,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useRef, useMemo } from "react";
 import { Plus, Trash2, Timer, Monitor } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { db_request, type DbRequestResult } from "@/lib/db_request";
+import { type GearItem } from "@/components/gear-card/types";
 import { PageHeader } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,7 +37,7 @@ import {
 export const Route = createFileRoute("/_authenticated/log")({
   validateSearch: (search: Record<string, unknown>): { tab?: "real" | "sim" } => {
     return {
-      tab: search.tab === "sim" || search.tab === "real" ? search.tab : undefined,
+      ...(search['tab'] === "sim" || search['tab'] === "real" ? { tab: search['tab'] } : {}),
     };
   },
   head: () => ({
@@ -78,13 +80,79 @@ function LogPage() {
   const { data } = useQuery({
     queryKey: ["log-data"],
     queryFn: async () => {
-      const [sessions, gear] = await Promise.all([
-        supabase.from("sessions").select("*").order("flown_on", { ascending: false }).limit(400),
-        supabase.from("gear").select("id,name,gear_type,brand,total_minutes,minutes_since_service,pack_count,crash_count"),
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData.user?.id;
+
+      const [sessions, batteriesRes, dronesRes, transmittersRes, gogglesRes, otherRes]: [
+        { data: SessionRow[] | null; error: Error | null },
+        DbRequestResult<GearItem[]>,
+        DbRequestResult<GearItem[]>,
+        DbRequestResult<GearItem[]>,
+        DbRequestResult<GearItem[]>,
+        DbRequestResult<GearItem[]>,
+      ] = await Promise.all([
+        db_request({
+          mode: "query",
+          schema: "public",
+          table: "sessions",
+          operation: "select",
+          selectColumns: "*",
+          orderBy: { column: "flown_on", ascending: false },
+          limit: 400,
+        }),
+        db_request({
+          mode: "query",
+          schema: "personal_gear",
+          table: "batteries",
+          operation: "select",
+          selectColumns: "id,name,brand,total_minutes,minutes_since_service,pack_count,crash_count",
+          filters: { user_id: user }
+        }),
+        db_request({
+          mode: "query",
+          schema: "personal_gear",
+          table: "drones",
+          operation: "select",
+          selectColumns: "id,name,brand,total_minutes,minutes_since_service,pack_count,crash_count",
+          filters: { user_id: user }
+        }),
+        db_request({
+          mode: "query",
+          schema: "personal_gear",
+          table: "transmitters",
+          operation: "select",
+          selectColumns: "id,name,brand,total_minutes,minutes_since_service,pack_count,crash_count",
+          filters: { user_id: user }
+        }),
+        db_request({
+          mode: "query",
+          schema: "personal_gear",
+          table: "goggles",
+          operation: "select",
+          selectColumns: "id,name,brand,total_minutes,minutes_since_service,pack_count,crash_count",
+          filters: { user_id: user }
+        }),
+        db_request({
+          mode: "query",
+          schema: "personal_gear",
+          table: "other_gear",
+          operation: "select",
+          selectColumns: "id,name,brand,total_minutes,minutes_since_service,pack_count,crash_count",
+          filters: { user_id: user }
+        }),
       ]);
+      
+      const gear = [
+        ...(batteriesRes.data ?? []).map(g => ({ ...g, gear_type: "battery" })),
+        ...(dronesRes.data ?? []).map(g => ({ ...g, gear_type: "quad" })),
+        ...(transmittersRes.data ?? []).map(g => ({ ...g, gear_type: "transmitter" })),
+        ...(gogglesRes.data ?? []).map(g => ({ ...g, gear_type: "goggles" })),
+        ...(otherRes.data ?? []).map(g => ({ ...g, gear_type: "other" })),
+      ];
+      
       return {
         sessions: (sessions.data ?? []) as unknown as SessionRow[],
-        gear: gear.data ?? [],
+        gear,
       };
     },
   });
@@ -110,6 +178,37 @@ function LogPage() {
       g.gear_type.toLowerCase().includes("goggle") ||
       g.gear_type.toLowerCase().includes("box")
   );
+
+  async function getTableNameForGearId(gearId: string): Promise<string> {
+    const tables = ["batteries", "drones", "transmitters", "goggles", "other_gear"];
+    for (const table of tables) {
+      const result: DbRequestResult<GearItem[]> = await db_request({
+        mode: "query",
+        schema: "personal_gear",
+        table,
+        operation: "select",
+        selectColumns: "id",
+        filters: { id: gearId }
+      });
+      if (result.error) throw result.error;
+      if (result.data) return table;
+    }
+    return "";
+  }
+
+  async function updateGearById(gearId: string, updates: Record<string, unknown>): Promise<void> {
+    const tableName = await getTableNameForGearId(gearId);
+    if (!tableName) throw new Error("Gear not found");
+    const { error } = await db_request({
+      mode: "query",
+      schema: "personal_gear",
+      table: tableName,
+      operation: "update",
+      data: updates,
+      filters: { id: gearId }
+    });
+    if (error) throw error;
+  }
 
   const handleTabChange = (newTab: "real" | "sim") => {
     if (newTab === activeTab) return;
@@ -145,67 +244,63 @@ function LogPage() {
         battery_notes: batteryNotes || null,
         weather: null,
         notes: notes || null,
-        created_at: new Date().toISOString(),
       };
 
       const currentList = localSessions ?? data?.sessions ?? [];
       setLocalSessions([newRow as SessionRow, ...currentList]);
 
-      const { error } = await supabase.from("sessions").insert({
-        user_id: uid,
-        session_type: type,
-        flown_on: flownOn,
-        duration_minutes: duration,
-        gear_id: type === "real" && gearId !== "none" ? gearId : null,
-        controller_id: controllerId !== "none" ? controllerId : null,
-        goggles_id: gogglesId !== "none" ? gogglesId : null,
-        location_id: null,
-        track_id: null,
-        sim_platform: type === "sim" ? platform : null,
-        packs_flown: type === "real" ? packs : 0,
-        crashes,
-        battery_notes: batteryNotes || null,
-        weather: null,
-        notes: notes || null,
+      const { error } = await db_request({
+        mode: "query",
+        schema: "public",
+        table: "sessions",
+        operation: "insert",
+        data: {
+          user_id: uid,
+          session_type: type,
+          flown_on: flownOn,
+          duration_minutes: duration,
+          gear_id: type === "real" && gearId !== "none" ? gearId : null,
+          controller_id: controllerId !== "none" ? controllerId : null,
+          goggles_id: gogglesId !== "none" ? gogglesId : null,
+          location_id: null,
+          track_id: null,
+          sim_platform: type === "sim" ? platform : null,
+          packs_flown: type === "real" ? packs : 0,
+          crashes,
+          battery_notes: batteryNotes || null,
+          weather: null,
+          notes: notes || null,
+        },
       });
       if (error) throw error;
 
       if (type === "real" && gearId !== "none") {
         const rig = gear.find((g) => g.id === gearId);
         if (rig) {
-          await supabase
-            .from("gear")
-            .update({
+          await updateGearById(gearId, {
               total_minutes: rig.total_minutes + duration,
               minutes_since_service: rig.minutes_since_service + duration,
               pack_count: rig.pack_count + packs,
               crash_count: rig.crash_count + crashes,
-            })
-            .eq("id", gearId);
+            });
         }
       }
 
       if (controllerId !== "none") {
         const ctrl = gear.find((g) => g.id === controllerId);
         if (ctrl) {
-          await supabase
-            .from("gear")
-            .update({
+          await updateGearById(controllerId, {
               total_minutes: ctrl.total_minutes + duration,
-            })
-            .eq("id", controllerId);
+            });
         }
       }
 
       if (gogglesId !== "none") {
         const gog = gear.find((g) => g.id === gogglesId);
         if (gog) {
-          await supabase
-            .from("gear")
-            .update({
+          await updateGearById(gogglesId, {
               total_minutes: gog.total_minutes + duration,
-            })
-            .eq("id", gogglesId);
+            });
         }
       }
     },
@@ -239,43 +334,40 @@ function LogPage() {
         if (sessionToDelete.gear_id) {
           const rig = gear.find((g) => g.id === sessionToDelete.gear_id);
           if (rig) {
-            await supabase
-              .from("gear")
-              .update({
+            await updateGearById(sessionToDelete.gear_id, {
                 total_minutes: Math.max(0, rig.total_minutes - dur),
                 minutes_since_service: Math.max(0, rig.minutes_since_service - dur),
                 pack_count: Math.max(0, rig.pack_count - packsFlown),
                 crash_count: Math.max(0, rig.crash_count - crashesCount),
-              })
-              .eq("id", sessionToDelete.gear_id);
+              });
           }
         }
 
         if (sessionToDelete.controller_id) {
           const ctrl = gear.find((g) => g.id === sessionToDelete.controller_id);
           if (ctrl) {
-            await supabase
-              .from("gear")
-              .update({
+            await updateGearById(sessionToDelete.controller_id, {
                 total_minutes: Math.max(0, ctrl.total_minutes - dur),
-              })
-              .eq("id", sessionToDelete.controller_id);
+              });
           }
         }
 
         if (sessionToDelete.goggles_id) {
           const gog = gear.find((g) => g.id === sessionToDelete.goggles_id);
           if (gog) {
-            await supabase
-              .from("gear")
-              .update({
+            await updateGearById(sessionToDelete.goggles_id, {
                 total_minutes: Math.max(0, gog.total_minutes - dur),
-              })
-              .eq("id", sessionToDelete.goggles_id);
+              });
           }
         }
 
-        const { error } = await supabase.from("sessions").delete().eq("id", id);
+        const { error } = await db_request({
+          mode: "query",
+          schema: "public",
+          table: "sessions",
+          operation: "delete",
+          filters: { id },
+        });
         if (error) throw error;
       }
     },
@@ -451,7 +543,7 @@ function LogPage() {
                     </Select>
                     {drones.length === 0 && (
                       <p className="text-xs text-muted-foreground">
-                        Add a drone in the garage to track airtime per airframe.
+                        Add a drone in the hanger to track airtime per airframe.
                       </p>
                     )}
                   </div>

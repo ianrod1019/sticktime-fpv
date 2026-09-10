@@ -4,611 +4,1048 @@ export type Json =
   | boolean
   | null
   | { [key: string]: Json | undefined }
-  | Json[]
+  | Json[];
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.17"
-  }
+    PostgrestVersion: "14.17";
+  };
   public: {
     Tables: {
       billing_customers: {
         Row: {
-          created_at: string
-          stripe_customer_id: string | null
-          updated_at: string
-          user_id: string
-        }
+          created_at: string;
+          stripe_customer_id: string | null;
+          updated_at: string;
+          user_id: string;
+        };
         Insert: {
-          created_at?: string
-          stripe_customer_id?: string | null
-          updated_at?: string
-          user_id: string
-        }
+          created_at?: string;
+          stripe_customer_id?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
         Update: {
-          created_at?: string
-          stripe_customer_id?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
+          created_at?: string;
+          stripe_customer_id?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       gear: {
         Row: {
-          brand: string | null
-          crash_count: number
-          created_at: string
-          gear_type: Database["public"]["Enums"]["gear_type"]
-          id: string
-          minutes_since_service: number
-          model: string | null
-          name: string
-          notes: string | null
-          pack_count: number
-          retired: boolean
-          service_interval_minutes: number
-          total_minutes: number
-          updated_at: string
-          user_id: string
-        }
+          brand: string | null;
+          crash_count: number;
+          created_at: string;
+          current_value: number;
+          gear_type: Database["public"]["Enums"]["gear_type"];
+          id: string;
+          minutes_since_service: number;
+          model: string | null;
+          name: string;
+          notes: string | null;
+          pack_count: number;
+          purchase_cost: number;
+          purchase_date: string | null;
+          retired: boolean;
+          service_interval_minutes: number;
+          total_minutes: number;
+          updated_at: string;
+          user_id: string;
+        };
         Insert: {
-          brand?: string | null
-          crash_count?: number
-          created_at?: string
-          gear_type?: Database["public"]["Enums"]["gear_type"]
-          id?: string
-          minutes_since_service?: number
-          model?: string | null
-          name: string
-          notes?: string | null
-          pack_count?: number
-          retired?: boolean
-          service_interval_minutes?: number
-          total_minutes?: number
-          updated_at?: string
-          user_id: string
-        }
+          brand?: string | null;
+          crash_count?: number;
+          created_at?: string;
+          current_value?: number;
+          gear_type?: Database["public"]["Enums"]["gear_type"];
+          id?: string;
+          minutes_since_service?: number;
+          model?: string | null;
+          name: string;
+          notes?: string | null;
+          pack_count?: number;
+          purchase_cost?: number;
+          purchase_date?: string | null;
+          retired?: boolean;
+          service_interval_minutes?: number;
+          total_minutes?: number;
+          updated_at?: string;
+          user_id: string;
+        };
         Update: {
-          brand?: string | null
-          crash_count?: number
-          created_at?: string
-          gear_type?: Database["public"]["Enums"]["gear_type"]
-          id?: string
-          minutes_since_service?: number
-          model?: string | null
-          name?: string
-          notes?: string | null
-          pack_count?: number
-          retired?: boolean
-          service_interval_minutes?: number
-          total_minutes?: number
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
+          brand?: string | null;
+          crash_count?: number;
+          created_at?: string;
+          current_value?: number;
+          gear_type?: Database["public"]["Enums"]["gear_type"];
+          id?: string;
+          minutes_since_service?: number;
+          model?: string | null;
+          name?: string;
+          notes?: string | null;
+          pack_count?: number;
+          purchase_cost?: number;
+          purchase_date?: string | null;
+          retired?: boolean;
+          service_interval_minutes?: number;
+          total_minutes?: number;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      batteries: {
+        Row: {
+          brand: string | null;
+          cells: number | null;
+          connector_type: string | null;
+          crash_count: number;
+          created_at: string;
+          current_value: number;
+          id: string;
+          minutes_since_service: number;
+          name: string;
+          pack_count: number;
+          purchase_cost: number;
+          purchase_date: string | null;
+          service_interval_minutes: number;
+          total_minutes: number;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          brand?: string | null;
+          cells?: number | null;
+          connector_type?: string | null;
+          crash_count?: number;
+          created_at?: string;
+          current_value?: number;
+          id?: string;
+          minutes_since_service?: number;
+          name: string;
+          pack_count?: number;
+          purchase_cost?: number;
+          purchase_date?: string | null;
+          service_interval_minutes?: number;
+          total_minutes?: number;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          brand?: string | null;
+          cells?: number | null;
+          connector_type?: string | null;
+          crash_count?: number;
+          created_at?: string;
+          current_value?: number;
+          id?: string;
+          minutes_since_service?: number;
+          name?: string;
+          pack_count?: number;
+          purchase_cost?: number;
+          purchase_date?: string | null;
+          service_interval_minutes?: number;
+          total_minutes?: number;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      drones: {
+        Row: {
+          brand: string | null;
+          cells: number | null;
+          connector_type: string | null;
+          crash_count: number;
+          created_at: string;
+          current_value: number;
+          id: string;
+          minutes_since_service: number;
+          name: string;
+          pack_count: number;
+          purchase_cost: number;
+          purchase_date: string | null;
+          service_interval_minutes: number;
+          total_minutes: number;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          brand?: string | null;
+          cells?: number | null;
+          connector_type?: string | null;
+          crash_count?: number;
+          created_at?: string;
+          current_value?: number;
+          id?: string;
+          minutes_since_service?: number;
+          name: string;
+          pack_count?: number;
+          purchase_cost?: number;
+          purchase_date?: string | null;
+          service_interval_minutes?: number;
+          total_minutes?: number;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          brand?: string | null;
+          cells?: number | null;
+          connector_type?: string | null;
+          crash_count?: number;
+          created_at?: string;
+          current_value?: number;
+          id?: string;
+          minutes_since_service?: number;
+          name?: string;
+          pack_count?: number;
+          purchase_cost?: number;
+          purchase_date?: string | null;
+          service_interval_minutes?: number;
+          total_minutes?: number;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      transmitters: {
+        Row: {
+          brand: string | null;
+          cells: number | null;
+          connector_type: string | null;
+          crash_count: number;
+          created_at: string;
+          current_value: number;
+          id: string;
+          minutes_since_service: number;
+          name: string;
+          pack_count: number;
+          purchase_cost: number;
+          purchase_date: string | null;
+          service_interval_minutes: number;
+          total_minutes: number;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          brand?: string | null;
+          cells?: number | null;
+          connector_type?: string | null;
+          crash_count?: number;
+          created_at?: string;
+          current_value?: number;
+          id?: string;
+          minutes_since_service?: number;
+          name: string;
+          pack_count?: number;
+          purchase_cost?: number;
+          purchase_date?: string | null;
+          service_interval_minutes?: number;
+          total_minutes?: number;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          brand?: string | null;
+          cells?: number | null;
+          connector_type?: string | null;
+          crash_count?: number;
+          created_at?: string;
+          current_value?: number;
+          id?: string;
+          minutes_since_service?: number;
+          name?: string;
+          pack_count?: number;
+          purchase_cost?: number;
+          purchase_date?: string | null;
+          service_interval_minutes?: number;
+          total_minutes?: number;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      goggles: {
+        Row: {
+          brand: string | null;
+          cells: number | null;
+          connector_type: string | null;
+          crash_count: number;
+          created_at: string;
+          current_value: number;
+          id: string;
+          minutes_since_service: number;
+          name: string;
+          pack_count: number;
+          purchase_cost: number;
+          purchase_date: string | null;
+          service_interval_minutes: number;
+          total_minutes: number;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          brand?: string | null;
+          cells?: number | null;
+          connector_type?: string | null;
+          crash_count?: number;
+          created_at?: string;
+          current_value?: number;
+          id?: string;
+          minutes_since_service?: number;
+          name: string;
+          pack_count?: number;
+          purchase_cost?: number;
+          purchase_date?: string | null;
+          service_interval_minutes?: number;
+          total_minutes?: number;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          brand?: string | null;
+          cells?: number | null;
+          connector_type?: string | null;
+          crash_count?: number;
+          created_at?: string;
+          current_value?: number;
+          id?: string;
+          minutes_since_service?: number;
+          name?: string;
+          pack_count?: number;
+          purchase_cost?: number;
+          purchase_date?: string | null;
+          service_interval_minutes?: number;
+          total_minutes?: number;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      other_gear: {
+        Row: {
+          brand: string | null;
+          cells: number | null;
+          connector_type: string | null;
+          crash_count: number;
+          created_at: string;
+          current_value: number;
+          id: string;
+          minutes_since_service: number;
+          name: string;
+          pack_count: number;
+          purchase_cost: number;
+          purchase_date: string | null;
+          service_interval_minutes: number;
+          total_minutes: number;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          brand?: string | null;
+          cells?: number | null;
+          connector_type?: string | null;
+          crash_count?: number;
+          created_at?: string;
+          current_value?: number;
+          id?: string;
+          minutes_since_service?: number;
+          name: string;
+          pack_count?: number;
+          purchase_cost?: number;
+          purchase_date?: string | null;
+          service_interval_minutes?: number;
+          total_minutes?: number;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          brand?: string | null;
+          cells?: number | null;
+          connector_type?: string | null;
+          crash_count?: number;
+          created_at?: string;
+          current_value?: number;
+          id?: string;
+          minutes_since_service?: number;
+          name?: string;
+          pack_count?: number;
+          purchase_cost?: number;
+          purchase_date?: string | null;
+          service_interval_minutes?: number;
+          total_minutes?: number;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       gear_parts: {
         Row: {
-          category: string | null
-          created_at: string
-          gear_id: string
-          id: string
-          installed_on: string
-          lifespan_minutes: number
-          minutes_used: number
-          name: string
-          notes: string | null
-          spare_count: number
-          updated_at: string
-          user_id: string
-        }
+          category: string | null;
+          created_at: string;
+          gear_id: string;
+          id: string;
+          installed_on: string;
+          lifespan_minutes: number;
+          minutes_used: number;
+          name: string;
+          notes: string | null;
+          spare_count: number;
+          updated_at: string;
+          user_id: string;
+        };
         Insert: {
-          category?: string | null
-          created_at?: string
-          gear_id: string
-          id?: string
-          installed_on?: string
-          lifespan_minutes?: number
-          minutes_used?: number
-          name: string
-          notes?: string | null
-          spare_count?: number
-          updated_at?: string
-          user_id: string
-        }
+          category?: string | null;
+          created_at?: string;
+          gear_id: string;
+          id?: string;
+          installed_on?: string;
+          lifespan_minutes?: number;
+          minutes_used?: number;
+          name: string;
+          notes?: string | null;
+          spare_count?: number;
+          updated_at?: string;
+          user_id: string;
+        };
         Update: {
-          category?: string | null
-          created_at?: string
-          gear_id?: string
-          id?: string
-          installed_on?: string
-          lifespan_minutes?: number
-          minutes_used?: number
-          name?: string
-          notes?: string | null
-          spare_count?: number
-          updated_at?: string
-          user_id?: string
-        }
+          category?: string | null;
+          created_at?: string;
+          gear_id?: string;
+          id?: string;
+          installed_on?: string;
+          lifespan_minutes?: number;
+          minutes_used?: number;
+          name?: string;
+          notes?: string | null;
+          spare_count?: number;
+          updated_at?: string;
+          user_id?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "gear_parts_gear_id_fkey"
-            columns: ["gear_id"]
-            isOneToOne: false
-            referencedRelation: "gear"
-            referencedColumns: ["id"]
+            foreignKeyName: "gear_parts_gear_id_fkey";
+            columns: ["gear_id"];
+            isOneToOne: false;
+            referencedRelation: "personal_gear";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       locations: {
         Row: {
-          city: string | null
-          country: string | null
-          created_at: string
-          id: string
-          latitude: number | null
-          longitude: number | null
-          name: string
-          notes: string | null
-          updated_at: string
-          user_id: string
-        }
+          city: string | null;
+          country: string | null;
+          created_at: string;
+          id: string;
+          latitude: number | null;
+          longitude: number | null;
+          name: string;
+          notes: string | null;
+          updated_at: string;
+          user_id: string;
+        };
         Insert: {
-          city?: string | null
-          country?: string | null
-          created_at?: string
-          id?: string
-          latitude?: number | null
-          longitude?: number | null
-          name: string
-          notes?: string | null
-          updated_at?: string
-          user_id: string
-        }
+          city?: string | null;
+          country?: string | null;
+          created_at?: string;
+          id?: string;
+          latitude?: number | null;
+          longitude?: number | null;
+          name: string;
+          notes?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
         Update: {
-          city?: string | null
-          country?: string | null
-          created_at?: string
-          id?: string
-          latitude?: number | null
-          longitude?: number | null
-          name?: string
-          notes?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
+          city?: string | null;
+          country?: string | null;
+          created_at?: string;
+          id?: string;
+          latitude?: number | null;
+          longitude?: number | null;
+          name?: string;
+          notes?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       maintenance_logs: {
         Row: {
-          cost: number | null
-          created_at: string
-          description: string
-          gear_id: string
-          id: string
-          performed_on: string
-          reset_service_clock: boolean
-          user_id: string
-        }
+          cost: number | null;
+          created_at: string;
+          description: string;
+          gear_id: string;
+          id: string;
+          performed_on: string;
+          reset_service_clock: boolean;
+          user_id: string;
+        };
         Insert: {
-          cost?: number | null
-          created_at?: string
-          description: string
-          gear_id: string
-          id?: string
-          performed_on?: string
-          reset_service_clock?: boolean
-          user_id: string
-        }
+          cost?: number | null;
+          created_at?: string;
+          description: string;
+          gear_id: string;
+          id?: string;
+          performed_on?: string;
+          reset_service_clock?: boolean;
+          user_id: string;
+        };
         Update: {
-          cost?: number | null
-          created_at?: string
-          description?: string
-          gear_id?: string
-          id?: string
-          performed_on?: string
-          reset_service_clock?: boolean
-          user_id?: string
-        }
+          cost?: number | null;
+          created_at?: string;
+          description?: string;
+          gear_id?: string;
+          id?: string;
+          performed_on?: string;
+          reset_service_clock?: boolean;
+          user_id?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "maintenance_logs_gear_id_fkey"
-            columns: ["gear_id"]
-            isOneToOne: false
-            referencedRelation: "gear"
-            referencedColumns: ["id"]
+            foreignKeyName: "maintenance_logs_gear_id_fkey";
+            columns: ["gear_id"];
+            isOneToOne: false;
+            referencedRelation: "personal_gear";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       personal_records: {
         Row: {
-          achieved_on: string
-          created_at: string
-          id: string
-          label: string
-          lap_seconds: number | null
-          notes: string | null
-          score: number | null
-          track_id: string | null
-          user_id: string
-        }
+          achieved_on: string;
+          created_at: string;
+          id: string;
+          label: string;
+          lap_seconds: number | null;
+          notes: string | null;
+          score: number | null;
+          track_id: string | null;
+          user_id: string;
+        };
         Insert: {
-          achieved_on?: string
-          created_at?: string
-          id?: string
-          label: string
-          lap_seconds?: number | null
-          notes?: string | null
-          score?: number | null
-          track_id?: string | null
-          user_id: string
-        }
+          achieved_on?: string;
+          created_at?: string;
+          id?: string;
+          label: string;
+          lap_seconds?: number | null;
+          notes?: string | null;
+          score?: number | null;
+          track_id?: string | null;
+          user_id: string;
+        };
         Update: {
-          achieved_on?: string
-          created_at?: string
-          id?: string
-          label?: string
-          lap_seconds?: number | null
-          notes?: string | null
-          score?: number | null
-          track_id?: string | null
-          user_id?: string
-        }
+          achieved_on?: string;
+          created_at?: string;
+          id?: string;
+          label?: string;
+          lap_seconds?: number | null;
+          notes?: string | null;
+          score?: number | null;
+          track_id?: string | null;
+          user_id?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "personal_records_track_id_fkey"
-            columns: ["track_id"]
-            isOneToOne: false
-            referencedRelation: "tracks"
-            referencedColumns: ["id"]
+            foreignKeyName: "personal_records_track_id_fkey";
+            columns: ["track_id"];
+            isOneToOne: false;
+            referencedRelation: "tracks";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       profiles: {
         Row: {
-          accent_color: string
-          avatar_url: string | null
-          bio: string | null
-          callsign: string | null
-          created_at: string
-          display_name: string | null
-          id: string
-          is_private: boolean
-          subscription_tier: string
-          updated_at: string
-          weekly_goal_hours: number
-        }
+          accent_color: string;
+          avatar_url: string | null;
+          bio: string | null;
+          callsign: string | null;
+          created_at: string;
+          display_name: string | null;
+          id: string;
+          is_private: boolean;
+          subscription_tier: string;
+          updated_at: string;
+          weekly_goal_hours: number;
+        };
         Insert: {
-          accent_color?: string
-          avatar_url?: string | null
-          bio?: string | null
-          callsign?: string | null
-          created_at?: string
-          display_name?: string | null
-          id: string
-          is_private?: boolean
-          subscription_tier?: string
-          updated_at?: string
-          weekly_goal_hours?: number
-        }
+          accent_color?: string;
+          avatar_url?: string | null;
+          bio?: string | null;
+          callsign?: string | null;
+          created_at?: string;
+          display_name?: string | null;
+          id: string;
+          is_private?: boolean;
+          subscription_tier?: string;
+          updated_at?: string;
+          weekly_goal_hours?: number;
+        };
         Update: {
-          accent_color?: string
-          avatar_url?: string | null
-          bio?: string | null
-          callsign?: string | null
-          created_at?: string
-          display_name?: string | null
-          id?: string
-          is_private?: boolean
-          subscription_tier?: string
-          updated_at?: string
-          weekly_goal_hours?: number
-        }
-        Relationships: []
-      }
+          accent_color?: string;
+          avatar_url?: string | null;
+          bio?: string | null;
+          callsign?: string | null;
+          created_at?: string;
+          display_name?: string | null;
+          id?: string;
+          is_private?: boolean;
+          subscription_tier?: string;
+          updated_at?: string;
+          weekly_goal_hours?: number;
+        };
+        Relationships: [];
+      };
       sessions: {
         Row: {
-          battery_notes: string | null
-          controller_id: string | null
-          crashes: number
-          created_at: string
-          duration_minutes: number
-          flown_on: string
-          gear_id: string | null
-          id: string
-          location_id: string | null
-          notes: string | null
-          packs_flown: number
-          rating: number | null
-          session_type: Database["public"]["Enums"]["session_type"]
-          sim_platform: string | null
-          start_time: string | null
-          track_id: string | null
-          updated_at: string
-          user_id: string
-          weather: Json | null
-        }
+          battery_notes: string | null;
+          controller_id: string | null;
+          crashes: number;
+          created_at: string;
+          duration_minutes: number;
+          flown_on: string;
+          gear_id: string | null;
+          id: string;
+          location_id: string | null;
+          notes: string | null;
+          packs_flown: number;
+          rating: number | null;
+          session_type: Database["public"]["Enums"]["session_type"];
+          sim_platform: string | null;
+          start_time: string | null;
+          track_id: string | null;
+          updated_at: string;
+          user_id: string;
+          weather: Json | null;
+        };
         Insert: {
-          battery_notes?: string | null
-          controller_id?: string | null
-          crashes?: number
-          created_at?: string
-          duration_minutes: number
-          flown_on?: string
-          gear_id?: string | null
-          id?: string
-          location_id?: string | null
-          notes?: string | null
-          packs_flown?: number
-          rating?: number | null
-          session_type?: Database["public"]["Enums"]["session_type"]
-          sim_platform?: string | null
-          start_time?: string | null
-          track_id?: string | null
-          updated_at?: string
-          user_id: string
-          weather?: Json | null
-        }
+          battery_notes?: string | null;
+          controller_id?: string | null;
+          crashes?: number;
+          created_at?: string;
+          duration_minutes: number;
+          flown_on?: string;
+          gear_id?: string | null;
+          id?: string;
+          location_id?: string | null;
+          notes?: string | null;
+          packs_flown?: number;
+          rating?: number | null;
+          session_type?: Database["public"]["Enums"]["session_type"];
+          sim_platform?: string | null;
+          start_time?: string | null;
+          track_id?: string | null;
+          updated_at?: string;
+          user_id: string;
+          weather?: Json | null;
+        };
         Update: {
-          battery_notes?: string | null
-          controller_id?: string | null
-          crashes?: number
-          created_at?: string
-          duration_minutes?: number
-          flown_on?: string
-          gear_id?: string | null
-          id?: string
-          location_id?: string | null
-          notes?: string | null
-          packs_flown?: number
-          rating?: number | null
-          session_type?: Database["public"]["Enums"]["session_type"]
-          sim_platform?: string | null
-          start_time?: string | null
-          track_id?: string | null
-          updated_at?: string
-          user_id?: string
-          weather?: Json | null
-        }
+          battery_notes?: string | null;
+          controller_id?: string | null;
+          crashes?: number;
+          created_at?: string;
+          duration_minutes?: number;
+          flown_on?: string;
+          gear_id?: string | null;
+          id?: string;
+          location_id?: string | null;
+          notes?: string | null;
+          packs_flown?: number;
+          rating?: number | null;
+          session_type?: Database["public"]["Enums"]["session_type"];
+          sim_platform?: string | null;
+          start_time?: string | null;
+          track_id?: string | null;
+          updated_at?: string;
+          user_id?: string;
+          weather?: Json | null;
+        };
         Relationships: [
           {
-            foreignKeyName: "sessions_controller_id_fkey"
-            columns: ["controller_id"]
-            isOneToOne: false
-            referencedRelation: "gear"
-            referencedColumns: ["id"]
+            foreignKeyName: "sessions_controller_id_fkey";
+            columns: ["controller_id"];
+            isOneToOne: false;
+            referencedRelation: "personal_gear";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "sessions_gear_id_fkey"
-            columns: ["gear_id"]
-            isOneToOne: false
-            referencedRelation: "gear"
-            referencedColumns: ["id"]
+            foreignKeyName: "sessions_gear_id_fkey";
+            columns: ["gear_id"];
+            isOneToOne: false;
+            referencedRelation: "personal_gear";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "sessions_location_id_fkey"
-            columns: ["location_id"]
-            isOneToOne: false
-            referencedRelation: "locations"
-            referencedColumns: ["id"]
+            foreignKeyName: "sessions_location_id_fkey";
+            columns: ["location_id"];
+            isOneToOne: false;
+            referencedRelation: "locations";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "sessions_track_id_fkey"
-            columns: ["track_id"]
-            isOneToOne: false
-            referencedRelation: "tracks"
-            referencedColumns: ["id"]
+            foreignKeyName: "sessions_track_id_fkey";
+            columns: ["track_id"];
+            isOneToOne: false;
+            referencedRelation: "tracks";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       team_invite_codes: {
         Row: {
-          code: string
-          created_at: string
-          created_by: string
-          expires_at: string
-          id: string
-          team_id: string
-        }
+          code: string;
+          created_at: string;
+          created_by: string;
+          expires_at: string;
+          id: string;
+          team_id: string;
+        };
         Insert: {
-          code: string
-          created_at?: string
-          created_by: string
-          expires_at: string
-          id?: string
-          team_id: string
-        }
+          code: string;
+          created_at?: string;
+          created_by: string;
+          expires_at: string;
+          id?: string;
+          team_id: string;
+        };
         Update: {
-          code?: string
-          created_at?: string
-          created_by?: string
-          expires_at?: string
-          id?: string
-          team_id?: string
-        }
+          code?: string;
+          created_at?: string;
+          created_by?: string;
+          expires_at?: string;
+          id?: string;
+          team_id?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "team_invite_codes_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
+            foreignKeyName: "team_invite_codes_team_id_fkey";
+            columns: ["team_id"];
+            isOneToOne: false;
+            referencedRelation: "teams";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       team_members: {
         Row: {
-          id: string
-          joined_at: string
-          team_id: string
-          team_role: string
-          user_id: string
-        }
+          id: string;
+          joined_at: string;
+          team_id: string;
+          team_role: string;
+          user_id: string;
+        };
         Insert: {
-          id?: string
-          joined_at?: string
-          team_id: string
-          team_role?: string
-          user_id: string
-        }
+          id?: string;
+          joined_at?: string;
+          team_id: string;
+          team_role?: string;
+          user_id: string;
+        };
         Update: {
-          id?: string
-          joined_at?: string
-          team_id?: string
-          team_role?: string
-          user_id?: string
-        }
+          id?: string;
+          joined_at?: string;
+          team_id?: string;
+          team_role?: string;
+          user_id?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "team_members_team_id_fkey"
-            columns: ["team_id"]
-            isOneToOne: false
-            referencedRelation: "teams"
-            referencedColumns: ["id"]
+            foreignKeyName: "team_members_team_id_fkey";
+            columns: ["team_id"];
+            isOneToOne: false;
+            referencedRelation: "teams";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       teams: {
         Row: {
-          created_at: string
-          description: string | null
-          id: string
-          name: string
-          owner_id: string
-        }
+          created_at: string;
+          description: string | null;
+          id: string;
+          name: string;
+          owner_id: string;
+        };
         Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          name: string
-          owner_id: string
-        }
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          name: string;
+          owner_id: string;
+        };
         Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          name?: string
-          owner_id?: string
-        }
-        Relationships: []
-      }
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          name?: string;
+          owner_id?: string;
+        };
+        Relationships: [];
+      };
       tracks: {
         Row: {
-          created_at: string
-          id: string
-          kind: Database["public"]["Enums"]["track_kind"]
-          layout_notes: string | null
-          location_id: string | null
-          name: string
-          sim_platform: string | null
-          updated_at: string
-          user_id: string
-        }
+          created_at: string;
+          id: string;
+          kind: Database["public"]["Enums"]["track_kind"];
+          layout_notes: string | null;
+          location_id: string | null;
+          name: string;
+          sim_platform: string | null;
+          updated_at: string;
+          user_id: string;
+        };
         Insert: {
-          created_at?: string
-          id?: string
-          kind?: Database["public"]["Enums"]["track_kind"]
-          layout_notes?: string | null
-          location_id?: string | null
-          name: string
-          sim_platform?: string | null
-          updated_at?: string
-          user_id: string
-        }
+          created_at?: string;
+          id?: string;
+          kind?: Database["public"]["Enums"]["track_kind"];
+          layout_notes?: string | null;
+          location_id?: string | null;
+          name: string;
+          sim_platform?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
         Update: {
-          created_at?: string
-          id?: string
-          kind?: Database["public"]["Enums"]["track_kind"]
-          layout_notes?: string | null
-          location_id?: string | null
-          name?: string
-          sim_platform?: string | null
-          updated_at?: string
-          user_id?: string
-        }
+          created_at?: string;
+          id?: string;
+          kind?: Database["public"]["Enums"]["track_kind"];
+          layout_notes?: string | null;
+          location_id?: string | null;
+          name?: string;
+          sim_platform?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "tracks_location_id_fkey"
-            columns: ["location_id"]
-            isOneToOne: false
-            referencedRelation: "locations"
-            referencedColumns: ["id"]
+            foreignKeyName: "tracks_location_id_fkey";
+            columns: ["location_id"];
+            isOneToOne: false;
+            referencedRelation: "locations";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       user_roles: {
         Row: {
-          created_at: string
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
+          created_at: string;
+          id: string;
+          role: Database["public"]["Enums"]["app_role"];
+          user_id: string;
+        };
         Insert: {
-          created_at?: string
-          id?: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
+          created_at?: string;
+          id?: string;
+          role?: Database["public"]["Enums"]["app_role"];
+          user_id: string;
+        };
         Update: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          user_id?: string
-        }
-        Relationships: []
-      }
-    }
+          created_at?: string;
+          id?: string;
+          role?: Database["public"]["Enums"]["app_role"];
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      battery_packs: {
+        Row: {
+          created_at: string;
+          current_capacity_mah: number;
+          gear_id: string;
+          health_percentage: number;
+          id: string;
+          internal_resistance_milliohm: number;
+          max_capacity_mah: number;
+          pack_number: number;
+          purchase_date: string | null;
+          serial_number: string | null;
+          total_cycles: number;
+          updated_at: string;
+          user_id: string;
+          voltage_sag_percent: number;
+        };
+        Insert: {
+          created_at?: string;
+          current_capacity_mah?: number;
+          gear_id: string;
+          health_percentage?: number;
+          id?: string;
+          internal_resistance_milliohm?: number;
+          max_capacity_mah?: number;
+          pack_number: number;
+          purchase_date?: string | null;
+          serial_number?: string | null;
+          total_cycles?: number;
+          updated_at?: string;
+          user_id: string;
+          voltage_sag_percent?: number;
+        };
+        Update: {
+          created_at?: string;
+          current_capacity_mah?: number;
+          gear_id?: string;
+          health_percentage?: number;
+          id?: string;
+          internal_resistance_milliohm?: number;
+          max_capacity_mah?: number;
+          pack_number?: number;
+          purchase_date?: string | null;
+          serial_number?: string | null;
+          total_cycles?: number;
+          updated_at?: string;
+          user_id?: string;
+          voltage_sag_percent?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "battery_packs_gear_id_fkey";
+            columns: ["gear_id"];
+            isOneToOne: false;
+            referencedRelation: "personal_gear";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      battery_health_readings: {
+        Row: {
+          ambient_temperature_celsius: number | null;
+          battery_pack_id: string;
+          calculated_internal_resistance_milliohm: number | null;
+          created_at: string;
+          current_draw_amps: number;
+          flight_duration_seconds: number | null;
+          id: string;
+          recorded_at: string;
+          session_id: string | null;
+          throttle_percent_avg: number | null;
+          updated_at: string;
+          user_id: string;
+          voltage_at_rest_volts: number;
+          voltage_sag_percent: number | null;
+          voltage_under_load_volts: number;
+        };
+        Insert: {
+          ambient_temperature_celsius?: number | null;
+          battery_pack_id: string;
+          calculated_internal_resistance_milliohm?: number | null;
+          created_at?: string;
+          current_draw_amps: number;
+          flight_duration_seconds?: number | null;
+          id?: string;
+          recorded_at?: string;
+          session_id?: string | null;
+          throttle_percent_avg?: number | null;
+          updated_at?: string;
+          user_id: string;
+          voltage_at_rest_volts: number;
+          voltage_sag_percent?: number | null;
+          voltage_under_load_volts: number;
+        };
+        Update: {
+          ambient_temperature_celsius?: number | null;
+          battery_pack_id?: string;
+          calculated_internal_resistance_milliohm?: number | null;
+          created_at?: string;
+          current_draw_amps?: number;
+          flight_duration_seconds?: number | null;
+          id?: string;
+          recorded_at?: string;
+          session_id?: string | null;
+          throttle_percent_avg?: number | null;
+          updated_at?: string;
+          user_id?: string;
+          voltage_at_rest_volts?: number;
+          voltage_sag_percent?: number | null;
+          voltage_under_load_volts?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "battery_health_readings_battery_pack_id_fkey";
+            columns: ["battery_pack_id"];
+            isOneToOne: false;
+            referencedRelation: "battery_packs";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "battery_health_readings_session_id_fkey";
+            columns: ["session_id"];
+            isOneToOne: false;
+            referencedRelation: "sessions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+    };
     Views: {
-      [_ in never]: never
-    }
+      [_ in never]: never;
+    };
     Functions: {
       has_role: {
         Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
-      }
+          _role: Database["public"]["Enums"]["app_role"];
+          _user_id: string;
+        };
+        Returns: boolean;
+      };
       is_team_member: {
-        Args: { _team_id: string; _user_id: string }
-        Returns: boolean
-      }
-      join_team_with_code: { Args: { _code: string }; Returns: string }
-    }
+        Args: { _team_id: string; _user_id: string };
+        Returns: boolean;
+      };
+      join_team_with_code: { Args: { _code: string }; Returns: string };
+      check_pro_access: {
+        Args: Record<string, never>;
+        Returns: boolean;
+      };
+      get_pro_access_details: {
+        Args: Record<string, never>;
+        Returns: {
+          has_access: boolean;
+          user_role: string;
+          user_tier: string;
+        }[];
+      };
+    };
     Enums: {
-      app_role: "free_user" | "pro_user" | "team_admin"
-      gear_type: "quad" | "transmitter" | "goggles" | "battery" | "other"
-      session_type: "sim" | "real"
-      track_kind: "sim" | "real"
-    }
+      app_role: "free_user" | "pro_user" | "team_admin";
+      gear_type: "quad" | "transmitter" | "goggles" | "battery" | "other";
+      session_type: "sim" | "real";
+      track_kind: "sim" | "real";
+    };
     CompositeTypes: {
-      [_ in never]: never
-    }
-  }
-}
+      [_ in never]: never;
+    };
+  };
+};
 
-type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">;
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+type DefaultSchema = DatabaseWithoutInternals[Extract<
+  keyof Database,
+  "public"
+>];
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
+  schema: keyof DatabaseWithoutInternals;
 }
   ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
       DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
-      Row: infer R
+      Row: infer R;
     }
     ? R
     : never
@@ -616,95 +1053,92 @@ export type Tables<
         DefaultSchema["Views"])
     ? (DefaultSchema["Tables"] &
         DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-        Row: infer R
+        Row: infer R;
       }
       ? R
       : never
-    : never
+    : never;
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
+    keyof DefaultSchema["Tables"] | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
+  schema: keyof DatabaseWithoutInternals;
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Insert: infer I
+      Insert: infer I;
     }
     ? I
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
     ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Insert: infer I
+        Insert: infer I;
       }
       ? I
       : never
-    : never
+    : never;
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
+    keyof DefaultSchema["Tables"] | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
+  schema: keyof DatabaseWithoutInternals;
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Update: infer U
+      Update: infer U;
     }
     ? U
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
     ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Update: infer U
+        Update: infer U;
       }
       ? U
       : never
-    : never
+    : never;
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema["Enums"]
-    | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
+    keyof DefaultSchema["Enums"] | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
+  schema: keyof DatabaseWithoutInternals;
 }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-    : never
+    : never;
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
+  schema: keyof DatabaseWithoutInternals;
 }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-    : never
+    : never;
 
 export const Constants = {
   public: {
@@ -715,4 +1149,4 @@ export const Constants = {
       track_kind: ["sim", "real"],
     },
   },
-} as const
+} as const;

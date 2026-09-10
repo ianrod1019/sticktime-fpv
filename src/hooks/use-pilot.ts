@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useRoleVerification } from "@/lib/role-verification";
+import { db_request, DbRequestResult } from "@/lib/db_request";
 
 export interface PilotProfile {
   id: string;
@@ -51,9 +52,26 @@ export function usePilot() {
     queryFn: async () => {
       if (!userId) return null;
 
-      let [{ data: settingsData, error: settingsError }, { data: profilesData, error: profilesError }] = await Promise.all([
-        supabase.from("pilot_settings").select("*").eq("user_id", userId).maybeSingle(),
-        supabase.from("profiles").select("id, role, tier, accent_color, avatar_url, display_name, created_at").eq("id", userId).maybeSingle(),
+      let [{ data: settingsData, error: settingsError }, { data: profilesData, error: profilesError }]: [
+        DbRequestResult<any>,
+        DbRequestResult<any>,
+      ] = await Promise.all([
+        db_request({
+          mode: "query",
+          table: "pilot_settings",
+          operation: "select",
+          selectColumns: "*",
+          filters: { user_id: userId },
+          head: true,
+        }),
+        db_request({
+          mode: "query",
+          table: "profiles",
+          operation: "select",
+          selectColumns: "id, role, tier, accent_color, avatar_url, display_name, created_at",
+          filters: { id: userId },
+          head: true,
+        }),
       ]);
 
       if (settingsError) {
@@ -72,11 +90,12 @@ export function usePilot() {
           callsign: defaultCallsign,
           bio: "",
         };
-        const { data: inserted, error: insertError } = await supabase
-          .from("pilot_settings")
-          .insert(newSettings)
-          .select()
-          .single();
+        const { data: inserted, error: insertError } = await db_request({
+          mode: "query",
+          table: "pilot_settings",
+          operation: "insert",
+          data: newSettings,
+        });
 
         if (!insertError && inserted) {
           settingsData = inserted;
@@ -128,11 +147,12 @@ export function usePilot() {
         updated_at: new Date().toISOString(),
       };
 
-      const { data, error } = await supabase
-        .from("pilot_settings")
-        .upsert(payload, { onConflict: "user_id" })
-        .select()
-        .single();
+      const { data, error } = await db_request({
+        mode: "query",
+        table: "pilot_settings",
+        operation: "upsert",
+        data: payload,
+      });
 
       if (error) throw error;
       return data;

@@ -1,13 +1,24 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { PilotProfile } from "@/hooks/use-pilot";
-import { LayoutDashboard, Timer, Wrench, Users, ShieldCheck, Settings, LogOut } from "lucide-react";
+import {
+  LayoutDashboard,
+  Timer,
+  Wrench,
+  Users,
+  ShieldCheck,
+  Settings,
+  LogOut,
+  BarChart3,
+  DollarSign,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/auth-context";
 
 const BASE_NAV = [
   { to: "/dashboard", icon: LayoutDashboard },
   { to: "/log", icon: Timer },
-  { to: "/garage", icon: Wrench },
+  { to: "/hanger", icon: Wrench },
+  { to: "/ledger", icon: BarChart3 },
   { to: "/squadron", icon: Users },
 ] as const;
 
@@ -63,7 +74,7 @@ export function SidebarNavigation({
             to={to}
             className={cn(
               "flex items-center justify-center rounded-md px-3 py-2 transition-colors",
-              pathname === to && "bg-sidebar-accent text-primary font-semibold"
+              pathname === to && "bg-sidebar-accent text-primary font-semibold",
             )}
           >
             <Icon className="h-4 w-4 shrink-0" />
@@ -75,7 +86,8 @@ export function SidebarNavigation({
             to="/admin"
             className={cn(
               "flex items-center justify-center rounded-md px-3 py-2 transition-colors",
-              pathname === "/admin" && "bg-sidebar-accent text-primary font-semibold"
+              pathname === "/admin" &&
+                "bg-sidebar-accent text-primary font-semibold",
             )}
           >
             <ShieldCheck className="h-4 w-4 shrink-0 text-primary" />
@@ -87,7 +99,8 @@ export function SidebarNavigation({
         to="/settings"
         className={cn(
           "flex items-center justify-center rounded-md px-3 py-2 transition-colors",
-          pathname === "/settings" && "bg-sidebar-accent text-primary font-semibold"
+          pathname === "/settings" &&
+            "bg-sidebar-accent text-primary font-semibold",
         )}
       >
         <Settings className="h-4 w-4 shrink-0 text-sidebar-foreground/70" />

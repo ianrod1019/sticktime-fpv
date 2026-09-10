@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { db_request } from "@/lib/db_request";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -70,11 +71,14 @@ export function AdminPilotsTable() {
         console.warn("admin_get_admin_directory RPC fallback:", e);
       }
 
-      const { data: profilesData, error: profilesErr } = await supabase
-        .from("profiles")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(100);
+      const { data: profilesData, error: profilesErr } = await db_request({
+        mode: "query",
+        table: "profiles",
+        operation: "select",
+        selectColumns: "*",
+        orderBy: { column: "created_at", ascending: false },
+        limit: 100,
+      });
 
       if (profilesErr) throw profilesErr;
 
@@ -126,26 +130,40 @@ export function AdminPilotsTable() {
         role,
       };
 
-      const { error } = await supabase
-        .from("profiles")
-        .update(updatePayload)
-        .eq("id", id);
+      const { error } = await db_request({
+        mode: "query",
+        table: "profiles",
+        operation: "update",
+        data: updatePayload,
+        filters: { id },
+        requireAdmin: true,
+      });
 
       if (error) {
-        const { error: err2 } = await supabase
-          .from("profiles")
-          .update(updatePayload)
-          .eq("uuid", id);
+        const { error: err2 } = await db_request({
+          mode: "query",
+          table: "profiles",
+          operation: "update",
+          data: updatePayload,
+          filters: { uuid: id },
+          requireAdmin: true,
+        });
         if (err2) throw err2;
       }
 
       const { data: userData } = await supabase.auth.getUser();
       if (userData.user) {
-        await supabase.from("admin_audit_logs").insert({
-          actor_id: userData.user.id,
-          action: "update_pilot_profile_and_role",
-          target_id: id,
-          payload: { subscription_tier, role },
+        await db_request({
+          mode: "query",
+          table: "admin_audit_logs",
+          operation: "insert",
+          data: {
+            actor_id: userData.user.id,
+            action: "update_pilot_profile_and_role",
+            target_id: id,
+            payload: { subscription_tier, role },
+          },
+          requireAdmin: true,
         });
       }
     },
@@ -178,26 +196,40 @@ export function AdminPilotsTable() {
         ban_until: is_banned ? (ban_until || null) : null,
       };
 
-      const { error } = await supabase
-        .from("profiles")
-        .update(updatePayload)
-        .eq("id", p.id);
+      const { error } = await db_request({
+        mode: "query",
+        table: "profiles",
+        operation: "update",
+        data: updatePayload,
+        filters: { id: p.id },
+        requireAdmin: true,
+      });
 
       if (error) {
-        const { error: err2 } = await supabase
-          .from("profiles")
-          .update(updatePayload)
-          .eq("uuid", p.id);
+        const { error: err2 } = await db_request({
+          mode: "query",
+          table: "profiles",
+          operation: "update",
+          data: updatePayload,
+          filters: { uuid: p.id },
+          requireAdmin: true,
+        });
         if (err2) throw err2;
       }
 
       const { data: userData } = await supabase.auth.getUser();
       if (userData.user) {
-        await supabase.from("admin_audit_logs").insert({
-          actor_id: userData.user.id,
-          action: is_banned ? "ban_pilot" : "unban_pilot",
-          target_id: p.id,
-          payload: updatePayload,
+        await db_request({
+          mode: "query",
+          table: "admin_audit_logs",
+          operation: "insert",
+          data: {
+            actor_id: userData.user.id,
+            action: is_banned ? "ban_pilot" : "unban_pilot",
+            target_id: p.id,
+            payload: updatePayload,
+          },
+          requireAdmin: true,
         });
       }
     },
