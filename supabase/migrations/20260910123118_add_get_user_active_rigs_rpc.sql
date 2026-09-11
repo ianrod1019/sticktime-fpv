@@ -10,11 +10,11 @@ AS $function$
 BEGIN
   RETURN QUERY
   WITH recent_flights AS (
-    -- Get unique gear_id from sessions in the last month
-    SELECT DISTINCT s.gear_id
+    -- Get unique drone_id from sessions in the last month
+    SELECT DISTINCT s.drone_id
     FROM public.sessions s
     WHERE s.user_id = p_user_id
-      AND s.gear_id IS NOT NULL
+      AND s.drone_id IS NOT NULL
       AND s.flown_on >= (CURRENT_DATE - INTERVAL '1 month')::text
   ),
   personal_drones AS (
@@ -26,7 +26,7 @@ BEGIN
   )
   SELECT COUNT(*)::bigint AS active_rig_count
   FROM recent_flights rf
-  JOIN personal_drones pd ON rf.gear_id = pd.id;
+  JOIN personal_drones pd ON rf.drone_id = pd.id;
 END;
 $function$;
 

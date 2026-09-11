@@ -37,7 +37,7 @@ interface DashboardContentProps {
   heatmapData: Array<{ date: string; minutes: number }>;
   monthlyData: Array<{ month: string; sim: number; real: number }>;
   rigUsage: Array<{
-    gear_id: string;
+    drone_id: string;
     name: string;
     hours: number;
   }>;

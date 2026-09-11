@@ -580,7 +580,7 @@ export type Database = {
           created_at: string;
           duration_minutes: number;
           flown_on: string;
-          gear_id: string | null;
+          drone_id: string | null;
           id: string;
           location_id: string | null;
           notes: string | null;
@@ -601,7 +601,7 @@ export type Database = {
           created_at?: string;
           duration_minutes: number;
           flown_on?: string;
-          gear_id?: string | null;
+          drone_id?: string | null;
           id?: string;
           location_id?: string | null;
           notes?: string | null;
@@ -622,7 +622,7 @@ export type Database = {
           created_at?: string;
           duration_minutes?: number;
           flown_on?: string;
-          gear_id?: string | null;
+          drone_id?: string | null;
           id?: string;
           location_id?: string | null;
           notes?: string | null;
@@ -645,8 +645,8 @@ export type Database = {
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "sessions_gear_id_fkey";
-            columns: ["gear_id"];
+            foreignKeyName: "sessions_drone_id_fkey";
+            columns: ["drone_id"];
             isOneToOne: false;
             referencedRelation: "personal_gear";
             referencedColumns: ["id"];

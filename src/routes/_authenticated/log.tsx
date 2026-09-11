@@ -40,7 +40,7 @@ function LogPage() {
   const navigate = useNavigate();
   const search = Route.useSearch();
 
-  const { sessions, gear, isLoading, isError, removeSession } = useLogData();
+  const { sessions, isLoading, isError, removeSession } = useLogData();
 
   const [open, setOpen] = useState(false);
   const initialTab = search.tab === "sim" ? "sim" : "real";
@@ -72,12 +72,11 @@ function LogPage() {
         title="Flight Logs"
         subtitle="Manual entry in 5-minute blocks — sim and real world tracked separately."
         action={
-          <LogSessionDialog
-            open={open}
-            onOpenChange={setOpen}
-            initialTab={activeTab}
-            gear={gear}
-          />
+<LogSessionDialog
+              open={open}
+              onOpenChange={setOpen}
+              initialTab={activeTab}
+            />
         }
       />
 
@@ -123,7 +122,6 @@ function LogPage() {
           >
             <LogSessionList
               sessions={sessions}
-              gear={gear}
               kind={activeTab}
               onRemove={(id) => removeSession.mutate(id)}
             />

@@ -37,7 +37,7 @@
       session_type session_type DEFAULT 'real'::session_type,
       flown_on text NOT NULL,
       duration_minutes integer DEFAULT 15 NOT NULL,
-      gear_id uuid REFERENCES gear(id) ON DELETE SET NULL,
+      drone_id uuid REFERENCES personal_gear.drones(id) ON DELETE SET NULL,
       controller_id uuid REFERENCES gear(id) ON DELETE SET NULL,
       location_id uuid REFERENCES locations(id) ON DELETE SET NULL,
       track_id uuid REFERENCES tracks(id) ON DELETE SET NULL,

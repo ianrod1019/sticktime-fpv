@@ -1,50 +1,27 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Trash2, Timer, Monitor } from "lucide-react";
+import { Plus, Timer, Monitor } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { db_request, type DbRequestResult } from "@/lib/db_request";
-import { type GearItem } from "@/components/gear-card/types";
+import { db_request } from "@/lib/db_request";
 import { type SessionRow } from "@/lib/fpv";
-import { PageHeader } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  DURATION_BLOCKS,
-  SIM_PLATFORMS,
-  formatHours,
-  toDateKey,
-} from "@/lib/fpv";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DURATION_BLOCKS, SIM_PLATFORMS, toDateKey } from "@/lib/fpv";
 
 interface LogSessionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  initialTab: "real" | "sim";
-  gear: GearItem[];
+  initialTab: "sim" | "real";
 }
 
 export function LogSessionDialog({
   open,
   onOpenChange,
   initialTab,
-  gear,
 }: LogSessionDialogProps) {
   const [type, setType] = useState<"sim" | "real">(initialTab);
   const [flownOn, setFlownOn] = useState(toDateKey(new Date()));
@@ -66,54 +43,6 @@ export function LogSessionDialog({
 
   const queryClient = useQueryClient();
 
-  const drones = gear.filter((g) => g.gear_type === "quad");
-  const controllers = gear.filter(
-    (g) =>
-      g.gear_type === "transmitter" ||
-      g.gear_type.toLowerCase() === "controller" ||
-      g.gear_type.toLowerCase().includes("trans")
-  );
-  const gogglesList = gear.filter(
-    (g) =>
-      g.gear_type === "goggles" ||
-      g.gear_type.toLowerCase().includes("goggle") ||
-      g.gear_type.toLowerCase().includes("box")
-  );
-
-  async function getTableNameForGearId(gearId: string): Promise<string> {
-    const tables = ["batteries", "drones", "transmitters", "goggles", "other_gear"];
-    for (const table of tables) {
-      const result: DbRequestResult<GearItem[]> = await db_request({
-        mode: "query",
-        schema: "personal_gear",
-        table,
-        operation: "select",
-        selectColumns: "id",
-        filters: { id: gearId },
-      });
-      if (result.error) throw result.error;
-      if (result.data) return table;
-    }
-    return "";
-  }
-
-  async function updateGearById(
-    gearId: string,
-    updates: Record<string, unknown>,
-  ): Promise<void> {
-    const tableName = await getTableNameForGearId(gearId);
-    if (!tableName) throw new Error("Gear not found");
-    const { error } = await db_request({
-      mode: "query",
-      schema: "personal_gear",
-      table: tableName,
-      operation: "update",
-      data: updates,
-      filters: { id: gearId },
-    });
-    if (error) throw error;
-  }
-
   const createSession = useMutation({
     mutationFn: async () => {
       const { data: userData } = await supabase.auth.getUser();
@@ -126,7 +55,7 @@ export function LogSessionDialog({
         session_type: type,
         flown_on: flownOn,
         duration_minutes: duration,
-        gear_id: type === "real" && gearId !== "none" ? gearId : null,
+        drone_id: type === "real" && gearId !== "none" ? gearId : null,
         controller_id: controllerId !== "none" ? controllerId : null,
         goggles_id: gogglesId !== "none" ? gogglesId : null,
         location_id: null,
@@ -139,8 +68,7 @@ export function LogSessionDialog({
         notes: notes || null,
       };
 
-      // Optimistically update the list
-      queryClient.setQueryData<{ sessions: SessionRow[]; gear: GearItem[] } | undefined>(
+      queryClient.setQueryData<{ sessions: SessionRow[]; gear: SessionRow[] } | undefined>(
         ["log-data"],
         (old) => {
           if (!old) return undefined;
@@ -161,7 +89,7 @@ export function LogSessionDialog({
           session_type: type,
           flown_on: flownOn,
           duration_minutes: duration,
-          gear_id: type === "real" && gearId !== "none" ? gearId : null,
+        drone_id: type === "real" && gearId !== "none" ? gearId : null,
           controller_id: controllerId !== "none" ? controllerId : null,
           goggles_id: gogglesId !== "none" ? gogglesId : null,
           location_id: null,
@@ -175,37 +103,6 @@ export function LogSessionDialog({
         },
       });
       if (error) throw error;
-
-      // Update gear stats if real flight and gear selected
-      if (type === "real" && gearId !== "none") {
-        const rig = gear.find((g) => g.id === gearId);
-        if (rig) {
-          await updateGearById(gearId, {
-            total_minutes: rig.total_minutes + duration,
-            minutes_since_service: rig.minutes_since_service + duration,
-            pack_count: rig.pack_count + packs,
-            crash_count: rig.crash_count + crashes,
-          });
-        }
-      }
-
-      if (controllerId !== "none") {
-        const ctrl = gear.find((g) => g.id === controllerId);
-        if (ctrl) {
-          await updateGearById(controllerId, {
-            total_minutes: ctrl.total_minutes + duration,
-          });
-        }
-      }
-
-      if (gogglesId !== "none") {
-        const gog = gear.find((g) => g.id === gogglesId);
-        if (gog) {
-          await updateGearById(gogglesId, {
-            total_minutes: gog.total_minutes + duration,
-          });
-        }
-      }
     },
     onSuccess: () => {
       setOpen(false);
@@ -213,11 +110,9 @@ export function LogSessionDialog({
       setBatteryNotes("");
       setPacks(0);
       setCrashes(0);
-      // Invalidate to refetch fresh data
       queryClient.invalidateQueries({ queryKey: ["log-data"] });
     },
     onError: (e: Error) => {
-      // Rollback optimistic update
       queryClient.invalidateQueries({ queryKey: ["log-data"] });
       import("sonner").then(({ toast }) => toast.error(e.message));
     },
@@ -312,18 +207,8 @@ export function LogSessionDialog({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">No drone</SelectItem>
-                  {drones.map((g) => (
-                    <SelectItem key={g.id} value={g.id}>
-                      {g.name}
-                    </SelectItem>
-                  ))}
                 </SelectContent>
               </Select>
-              {drones.length === 0 && (
-                <p className="text-xs text-muted-foreground">
-                  Add a drone in the hanger to track airtime per airframe.
-                </p>
-              )}
             </div>
           )}
 
@@ -339,11 +224,6 @@ export function LogSessionDialog({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">None</SelectItem>
-                  {controllers.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {c.name}
-                    </SelectItem>
-                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -355,11 +235,6 @@ export function LogSessionDialog({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">None</SelectItem>
-                  {gogglesList.map((g) => (
-                    <SelectItem key={g.id} value={g.id}>
-                      {g.name}
-                    </SelectItem>
-                  ))}
                 </SelectContent>
               </Select>
             </div>

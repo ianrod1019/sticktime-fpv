@@ -355,3 +355,12 @@ export async function isUserInRoles(
   const role = await fetchUserRole(userId);
   return role ? roles.includes(role) : false;
 }
+
+export async function getUserSessionsWithGear(userId: string, sessionIds?: string[]): Promise<any[]> {
+  const { data, error } = await supabase.rpc("get_user_sessions_with_gear", {
+    p_user_id: userId,
+    p_session_ids: sessionIds || null,
+  });
+  if (error) throw error;
+  return data as any[];
+}

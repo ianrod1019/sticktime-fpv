@@ -76,7 +76,7 @@ export function useRecentSessions(userId: string | null) {
       const result = await supabase
         .from("sessions")
         .select(
-          "id, session_type, flown_on, duration_minutes, gear_id, controller_id, goggles_id, location_id, track_id, sim_platform, packs_flown, crashes, battery_notes, weather, rating, notes",
+          "id, session_type, flown_on, duration_minutes, drone_id, controller_id, goggles_id, location_id, track_id, sim_platform, packs_flown, crashes, battery_notes, weather, rating, notes",
         )
         .eq("user_id", userId)
         .order("flown_on", { ascending: false });
@@ -100,15 +100,15 @@ export function useActiveRigs(userId: string | null) {
       const sessionsResult = await db_request({
         mode: "query",
         table: "sessions",
-        selectColumns: "gear_id",
+        selectColumns: "drone_id",
         filters: {
           user_id: userId,
           flown_on: { $gte: oneMonthAgoStr },
         },
       });
       if (sessionsResult.error) throw sessionsResult.error;
-      const sessionGearIds = (sessionsResult.data as { gear_id: string }[])
-        .map((row) => row.gear_id)
+      const sessionGearIds = (sessionsResult.data as { drone_id: string }[])
+        .map((row) => row.drone_id)
         .filter((id): id is string => id !== null);
 
       // Fetch user's drones
@@ -126,7 +126,7 @@ export function useActiveRigs(userId: string | null) {
         (row) => row.id,
       );
 
-      // Count distinct gear_ids from sessions that are in the user's non-retired drones
+      // Count distinct drone_ids from sessions that are in the user's non-retired drones
       const uniqueSessionGearIds = new Set(sessionGearIds);
       const activeCount = [...uniqueSessionGearIds].filter((id) =>
         droneIds.includes(id),

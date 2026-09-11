@@ -1,20 +1,19 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { type SessionRow } from "@/lib/fpv";
 import { type GearItem } from "@/components/gear-card/types";
 import { formatHours } from "@/lib/fpv";
 
 interface LogSessionListProps {
   sessions: SessionRow[];
-  gear: GearItem[];
   kind: "sim" | "real";
   onRemove: (id: string) => void;
 }
 
 export function LogSessionList({
   sessions,
-  gear,
   kind,
   onRemove
 }: LogSessionListProps) {
@@ -35,12 +34,11 @@ export function LogSessionList({
       <div className="flex items-center justify-between p-4 bg-muted/40">
         <div className="flex items-center gap-2">
           {isSim ? (
-            <span className="h-4 w-4 text-sim">
-              {/* Monitor icon from lucide-react */}
+            <span className="flex h-6 w-6 items-center justify-center text-sim">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
+                width="20"
+                height="20"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -54,12 +52,11 @@ export function LogSessionList({
               </svg>
             </span>
           ) : (
-            <span className="h-4 w-4 text-primary">
-              {/* Timer icon from lucide-react */}
+            <span className="flex h-6 w-6 items-center justify-center text-primary">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
+                width="20"
+                height="20"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -83,19 +80,6 @@ export function LogSessionList({
         </div>
       </div>
       {rows.map((s) => {
-        const associatedDrone = gear.find((g) => g.id === s.gear_id);
-        const associatedController = gear.find(
-          (g) => g.id === s.controller_id,
-        );
-        const associatedGoggles = gear.find((g) => g.id === s.goggles_id);
-
-        // Build combined badge text
-        const badgeParts: string[] = [];
-        if (associatedDrone) badgeParts.push(`Drone: ${associatedDrone.name}`);
-        if (associatedController) badgeParts.push(`Radio: ${associatedController.name}`);
-        if (associatedGoggles) badgeParts.push(`Goggles: ${associatedGoggles.name}`);
-        const badgeText = badgeParts.join(", ");
-
         return (
           <div
             key={s.id}
@@ -107,16 +91,35 @@ export function LogSessionList({
                 <Badge variant="secondary" className="font-mono text-[10px]">
                   {s.duration_minutes} min
                 </Badge>
+                {s.drone_name && s.drone_name.length > 0 && (
+                  <Link
+                    to="/hanger"
+                    search={{ type: "drone", id: s.drone_id }}
+                    className="rounded-full bg-primary/20 px-2 py-0.5 font-mono text-[10px] font-semibold text-primary transition-colors hover:bg-primary/30"
+                  >
+                    {s.drone_name}
+                  </Link>
+                )}
+                {s.transmitter_name && s.transmitter_name.length > 0 && (
+                  <Link
+                    to="/hanger"
+                    search={{ type: "transmitter", id: s.controller_id }}
+                    className="rounded-full bg-primary/20 px-2 py-0.5 font-mono text-[10px] font-semibold text-primary transition-colors hover:bg-primary/30"
+                  >
+                    {s.transmitter_name}
+                  </Link>
+                )}
+                {s.goggles_name && s.goggles_name.length > 0 && (
+                  <Link
+                    to="/hanger"
+                    search={{ type: "goggles", id: s.goggles_id }}
+                    className="rounded-full bg-primary/20 px-2 py-0.5 font-mono text-[10px] font-semibold text-primary transition-colors hover:bg-primary/30"
+                  >
+                    {s.goggles_name}
+                  </Link>
+                )}
                 {s.sim_platform && (
                   <Badge variant="outline">{s.sim_platform}</Badge>
-                )}
-                {badgeText && (
-                  <Badge
-                    variant="outline"
-                    className="border-primary/30 text-primary"
-                  >
-                    {badgeText}
-                  </Badge>
                 )}
                 {s.packs_flown > 0 && (
                   <Badge variant="outline">{s.packs_flown} packs</Badge>

@@ -4,7 +4,7 @@ export type SessionRow = {
   session_type: "sim" | "real";
   flown_on: string;
   duration_minutes: number;
-  gear_id: string | null;
+  drone_id: string | null;
   controller_id: string | null;
   goggles_id: string | null;
   location_id: string | null;
@@ -16,6 +16,9 @@ export type SessionRow = {
   rating: number | null;
   crashes: number;
   notes: string | null;
+  transmitter_name?: string | null;
+  drone_name?: string | null;
+  goggles_name?: string | null;
 };
 
 export const ACCENTS = ["ember", "lime", "cyan", "magenta", "amber"] as const;
