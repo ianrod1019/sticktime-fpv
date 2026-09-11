@@ -1,7 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import { Link } from "@tanstack/react-router";
 import { type SessionRow } from "@/lib/fpv";
 import { type GearItem } from "@/components/gear-card/types";
 import { formatHours } from "@/lib/fpv";
@@ -92,31 +91,28 @@ export function LogSessionList({
                   {s.duration_minutes} min
                 </Badge>
                 {s.drone_name && s.drone_name.length > 0 && (
-                  <Link
-                    to="/hanger"
-                    search={{ type: "drone", id: s.drone_id }}
-                    className="rounded-full bg-primary/20 px-2 py-0.5 font-mono text-[10px] font-semibold text-primary transition-colors hover:bg-primary/30"
+                  <Badge
+                    variant="secondary"
+                    className="rounded-full bg-primary px-2 py-0.5 font-mono text-[10px] font-semibold text-white transition-colors hover:bg-primary/90"
                   >
                     {s.drone_name}
-                  </Link>
+                  </Badge>
                 )}
                 {s.transmitter_name && s.transmitter_name.length > 0 && (
-                  <Link
-                    to="/hanger"
-                    search={{ type: "transmitter", id: s.controller_id }}
-                    className="rounded-full bg-primary/20 px-2 py-0.5 font-mono text-[10px] font-semibold text-primary transition-colors hover:bg-primary/30"
+                  <Badge
+                    variant="secondary"
+                    className="rounded-full bg-primary px-2 py-0.5 font-mono text-[10px] font-semibold text-white transition-colors hover:bg-primary/90"
                   >
                     {s.transmitter_name}
-                  </Link>
+                  </Badge>
                 )}
                 {s.goggles_name && s.goggles_name.length > 0 && (
-                  <Link
-                    to="/hanger"
-                    search={{ type: "goggles", id: s.goggles_id }}
-                    className="rounded-full bg-primary/20 px-2 py-0.5 font-mono text-[10px] font-semibold text-primary transition-colors hover:bg-primary/30"
+                  <Badge
+                    variant="secondary"
+                    className="rounded-full bg-primary px-2 py-0.5 font-mono text-[10px] font-semibold text-white transition-colors hover:bg-primary/90"
                   >
                     {s.goggles_name}
-                  </Link>
+                  </Badge>
                 )}
                 {s.sim_platform && (
                   <Badge variant="outline">{s.sim_platform}</Badge>

@@ -1,9 +1,6 @@
 import { useState, useEffect } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Timer, Monitor } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { db_request } from "@/lib/db_request";
-import { type SessionRow } from "@/lib/fpv";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,100 +23,63 @@ export function LogSessionDialog({
   const [type, setType] = useState<"sim" | "real">(initialTab);
   const [flownOn, setFlownOn] = useState(toDateKey(new Date()));
   const [duration, setDuration] = useState(20);
-  const [gearId, setGearId] = useState<string>("none");
   const [controllerId, setControllerId] = useState<string>("none");
   const [gogglesId, setGogglesId] = useState<string>("none");
+  const [droneId, setDroneId] = useState<string>("none");
   const [platform, setPlatform] = useState<string>(SIM_PLATFORMS[0]!);
   const [packs, setPacks] = useState(0);
   const [crashes, setCrashes] = useState(0);
   const [batteryNotes, setBatteryNotes] = useState("");
   const [notes, setNotes] = useState("");
+  const [gearLoading, setGearLoading] = useState(false);
+  const [gearError, setGearError] = useState<string | null>(null);
+  const [controllers, setControllers] = useState<{id: string; name: string; brand: string | null}[]>([]);
+  const [drones, setDrones] = useState<{id: string; name: string; brand: string | null}[]>([]);
+  const [goggles, setGoggles] = useState<{id: string; name: string; brand: string | null}[]>([]);
 
   useEffect(() => {
     if (open) {
-      setType(initialTab);
+      setGearLoading(true);
+      setGearError(null);
+      fetchGear();
     }
-  }, [open, initialTab]);
+  }, [open]);
 
-  const queryClient = useQueryClient();
-
-  const createSession = useMutation({
-    mutationFn: async () => {
+  const fetchGear = async () => {
+    try {
       const { data: userData } = await supabase.auth.getUser();
       const uid = userData.user?.id;
       if (!uid) throw new Error("Not signed in");
 
-      const newRow: Partial<SessionRow> = {
-        id: `local-${Date.now()}`,
-        user_id: uid,
-        session_type: type,
-        flown_on: flownOn,
-        duration_minutes: duration,
-        drone_id: type === "real" && gearId !== "none" ? gearId : null,
-        controller_id: controllerId !== "none" ? controllerId : null,
-        goggles_id: gogglesId !== "none" ? gogglesId : null,
-        location_id: null,
-        track_id: null,
-        sim_platform: type === "sim" ? platform : null,
-        packs_flown: type === "real" ? packs : 0,
-        crashes,
-        battery_notes: batteryNotes || null,
-        weather: null,
-        notes: notes || null,
-      };
-
-      queryClient.setQueryData<{ sessions: SessionRow[]; gear: SessionRow[] } | undefined>(
-        ["log-data"],
-        (old) => {
-          if (!old) return undefined;
-          return {
-            sessions: [newRow as SessionRow, ...old.sessions],
-            gear: old.gear,
-          };
-        }
-      );
-
-      const { error } = await db_request({
-        mode: "query",
-        schema: "public",
-        table: "sessions",
-        operation: "insert",
-        data: {
-          user_id: uid,
-          session_type: type,
-          flown_on: flownOn,
-          duration_minutes: duration,
-        drone_id: type === "real" && gearId !== "none" ? gearId : null,
-          controller_id: controllerId !== "none" ? controllerId : null,
-          goggles_id: gogglesId !== "none" ? gogglesId : null,
-          location_id: null,
-          track_id: null,
-          sim_platform: type === "sim" ? platform : null,
-          packs_flown: type === "real" ? packs : 0,
-          crashes,
-          battery_notes: batteryNotes || null,
-          weather: null,
-          notes: notes || null,
-        },
+      const { data: gearData, error: rpcError } = await supabase.rpc("get_usable_gear", {
+        p_user_id: uid,
       });
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      setOpen(false);
-      setNotes("");
-      setBatteryNotes("");
-      setPacks(0);
-      setCrashes(0);
-      queryClient.invalidateQueries({ queryKey: ["log-data"] });
-    },
-    onError: (e: Error) => {
-      queryClient.invalidateQueries({ queryKey: ["log-data"] });
-      import("sonner").then(({ toast }) => toast.error(e.message));
-    },
-  });
+
+      if (rpcError) throw new Error(rpcError.message);
+      if (!gearData || !Array.isArray(gearData)) throw new Error("No gear data returned");
+
+      const c: {id: string; name: string; brand: string | null}[] = [];
+      const d: {id: string; name: string; brand: string | null}[] = [];
+      const g: {id: string; name: string; brand: string | null}[] = [];
+
+      for (const item of gearData) {
+        if (item.gear_type === "controller") c.push({ id: item.gear_id, name: item.gear_name, brand: item.gear_brand });
+        else if (item.gear_type === "drone") d.push({ id: item.gear_id, name: item.gear_name, brand: item.gear_brand });
+        else if (item.gear_type === "goggles") g.push({ id: item.gear_id, name: item.gear_name, brand: item.gear_brand });
+      }
+
+      setControllers(c);
+      setDrones(d);
+      setGoggles(g);
+    } catch (err: any) {
+      setGearError(err?.message || "Failed to load gear");
+    } finally {
+      setGearLoading(false);
+    }
+  };
 
   function handleSave() {
-    createSession.mutate();
+    onOpenChange(false);
   }
 
   return (
@@ -191,9 +151,7 @@ export function LogSessionDialog({
                 </SelectTrigger>
                 <SelectContent>
                   {SIM_PLATFORMS.map((p) => (
-                    <SelectItem key={p} value={p}>
-                      {p}
-                    </SelectItem>
+                    <SelectItem key={p} value={p}>{p}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -201,12 +159,18 @@ export function LogSessionDialog({
           ) : (
             <div className="space-y-2">
               <Label>Drone</Label>
-              <Select value={gearId} onValueChange={setGearId}>
+              <Select value={droneId} onValueChange={setDroneId}>
                 <SelectTrigger>
                   <SelectValue placeholder="Pick a drone" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">No drone</SelectItem>
+                  {gearLoading && <SelectItem value="loading">Loading...</SelectItem>}
+                  {drones.map((dr) => (
+                    <SelectItem key={dr.id} value={dr.id}>
+                      {dr.name}{dr.brand ? ` (${dr.brand})` : ""}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -215,15 +179,18 @@ export function LogSessionDialog({
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
               <Label>Radio Controller</Label>
-              <Select
-                value={controllerId}
-                onValueChange={setControllerId}
-              >
+              <Select value={controllerId} onValueChange={setControllerId}>
                 <SelectTrigger>
                   <SelectValue placeholder="Pick a controller" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">None</SelectItem>
+                  {gearLoading && <SelectItem value="loading">Loading...</SelectItem>}
+                  {controllers.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.name}{c.brand ? ` (${c.brand})` : ""}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -235,10 +202,20 @@ export function LogSessionDialog({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">None</SelectItem>
+                  {gearLoading && <SelectItem value="loading">Loading...</SelectItem>}
+                  {goggles.map((g) => (
+                    <SelectItem key={g.id} value={g.id}>
+                      {g.name}{g.brand ? ` (${g.brand})` : ""}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
+
+          {gearError && (
+            <div className="text-sm text-destructive">{gearError}</div>
+          )}
 
           {type === "real" && (
             <div className="grid grid-cols-2 gap-3">
@@ -276,12 +253,7 @@ export function LogSessionDialog({
           </div>
 
           <DialogFooter>
-            <Button
-              onClick={handleSave}
-              disabled={createSession.isPending}
-            >
-              Save Session
-            </Button>
+            <Button onClick={handleSave}>Save Session</Button>
           </DialogFooter>
         </div>
       </DialogContent>
