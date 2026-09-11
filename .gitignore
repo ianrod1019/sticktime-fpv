@@ -231,3 +231,4 @@ node_modules
 .output/server/_ssr/squadron-qfmZxdvq.mjs
 .output/server/_ssr/start-Cg8EiYfi.mjs
 .output/server/_ssr/teams-NxAkOu7Z.mjs
+./claude/

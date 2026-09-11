@@ -2,8 +2,8 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 
 export const adminSupabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL || "",
-  import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY || "",
+  import.meta.env['VITE_SUPABASE_URL'] || "",
+  import.meta.env['VITE_SUPABASE_SERVICE_ROLE_KEY'] || "",
   {
     auth: {
       autoRefreshToken: false,
