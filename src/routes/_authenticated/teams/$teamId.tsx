@@ -23,7 +23,11 @@ function SquadHQPage() {
   });
 
   // Backend membership and team validation check
-  const { data: membershipData, isLoading, error } = useQuery({
+  const {
+    data: membershipData,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["squad-membership-check", teamId, user?.id],
     enabled: !!user?.id && !!teamId,
     queryFn: async () => {
@@ -71,9 +75,13 @@ function SquadHQPage() {
         </div>
         <h2 className="text-xl font-bold tracking-tight">Access Denied</h2>
         <p className="text-sm text-muted-foreground">
-          {error?.message || "You do not have clearance to access this Squad HQ."}
+          {error?.message ||
+            "You do not have clearance to access this Squad HQ."}
         </p>
-        <Button onClick={() => navigate({ to: "/teams" })} className="w-full gap-2">
+        <Button
+          onClick={() => navigate({ to: "/teams" })}
+          className="w-full gap-2"
+        >
           <ArrowLeft className="h-4 w-4" /> Return to Squad Portal
         </Button>
       </div>
@@ -101,9 +109,12 @@ function SquadHQPage() {
       />
 
       <div className="hud-panel p-12 text-center space-y-4 mt-6">
-        <h2 className="text-2xl font-extrabold tracking-tight text-primary">Squad HQ</h2>
+        <h2 className="text-2xl font-extrabold tracking-tight text-primary">
+          Squad HQ
+        </h2>
         <p className="text-muted-foreground max-w-md mx-auto text-sm">
-          Secure backend telemetry verified. You are an authorized member of this squad. Feature modules coming online shortly.
+          Secure backend telemetry verified. You are an authorized member of
+          this squad. Feature modules coming online shortly.
         </p>
       </div>
     </>

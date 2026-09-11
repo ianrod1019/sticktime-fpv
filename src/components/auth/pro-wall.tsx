@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Lock, Crown, AlertTriangle, Shield, TrendingDown, Zap } from "lucide-react";
+import { Lock, Crown, AlertTriangle, Shield, TrendingDown } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,13 @@ type ProWallProps = {
   fallbackPath?: string;
 };
 
-export function ProWall({ children, featureName, description, allowAdminOverride = true, fallbackPath }: ProWallProps) {
+export function ProWall({
+  children,
+  featureName,
+  description,
+  allowAdminOverride = true,
+  fallbackPath,
+}: ProWallProps) {
   const [hasProAccess, setHasProAccess] = useState<boolean | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [userTier, setUserTier] = useState<string | null>(null);
@@ -30,8 +36,10 @@ export function ProWall({ children, featureName, description, allowAdminOverride
   const checkProAccess = async () => {
     try {
       setLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       if (!user) {
         setHasProAccess(false);
         setLoading(false);
@@ -53,8 +61,8 @@ export function ProWall({ children, featureName, description, allowAdminOverride
       }
 
       // Check pro access using RPC function
-      const { data: proAccessData, error } = await supabase
-        .rpc("check_pro_access");
+      const { data: proAccessData, error } =
+        await supabase.rpc("check_pro_access");
 
       if (error) {
         console.error("Error checking pro access:", error);
@@ -76,7 +84,9 @@ export function ProWall({ children, featureName, description, allowAdminOverride
     return (
       <div className="flex items-center justify-center py-8">
         <div className="animate-spin rounded-full h-6 w-6 border-2 border-primary border-t-transparent" />
-        <span className="ml-2 text-xs text-muted-foreground">Checking pro access...</span>
+        <span className="ml-2 text-xs text-muted-foreground">
+          Checking pro access...
+        </span>
       </div>
     );
   }
@@ -92,18 +102,26 @@ export function ProWall({ children, featureName, description, allowAdminOverride
           <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 border border-primary/30">
             <Lock className="h-6 w-6 text-primary" />
           </div>
-          
+
           <h3 className="text-lg font-semibold text-foreground mb-2 flex items-center justify-center gap-2">
             {featureName}
           </h3>
-          
+
           <p className="text-sm text-muted-foreground mb-6">
-            {description || "This feature requires a Pro subscription. Upgrade to access advanced LiPo health analytics, voltage sag curve tracking, and internal resistance monitoring over time."}
+            {description ||
+              "This feature requires a Pro subscription. Upgrade to unlock advanced analytics and additional features."}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
-            <Badge variant="outline" className="gap-1.5 border-primary/30 bg-primary/10">
-              {isAdmin ? <Crown className="h-3.5 w-3.5" /> : <Shield className="h-3.5 w-3.5" />}
+            <Badge
+              variant="outline"
+              className="gap-1.5 border-primary/30 bg-primary/10"
+            >
+              {isAdmin ? (
+                <Crown className="h-3.5 w-3.5" />
+              ) : (
+                <Shield className="h-3.5 w-3.5" />
+              )}
               Current: {userTier || "Free"} {isAdmin ? `(Admin)` : ""}
             </Badge>
             <Badge variant="secondary" className="gap-1.5">
@@ -112,23 +130,13 @@ export function ProWall({ children, featureName, description, allowAdminOverride
           </div>
 
           <div className="bg-secondary/20 border border-secondary/30 rounded-lg p-4 text-left text-xs space-y-2">
-            <div className="font-medium text-foreground/80 mb-2">Pro features include:</div>
+            <div className="font-medium text-foreground/80 mb-2">
+              Pro features include:
+            </div>
             <div className="space-y-1 text-muted-foreground">
-              <div className="flex items-start gap-2">
-                <Zap className="h-3.5 w-3.5 text-warning mt-0.5 flex-shrink-0" />
-                <span>Real-time voltage sag curve analytics</span>
-              </div>
               <div className="flex items-start gap-2">
                 <TrendingDown className="h-3.5 w-3.5 text-destructive mt-0.5 flex-shrink-0" />
                 <span>Pack degradation alerts and health scoring</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <AlertTriangle className="h-3.5 w-3.5 text-warning mt-0.5 flex-shrink-0" />
-                <span>Internal resistance (IR) tracking and trending</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <Shield className="h-3.5 w-3.5 text-success mt-0.5 flex-shrink-0" />
-                <span>Historical data analysis across multiple flight sessions</span>
               </div>
             </div>
           </div>
@@ -136,8 +144,8 @@ export function ProWall({ children, featureName, description, allowAdminOverride
           {isAdmin && (
             <div className="mt-4 p-3 bg-success/10 border border-success/30 rounded-lg">
               <p className="text-xs text-success">
-                <Crown className="h-3.5 w-3.5 inline mr-1" /> 
-                As an admin, you have access to all pro features including LiPo Health & IR Tracking.
+                <Crown className="h-3.5 w-3.5 inline mr-1" />
+                As an admin, you have access to all pro features.
               </p>
             </div>
           )}

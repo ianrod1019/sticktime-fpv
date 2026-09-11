@@ -13,7 +13,16 @@ interface GearCardHeaderProps {
   isDeleting: boolean;
   onHoverDelete: (id: string | null) => void;
   onDeleteGear: (id: string, name: string) => void;
-  onUpdateGear: (gearId: string, name: string, brand: string, serviceInterval: number, packCount: number, cells: number, connectorType: string, purchaseCost: number, currentValue: number) => void;
+  onUpdateGear: (
+    gearId: string,
+    name: string,
+    brand: string,
+    serviceInterval: number,
+    packCount: number,
+    cells: number,
+    connectorType: string,
+    purchaseCost: number,
+  ) => void;
 }
 
 export function GearCardHeader({
@@ -65,17 +74,20 @@ export function GearCardHeader({
     gear.gear_type === "quad"
       ? "Drone / Quad"
       : gear.gear_type === "transmitter"
-      ? "Controller / Radio"
-      : gear.gear_type === "goggles"
-      ? "Goggles"
-      : gear.gear_type === "battery"
-      ? "Battery Set"
-      : "Other Gear";
+        ? "Controller / Radio"
+        : gear.gear_type === "goggles"
+          ? "Goggles"
+          : gear.gear_type === "battery"
+            ? "Battery Set"
+            : "Other Gear";
 
   return (
     <div className="flex items-start justify-between gap-2 mb-3">
       <div className="min-w-0 flex-1 pr-1">
-        <h3 className="text-base font-semibold tracking-tight truncate text-foreground" title={gear.name}>
+        <h3
+          className="text-base font-semibold tracking-tight truncate text-foreground"
+          title={gear.name}
+        >
           {gear.name}
         </h3>
         <p className="text-[11px] text-muted-foreground truncate mt-0.5">
@@ -85,7 +97,9 @@ export function GearCardHeader({
             ""
           )}
           {gear.brand ? " · " : ""}
-          <span className="uppercase tracking-wider text-[10px]">{typeLabel}</span>
+          <span className="uppercase tracking-wider text-[10px]">
+            {typeLabel}
+          </span>
         </p>
       </div>
 
@@ -100,7 +114,11 @@ export function GearCardHeader({
         )}
 
         {/* Edit Button Dialog */}
-        <GearCardEditDialog gear={gear} onUpdateGear={onUpdateGear} isDeleting={isDeleting} />
+        <GearCardEditDialog
+          gear={gear}
+          onUpdateGear={onUpdateGear}
+          isDeleting={isDeleting}
+        />
 
         {/* Inline Confirmation or Trash Button */}
         {isConfirmingDelete ? (

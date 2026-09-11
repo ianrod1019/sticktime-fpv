@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -13,13 +20,25 @@ interface BanPilotModalProps {
   isOpen: boolean;
   onClose: () => void;
   pilot: ProfileWithEmail | null;
-  onConfirmBan: (pilot: ProfileWithEmail, reason: string, banUntil: string | null) => void;
+  onConfirmBan: (
+    pilot: ProfileWithEmail,
+    reason: string,
+    banUntil: string | null,
+  ) => void;
   isLoading?: boolean;
 }
 
-export function BanPilotModal({ isOpen, onClose, pilot, onConfirmBan, isLoading }: BanPilotModalProps) {
+export function BanPilotModal({
+  isOpen,
+  onClose,
+  pilot,
+  onConfirmBan,
+  isLoading,
+}: BanPilotModalProps) {
   const [reason, setReason] = useState("");
-  const [banType, setBanType] = useState<"permanent" | "temporary">("permanent");
+  const [banType, setBanType] = useState<"permanent" | "temporary">(
+    "permanent",
+  );
   const [banUntilDate, setBanUntilDate] = useState("");
 
   if (!pilot) return null;
@@ -34,7 +53,9 @@ export function BanPilotModal({ isOpen, onClose, pilot, onConfirmBan, isLoading 
     let finalBanUntil: string | null = null;
     if (banType === "temporary") {
       if (!banUntilDate) {
-        toast.error("Please specify a valid expiration date for temporary suspension.");
+        toast.error(
+          "Please specify a valid expiration date for temporary suspension.",
+        );
         return;
       }
       finalBanUntil = new Date(banUntilDate).toISOString();
@@ -50,16 +71,23 @@ export function BanPilotModal({ isOpen, onClose, pilot, onConfirmBan, isLoading 
           <DialogHeader className="space-y-3">
             <div className="flex items-center gap-2 text-destructive">
               <ShieldAlert className="h-5 w-5" />
-              <DialogTitle className="font-mono text-lg">Ban Pilot: {pilot.email}</DialogTitle>
+              <DialogTitle className="font-mono text-lg">
+                Ban Pilot: {pilot.email}
+              </DialogTitle>
             </div>
             <DialogDescription className="text-muted-foreground text-xs font-mono">
-              This action restricts pilot access. A mandatory reason must be provided and will be logged securely for administrator review only.
+              This action restricts pilot access. A mandatory reason must be
+              provided and will be logged securely for administrator review
+              only.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="ban-reason" className="text-xs font-mono font-medium text-foreground">
+              <Label
+                htmlFor="ban-reason"
+                className="text-xs font-mono font-medium text-foreground"
+              >
                 Mandatory Ban Reason <span className="text-destructive">*</span>
               </Label>
               <Textarea
@@ -73,18 +101,33 @@ export function BanPilotModal({ isOpen, onClose, pilot, onConfirmBan, isLoading 
             </div>
 
             <div className="space-y-3 pt-2">
-              <Label className="text-xs font-mono font-medium text-foreground">Ban Duration</Label>
-              <RadioGroup value={banType} onValueChange={(v) => setBanType(v as "permanent" | "temporary")} className="flex flex-col gap-2">
+              <Label className="text-xs font-mono font-medium text-foreground">
+                Ban Duration
+              </Label>
+              <RadioGroup
+                value={banType}
+                onValueChange={(v) =>
+                  setBanType(v as "permanent" | "temporary")
+                }
+                className="flex flex-col gap-2"
+              >
                 <div className="flex items-center space-x-2 border border-border/60 rounded-md p-2.5 bg-background/30 hover:bg-muted/30 cursor-pointer">
                   <RadioGroupItem value="permanent" id="perm" />
-                  <Label htmlFor="perm" className="text-xs font-mono cursor-pointer flex-1">
+                  <Label
+                    htmlFor="perm"
+                    className="text-xs font-mono cursor-pointer flex-1"
+                  >
                     Permanent Ban (Indefinite)
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2 border border-border/60 rounded-md p-2.5 bg-background/30 hover:bg-muted/30 cursor-pointer">
                   <RadioGroupItem value="temporary" id="temp" />
-                  <Label htmlFor="temp" className="text-xs font-mono cursor-pointer flex-1 flex items-center gap-2">
-                    <Calendar className="h-3.5 w-3.5 text-muted-foreground" /> Temporary Suspension
+                  <Label
+                    htmlFor="temp"
+                    className="text-xs font-mono cursor-pointer flex-1 flex items-center gap-2"
+                  >
+                    <Calendar className="h-3.5 w-3.5 text-muted-foreground" />{" "}
+                    Temporary Suspension
                   </Label>
                 </div>
               </RadioGroup>
@@ -92,7 +135,10 @@ export function BanPilotModal({ isOpen, onClose, pilot, onConfirmBan, isLoading 
 
             {banType === "temporary" && (
               <div className="space-y-2 pt-1 pl-6">
-                <Label htmlFor="ban-date" className="text-[11px] font-mono text-muted-foreground">
+                <Label
+                  htmlFor="ban-date"
+                  className="text-[11px] font-mono text-muted-foreground"
+                >
                   Ban Until Date & Time
                 </Label>
                 <Input

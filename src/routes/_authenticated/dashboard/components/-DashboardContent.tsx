@@ -16,9 +16,9 @@ import { Heatmap } from "@/components/heatmap";
 import { Progress } from "@/components/ui/progress";
 import { PageHeader } from "@/components/app-shell";
 import { formatHours, type SessionRow } from "@/lib/fpv";
-import { StatCard } from "./StatCard";
-import { RatioBar } from "./RatioBar";
-import { QuickAddSessionLogger } from "./QuickAddSessionLogger";
+import { StatCard } from "./-StatCard";
+import { RatioBar } from "./-RatioBar";
+import { QuickAddSessionLogger } from "./-QuickAddSessionLogger";
 
 interface DashboardContentProps {
   simMinutes: number;
@@ -67,18 +67,21 @@ export function DashboardContent({
   const packs = totalPacks;
   const activeDrones = activeRigs;
 
-  const heatmapSessions = (heatmapData?.map((d) => ({ flown_on: d.date, duration_minutes: d.minutes })) ?? []) as SessionRow[];
+  const heatmapSessions = (heatmapData?.map((d) => ({
+    flown_on: d.date,
+    duration_minutes: d.minutes,
+  })) ?? []) as SessionRow[];
 
-  const fallbackMonths = Array.from({length: 12}, (_, i) => {
-                    const d = new Date();
-                    d.setMonth(d.getMonth() - i);
-                    const month = d.getMonth() + 1;
-                    return {
-                      month: `${String(month).padStart(2, '0')}-${d.getFullYear()}`,
-                      sim: 0,
-                      real: 0,
-                    };
-                  }).reverse();
+  const fallbackMonths = Array.from({ length: 12 }, (_, i) => {
+    const d = new Date();
+    d.setMonth(d.getMonth() - i);
+    const month = d.getMonth() + 1;
+    return {
+      month: `${String(month).padStart(2, "0")}-${d.getFullYear()}`,
+      sim: 0,
+      real: 0,
+    };
+  }).reverse();
 
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
 
@@ -118,7 +121,12 @@ export function DashboardContent({
           value={`${streak.combined} ${streak.combined === 1 ? "day" : "days"}`}
           hint={`Sim: ${streak.sim}d, Real: ${streak.real}d`}
         />
-        <StatCard icon={Battery} label="Packs flown" value={String(packs)} hint="Real-world packs" />
+        <StatCard
+          icon={Battery}
+          label="Packs flown"
+          value={String(packs)}
+          hint="Real-world packs"
+        />
         <StatCard
           icon={Cpu}
           label="Active rigs"
@@ -137,7 +145,9 @@ export function DashboardContent({
       </div>
 
       <div className="mt-4 hud-panel p-5">
-        <span className="label-mono text-sm mb-2 block">AIRTIME CONSOLIDATED VIEW</span>
+        <span className="label-mono text-sm mb-2 block">
+          AIRTIME CONSOLIDATED VIEW
+        </span>
         <div className="flex flex-col items-start gap-4">
           <div className="w-full">
             <div className="flex justify-between text-sm text-muted-foreground mb-1">
@@ -146,52 +156,66 @@ export function DashboardContent({
             </div>
             <RatioBar simMinutes={simMinutes} realMinutes={realMinutes} />
             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>{formatHours(simMinutes)} ({Math.round((simMinutes / totalMinutes) * 100)}%)</span>
-              <span>{formatHours(realMinutes)} ({Math.round((realMinutes / totalMinutes) * 100)}%)</span>
+              <span>
+                {formatHours(simMinutes)} (
+                {Math.round((simMinutes / totalMinutes) * 100)}%)
+              </span>
+              <span>
+                {formatHours(realMinutes)} (
+                {Math.round((realMinutes / totalMinutes) * 100)}%)
+              </span>
             </div>
           </div>
 
           <div className="w-full">
-            <span className="text-primary text-lg font-bold">{formatHours(totalMinutes)}</span>
+            <span className="text-primary text-lg font-bold">
+              {formatHours(totalMinutes)}
+            </span>
           </div>
 
           <div className="w-full">
             <span className="label-mono">Monthly volume (hours)</span>
             <div className="mt-2">
-<ResponsiveContainer width="100%" height={280}>
-    <AreaChart data={monthlyData.length > 0 ? monthlyData : fallbackMonths}>
-      <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-      <XAxis dataKey="month" stroke="var(--muted-foreground)" fontSize={11} />
-      <YAxis stroke="var(--muted-foreground)" fontSize={11} />
-      <RTooltip
-        contentStyle={{
-          background: "var(--popover)",
-          border: "1px solid var(--border)",
-          borderRadius: 8,
-        }}
-        formatter={(value) => formatHours(value as number)}
-      />
-      <Legend />
-      <Area
-        dataKey="sim"
-        stackId="a"
-        fill="var(--sim)"
-        stroke="var(--sim)"
-        strokeWidth={2}
-        type="monotone"
-        fillOpacity={0.6}
-      />
-      <Area
-        dataKey="real"
-        stackId="a"
-        fill="var(--primary)"
-        stroke="var(--primary)"
-        strokeWidth={2}
-        type="monotone"
-        fillOpacity={0.6}
-      />
-    </AreaChart>
-  </ResponsiveContainer>
+              <ResponsiveContainer width="100%" height={280}>
+                <AreaChart
+                  data={monthlyData.length > 0 ? monthlyData : fallbackMonths}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                  <XAxis
+                    dataKey="month"
+                    stroke="var(--muted-foreground)"
+                    fontSize={11}
+                  />
+                  <YAxis stroke="var(--muted-foreground)" fontSize={11} />
+                  <RTooltip
+                    contentStyle={{
+                      background: "var(--popover)",
+                      border: "1px solid var(--border)",
+                      borderRadius: 8,
+                    }}
+                    formatter={(value) => formatHours(value as number)}
+                  />
+                  <Legend />
+                  <Area
+                    dataKey="sim"
+                    stackId="a"
+                    fill="var(--sim)"
+                    stroke="var(--sim)"
+                    strokeWidth={2}
+                    type="monotone"
+                    fillOpacity={0.6}
+                  />
+                  <Area
+                    dataKey="real"
+                    stackId="a"
+                    fill="var(--primary)"
+                    stroke="var(--primary)"
+                    strokeWidth={2}
+                    type="monotone"
+                    fillOpacity={0.6}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>
@@ -209,8 +233,16 @@ export function DashboardContent({
           ) : (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={rigUsage} layout="vertical" margin={{ left: 24 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
-                <XAxis type="number" stroke="var(--muted-foreground)" fontSize={11} />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="var(--border)"
+                  horizontal={false}
+                />
+                <XAxis
+                  type="number"
+                  stroke="var(--muted-foreground)"
+                  fontSize={11}
+                />
                 <YAxis
                   type="category"
                   dataKey="name"
@@ -225,7 +257,11 @@ export function DashboardContent({
                     borderRadius: 8,
                   }}
                 />
-                <Bar dataKey="hours" fill="var(--primary)" radius={[0, 4, 4, 0]} />
+                <Bar
+                  dataKey="hours"
+                  fill="var(--primary)"
+                  radius={[0, 4, 4, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           )}

@@ -62,7 +62,8 @@ export function GearCardServiceDialog({
             Service {gear.name}
           </DialogTitle>
           <DialogDescription>
-            Log a service interval. This will add the minutes to "minutes since last service".
+            Log a service interval. This will add the minutes to "minutes since
+            last service".
           </DialogDescription>
         </DialogHeader>
 
@@ -97,7 +98,8 @@ export function GearCardServiceDialog({
               checked={isFullReset}
               onChange={(e) => {
                 setIsFullReset(e.target.checked);
-                if (e.target.checked) setServiceMinutes(gear.service_interval_minutes.toString());
+                if (e.target.checked)
+                  setServiceMinutes(gear.service_interval_minutes.toString());
               }}
               className="h-4 w-4 rounded border-primary text-primary focus:ring-primary"
             />
@@ -110,7 +112,12 @@ export function GearCardServiceDialog({
         <DialogFooter className="flex-col gap-2">
           <Button
             onClick={handleService}
-            disabled={isDeleting || isFullReset || !serviceMinutes || parseInt(serviceMinutes, 10) <= 0}
+            disabled={
+              isDeleting ||
+              isFullReset ||
+              !serviceMinutes ||
+              parseInt(serviceMinutes, 10) <= 0
+            }
             className="bg-primary hover:bg-primary/90 text-primary-foreground w-full"
           >
             {isFullReset ? "Full reset" : "Log service"}

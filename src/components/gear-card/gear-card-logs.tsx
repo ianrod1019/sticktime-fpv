@@ -1,5 +1,13 @@
 import { useState, useRef, useEffect } from "react";
-import { ChevronDown, ChevronUp, Plus, Check, X, Trash2, DollarSign } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Plus,
+  Check,
+  X,
+  Trash2,
+  DollarSign,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -168,28 +176,37 @@ export function GearCardLogs({
 
       <div
         style={{
-          transition: "max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+          transition:
+            "max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
           overflow: "hidden",
           maxHeight: isLogsCollapsed ? "0px" : "300px",
           opacity: isLogsCollapsed ? 0 : 1,
         }}
       >
         {logs.length > 0 ? (
-          <div className="space-y-1.5 pt-1 pr-1 max-h-[150px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-secondary/20 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/50 hover:[&::-webkit-scrollbar-thumb]:bg-primary">
+          <div className="space-y-1.5 pt-1 pr-1 max-h-37.5 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-secondary/20 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/50 hover:[&::-webkit-scrollbar-thumb]:bg-primary">
             {logs
               .slice()
-              .sort((a, b) => new Date(b.performed_on).getTime() - new Date(a.performed_on).getTime())
+              .sort(
+                (a, b) =>
+                  new Date(b.performed_on).getTime() -
+                  new Date(a.performed_on).getTime(),
+              )
               .map((log) => {
                 const isLogConfirming = confirmingLogId === log.id;
                 const isLogDeleting = deletingLogId === log.id;
                 const isLogHovered = hoveredLogId === log.id;
-                const isLogActiveHighlight = isLogConfirming || isLogHovered || isLogDeleting;
+                const isLogActiveHighlight =
+                  isLogConfirming || isLogHovered || isLogDeleting;
 
-                const date = new Date(log.performed_on).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                });
+                const date = new Date(log.performed_on).toLocaleDateString(
+                  "en-US",
+                  {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  },
+                );
 
                 return (
                   <div
@@ -198,20 +215,26 @@ export function GearCardLogs({
                       isLogDeleting
                         ? "opacity-0 scale-95 translate-x-2 pointer-events-none"
                         : isLogActiveHighlight
-                        ? "bg-card/90 border-destructive/60 shadow-sm shadow-destructive/10 animate-subtle-shake ring-1 ring-destructive/40"
-                        : "bg-secondary/30 border-primary/10"
+                          ? "bg-card/90 border-destructive/60 shadow-sm shadow-destructive/10 animate-subtle-shake ring-1 ring-destructive/40"
+                          : "bg-secondary/30 border-primary/10"
                     }`}
                   >
                     <div className="min-w-0 flex-1 truncate">
-                      <p className={`font-medium ${
-                        isLogActiveHighlight ? "text-destructive" : "text-foreground"
-                      }`}>
+                      <p
+                        className={`font-medium ${
+                          isLogActiveHighlight
+                            ? "text-destructive"
+                            : "text-foreground"
+                        }`}
+                      >
                         {log.description}
                       </p>
                       <div className="flex items-center gap-2 mt-0.5 text-[10px] text-muted-foreground">
                         <span>{date}</span>
                         {log.cost && log.cost > 0 && (
-                          <span className="text-primary font-mono">${log.cost.toFixed(2)}</span>
+                          <span className="text-primary font-mono">
+                            ${log.cost.toFixed(2)}
+                          </span>
                         )}
                       </div>
                     </div>

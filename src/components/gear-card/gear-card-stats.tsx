@@ -37,7 +37,9 @@ export function GearCardStats({
             {isBattery ? "Total Cycles" : "Flight Time"}
           </div>
           <div className="font-mono font-medium text-foreground text-sm">
-            {isBattery ? `${gear.total_minutes} cycles` : `${gear.total_minutes}m`}
+            {isBattery
+              ? `${gear.total_minutes} cycles`
+              : `${gear.total_minutes}m`}
           </div>
         </div>
       </div>
@@ -49,24 +51,23 @@ export function GearCardStats({
             <BatteryCharging className="w-4 h-4" />
           </div>
           <div>
-            <div className="text-muted-foreground text-[10px] uppercase font-semibold tracking-wider">Pack Count</div>
+            <div className="text-muted-foreground text-[10px] uppercase font-semibold tracking-wider">
+              Pack Count
+            </div>
             <div className="font-mono font-medium text-foreground text-sm">
               {gear.pack_count || 4} packs
             </div>
           </div>
         </div>
-      ) : isAsNeeded ? (
-        /* As needed items do not show the service wear box */
-        null
-      ) : (
+      ) : isAsNeeded /* As needed items do not show the service wear box */ ? null : (
         <div className="bg-muted/30 border border-primary/10 rounded-lg p-2.5 flex items-center gap-2.5">
           <div
             className={`p-1.5 rounded-md ${
               servicePct >= 100
                 ? "bg-destructive/20 text-destructive animate-pulse"
                 : servicePct >= 80
-                ? "bg-warning/20 text-warning"
-                : "bg-success/20 text-success"
+                  ? "bg-warning/20 text-warning"
+                  : "bg-success/20 text-success"
             }`}
           >
             <Shield className="w-4 h-4" />
@@ -79,8 +80,8 @@ export function GearCardStats({
                   servicePct >= 100
                     ? "text-destructive font-bold"
                     : servicePct >= 80
-                    ? "text-warning font-bold"
-                    : "text-muted-foreground"
+                      ? "text-warning font-bold"
+                      : "text-muted-foreground"
                 }`}
               >
                 {servicePct}%
@@ -92,8 +93,8 @@ export function GearCardStats({
                   servicePct >= 100
                     ? "bg-destructive"
                     : servicePct >= 80
-                    ? "bg-warning"
-                    : "bg-success"
+                      ? "bg-warning"
+                      : "bg-success"
                 }`}
                 style={{ width: `${Math.min(100, servicePct)}%` }}
               />
@@ -110,14 +111,20 @@ export function GearCardStats({
               <Flame className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-muted-foreground text-[10px] uppercase font-semibold tracking-wider">Crash Count</div>
+              <div className="text-muted-foreground text-[10px] uppercase font-semibold tracking-wider">
+                Crash Count
+              </div>
               <div className="font-mono font-medium text-foreground text-sm">
                 {gear.crash_count || 0} recorded crashes
               </div>
             </div>
           </div>
           <div className="text-xs font-mono text-muted-foreground bg-background/50 px-2 py-1 rounded border border-border/50">
-            {(gear.crash_count || 0) === 0 ? "Clean pilot 🏆" : (gear.crash_count || 0) > 5 ? "Send it! 🔥" : "Moderate"}
+            {(gear.crash_count || 0) === 0
+              ? "Clean pilot 🏆"
+              : (gear.crash_count || 0) > 5
+                ? "Send it! 🔥"
+                : "Moderate"}
           </div>
         </div>
       )}

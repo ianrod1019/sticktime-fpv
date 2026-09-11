@@ -1,6 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, ShieldAlert, Key, Copy, Check, RefreshCw } from "lucide-react";
+import {
+  ArrowLeft,
+  ShieldAlert,
+  Key,
+  Copy,
+  Check,
+  RefreshCw,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/app-shell";
@@ -42,7 +49,11 @@ function SquadronManagePage() {
   });
 
   // Strict role check: Must be owner or manager
-  const { data: squadData, isLoading, error } = useQuery({
+  const {
+    data: squadData,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["squadron-manage-details", squadronId, user?.id],
     enabled: !!user?.id && !!squadronId,
     queryFn: async () => {
@@ -70,7 +81,9 @@ function SquadronManagePage() {
       const isManager = role === "manager";
 
       if (!isOwner && !isManager) {
-        throw new Error("Access Denied: Only squadron managers and owners can access management controls.");
+        throw new Error(
+          "Access Denied: Only squadron managers and owners can access management controls.",
+        );
       }
 
       // Fetch invite codes
@@ -105,7 +118,9 @@ function SquadronManagePage() {
 
       if (error) throw error;
 
-      await queryClient.invalidateQueries({ queryKey: ["squadron-manage-details", squadronId] });
+      await queryClient.invalidateQueries({
+        queryKey: ["squadron-manage-details", squadronId],
+      });
     } catch (err: any) {
       console.error("Failed to generate invite code:", err);
       toast.error(err?.message || "Failed to generate new invite code.");
@@ -130,9 +145,15 @@ function SquadronManagePage() {
         </div>
         <h2 className="text-xl font-bold tracking-tight">Access Denied</h2>
         <p className="text-sm text-muted-foreground">
-          {error?.message || "You do not have manager clearance for this squadron."}
+          {error?.message ||
+            "You do not have manager clearance for this squadron."}
         </p>
-        <Button onClick={() => navigate({ to: "/squadron/$squadronId", params: { squadronId } })} className="w-full gap-2">
+        <Button
+          onClick={() =>
+            navigate({ to: "/squadron/$squadronId", params: { squadronId } })
+          }
+          className="w-full gap-2"
+        >
           <ArrowLeft className="h-4 w-4" /> Return to Squad HQ
         </Button>
       </div>
@@ -147,7 +168,9 @@ function SquadronManagePage() {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => navigate({ to: "/squadron/$squadronId", params: { squadronId } })}
+          onClick={() =>
+            navigate({ to: "/squadron/$squadronId", params: { squadronId } })
+          }
           className="text-muted-foreground hover:text-foreground gap-2"
         >
           <ArrowLeft className="h-4 w-4" /> Back to Squad HQ
@@ -175,11 +198,15 @@ function SquadronManagePage() {
               disabled={isGenerating}
               className="h-8 w-8 text-muted-foreground hover:text-foreground"
             >
-              <RefreshCw className={`h-4 w-4 ${isGenerating ? "animate-spin" : ""}`} />
+              <RefreshCw
+                className={`h-4 w-4 ${isGenerating ? "animate-spin" : ""}`}
+              />
             </Button>
           </h2>
           <p className="text-xs text-muted-foreground mb-4">
-            Share this invite code with fellow FPV pilots to grant them instant access to this Squadron HQ. Generating a new code invalidates previous codes.
+            Share this invite code with fellow FPV pilots to grant them instant
+            access to this Squadron HQ. Generating a new code invalidates
+            previous codes.
           </p>
           {inviteCode ? (
             <div className="space-y-3">
@@ -192,7 +219,11 @@ function SquadronManagePage() {
                   onClick={() => handleCopyCode(inviteCode.code)}
                   className="h-8 w-8 text-muted-foreground hover:text-foreground"
                 >
-                  {copiedCode ? <Check className="h-4 w-4 text-success" /> : <Copy className="h-4 w-4" />}
+                  {copiedCode ? (
+                    <Check className="h-4 w-4 text-success" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
                 </Button>
               </div>
               <p className="text-[11px] text-muted-foreground text-center">
@@ -200,7 +231,9 @@ function SquadronManagePage() {
               </p>
             </div>
           ) : (
-            <p className="text-xs text-muted-foreground italic">No active invite code generated.</p>
+            <p className="text-xs text-muted-foreground italic">
+              No active invite code generated.
+            </p>
           )}
         </div>
 
@@ -211,7 +244,9 @@ function SquadronManagePage() {
               Squadron Controls
             </h2>
             <p className="text-xs text-muted-foreground mb-6">
-              {isOwner ? "As squad owner, you can manage team permissions or dissolve the squadron permanently." : "You can leave this squadron at any time."}
+              {isOwner
+                ? "As squad owner, you can manage team permissions or dissolve the squadron permanently."
+                : "You can leave this squadron at any time."}
             </p>
           </div>
           {user && (
@@ -220,7 +255,12 @@ function SquadronManagePage() {
               squadronName={team.name}
               isOwner={isOwner}
               userId={user.id}
-              userCallsignOrName={profile?.callsign || profile?.display_name || user.email || "Pilot"}
+              userCallsignOrName={
+                profile?.callsign ||
+                profile?.display_name ||
+                user.email ||
+                "Pilot"
+              }
             />
           )}
         </div>

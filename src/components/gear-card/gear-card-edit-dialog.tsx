@@ -31,7 +31,6 @@ interface GearCardEditDialogProps {
     cells: number,
     connectorType: string,
     purchaseCost: number,
-    currentValue: number,
   ) => void;
   isDeleting: boolean;
 }
@@ -71,9 +70,6 @@ export function GearCardEditDialog({
   const [purchaseCost, setPurchaseCost] = useState<number>(
     gear.purchase_cost ?? 0,
   );
-  const [currentValue, setCurrentValue] = useState<number>(
-    gear.current_value ?? gear.purchase_cost ?? 0,
-  );
 
   const initialConn = gear.connector_type || "XT60";
   const isInitialPreset = PRESET_CONNECTORS.includes(initialConn);
@@ -96,9 +92,8 @@ export function GearCardEditDialog({
           : 600,
       );
       setPackCount(gear.pack_count || 4);
-      setCells(gear.cells || (gear.gear_type === "battery" ? 6 : 4));
+      setCells(gear.cells || 4);
       setPurchaseCost(gear.purchase_cost ?? 0);
-      setCurrentValue(gear.current_value ?? gear.purchase_cost ?? 0);
 
       const conn = gear.connector_type || "XT60";
       if (PRESET_CONNECTORS.includes(conn)) {
@@ -129,7 +124,6 @@ export function GearCardEditDialog({
       finalCells,
       finalConnector,
       purchaseCost,
-      currentValue,
     );
     setOpen(false);
   };
@@ -285,35 +279,19 @@ export function GearCardEditDialog({
                 Cost Tracking (Pro Feature)
               </Label>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <Label htmlFor={`edit-purchase-cost-${gear.id}`}>
-                  Purchase Cost ($)
-                </Label>
-                <Input
-                  id={`edit-purchase-cost-${gear.id}`}
-                  type="number"
-                  min={0}
-                  step={0.01}
-                  value={String(purchaseCost)}
-                  onChange={(e) => setPurchaseCost(Number(e.target.value))}
-                  placeholder="0.00"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`edit-current-value-${gear.id}`}>
-                  Current Value ($)
-                </Label>
-                <Input
-                  id={`edit-current-value-${gear.id}`}
-                  type="number"
-                  min={0}
-                  step={0.01}
-                  value={String(currentValue)}
-                  onChange={(e) => setCurrentValue(Number(e.target.value))}
-                  placeholder="0.00"
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor={`edit-purchase-cost-${gear.id}`}>
+                Purchase Cost ($)
+              </Label>
+              <Input
+                id={`edit-purchase-cost-${gear.id}`}
+                type="number"
+                min={0}
+                step={0.01}
+                value={String(purchaseCost)}
+                onChange={(e) => setPurchaseCost(Number(e.target.value))}
+                placeholder="0.00"
+              />
             </div>
           </div>
         </div>

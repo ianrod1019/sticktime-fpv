@@ -3,7 +3,6 @@ import { GearItem, GearPart, MaintenanceLog } from "./types";
 import { GearCardHeader } from "./gear-card-header";
 import { GearCardStats } from "./gear-card-stats";
 import { GearCardBatteries } from "./gear-card-batteries";
-import { BatteryHealthDashboard } from "./battery-health-dashboard.tsx";
 import { GearCardParts } from "./gear-card-parts";
 import { GearCardLogs } from "./gear-card-logs";
 import { GearCardServiceDialog } from "./gear-card-service-dialog";
@@ -13,8 +12,22 @@ interface GearCardProps {
   parts: GearPart[];
   logs: MaintenanceLog[];
   onDeleteGear: (id: string, name: string) => void;
-  onUpdateGear: (gearId: string, name: string, brand: string, serviceInterval: number, packCount: number, cells: number, connectorType: string, purchaseCost: number, currentValue: number) => void;
-  onAddPart: (gearId: string, partName: string, category: string, description: string) => void;
+  onUpdateGear: (
+    gearId: string,
+    name: string,
+    brand: string,
+    serviceInterval: number,
+    packCount: number,
+    cells: number,
+    connectorType: string,
+    purchaseCost: number,
+  ) => void;
+  onAddPart: (
+    gearId: string,
+    partName: string,
+    category: string,
+    description: string,
+  ) => void;
   onRemovePart: (partId: string) => void;
   onAddLog: (gearId: string, description: string, cost: string) => void;
   onRemoveLog: (logId: string) => void;
@@ -50,30 +63,41 @@ export function GearCard({
   const isOther = gear.gear_type === "other";
 
   const isAsNeeded = gear.service_interval_minutes <= 0;
-  const servicePct = isAsNeeded ? 0 : Math.min(100, Math.round((gear.minutes_since_service / gear.service_interval_minutes) * 100));
+  const servicePct = isAsNeeded
+    ? 0
+    : Math.min(
+        100,
+        Math.round(
+          (gear.minutes_since_service / gear.service_interval_minutes) * 100,
+        ),
+      );
 
   return (
+    <div
+      style={{
+        transitionProperty: "all",
+        transitionDuration: "400ms",
+        transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+        maxHeight: isDeleting ? "0px" : "1000px",
+        opacity: isDeleting ? 0 : 1,
+        transform: isDeleting
+          ? "scale(0.92) translateY(-16px)"
+          : "scale(1) translateY(0)",
+        marginTop: isDeleting ? "0px" : undefined,
+        marginBottom: isDeleting ? "0px" : undefined,
+        paddingTop: isDeleting ? "0px" : undefined,
+        paddingBottom: isDeleting ? "0px" : undefined,
+        overflow: "hidden",
+      }}
+      className={`relative group bg-card/50 border rounded-xl p-4 ${
+        isHoveredDelete && !isDeleting
+          ? "border-destructive/40 bg-destructive/5 shadow-lg shadow-destructive/10 ring-1 ring-destructive/20"
+          : "border-primary/10 hover:border-primary/30"
+      } ${isDeleting ? "border-transparent! p-0! m-0! shadow-none!" : ""}`}
+    >
       <div
-        style={{
-          transitionProperty: "all",
-          transitionDuration: "400ms",
-          transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
-          maxHeight: isDeleting ? "0px" : "1000px",
-          opacity: isDeleting ? 0 : 1,
-          transform: isDeleting ? "scale(0.92) translateY(-16px)" : "scale(1) translateY(0)",
-          marginTop: isDeleting ? "0px" : undefined,
-          marginBottom: isDeleting ? "0px" : undefined,
-          paddingTop: isDeleting ? "0px" : undefined,
-          paddingBottom: isDeleting ? "0px" : undefined,
-          overflow: "hidden",
-        }}
-        className={`relative group bg-card/50 border rounded-xl p-4 ${
-          isHoveredDelete && !isDeleting
-            ? "border-destructive/40 bg-destructive/5 shadow-lg shadow-destructive/10 ring-1 ring-destructive/20"
-            : "border-primary/10 hover:border-primary/30"
-        } ${isDeleting ? "!border-transparent !p-0 !m-0 !shadow-none" : ""}`}
+        className={`transition-opacity duration-200 ${isDeleting ? "opacity-0 pointer-events-none" : "opacity-100"}`}
       >
-      <div className={`transition-opacity duration-200 ${isDeleting ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
         {/* Header */}
         <GearCardHeader
           gear={gear}
@@ -98,19 +122,15 @@ export function GearCard({
           />
 
           {/* Battery Packs Section */}
-        {isBattery && (
-          <div className="space-y-4">
-            <GearCardBatteries
-              gear={gear}
-              onUpdatePackCount={onUpdatePackCount}
-              isDeleting={isDeleting}
-            />
-            <BatteryHealthDashboard
-              gearId={gear.id}
-              packCount={gear.pack_count}
-            />
-          </div>
-        )}
+          {isBattery && (
+            <div className="space-y-4">
+              <GearCardBatteries
+                gear={gear}
+                onUpdatePackCount={onUpdatePackCount}
+                isDeleting={isDeleting}
+              />
+            </div>
+          )}
 
           {/* Parts/Upgrades Section */}
           {(isTransmitter || isGoggles || isQuad || isOther) && (

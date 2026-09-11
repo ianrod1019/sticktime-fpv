@@ -69,8 +69,6 @@ export interface GearItem {
   cells?: number | null;
   connector_type?: string | null;
   purchase_cost?: number;
-  purchase_date?: string | null;
-  current_value?: number;
   created_at?: string;
   service_interval_minutes: number;
   minutes_since_service: number;
@@ -123,7 +121,6 @@ export interface GearCardProps {
     cells: number,
     connectorType: string,
     purchaseCost: number,
-    currentValue: number
   ) => void;
   onService: (gearId: string, minutes: number, notes: string) => void;
 }

@@ -19,7 +19,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GearItem, GearPart, CONTROLLER_CATEGORIES, GOGGLES_CATEGORIES } from "./types";
+import {
+  GearItem,
+  GearPart,
+  CONTROLLER_CATEGORIES,
+  GOGGLES_CATEGORIES,
+} from "./types";
 
 interface GearCardPartsProps {
   gear: GearItem;
@@ -27,7 +32,12 @@ interface GearCardPartsProps {
   isTransmitter: boolean;
   isGoggles: boolean;
   isDeleting: boolean;
-  onAddPart: (gearId: string, partName: string, category: string, description: string) => void;
+  onAddPart: (
+    gearId: string,
+    partName: string,
+    category: string,
+    description: string,
+  ) => void;
   onRemovePart: (partId: string) => void;
 }
 
@@ -93,8 +103,8 @@ export function GearCardParts({
   const sectionLabel = isTransmitter
     ? "Upgrades"
     : isGoggles
-    ? "Modules & Upgrades"
-    : "Components";
+      ? "Modules & Upgrades"
+      : "Components";
 
   return (
     <div className="mt-4 pt-3 border-t border-primary/10">
@@ -148,8 +158,8 @@ export function GearCardParts({
                 {isTransmitter
                   ? "Add controller upgrade"
                   : isGoggles
-                  ? "Add goggle module or upgrade"
-                  : "Track a component"}
+                    ? "Add goggle module or upgrade"
+                    : "Track a component"}
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-2">
@@ -161,7 +171,9 @@ export function GearCardParts({
                       value={partCategory}
                       onValueChange={(val) => {
                         setPartCategory(val);
-                        const found = CONTROLLER_CATEGORIES.find((c) => c.value === val);
+                        const found = CONTROLLER_CATEGORIES.find(
+                          (c) => c.value === val,
+                        );
                         if (found) setPartName(found.label);
                       }}
                     >
@@ -169,12 +181,14 @@ export function GearCardParts({
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-{CONTROLLER_CATEGORIES.map((cat) => (
-                           <SelectItem key={cat.value} value={cat.value}>
-                             <span className="text-primary font-medium mr-1.5">▪</span>
-                             {cat.label}
-                           </SelectItem>
-                         ))}
+                        {CONTROLLER_CATEGORIES.map((cat) => (
+                          <SelectItem key={cat.value} value={cat.value}>
+                            <span className="text-primary font-medium mr-1.5">
+                              ▪
+                            </span>
+                            {cat.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -194,8 +208,9 @@ export function GearCardParts({
                       value={partDescription}
                       onChange={(e) => setPartDescription(e.target.value)}
                       placeholder={
-                        CONTROLLER_CATEGORIES.find((c) => c.value === partCategory)?.placeholder ||
-                        "e.g. CNC Aluminum V2 Ends"
+                        CONTROLLER_CATEGORIES.find(
+                          (c) => c.value === partCategory,
+                        )?.placeholder || "e.g. CNC Aluminum V2 Ends"
                       }
                     />
                   </div>
@@ -208,7 +223,9 @@ export function GearCardParts({
                       value={partCategory}
                       onValueChange={(val) => {
                         setPartCategory(val);
-                        const found = GOGGLES_CATEGORIES.find((c) => c.value === val);
+                        const found = GOGGLES_CATEGORIES.find(
+                          (c) => c.value === val,
+                        );
                         if (found) setPartName(found.label);
                       }}
                     >
@@ -216,12 +233,14 @@ export function GearCardParts({
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-{GOGGLES_CATEGORIES.map((cat) => (
-                           <SelectItem key={cat.value} value={cat.value}>
-                             <span className="text-primary font-medium mr-1.5">▪</span>
-                             {cat.label}
-                           </SelectItem>
-                         ))}
+                        {GOGGLES_CATEGORIES.map((cat) => (
+                          <SelectItem key={cat.value} value={cat.value}>
+                            <span className="text-primary font-medium mr-1.5">
+                              ▪
+                            </span>
+                            {cat.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -241,8 +260,8 @@ export function GearCardParts({
                       value={partDescription}
                       onChange={(e) => setPartDescription(e.target.value)}
                       placeholder={
-                        GOGGLES_CATEGORIES.find((c) => c.value === partCategory)?.placeholder ||
-                        "e.g. RapidFire Analog Module"
+                        GOGGLES_CATEGORIES.find((c) => c.value === partCategory)
+                          ?.placeholder || "e.g. RapidFire Analog Module"
                       }
                     />
                   </div>
@@ -290,20 +309,22 @@ export function GearCardParts({
 
       <div
         style={{
-          transition: "max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+          transition:
+            "max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
           overflow: "hidden",
           maxHeight: isUpgradesCollapsed ? "0px" : "250px",
           opacity: isUpgradesCollapsed ? 0 : 1,
         }}
       >
         {parts.length > 0 ? (
-          <div className="space-y-1.5 pt-1 pr-1 max-h-[110px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-secondary/20 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/50 hover:[&::-webkit-scrollbar-thumb]:bg-primary">
+          <div className="space-y-1.5 pt-1 pr-1 max-h-27.5 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-secondary/20 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/50 hover:[&::-webkit-scrollbar-thumb]:bg-primary">
             {parts.map((p) => {
               const isCustomMeta = isTransmitter || isGoggles;
               const isPartConfirming = confirmingPartId === p.id;
               const isPartDeleting = deletingPartId === p.id;
               const isPartHovered = hoveredPartId === p.id;
-              const isPartActiveHighlight = isPartConfirming || isPartHovered || isPartDeleting;
+              const isPartActiveHighlight =
+                isPartConfirming || isPartHovered || isPartDeleting;
 
               return (
                 <div
@@ -312,7 +333,7 @@ export function GearCardParts({
                     isPartDeleting
                       ? "opacity-0 scale-95 translate-x-2 pointer-events-none"
                       : isPartActiveHighlight
-? "bg-card/90 border-destructive/60 shadow-sm shadow-destructive/10 animate-subtle-shake ring-1 ring-destructive/40"
+                        ? "bg-card/90 border-destructive/60 shadow-sm shadow-destructive/10 animate-subtle-shake ring-1 ring-destructive/40"
                         : "bg-secondary/30 border-primary/10"
                   }`}
                 >
@@ -332,7 +353,9 @@ export function GearCardParts({
                       )}
                       <span
                         className={`truncate font-medium ${
-                          isPartActiveHighlight ? "text-destructive" : "text-foreground"
+                          isPartActiveHighlight
+                            ? "text-destructive"
+                            : "text-foreground"
                         }`}
                       >
                         {p.name}

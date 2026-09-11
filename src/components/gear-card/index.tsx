@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { Wrench, ShieldAlert, AlertTriangle, Plus, Trash2, Calendar, DollarSign, Activity } from "lucide-react";
+import {
+  Wrench,
+  ShieldAlert,
+  AlertTriangle,
+  Plus,
+  Trash2,
+  Calendar,
+  DollarSign,
+  Activity,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,7 +27,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GearCardProps, CONTROLLER_CATEGORIES, GOGGLES_CATEGORIES } from "./types";
+import {
+  GearCardProps,
+  CONTROLLER_CATEGORIES,
+  GOGGLES_CATEGORIES,
+} from "./types";
 import { GearCardBatteries } from "./gear-card-batteries";
 import { GearCardEditDialog } from "./gear-card-edit-dialog";
 
@@ -44,7 +57,8 @@ export function GearCard({
     serviceInterval: number,
     packCount: number,
     cells: number,
-    connectorType: string
+    connectorType: string,
+    purchaseCost: number,
   ) => void;
 }) {
   const [partOpen, setPartOpen] = useState(false);
@@ -63,12 +77,21 @@ export function GearCard({
 
   const serviceInterval = gear.service_interval_minutes || 600;
   const minutesSince = gear.minutes_since_service || 0;
-  const percentUsed = isBattery || serviceInterval >= 999999 ? 0 : Math.min(100, Math.round((minutesSince / serviceInterval) * 100));
-  const needsService = !isBattery && serviceInterval < 999999 && minutesSince >= serviceInterval;
+  const percentUsed =
+    isBattery || serviceInterval >= 999999
+      ? 0
+      : Math.min(100, Math.round((minutesSince / serviceInterval) * 100));
+  const needsService =
+    !isBattery && serviceInterval < 999999 && minutesSince >= serviceInterval;
 
   const handleAddPartSubmit = () => {
     if (!newPartName.trim()) return;
-    onAddPart(gear.id, newPartName.trim(), partCategory, partDescription.trim());
+    onAddPart(
+      gear.id,
+      newPartName.trim(),
+      partCategory,
+      partDescription.trim(),
+    );
     setNewPartName("");
     setPartDescription("");
     setPartOpen(false);
@@ -97,12 +120,12 @@ export function GearCard({
                 {gear.gear_type === "quad"
                   ? "Drone"
                   : gear.gear_type === "transmitter"
-                  ? "Radio"
-                  : gear.gear_type === "goggles"
-                  ? "Goggles"
-                  : gear.gear_type === "battery"
-                  ? "Battery Set"
-                  : "Other"}
+                    ? "Radio"
+                    : gear.gear_type === "goggles"
+                      ? "Goggles"
+                      : gear.gear_type === "battery"
+                        ? "Battery Set"
+                        : "Other"}
               </span>
               {gear.brand && (
                 <span className="text-[10px] font-mono tracking-wider uppercase px-2 py-0.5 rounded bg-secondary/60 text-muted-foreground border border-border">
@@ -136,8 +159,8 @@ export function GearCard({
               size="icon"
               className={`h-7 w-7 transition-all duration-200 ease-out border ${
                 isHoveredDelete
-                   ? "bg-destructive text-destructive-foreground border-destructive/60 scale-105 shadow-md shadow-destructive/10"
-                   : "text-muted-foreground hover:text-destructive hover:bg-destructive/20 hover:border-destructive/40 border-transparent"
+                  ? "bg-destructive text-destructive-foreground border-destructive/60 scale-105 shadow-md shadow-destructive/10"
+                  : "text-muted-foreground hover:text-destructive hover:bg-destructive/20 hover:border-destructive/40 border-transparent"
               }`}
               onClick={() => onDeleteGear(gear.id, gear.name)}
               onMouseEnter={() => onHoverDelete(gear.id)}
@@ -161,10 +184,11 @@ export function GearCard({
 
         {/* Maintenance / Airtime progress if not battery */}
         {!isBattery && serviceInterval < 999999 && (
-           <div className="mt-4 space-y-2 pt-3 border-t border-primary/10">
+          <div className="mt-4 space-y-2 pt-3 border-t border-primary/10">
             <div className="flex justify-between items-center text-xs">
               <span className="text-muted-foreground font-medium flex items-center gap-1.5">
-                <Wrench className="h-3.5 w-3.5 text-primary" /> Maintenance Health
+                <Wrench className="h-3.5 w-3.5 text-primary" /> Maintenance
+                Health
               </span>
               <span className="font-mono font-bold text-foreground">
                 {minutesSince} / {serviceInterval} min ({percentUsed}%)
@@ -173,7 +197,11 @@ export function GearCard({
             <div className="w-full bg-secondary/50 rounded-full h-2 overflow-hidden border border-primary/20">
               <div
                 className={`h-full transition-all duration-500 ${
-                  needsService ? "bg-warning" : percentUsed > 80 ? "bg-warning" : "bg-success"
+                  needsService
+                    ? "bg-warning"
+                    : percentUsed > 80
+                      ? "bg-warning"
+                      : "bg-success"
                 }`}
                 style={{ width: `${percentUsed}%` }}
               />
@@ -191,10 +219,12 @@ export function GearCard({
         {isQuad && (
           <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground bg-secondary/30 px-3 py-1.5 rounded-md border border-primary/10">
             <span className="flex items-center gap-1.5">
-              <Activity className="h-3.5 w-3.5 text-primary" /> Total Flight Time
+              <Activity className="h-3.5 w-3.5 text-primary" /> Total Flight
+              Time
             </span>
             <span className="font-mono font-semibold text-foreground">
-              {gear.total_minutes || 0} mins ({Math.round((gear.total_minutes || 0) / 60 * 10) / 10} hrs)
+              {gear.total_minutes || 0} mins (
+              {Math.round(((gear.total_minutes || 0) / 60) * 10) / 10} hrs)
             </span>
           </div>
         )}
@@ -203,7 +233,10 @@ export function GearCard({
         <div className="mt-4 pt-3 border-t border-primary/10 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-mono font-medium tracking-wider uppercase text-primary">
-              {isTransmitter || isGoggles ? "Accessories & Modules" : "Installed Components"} ({parts.length})
+              {isTransmitter || isGoggles
+                ? "Accessories & Modules"
+                : "Installed Components"}{" "}
+              ({parts.length})
             </span>
             <Dialog open={partOpen} onOpenChange={setPartOpen}>
               <DialogTrigger asChild>
@@ -226,7 +259,10 @@ export function GearCard({
                     <>
                       <div className="space-y-2">
                         <Label>Category</Label>
-                        <Select value={partCategory} onValueChange={setPartCategory}>
+                        <Select
+                          value={partCategory}
+                          onValueChange={setPartCategory}
+                        >
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
@@ -245,7 +281,9 @@ export function GearCard({
                           value={newPartName}
                           onChange={(e) => setNewPartName(e.target.value)}
                           placeholder={
-                            CONTROLLER_CATEGORIES.find((c) => c.value === partCategory)?.placeholder || "e.g. AG01"
+                            CONTROLLER_CATEGORIES.find(
+                              (c) => c.value === partCategory,
+                            )?.placeholder || "e.g. AG01"
                           }
                         />
                       </div>
@@ -254,7 +292,10 @@ export function GearCard({
                     <>
                       <div className="space-y-2">
                         <Label>Category</Label>
-                        <Select value={partCategory} onValueChange={setPartCategory}>
+                        <Select
+                          value={partCategory}
+                          onValueChange={setPartCategory}
+                        >
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
@@ -273,7 +314,9 @@ export function GearCard({
                           value={newPartName}
                           onChange={(e) => setNewPartName(e.target.value)}
                           placeholder={
-                            GOGGLES_CATEGORIES.find((c) => c.value === partCategory)?.placeholder || "e.g. RapidFire"
+                            GOGGLES_CATEGORIES.find(
+                              (c) => c.value === partCategory,
+                            )?.placeholder || "e.g. RapidFire"
                           }
                         />
                       </div>
@@ -321,7 +364,9 @@ export function GearCard({
               ))}
             </div>
           ) : (
-            <p className="text-[11px] text-muted-foreground/60 italic">No components registered.</p>
+            <p className="text-[11px] text-muted-foreground/60 italic">
+              No components registered.
+            </p>
           )}
         </div>
       </div>
@@ -368,7 +413,8 @@ export function GearCard({
                     />
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Logging service will automatically reset the maintenance service clock back to 0.
+                    Logging service will automatically reset the maintenance
+                    service clock back to 0.
                   </p>
                 </div>
                 <DialogFooter>
@@ -385,21 +431,25 @@ export function GearCard({
           </div>
 
           {logs.length > 0 ? (
-            <div className="space-y-1.5 max-h-[100px] overflow-y-auto pr-1">
+            <div className="space-y-1.5 max-h-25 overflow-y-auto pr-1">
               {logs.slice(0, 3).map((l) => (
                 <div
                   key={l.id}
                   className="flex items-center justify-between text-xs bg-secondary/30 px-2.5 py-1.5 rounded border border-primary/10"
                 >
                   <div className="min-w-0 pr-2">
-                    <p className="font-medium text-foreground truncate">{l.description}</p>
+                    <p className="font-medium text-foreground truncate">
+                      {l.description}
+                    </p>
                     <div className="flex items-center gap-2 text-[10px] text-muted-foreground mt-0.5">
                       <span className="flex items-center gap-0.5">
-                        <Calendar className="h-2.5 w-2.5" /> {new Date(l.performed_on).toLocaleDateString()}
+                        <Calendar className="h-2.5 w-2.5" />{" "}
+                        {new Date(l.performed_on).toLocaleDateString()}
                       </span>
                       {l.cost ? (
                         <span className="flex items-center gap-0.5 text-success font-mono">
-                          <DollarSign className="h-2.5 w-2.5" /> {l.cost.toFixed(2)}
+                          <DollarSign className="h-2.5 w-2.5" />{" "}
+                          {l.cost.toFixed(2)}
                         </span>
                       ) : null}
                     </div>
@@ -415,7 +465,9 @@ export function GearCard({
               ))}
             </div>
           ) : (
-            <p className="text-[11px] text-muted-foreground/60 italic">No service logs recorded.</p>
+            <p className="text-[11px] text-muted-foreground/60 italic">
+              No service logs recorded.
+            </p>
           )}
         </div>
       )}

@@ -25,7 +25,10 @@ function AdminPanelComponent() {
         subtitle="Global pilot accounts, immutable admin audit logs, security telemetry, and broadcasts."
         action={
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="gap-1.5 border-success/40 bg-success/10 text-success font-mono">
+            <Badge
+              variant="outline"
+              className="gap-1.5 border-success/40 bg-success/10 text-success font-mono"
+            >
               <Shield className="h-3.5 w-3.5" /> SECURE ADMIN ACCESS
             </Badge>
           </div>
@@ -34,7 +37,11 @@ function AdminPanelComponent() {
 
       <AdminStatsCards />
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-6"
+      >
         <TabsList className="grid w-full max-w-3xl grid-cols-4">
           <TabsTrigger value="pilots" className="gap-2 font-mono text-xs">
             <Users className="h-4 w-4" /> Pilot Directory

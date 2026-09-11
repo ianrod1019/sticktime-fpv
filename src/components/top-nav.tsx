@@ -36,18 +36,43 @@ export function TopNav() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 h-16 flex items-center justify-between px-6 bg-[var(--color-background)]/95 backdrop-blur-sm border-b border-[var(--color-border)]">
+    <nav className="fixed top-0 left-0 right-0 z-50 h-16 flex items-center justify-between px-6 bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="flex items-center gap-8">
         <Link to="/" className="flex items-center gap-2">
           <DroneIcon className="h-8 w-8 text-primary" />
           <span className="text-xl font-bold">StickTime FPV</span>
         </Link>
         <div className="hidden md:flex space-x-6">
-          <Link to="/features" className="text-foreground hover:text-primary transition-colors font-mono text-sm">Features</Link>
-          <Link to="/docs" className="text-foreground hover:text-primary transition-colors font-mono text-sm">Docs</Link>
-          <Link to="/pricing" className="text-foreground hover:text-primary transition-colors font-mono text-sm">Pricing</Link>
-          <Link to="/terms" className="text-foreground hover:text-primary transition-colors font-mono text-sm">Terms</Link>
-          <Link to="/privacy" className="text-foreground hover:text-primary transition-colors font-mono text-sm">Privacy</Link>
+          <Link
+            to="/features"
+            className="text-foreground hover:text-primary transition-colors font-mono text-sm"
+          >
+            Features
+          </Link>
+          <Link
+            to="/docs"
+            className="text-foreground hover:text-primary transition-colors font-mono text-sm"
+          >
+            Docs
+          </Link>
+          <Link
+            to="/pricing"
+            className="text-foreground hover:text-primary transition-colors font-mono text-sm"
+          >
+            Pricing
+          </Link>
+          <Link
+            to="/terms"
+            className="text-foreground hover:text-primary transition-colors font-mono text-sm"
+          >
+            Terms
+          </Link>
+          <Link
+            to="/privacy"
+            className="text-foreground hover:text-primary transition-colors font-mono text-sm"
+          >
+            Privacy
+          </Link>
         </div>
       </div>
       <div className="flex items-center gap-2">
@@ -55,14 +80,12 @@ export function TopNav() {
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
         ) : user ? (
           <Link to="/dashboard">
-            <Button variant="default" size="sm">Dashboard</Button>
+            <Button variant="default" size="sm">
+              Dashboard
+            </Button>
           </Link>
         ) : (
-          <Button
-            variant="default"
-            size="sm"
-            onClick={() => openAuth("login")}
-          >
+          <Button variant="default" size="sm" onClick={() => openAuth("login")}>
             Sign in
           </Button>
         )}

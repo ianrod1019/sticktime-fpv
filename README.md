@@ -16,7 +16,7 @@ The application is built in Lovable with a full backend architecture that can la
 
 - **Authentication & Database:** Secure user sign-up/login using Supabase Auth. Row Level Security (RLS) policies must ensure pilots can only access/edit their own private flight logs and gear.
 
-- **Subscription Tiers (Stripe Integration):** 
+- **Subscription Tiers (Stripe Integration):**
 
   - **Free Tier:** Basic logging, single user garage, standard stats.
 
@@ -30,7 +30,7 @@ The application is built in Lovable with a full backend architecture that can la
 
 - **Dashboard Metrics:** Prominent display of **Total Flight Hours**, a **Streak Counter**, and **Progress Bars** toward flight goals.
 
-- **Visualizations & Data:** 
+- **Visualizations & Data:**
 
   - A **GitHub-style contribution heatmap** tracking daily flying consistency.
 

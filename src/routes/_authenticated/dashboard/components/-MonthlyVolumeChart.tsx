@@ -10,7 +10,11 @@ import {
 } from "recharts";
 
 interface MonthlyVolumeChartProps {
-  monthlyData: Array<{ month: string; total_sim_minutes: number; total_real_minutes: number }>;
+  monthlyData: Array<{
+    month: string;
+    total_sim_minutes: number;
+    total_real_minutes: number;
+  }>;
 }
 
 export function MonthlyVolumeChart({ monthlyData }: MonthlyVolumeChartProps) {

@@ -2,10 +2,25 @@ import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/app-shell";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, ArrowLeft, Shield, Clock, User, Mail, Radio, Activity } from "lucide-react";
+import {
+  ShieldCheck,
+  ArrowLeft,
+  Shield,
+  Clock,
+  User,
+  Mail,
+  Radio,
+  Activity,
+} from "lucide-react";
 import { useState } from "react";
 
 interface AdminLookupSearch {
@@ -70,17 +85,23 @@ function AdminUserLookupComponent() {
       if (profileError) throw profileError;
 
       // Fetch user directory info to obtain the exact callsign / email meta
-      const { data: directoryList, error: dirError } = await supabase.rpc("admin_get_admin_directory");
-      
+      const { data: directoryList, error: dirError } = await supabase.rpc(
+        "admin_get_admin_directory",
+      );
+
       let matchedDirectoryUser = null;
       if (!dirError && directoryList) {
-        matchedDirectoryUser = (directoryList as any[]).find((u) => u.id === uuid);
+        matchedDirectoryUser = (directoryList as any[]).find(
+          (u) => u.id === uuid,
+        );
       }
 
       // Fetch email map specifically if available
-      let emailMap: Record<string, string> = {};
+      const emailMap: Record<string, string> = {};
       try {
-        const { data: emailsData } = await supabase.rpc("admin_get_user_emails");
+        const { data: emailsData } = await supabase.rpc(
+          "admin_get_user_emails",
+        );
         if (emailsData) {
           (emailsData as any[]).forEach((item) => {
             if (item.id && item.email) emailMap[item.id] = item.email;
@@ -119,7 +140,9 @@ function AdminUserLookupComponent() {
 
         if (fallbackError) throw fallbackError;
         return ((fallbackData || []) as AdminAuditLogEntry[]).filter(
-          (l) => l.action !== "admin_session_enter" && l.action !== "admin_session_exit"
+          (l) =>
+            l.action !== "admin_session_enter" &&
+            l.action !== "admin_session_exit",
         );
       }
 
@@ -134,20 +157,18 @@ function AdminUserLookupComponent() {
   const fallbackEmail = targetData?.fallbackEmail;
 
   // Resolve properties cleanly with correct callsign and email
-  const fullName = 
-    targetProfile?.full_name || 
-    directoryUser?.display_name || 
-    directoryUser?.callsign || 
+  const fullName =
+    targetProfile?.full_name ||
+    directoryUser?.display_name ||
+    directoryUser?.callsign ||
     uuid.slice(0, 8);
 
-  const callsign = 
-    targetProfile?.callsign || 
-    directoryUser?.callsign || 
-    "Unassigned";
+  const callsign =
+    targetProfile?.callsign || directoryUser?.callsign || "Unassigned";
 
-  const email = 
+  const email =
     fallbackEmail ||
-    directoryUser?.email || 
+    directoryUser?.email ||
     `pilot_${uuid.slice(0, 6)}@fpv.internal`;
 
   const filteredLogs = (auditLogs || []).filter((log) => {
@@ -156,7 +177,9 @@ function AdminUserLookupComponent() {
     return (
       log.action.toLowerCase().includes(q) ||
       (log.target_id && log.target_id.toLowerCase().includes(q)) ||
-      JSON.stringify(log.payload || {}).toLowerCase().includes(q)
+      JSON.stringify(log.payload || {})
+        .toLowerCase()
+        .includes(q)
     );
   });
 
@@ -171,8 +194,12 @@ function AdminUserLookupComponent() {
         >
           <ArrowLeft className="h-4 w-4" /> Back to Admin Control Center
         </Button>
-        <Badge variant="outline" className="border-success/40 text-success bg-success/10 font-mono text-xs">
-          Token Verified: {search.token ? search.token.slice(0, 8) + "..." : "Active"}
+        <Badge
+          variant="outline"
+          className="border-success/40 text-success bg-success/10 font-mono text-xs"
+        >
+          Token Verified:{" "}
+          {search.token ? search.token.slice(0, 8) + "..." : "Active"}
         </Badge>
       </div>
 
@@ -181,8 +208,12 @@ function AdminUserLookupComponent() {
         subtitle={`Reviewing actions performed by administrator @${callsign}`}
         action={
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="gap-1.5 border-primary/40 bg-primary/10 text-primary font-mono uppercase">
-              <Shield className="h-3.5 w-3.5" /> {targetProfile?.role || directoryUser?.role || "Admin"}
+            <Badge
+              variant="outline"
+              className="gap-1.5 border-primary/40 bg-primary/10 text-primary font-mono uppercase"
+            >
+              <Shield className="h-3.5 w-3.5" />{" "}
+              {targetProfile?.role || directoryUser?.role || "Admin"}
             </Badge>
           </div>
         }
@@ -207,9 +238,7 @@ function AdminUserLookupComponent() {
               <span className="text-muted-foreground flex items-center gap-1">
                 <Radio className="h-3 w-3 text-primary" /> Callsign:
               </span>
-              <p className="font-semibold text-primary text-sm">
-                @{callsign}
-              </p>
+              <p className="font-semibold text-primary text-sm">@{callsign}</p>
             </div>
             <div className="space-y-1">
               <span className="text-muted-foreground flex items-center gap-1">
@@ -227,11 +256,18 @@ function AdminUserLookupComponent() {
             </div>
             <div className="space-y-1">
               <span className="text-muted-foreground">Security Role:</span>
-              <p className="uppercase text-success font-bold">{targetProfile?.role || directoryUser?.role || "admin"}</p>
+              <p className="uppercase text-success font-bold">
+                {targetProfile?.role || directoryUser?.role || "admin"}
+              </p>
             </div>
             <div className="pt-2 border-t border-border/50">
-              <span className="text-muted-foreground block mb-1">Total Actions Recorded:</span>
-              <Badge variant="outline" className="border-primary/30 text-primary bg-primary/5 font-mono text-xs">
+              <span className="text-muted-foreground block mb-1">
+                Total Actions Recorded:
+              </span>
+              <Badge
+                variant="outline"
+                className="border-primary/30 text-primary bg-primary/5 font-mono text-xs"
+              >
                 {auditLogs?.length || 0} Action Events
               </Badge>
             </div>
@@ -243,9 +279,13 @@ function AdminUserLookupComponent() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
                 <CardTitle className="font-mono text-sm flex items-center gap-2">
-                  <ShieldCheck className="h-4 w-4 text-success" /> Admin Action Audit Trail
+                  <ShieldCheck className="h-4 w-4 text-success" /> Admin Action
+                  Audit Trail
                 </CardTitle>
-                <CardDescription>Showing actions performed and exact timestamps (session events excluded).</CardDescription>
+                <CardDescription>
+                  Showing actions performed and exact timestamps (session events
+                  excluded).
+                </CardDescription>
               </div>
               <div className="w-full sm:w-64">
                 <input
@@ -260,7 +300,9 @@ function AdminUserLookupComponent() {
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <div className="py-12 text-center text-muted-foreground font-mono">Loading action audit records...</div>
+              <div className="py-12 text-center text-muted-foreground font-mono">
+                Loading action audit records...
+              </div>
             ) : !filteredLogs || filteredLogs.length === 0 ? (
               <div className="py-12 text-center text-muted-foreground font-mono">
                 No administrative actions recorded for @{callsign}.
@@ -278,7 +320,10 @@ function AdminUserLookupComponent() {
                       </div>
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <Badge variant="outline" className="font-mono text-xs border-primary/40 text-primary bg-primary/5 font-semibold">
+                          <Badge
+                            variant="outline"
+                            className="font-mono text-xs border-primary/40 text-primary bg-primary/5 font-semibold"
+                          >
                             {log.action}
                           </Badge>
                           {log.target_id && (

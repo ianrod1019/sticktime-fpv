@@ -59,7 +59,9 @@ export function SquadronLeaveDeleteModal({
           throw new Error(error.message || "Failed to dissolve squadron.");
         }
 
-        toast.success(`Squadron "${squadronName}" has been permanently dissolved.`);
+        toast.success(
+          `Squadron "${squadronName}" has been permanently dissolved.`,
+        );
       } else {
         console.log("Invoking leave_squadron RPC for team ID:", squadronId);
 
@@ -77,7 +79,9 @@ export function SquadronLeaveDeleteModal({
 
       // Invalidate queries so the portal updates immediately
       await queryClient.invalidateQueries({ queryKey: ["user-squadrons"] });
-      await queryClient.invalidateQueries({ queryKey: ["squadron-hq-details", squadronId] });
+      await queryClient.invalidateQueries({
+        queryKey: ["squadron-hq-details", squadronId],
+      });
 
       setOpen(false);
       navigate({ to: "/squadron" });
@@ -111,11 +115,21 @@ export function SquadronLeaveDeleteModal({
           <DialogDescription className="pt-2 text-sm">
             {isOwner ? (
               <>
-                You are about to permanently delete <span className="font-semibold text-foreground">{squadronName}</span> and remove all member associations. This action cannot be undone.
+                You are about to permanently delete{" "}
+                <span className="font-semibold text-foreground">
+                  {squadronName}
+                </span>{" "}
+                and remove all member associations. This action cannot be
+                undone.
               </>
             ) : (
               <>
-                You will lose access to shared telemetry logs and hangar equipment for <span className="font-semibold text-foreground">{squadronName}</span>.
+                You will lose access to shared telemetry logs and hangar
+                equipment for{" "}
+                <span className="font-semibold text-foreground">
+                  {squadronName}
+                </span>
+                .
               </>
             )}
           </DialogDescription>
@@ -123,8 +137,15 @@ export function SquadronLeaveDeleteModal({
 
         {isOwner && (
           <div className="space-y-3 py-3">
-            <Label htmlFor="confirm-name" className="text-xs text-muted-foreground">
-              To confirm, type the squadron name <span className="font-mono text-foreground font-bold">{squadronName}</span> below:
+            <Label
+              htmlFor="confirm-name"
+              className="text-xs text-muted-foreground"
+            >
+              To confirm, type the squadron name{" "}
+              <span className="font-mono text-foreground font-bold">
+                {squadronName}
+              </span>{" "}
+              below:
             </Label>
             <Input
               id="confirm-name"
@@ -149,9 +170,16 @@ export function SquadronLeaveDeleteModal({
             type="button"
             variant="destructive"
             onClick={handleAction}
-            disabled={isLoading || (isOwner && confirmText.trim() !== squadronName.trim())}
+            disabled={
+              isLoading ||
+              (isOwner && confirmText.trim() !== squadronName.trim())
+            }
           >
-            {isLoading ? "Processing..." : isOwner ? "Dissolve Squadron" : "Leave Squadron"}
+            {isLoading
+              ? "Processing..."
+              : isOwner
+                ? "Dissolve Squadron"
+                : "Leave Squadron"}
           </Button>
         </DialogFooter>
       </DialogContent>

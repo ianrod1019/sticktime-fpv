@@ -1,6 +1,16 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Users, Plus, Key, Radio, Shield, ExternalLink, Trash2, Calendar, Sparkles } from "lucide-react";
+import {
+  Users,
+  Plus,
+  Key,
+  Radio,
+  Shield,
+  ExternalLink,
+  Trash2,
+  Calendar,
+  Sparkles,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/app-shell";
@@ -70,7 +80,13 @@ function SquadronPortalPage() {
   });
 
   const createSquadronMutation = useMutation({
-    mutationFn: async ({ name, description }: { name: string; description: string }) => {
+    mutationFn: async ({
+      name,
+      description,
+    }: {
+      name: string;
+      description: string;
+    }) => {
       const { data, error } = await supabase.rpc("create_team_with_owner", {
         team_name: name,
         team_desc: description,
@@ -143,10 +159,19 @@ function SquadronPortalPage() {
         subtitle="Collaborate with pilots, share telemetry logs, and manage fleet gear together."
         action={
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => setShowJoinModal(true)} className="gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowJoinModal(true)}
+              className="gap-2"
+            >
               <Key className="h-4 w-4" /> Join via Code
             </Button>
-            <Button size="sm" onClick={() => setShowCreateModal(true)} className="gap-2">
+            <Button
+              size="sm"
+              onClick={() => setShowCreateModal(true)}
+              className="gap-2"
+            >
               <Plus className="h-4 w-4" /> Establish Squadron
             </Button>
           </div>
@@ -164,7 +189,8 @@ function SquadronPortalPage() {
           </div>
           <h3 className="text-lg font-bold">No Active Squadrons</h3>
           <p className="text-sm text-muted-foreground">
-            You are currently flying solo. Establish your own FPV squadron or join an existing squadron via invite code to sync logs and gear.
+            You are currently flying solo. Establish your own FPV squadron or
+            join an existing squadron via invite code to sync logs and gear.
           </p>
           <div className="flex justify-center gap-3 pt-2">
             <Button variant="outline" onClick={() => setShowJoinModal(true)}>
@@ -178,7 +204,10 @@ function SquadronPortalPage() {
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-6">
           {squadrons.map((squad: any) => (
-            <div key={squad.id} className="hud-panel p-6 flex flex-col justify-between relative overflow-hidden group hover:border-primary/50 transition-all">
+            <div
+              key={squad.id}
+              className="hud-panel p-6 flex flex-col justify-between relative overflow-hidden group hover:border-primary/50 transition-all"
+            >
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full pointer-events-none group-hover:bg-primary/10 transition-colors" />
               <div>
                 <div className="flex items-center justify-between mb-3">
@@ -189,7 +218,9 @@ function SquadronPortalPage() {
                     Est. {new Date(squad.created_at).toLocaleDateString()}
                   </span>
                 </div>
-                <h3 className="text-lg font-bold tracking-tight mb-1 text-foreground">{squad.name}</h3>
+                <h3 className="text-lg font-bold tracking-tight mb-1 text-foreground">
+                  {squad.name}
+                </h3>
                 <p className="text-xs text-muted-foreground line-clamp-2 mb-4">
                   {squad.description || "No mission description provided."}
                 </p>
@@ -197,13 +228,21 @@ function SquadronPortalPage() {
 
               <div className="pt-4 border-t border-border/60 flex items-center justify-between">
                 <span className="text-xs font-mono text-muted-foreground flex items-center gap-1">
-                  <Calendar className="h-3 w-3" /> Joined {new Date(squad.joinedAt || squad.created_at).toLocaleDateString()}
+                  <Calendar className="h-3 w-3" /> Joined{" "}
+                  {new Date(
+                    squad.joinedAt || squad.created_at,
+                  ).toLocaleDateString()}
                 </span>
                 <Button
                   size="sm"
                   variant="default"
                   className="gap-1.5 font-semibold text-xs"
-                  onClick={() => navigate({ to: "/squadron/$squadronId", params: { squadronId: squad.id } })}
+                  onClick={() =>
+                    navigate({
+                      to: "/squadron/$squadronId",
+                      params: { squadronId: squad.id },
+                    })
+                  }
                 >
                   Enter Squad HQ <ExternalLink className="h-3 w-3" />
                 </Button>
@@ -218,10 +257,12 @@ function SquadronPortalPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
           <div className="hud-panel w-full max-w-md p-6 space-y-4">
             <h3 className="text-lg font-bold flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-primary" /> Establish New Squadron
+              <Sparkles className="h-5 w-5 text-primary" /> Establish New
+              Squadron
             </h3>
             <p className="text-xs text-muted-foreground">
-              Create an operational squadron base for your FPV crew to coordinate sessions and gear.
+              Create an operational squadron base for your FPV crew to
+              coordinate sessions and gear.
             </p>
             <div className="space-y-3">
               <div>
@@ -234,7 +275,9 @@ function SquadronPortalPage() {
                 />
               </div>
               <div>
-                <Label className="text-xs">Mission Description (Optional)</Label>
+                <Label className="text-xs">
+                  Mission Description (Optional)
+                </Label>
                 <Input
                   value={newSquadDesc}
                   onChange={(e) => setNewSquadDesc(e.target.value)}
@@ -244,15 +287,28 @@ function SquadronPortalPage() {
               </div>
             </div>
             <div className="flex justify-end gap-2 pt-2">
-              <Button variant="ghost" size="sm" onClick={() => setShowCreateModal(false)}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowCreateModal(false)}
+              >
                 Cancel
               </Button>
               <Button
                 size="sm"
-                disabled={!newSquadName.trim() || createSquadronMutation.isPending}
-                onClick={() => createSquadronMutation.mutate({ name: newSquadName, description: newSquadDesc })}
+                disabled={
+                  !newSquadName.trim() || createSquadronMutation.isPending
+                }
+                onClick={() =>
+                  createSquadronMutation.mutate({
+                    name: newSquadName,
+                    description: newSquadDesc,
+                  })
+                }
               >
-                {createSquadronMutation.isPending ? "Establishing..." : "Establish Squadron"}
+                {createSquadronMutation.isPending
+                  ? "Establishing..."
+                  : "Establish Squadron"}
               </Button>
             </div>
           </div>
@@ -264,10 +320,12 @@ function SquadronPortalPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
           <div className="hud-panel w-full max-w-md p-6 space-y-4">
             <h3 className="text-lg font-bold flex items-center gap-2">
-              <Key className="h-5 w-5 text-primary" /> Join Squadron via Invite Code
+              <Key className="h-5 w-5 text-primary" /> Join Squadron via Invite
+              Code
             </h3>
             <p className="text-xs text-muted-foreground">
-              Enter the secure alphanumeric invite code provided by your squadron commander.
+              Enter the secure alphanumeric invite code provided by your
+              squadron commander.
             </p>
             <div className="space-y-3">
               <div>
@@ -281,7 +339,11 @@ function SquadronPortalPage() {
               </div>
             </div>
             <div className="flex justify-end gap-2 pt-2">
-              <Button variant="ghost" size="sm" onClick={() => setShowJoinModal(false)}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowJoinModal(false)}
+              >
                 Cancel
               </Button>
               <Button
@@ -289,7 +351,9 @@ function SquadronPortalPage() {
                 disabled={!joinCode.trim() || joinSquadronMutation.isPending}
                 onClick={() => joinSquadronMutation.mutate(joinCode)}
               >
-                {joinSquadronMutation.isPending ? "Connecting Uplink..." : "Connect to Squadron"}
+                {joinSquadronMutation.isPending
+                  ? "Connecting Uplink..."
+                  : "Connect to Squadron"}
               </Button>
             </div>
           </div>

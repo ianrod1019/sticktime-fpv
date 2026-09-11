@@ -2,24 +2,36 @@ import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { db_request } from "@/lib/db_request";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { 
-  Shield, 
-  Terminal, 
-  AlertTriangle, 
-  Globe, 
-  Cpu, 
-  Search, 
-  RefreshCw, 
+import {
+  Shield,
+  Terminal,
+  AlertTriangle,
+  Globe,
+  Cpu,
+  Search,
+  RefreshCw,
   Play,
   Eye,
   Lock,
   ShieldAlert,
-  RefreshCcw
+  RefreshCcw,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -55,7 +67,7 @@ export function SecurityLogsView() {
           limit: 100,
           requireAdmin: true,
         });
-        
+
         if (directErr) throw directErr;
         setSecurityLogs(directData || []);
         return directData;
@@ -81,7 +93,7 @@ export function SecurityLogsView() {
             icon: <ShieldAlert className="h-4 w-4 text-destructive" />,
           });
           refetchLogs();
-        }
+        },
       )
       .subscribe((status) => {
         setIsSubscribed(status === "SUBSCRIBED");
@@ -94,8 +106,17 @@ export function SecurityLogsView() {
 
   const simulateLogMutation = useMutation({
     mutationFn: async () => {
-      const paths = ["/admin/settings", "/api/v1/intel", "/firmware/secure-flash", "/billing/override"];
-      const actions = ["unauthorized_access_attempt", "privilege_escalation_attempt", "api_key_abuse"];
+      const paths = [
+        "/admin/settings",
+        "/api/v1/intel",
+        "/firmware/secure-flash",
+        "/billing/override",
+      ];
+      const actions = [
+        "unauthorized_access_attempt",
+        "privilege_escalation_attempt",
+        "api_key_abuse",
+      ];
       const randomPath = paths[Math.floor(Math.random() * paths.length)];
       const randomAction = actions[Math.floor(Math.random() * actions.length)];
 
@@ -103,16 +124,16 @@ export function SecurityLogsView() {
         attempted_path: randomPath,
         attempted_action: randomAction,
         client_ip: "192.168.1." + Math.floor(Math.random() * 254 + 1),
-        client_ua: navigator.userAgent
+        client_ua: navigator.userAgent,
       });
 
       if (error) throw error;
       return data;
     },
     onSuccess: async () => {
-toast.warning("Security event logged! Refreshing session token...", {
-      icon: <RefreshCcw className="h-4 w-4 text-warning animate-spin" />
-    });
+      toast.warning("Security event logged! Refreshing session token...", {
+        icon: <RefreshCcw className="h-4 w-4 text-warning animate-spin" />,
+      });
 
       const { error: refreshError } = await supabase.auth.refreshSession();
       if (refreshError) {
@@ -120,7 +141,7 @@ toast.warning("Security event logged! Refreshing session token...", {
       } else {
         toast.success("Session token successfully refreshed & verified!");
       }
-      
+
       refetchLogs();
     },
     onError: (err: any) => {
@@ -129,19 +150,25 @@ toast.warning("Security event logged! Refreshing session token...", {
   });
 
   const filteredLogs = securityLogs.filter((log) => {
-    const matchesSearch = 
+    const matchesSearch =
       log.path.toLowerCase().includes(logsFilter.toLowerCase()) ||
-      (log.email && log.email.toLowerCase().includes(logsFilter.toLowerCase())) ||
-      (log.user_id && log.user_id.toLowerCase().includes(logsFilter.toLowerCase()));
-    
+      (log.email &&
+        log.email.toLowerCase().includes(logsFilter.toLowerCase())) ||
+      (log.user_id &&
+        log.user_id.toLowerCase().includes(logsFilter.toLowerCase()));
+
     const matchesAction = actionFilter === "all" || log.action === actionFilter;
 
     return matchesSearch && matchesAction;
   });
 
   const totalAttempts = securityLogs.length;
-  const uniqueIPs = new Set(securityLogs.map(l => l.ip_address).filter(Boolean)).size;
-  const highRiskAttempts = securityLogs.filter(l => l.action === "privilege_escalation_attempt").length;
+  const uniqueIPs = new Set(
+    securityLogs.map((l) => l.ip_address).filter(Boolean),
+  ).size;
+  const highRiskAttempts = securityLogs.filter(
+    (l) => l.action === "privilege_escalation_attempt",
+  ).length;
 
   return (
     <div className="space-y-6">
@@ -149,10 +176,14 @@ toast.warning("Security event logged! Refreshing session token...", {
       <div className="grid gap-4 md:grid-cols-4">
         <Card className="border-border bg-card/40">
           <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Real-time Feed Status</CardTitle>
+            <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Real-time Feed Status
+            </CardTitle>
           </CardHeader>
           <CardContent className="flex items-center gap-2">
-            <div className={`h-2.5 w-2.5 rounded-full ${isSubscribed ? "bg-success animate-pulse" : "bg-warning"}`} />
+            <div
+              className={`h-2.5 w-2.5 rounded-full ${isSubscribed ? "bg-success animate-pulse" : "bg-warning"}`}
+            />
             <span className="text-sm font-mono font-semibold">
               {isSubscribed ? "LIVE TELEMETRY ACTIVE" : "POLLING BACKUP"}
             </span>
@@ -161,7 +192,9 @@ toast.warning("Security event logged! Refreshing session token...", {
 
         <Card className="border-border bg-card/40">
           <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Logged Events</CardTitle>
+            <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Total Logged Events
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold font-mono">{totalAttempts}</div>
@@ -170,7 +203,9 @@ toast.warning("Security event logged! Refreshing session token...", {
 
         <Card className="border-border bg-card/40">
           <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Unique Source IPs</CardTitle>
+            <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Unique Source IPs
+            </CardTitle>
           </CardHeader>
           <CardContent className="flex items-center gap-2">
             <Globe className="h-4 w-4 text-muted-foreground" />
@@ -180,11 +215,15 @@ toast.warning("Security event logged! Refreshing session token...", {
 
         <Card className="border-border bg-card/40">
           <CardHeader className="pb-2">
-            <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">High Risk Escalations</CardTitle>
+            <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              High Risk Escalations
+            </CardTitle>
           </CardHeader>
           <CardContent className="flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-destructive" />
-            <div className="text-2xl font-bold font-mono text-destructive">{highRiskAttempts}</div>
+            <div className="text-2xl font-bold font-mono text-destructive">
+              {highRiskAttempts}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -207,8 +246,12 @@ toast.warning("Security event logged! Refreshing session token...", {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Actions</SelectItem>
-              <SelectItem value="unauthorized_access_attempt">Unauthorized Access</SelectItem>
-              <SelectItem value="privilege_escalation_attempt">Privilege Escalation</SelectItem>
+              <SelectItem value="unauthorized_access_attempt">
+                Unauthorized Access
+              </SelectItem>
+              <SelectItem value="privilege_escalation_attempt">
+                Privilege Escalation
+              </SelectItem>
               <SelectItem value="api_key_abuse">API Key Abuse</SelectItem>
             </SelectContent>
           </Select>
@@ -222,7 +265,10 @@ toast.warning("Security event logged! Refreshing session token...", {
             disabled={logsLoading}
             className="h-9 gap-1.5"
           >
-            <RefreshCw className={`h-3.5 w-3.5 ${logsLoading ? "animate-spin" : ""}`} /> Refresh
+            <RefreshCw
+              className={`h-3.5 w-3.5 ${logsLoading ? "animate-spin" : ""}`}
+            />{" "}
+            Refresh
           </Button>
           <Button
             variant="destructive"
@@ -242,33 +288,42 @@ toast.warning("Security event logged! Refreshing session token...", {
         <Card className="border-border bg-card/60 lg:col-span-2">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-mono flex items-center gap-2">
-              <Terminal className="h-4 w-4 text-primary" /> Live Security Event Stream
+              <Terminal className="h-4 w-4 text-primary" /> Live Security Event
+              Stream
             </CardTitle>
             <CardDescription>
-              Real-time audit trail of unauthorized access attempts and system violations.
+              Real-time audit trail of unauthorized access attempts and system
+              violations.
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             {logsLoading && securityLogs.length === 0 ? (
-              <div className="py-12 text-center text-muted-foreground">Connecting to security stream...</div>
+              <div className="py-12 text-center text-muted-foreground">
+                Connecting to security stream...
+              </div>
             ) : filteredLogs.length === 0 ? (
-              <div className="py-12 text-center text-muted-foreground">No security events match the filters.</div>
+              <div className="py-12 text-center text-muted-foreground">
+                No security events match the filters.
+              </div>
             ) : (
               <div className="divide-y divide-border/40 max-h-[500px] overflow-y-auto">
                 {filteredLogs.map((log) => {
-                  const isHighRisk = log.action === "privilege_escalation_attempt";
+                  const isHighRisk =
+                    log.action === "privilege_escalation_attempt";
                   return (
                     <div
                       key={log.id}
                       onClick={() => setSelectedLog(log)}
                       className={`p-4 flex items-start justify-between gap-4 cursor-pointer transition-colors hover:bg-muted/30 ${
-                        selectedLog?.id === log.id ? "bg-muted/40 border-l-2 border-primary" : ""
+                        selectedLog?.id === log.id
+                          ? "bg-muted/40 border-l-2 border-primary"
+                          : ""
                       }`}
                     >
                       <div className="space-y-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <Badge 
-                            variant={isHighRisk ? "destructive" : "outline"} 
+                          <Badge
+                            variant={isHighRisk ? "destructive" : "outline"}
                             className="font-mono text-[9px] uppercase tracking-wider"
                           >
                             {log.action.replace(/_/g, " ")}
@@ -278,7 +333,8 @@ toast.warning("Security event logged! Refreshing session token...", {
                           </span>
                         </div>
                         <div className="text-xs text-muted-foreground truncate">
-                          {log.email || `User: ${log.user_id?.slice(0, 8) || "Anonymous"}`}
+                          {log.email ||
+                            `User: ${log.user_id?.slice(0, 8) || "Anonymous"}`}
                         </div>
                       </div>
                       <div className="text-right shrink-0">
@@ -304,35 +360,44 @@ toast.warning("Security event logged! Refreshing session token...", {
               <Eye className="h-4 w-4 text-secondary" /> Event Inspector
             </CardTitle>
             <CardDescription>
-              Select a security event from the stream to inspect full payload and metadata.
+              Select a security event from the stream to inspect full payload
+              and metadata.
             </CardDescription>
           </CardHeader>
           <CardContent>
             {selectedLog ? (
               <div className="space-y-4">
                 <div className="space-y-1.5">
-                  <span className="text-xs text-muted-foreground block">Event ID</span>
+                  <span className="text-xs text-muted-foreground block">
+                    Event ID
+                  </span>
                   <div className="font-mono text-xs bg-muted/50 p-2 rounded border border-border select-all">
                     {selectedLog.id}
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <span className="text-xs text-muted-foreground block">Attempted Path</span>
+                  <span className="text-xs text-muted-foreground block">
+                    Attempted Path
+                  </span>
                   <div className="font-mono text-xs bg-muted/50 p-2 rounded border border-border text-primary font-semibold">
                     {selectedLog.path}
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <span className="text-xs text-muted-foreground block">Action Type</span>
+                  <span className="text-xs text-muted-foreground block">
+                    Action Type
+                  </span>
                   <div className="font-mono text-xs bg-muted/50 p-2 rounded border border-border">
                     {selectedLog.action}
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <span className="text-xs text-muted-foreground block">Source IP Address</span>
+                  <span className="text-xs text-muted-foreground block">
+                    Source IP Address
+                  </span>
                   <div className="font-mono text-xs bg-muted/50 p-2 rounded border border-border flex items-center gap-1.5">
                     <Globe className="h-3.5 w-3.5 text-muted-foreground" />
                     {selectedLog.ip_address || "Unknown"}
@@ -340,7 +405,9 @@ toast.warning("Security event logged! Refreshing session token...", {
                 </div>
 
                 <div className="space-y-1.5">
-                  <span className="text-xs text-muted-foreground block">User Agent</span>
+                  <span className="text-xs text-muted-foreground block">
+                    User Agent
+                  </span>
                   <div className="font-mono text-[10px] bg-muted/50 p-2 rounded border border-border break-all leading-relaxed">
                     <Cpu className="h-3.5 w-3.5 text-muted-foreground inline mr-1.5" />
                     {selectedLog.user_agent || "Unknown"}
@@ -348,7 +415,9 @@ toast.warning("Security event logged! Refreshing session token...", {
                 </div>
 
                 <div className="space-y-1.5">
-                  <span className="text-xs text-muted-foreground block">Timestamp</span>
+                  <span className="text-xs text-muted-foreground block">
+                    Timestamp
+                  </span>
                   <div className="font-mono text-xs bg-muted/50 p-2 rounded border border-border">
                     {new Date(selectedLog.created_at).toLocaleString()}
                   </div>
@@ -357,7 +426,10 @@ toast.warning("Security event logged! Refreshing session token...", {
                 <div className="pt-2 border-t border-border/50">
                   <div className="flex items-center gap-2 text-xs text-warning bg-warning/10 px-2 py-1 rounded border border-warning/20">
                     <Lock className="h-4 w-4 shrink-0" />
-                    <span>This event was blocked by system middleware. No data was compromised.</span>
+                    <span>
+                      This event was blocked by system middleware. No data was
+                      compromised.
+                    </span>
                   </div>
                 </div>
               </div>

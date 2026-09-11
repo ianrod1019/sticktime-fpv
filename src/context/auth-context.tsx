@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { db_request } from "@/lib/db_request";
@@ -56,13 +62,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (data) {
         resolvedRole = (data.role || "user").toLowerCase();
-        resolvedTier = (data.tier || data.subscription_tier || "free").toLowerCase();
+        resolvedTier = (
+          data.tier ||
+          data.subscription_tier ||
+          "free"
+        ).toLowerCase();
       }
 
       // 2. Fallback check via RPC if role is still user
       if (resolvedRole === "user") {
         try {
-          const { data: rpcData, error: rpcError } = await supabase.rpc("check_is_admin");
+          const { data: rpcData, error: rpcError } =
+            await supabase.rpc("check_is_admin");
           if (!rpcError && rpcData === true) {
             resolvedRole = "admin";
           }
@@ -79,7 +90,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Cache locally for instant reads
       try {
         sessionStorage.setItem(`sticktime_user_role_${userId}`, resolvedRole);
-        sessionStorage.setItem(`sticktime_user_role_ts_${userId}`, String(Date.now()));
+        sessionStorage.setItem(
+          `sticktime_user_role_ts_${userId}`,
+          String(Date.now()),
+        );
       } catch {}
     } catch (err) {
       console.error("Exception fetching role/tier:", err);
@@ -91,8 +105,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const refreshRoleAndTier = useCallback(async () => {
     if (user?.id) {
-      await queryClient.invalidateQueries({ queryKey: ["role-and-tier", user.id] });
-      await queryClient.invalidateQueries({ queryKey: ["admin-status", user.id] });
+      await queryClient.invalidateQueries({
+        queryKey: ["role-and-tier", user.id],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["admin-status", user.id],
+      });
       await fetchRoleAndTier(user.id);
     }
   }, [user?.id, queryClient, fetchRoleAndTier]);
@@ -102,8 +120,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     async function initializeAuth() {
       try {
-        const { data: { session: activeSession }, error } = await supabase.auth.getSession();
-        
+        const {
+          data: { session: activeSession },
+          error,
+        } = await supabase.auth.getSession();
+
         if (error) {
           console.error("Error getting initial session:", error);
         }
@@ -129,23 +150,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     initializeAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, currentSession) => {
-        if (!mounted) return;
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+      if (!mounted) return;
 
-        setSession(currentSession);
-        setUser(currentSession?.user ?? null);
+      setSession(currentSession);
+      setUser(currentSession?.user ?? null);
 
-        if (currentSession?.user) {
-          await fetchRoleAndTier(currentSession.user.id);
-        } else {
-          setUserRole(null);
-          setUserTier(null);
-          setIsAdminOrDev(false);
-        }
-        setLoading(false);
+      if (currentSession?.user) {
+        await fetchRoleAndTier(currentSession.user.id);
+      } else {
+        setUserRole(null);
+        setUserTier(null);
+        setIsAdminOrDev(false);
       }
-    );
+      setLoading(false);
+    });
 
     return () => {
       mounted = false;
@@ -170,7 +191,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, userRole, userTier, isAdminOrDev, signOut, refreshRoleAndTier }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        session,
+        loading,
+        userRole,
+        userTier,
+        isAdminOrDev,
+        signOut,
+        refreshRoleAndTier,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

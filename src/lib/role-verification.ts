@@ -92,14 +92,15 @@ export function useRoleVerification(userId: string | undefined) {
   const adminStatus = useAdminStatus(userId);
 
   return {
-    data: roleAndTier.data && adminStatus.data
-      ? {
-          role: roleAndTier.data.role,
-          tier: roleAndTier.data.tier,
-          isAdminOrDev: adminStatus.data.isAdminOrDev,
-          userId: roleAndTier.data.userId,
-        }
-      : undefined,
+    data:
+      roleAndTier.data && adminStatus.data
+        ? {
+            role: roleAndTier.data.role,
+            tier: roleAndTier.data.tier,
+            isAdminOrDev: adminStatus.data.isAdminOrDev,
+            userId: roleAndTier.data.userId,
+          }
+        : undefined,
     isLoading: roleAndTier.isLoading || adminStatus.isLoading,
     isError: roleAndTier.isError || adminStatus.isError,
     error: roleAndTier.error || adminStatus.error,
@@ -116,7 +117,10 @@ export function isAdminOrDev(role: string | undefined): boolean {
   return role?.toLowerCase() === "admin" || role?.toLowerCase() === "dev";
 }
 
-export function isProOrHigher(tier: string | undefined, role: string | undefined): boolean {
+export function isProOrHigher(
+  tier: string | undefined,
+  role: string | undefined,
+): boolean {
   if (isAdminOrDev(role)) return true;
   const t = tier?.toLowerCase();
   return t === "pro" || t === "premium";
@@ -132,7 +136,10 @@ export function requireAdmin(role: string | undefined): void {
   }
 }
 
-export function requirePro(role: string | undefined, tier: string | undefined): void {
+export function requirePro(
+  role: string | undefined,
+  tier: string | undefined,
+): void {
   if (!isProOrHigher(tier, role)) {
     throw new Error("Pro subscription required");
   }

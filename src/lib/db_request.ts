@@ -78,7 +78,9 @@ export async function db_request<T = any>({
   }
 
   if (allowedRoles.length > 0 && userRole && !allowedRoles.includes(userRole)) {
-    throw new Error(`User role "${userRole}" not in allowed roles: ${allowedRoles.join(", ")}`);
+    throw new Error(
+      `User role "${userRole}" not in allowed roles: ${allowedRoles.join(", ")}`,
+    );
   }
 
   const isPersonalGear = isPersonalGearTable(schema, table);
@@ -108,7 +110,10 @@ export async function db_request<T = any>({
       if (!rpcFunction) {
         throw new Error("RPC mode requires rpcFunction parameter.");
       }
-      const { data: rpcData, error: rpcError } = await supabase.rpc(rpcFunction, rpcParams ?? {});
+      const { data: rpcData, error: rpcError } = await supabase.rpc(
+        rpcFunction,
+        rpcParams ?? {},
+      );
       if (rpcError) {
         return { data: null, error: rpcError };
       }
@@ -119,7 +124,9 @@ export async function db_request<T = any>({
       throw new Error("Query mode requires table parameter.");
     }
 
-    const fromBuilder = schema ? supabase.schema(schema).from(table) : supabase.from(table);
+    const fromBuilder = schema
+      ? supabase.schema(schema).from(table)
+      : supabase.from(table);
 
     const applyFilters = (query: any, extraFilters?: Record<string, any>) => {
       const allFilters = mergedFilters(extraFilters);
@@ -127,7 +134,7 @@ export async function db_request<T = any>({
         Object.entries(allFilters).forEach(([key, value]) => {
           if (Array.isArray(value)) {
             query = query.in(key, value);
-          } else if (typeof value === 'object' && value !== null) {
+          } else if (typeof value === "object" && value !== null) {
             // Support range operators: $gte, $gt, $lte, $lt
             if (value.$gte !== undefined) query = query.gte(key, value.$gte);
             if (value.$gt !== undefined) query = query.gt(key, value.$gt);
@@ -144,7 +151,9 @@ export async function db_request<T = any>({
 
     const applyOrder = (query: any) => {
       if (orderBy) {
-        query = query.order(orderBy.column, { ascending: orderBy.ascending ?? true });
+        query = query.order(orderBy.column, {
+          ascending: orderBy.ascending ?? true,
+        });
       }
       return query;
     };
@@ -159,7 +168,10 @@ export async function db_request<T = any>({
     switch (operation ?? "select") {
       case "select": {
         const selectStr = selectColumns ?? "*";
-        let query = fromBuilder.select(selectStr, count !== undefined ? { count } : undefined);
+        let query = fromBuilder.select(
+          selectStr,
+          count !== undefined ? { count } : undefined,
+        );
         query = applyFilters(query);
         query = applyOrder(query);
         query = applyLimit(query);
@@ -173,11 +185,21 @@ export async function db_request<T = any>({
           return { data: selectData as T, error: null };
         }
 
-        const { data: selectData, error: selectError, count: rowCount } = await query;
+        const {
+          data: selectData,
+          error: selectError,
+          count: rowCount,
+        } = await query;
         if (selectError) {
           return { data: null, error: selectError };
         }
-        return { data: selectData as T, error: null, ...(rowCount !== undefined && rowCount !== null ? { count: rowCount } : {}) };
+        return {
+          data: selectData as T,
+          error: null,
+          ...(rowCount !== undefined && rowCount !== null
+            ? { count: rowCount }
+            : {}),
+        };
       }
 
       case "insert":
@@ -187,14 +209,22 @@ export async function db_request<T = any>({
         }
         const insertData = Array.isArray(data) ? data : [data];
         const payload = injectOwner(insertData);
-        const builder = operation === "upsert" ? fromBuilder.upsert(payload) : fromBuilder.insert(payload);
+        const builder =
+          operation === "upsert"
+            ? fromBuilder.upsert(payload)
+            : fromBuilder.insert(payload);
         let query: any = builder.select();
         if (single) query = query.single();
         const { data: insertResult, error: insertError } = await query;
         if (insertError) {
           return { data: null, error: insertError };
         }
-        return { data: (Array.isArray(data) ? insertResult : insertResult?.[0] ?? null) as T, error: null };
+        return {
+          data: (Array.isArray(data)
+            ? insertResult
+            : (insertResult?.[0] ?? null)) as T,
+          error: null,
+        };
       }
 
       case "update": {
@@ -202,19 +232,23 @@ export async function db_request<T = any>({
           throw new Error("Update operation requires data parameter.");
         }
         if (!filters || Object.keys(filters).length === 0) {
-          throw new Error("Update operation requires filters to identify rows.");
+          throw new Error(
+            "Update operation requires filters to identify rows.",
+          );
         }
         let query = fromBuilder.update(data);
         query = applyFilters(query, filters);
         if (head || single) {
           query = query.limit(1);
-          const { data: updateResult, error: updateError } = await query.single();
+          const { data: updateResult, error: updateError } =
+            await query.single();
           if (updateError) {
             return { data: null, error: updateError };
           }
           return { data: updateResult as T, error: null };
         } else {
-          const { data: updateResult, error: updateError } = await query.select();
+          const { data: updateResult, error: updateError } =
+            await query.select();
           if (updateError) {
             return { data: null, error: updateError };
           }
@@ -224,19 +258,23 @@ export async function db_request<T = any>({
 
       case "delete": {
         if (!filters || Object.keys(filters).length === 0) {
-          throw new Error("Delete operation requires filters to identify rows.");
+          throw new Error(
+            "Delete operation requires filters to identify rows.",
+          );
         }
         let query = fromBuilder.delete();
         query = applyFilters(query, filters);
         if (head || single) {
           query = query.limit(1);
-          const { data: deleteResult, error: deleteError } = await query.single();
+          const { data: deleteResult, error: deleteError } =
+            await query.single();
           if (deleteError) {
             return { data: null, error: deleteError };
           }
           return { data: deleteResult as T, error: null };
         } else {
-          const { data: deleteResult, error: deleteError } = await query.select();
+          const { data: deleteResult, error: deleteError } =
+            await query.select();
           if (deleteError) {
             return { data: null, error: deleteError };
           }
@@ -245,7 +283,9 @@ export async function db_request<T = any>({
       }
 
       case "count": {
-        let query = fromBuilder.select(selectColumns ?? "*", { count: count ?? "exact" });
+        let query = fromBuilder.select(selectColumns ?? "*", {
+          count: count ?? "exact",
+        });
         query = applyFilters(query);
         const { count: rowCount, error: countError } = await query;
         if (countError) {
@@ -258,7 +298,10 @@ export async function db_request<T = any>({
         throw new Error(`Unsupported operation: ${operation}`);
     }
   } catch (err) {
-    return { data: null, error: err instanceof Error ? err : new Error(String(err)) };
+    return {
+      data: null,
+      error: err instanceof Error ? err : new Error(String(err)),
+    };
   }
 }
 
@@ -288,7 +331,9 @@ export interface DbRequestResult<T = any> {
 }
 
 export async function checkIsAdmin(userId: string): Promise<boolean> {
-  const { data, error } = await supabase.rpc("check_is_admin", { p_user_id: userId });
+  const { data, error } = await supabase.rpc("check_is_admin", {
+    p_user_id: userId,
+  });
   if (error) throw error;
   return data === true || (data && (data as any).is_admin === true);
 }
@@ -303,7 +348,10 @@ export async function fetchUserRole(userId: string): Promise<string | null> {
   return (data as any)?.role ?? "user";
 }
 
-export async function isUserInRoles(userId: string, roles: string[]): Promise<boolean> {
+export async function isUserInRoles(
+  userId: string,
+  roles: string[],
+): Promise<boolean> {
   const role = await fetchUserRole(userId);
   return role ? roles.includes(role) : false;
 }

@@ -23,13 +23,13 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
 
   if (!isOpen) return null;
 
-const handleGoogleAuth = async () => {
+  const handleGoogleAuth = async () => {
     setLoading(true);
     setErrorDetails(null);
     setIsTriggerError(false);
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
+        provider: "google",
         options: {
           redirectTo: `${window.location.origin}/`,
         },
@@ -62,7 +62,10 @@ const handleGoogleAuth = async () => {
         });
 
         if (error) {
-          if (error.message?.includes("Database error saving new user") || error.message?.includes("trigger")) {
+          if (
+            error.message?.includes("Database error saving new user") ||
+            error.message?.includes("trigger")
+          ) {
             setIsTriggerError(true);
           }
           throw error;
@@ -71,14 +74,15 @@ const handleGoogleAuth = async () => {
         // 2. If Supabase requires email confirmation, data.session will be null.
         // We automatically sign them in right away so they don't get blocked by email confirmation!
         if (!data.session) {
-          const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
-          
+          const { data: loginData, error: loginError } =
+            await supabase.auth.signInWithPassword({
+              email,
+              password,
+            });
+
           if (loginError) {
             // If sign-in after signup fails due to email confirmation required in project settings,
-            // we inform them and log them in through a simulated token or direct instructions, 
+            // we inform them and log them in through a simulated token or direct instructions,
             // but usually Supabase allows password login immediately if configured or we guide them.
             console.warn("Auto sign-in warning:", loginError.message);
           }
@@ -99,7 +103,10 @@ const handleGoogleAuth = async () => {
           // Fallback if session is still null (e.g. project config strictly enforces email verification)
           // Attempt a direct sign in or notify success
           toast.success("Signup successful! Signing you in...");
-          const { error: retryError } = await supabase.auth.signInWithPassword({ email, password });
+          const { error: retryError } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
           if (!retryError) {
             onClose();
             navigate({ to: "/" });
@@ -114,7 +121,10 @@ const handleGoogleAuth = async () => {
           password,
         });
         if (error) {
-          if (error.message?.includes("Database error saving new user") || error.message?.includes("trigger")) {
+          if (
+            error.message?.includes("Database error saving new user") ||
+            error.message?.includes("trigger")
+          ) {
             setIsTriggerError(true);
           }
           throw error;
@@ -165,7 +175,9 @@ const handleGoogleAuth = async () => {
           <div className="mb-4 p-4 text-sm bg-destructive/10 border border-destructive/20 text-destructive rounded-lg space-y-2">
             <div className="flex items-start gap-2">
               <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
-              <div className="flex-1 break-words font-medium">{errorDetails}</div>
+              <div className="flex-1 break-words font-medium">
+                {errorDetails}
+              </div>
             </div>
             {isTriggerError && (
               <div className="mt-2 pt-2 border-t border-destructive/20 text-xs space-y-1">
@@ -174,7 +186,11 @@ const handleGoogleAuth = async () => {
                   Database Trigger Issue Detected:
                 </div>
                 <p>
-                  Your Supabase project has a broken trigger function on <code className="bg-destructive/20 px-1 py-0.5 rounded">auth.users</code>.
+                  Your Supabase project has a broken trigger function on{" "}
+                  <code className="bg-destructive/20 px-1 py-0.5 rounded">
+                    auth.users
+                  </code>
+                  .
                 </p>
               </div>
             )}
@@ -212,7 +228,9 @@ const handleGoogleAuth = async () => {
 
           <div className="relative flex py-2 items-center">
             <div className="flex-grow border-t border-muted"></div>
-            <span className="flex-shrink mx-4 text-xs uppercase text-muted-foreground">Or continue with email</span>
+            <span className="flex-shrink mx-4 text-xs uppercase text-muted-foreground">
+              Or continue with email
+            </span>
             <div className="flex-grow border-t border-muted"></div>
           </div>
         </div>
@@ -253,13 +271,19 @@ const handleGoogleAuth = async () => {
             />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Processing..." : mode === "login" ? "Sign In" : "Sign Up"}
+            {loading
+              ? "Processing..."
+              : mode === "login"
+                ? "Sign In"
+                : "Sign Up"}
           </Button>
         </form>
 
         <div className="mt-6 text-center text-sm">
           <p className="text-muted-foreground">
-            {mode === "login" ? "Don't have an account?" : "Already have an account?"}{" "}
+            {mode === "login"
+              ? "Don't have an account?"
+              : "Already have an account?"}{" "}
             <button
               type="button"
               className="font-medium text-primary hover:underline"

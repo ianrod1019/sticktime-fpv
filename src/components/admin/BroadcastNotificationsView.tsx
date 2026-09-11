@@ -2,11 +2,23 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { db_request } from "@/lib/db_request";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Bell, Send, Radio, Megaphone, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
@@ -44,7 +56,15 @@ export function BroadcastNotificationsView() {
   });
 
   const sendBroadcastMutation = useMutation({
-    mutationFn: async ({ title, message, targetTier }: { title: string; message: string; targetTier: string }) => {
+    mutationFn: async ({
+      title,
+      message,
+      targetTier,
+    }: {
+      title: string;
+      message: string;
+      targetTier: string;
+    }) => {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) throw new Error("Not authenticated");
 
@@ -75,7 +95,9 @@ export function BroadcastNotificationsView() {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-broadcast-notifications"] });
+      queryClient.invalidateQueries({
+        queryKey: ["admin-broadcast-notifications"],
+      });
       queryClient.invalidateQueries({ queryKey: ["admin-audit-logs-list"] });
       toast.success("Broadcast push notification sent & logged successfully!", {
         icon: <CheckCircle2 className="h-4 w-4 text-success" />,
@@ -106,28 +128,37 @@ export function BroadcastNotificationsView() {
             <Megaphone className="h-5 w-5 text-primary" /> Broadcast Push Alert
           </CardTitle>
           <CardDescription>
-            Dispatch critical safety bulletins, maintenance announcements, or tier-specific banners.
+            Dispatch critical safety bulletins, maintenance announcements, or
+            tier-specific banners.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">Target Audience / Tier</label>
+              <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">
+                Target Audience / Tier
+              </label>
               <Select value={targetTier} onValueChange={setTargetTier}>
                 <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">🌐 All Pilots (Global Broadcast)</SelectItem>
+                  <SelectItem value="all">
+                    🌐 All Pilots (Global Broadcast)
+                  </SelectItem>
                   <SelectItem value="free">📦 Free Tier Pilots</SelectItem>
                   <SelectItem value="pro">⚡ Pro Tier Pilots</SelectItem>
-                  <SelectItem value="enterprise">🏢 Enterprise Tier Pilots</SelectItem>
+                  <SelectItem value="enterprise">
+                    🏢 Enterprise Tier Pilots
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">Announcement Title</label>
+              <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">
+                Announcement Title
+              </label>
               <Input
                 placeholder="e.g. Critical Safety Advisory / Maintenance"
                 value={title}
@@ -136,7 +167,9 @@ export function BroadcastNotificationsView() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">Message Body</label>
+              <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">
+                Message Body
+              </label>
               <Textarea
                 placeholder="Enter global broadcast details or banner text..."
                 rows={4}
@@ -151,7 +184,9 @@ export function BroadcastNotificationsView() {
               disabled={sendBroadcastMutation.isPending}
             >
               <Send className="h-4 w-4" />
-              {sendBroadcastMutation.isPending ? "Broadcasting..." : "Dispatch Broadcast Push"}
+              {sendBroadcastMutation.isPending
+                ? "Broadcasting..."
+                : "Dispatch Broadcast Push"}
             </Button>
           </form>
         </CardContent>
@@ -160,15 +195,19 @@ export function BroadcastNotificationsView() {
       <Card className="border-border bg-card/60 lg:col-span-2">
         <CardHeader>
           <CardTitle className="text-base font-mono flex items-center gap-2">
-            <Radio className="h-5 w-5 text-secondary" /> Dispatched Broadcast History
+            <Radio className="h-5 w-5 text-secondary" /> Dispatched Broadcast
+            History
           </CardTitle>
           <CardDescription>
-            Active feed of alerts sent to pilots across the FPV telemetry network.
+            Active feed of alerts sent to pilots across the FPV telemetry
+            network.
           </CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="py-12 text-center text-muted-foreground">Loading broadcast history...</div>
+            <div className="py-12 text-center text-muted-foreground">
+              Loading broadcast history...
+            </div>
           ) : notifications?.length === 0 ? (
             <div className="py-12 text-center text-muted-foreground flex flex-col items-center justify-center gap-2">
               <Bell className="h-8 w-8 text-muted-foreground/40" />
@@ -179,7 +218,10 @@ export function BroadcastNotificationsView() {
               {notifications?.map((item) => {
                 const tier = item.target_tier || "all";
                 return (
-                  <div key={item.id} className="p-4 rounded-lg bg-muted/40 border border-border/60 space-y-2 hover:bg-muted/60 transition-colors">
+                  <div
+                    key={item.id}
+                    className="p-4 rounded-lg bg-muted/40 border border-border/60 space-y-2 hover:bg-muted/60 transition-colors"
+                  >
                     <div className="flex items-center justify-between gap-2 flex-wrap">
                       <div className="flex items-center gap-2">
                         <Badge
@@ -188,7 +230,9 @@ export function BroadcastNotificationsView() {
                         >
                           Target: {tier}
                         </Badge>
-                        <h4 className="font-semibold text-sm text-foreground">{item.title}</h4>
+                        <h4 className="font-semibold text-sm text-foreground">
+                          {item.title}
+                        </h4>
                       </div>
                       <span className="text-[10px] font-mono text-muted-foreground">
                         {new Date(item.created_at).toLocaleString()}

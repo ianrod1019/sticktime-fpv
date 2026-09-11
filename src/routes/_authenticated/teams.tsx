@@ -76,9 +76,14 @@ function Teams() {
         data: { team_id: team.id, user_id: user.id, team_role: "owner" },
       });
 
-      const randomCode = Math.random().toString(36).substring(2, 9).toUpperCase();
-      const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
-      
+      const randomCode = Math.random()
+        .toString(36)
+        .substring(2, 9)
+        .toUpperCase();
+      const expiresAt = new Date(
+        Date.now() + 7 * 24 * 60 * 60 * 1000,
+      ).toISOString();
+
       await db_request({
         mode: "query",
         schema: "public",
@@ -106,7 +111,9 @@ function Teams() {
 
   const joinTeam = useMutation({
     mutationFn: async () => {
-      const { data, error } = await supabase.rpc("join_team_with_code", { _code: code.trim() });
+      const { data, error } = await supabase.rpc("join_team_with_code", {
+        _code: code.trim(),
+      });
       if (error) throw error;
       return data;
     },
@@ -115,7 +122,10 @@ function Teams() {
       setCode("");
       queryClient.invalidateQueries({ queryKey: ["my-teams"] });
       if (teamId) {
-        navigate({ to: "/squadron/$squadronId", params: { squadronId: teamId } });
+        navigate({
+          to: "/squadron/$squadronId",
+          params: { squadronId: teamId },
+        });
       }
     },
     onError: (e: Error) => toast.error(e.message),
@@ -137,24 +147,35 @@ function Teams() {
             </h3>
             <div className="grid gap-4 md:grid-cols-2">
               {myTeams.map((team: any) => (
-                <div key={team.id} className="hud-panel p-6 flex flex-col justify-between border-primary/40 bg-card/60 relative overflow-hidden">
+                <div
+                  key={team.id}
+                  className="hud-panel p-6 flex flex-col justify-between border-primary/40 bg-card/60 relative overflow-hidden"
+                >
                   <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full pointer-events-none" />
                   <div>
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
                         <Users className="h-5 w-5 text-primary" />
-                        <h2 className="text-xl font-bold tracking-tight">{team.name}</h2>
+                        <h2 className="text-xl font-bold tracking-tight">
+                          {team.name}
+                        </h2>
                       </div>
                       <span className="text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary font-medium capitalize border border-primary/20">
                         {team.team_role}
                       </span>
                     </div>
                     <p className="text-sm text-muted-foreground line-clamp-2 mb-6">
-                      {team.description || "No description provided for this squad."}
+                      {team.description ||
+                        "No description provided for this squad."}
                     </p>
                   </div>
                   <Button
-                    onClick={() => navigate({ to: "/squadron/$squadronId", params: { squadronId: team.id } })}
+                    onClick={() =>
+                      navigate({
+                        to: "/squadron/$squadronId",
+                        params: { squadronId: team.id },
+                      })
+                    }
                     className="w-full gap-2 mt-4 cursor-pointer"
                   >
                     Enter Squad HQ
@@ -216,7 +237,9 @@ function Teams() {
                 <h2 className="text-lg font-bold">Join with Entry Code</h2>
               </div>
               <p className="text-sm text-muted-foreground mb-6">
-                Enter a valid 7-day squad invite code shared by your squad leader or team admin to instantly access the squad hangar and shared flight logs.
+                Enter a valid 7-day squad invite code shared by your squad
+                leader or team admin to instantly access the squad hangar and
+                shared flight logs.
               </p>
               <div className="space-y-4">
                 <div>

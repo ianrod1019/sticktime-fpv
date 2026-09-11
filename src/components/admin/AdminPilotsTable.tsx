@@ -2,12 +2,35 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { db_request } from "@/lib/db_request";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Users, Edit2, Check, X, Search, ShieldAlert, ShieldCheck, Shield, Lock, Calendar } from "lucide-react";
+import {
+  Users,
+  Edit2,
+  Check,
+  X,
+  Search,
+  ShieldAlert,
+  ShieldCheck,
+  Shield,
+  Lock,
+  Calendar,
+} from "lucide-react";
 import { toast } from "sonner";
 import { BanPilotModal } from "./BanPilotModal";
 
@@ -33,7 +56,8 @@ export function AdminPilotsTable() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   // Modal state for banning pilot
-  const [selectedPilotToBan, setSelectedPilotToBan] = useState<ProfileWithEmail | null>(null);
+  const [selectedPilotToBan, setSelectedPilotToBan] =
+    useState<ProfileWithEmail | null>(null);
 
   // Get current user id to prevent self-role editing
   useQuery({
@@ -48,16 +72,26 @@ export function AdminPilotsTable() {
     },
   });
 
-  const { data: profiles, isLoading: profilesErrorLoading, error: profilesError } = useQuery({
+  const {
+    data: profiles,
+    isLoading: profilesErrorLoading,
+    error: profilesError,
+  } = useQuery({
     queryKey: ["admin-profiles-with-emails-correct-schema-v8"],
     queryFn: async () => {
       try {
-        const { data: rpcData, error: rpcErr } = await supabase.rpc("admin_get_admin_directory");
+        const { data: rpcData, error: rpcErr } = await supabase.rpc(
+          "admin_get_admin_directory",
+        );
         if (!rpcErr && rpcData) {
           return (rpcData as any[]).map((item) => ({
             id: item.id,
             email: item.email || `pilot_${item.id.slice(0, 6)}@fpv.internal`,
-            display_name: item.display_name || item.callsign || item.email?.split("@")[0] || "Pilot",
+            display_name:
+              item.display_name ||
+              item.callsign ||
+              item.email?.split("@")[0] ||
+              "Pilot",
             callsign: item.callsign || "",
             subscription_tier: item.tier || item.subscription_tier || "free",
             role: item.role || "user",
@@ -82,7 +116,7 @@ export function AdminPilotsTable() {
 
       if (profilesErr) throw profilesErr;
 
-      let emailMap: Record<string, string> = {};
+      const emailMap: Record<string, string> = {};
       try {
         const { data: rpcEmails } = await supabase.rpc("admin_get_user_emails");
         if (rpcEmails) {
@@ -96,32 +130,46 @@ export function AdminPilotsTable() {
         console.warn("Could not fetch emails via RPC:", err);
       }
 
-      const combined: ProfileWithEmail[] = (profilesData || []).map((p: any) => {
-        const userId = p.id || p.uuid;
-        const userEmail = emailMap[userId] || `pilot_${(userId || "").slice(0, 6)}@fpv.internal`;
-        const callsign = p.callsign || userEmail.split("@")[0];
-        return {
-          id: userId,
-          email: userEmail,
-          display_name: callsign,
-          callsign: p.callsign || "",
-          subscription_tier: p.tier || p.subscription_tier || "free",
-          role: p.role || "user",
-          created_at: p.created_at || new Date().toISOString(),
-          is_banned: !!p.is_banned,
-          ban_reason: p.ban_reason || "",
-          ban_until: p.ban_until || null,
-        };
-      });
+      const combined: ProfileWithEmail[] = (profilesData || []).map(
+        (p: any) => {
+          const userId = p.id || p.uuid;
+          const userEmail =
+            emailMap[userId] ||
+            `pilot_${(userId || "").slice(0, 6)}@fpv.internal`;
+          const callsign = p.callsign || userEmail.split("@")[0];
+          return {
+            id: userId,
+            email: userEmail,
+            display_name: callsign,
+            callsign: p.callsign || "",
+            subscription_tier: p.tier || p.subscription_tier || "free",
+            role: p.role || "user",
+            created_at: p.created_at || new Date().toISOString(),
+            is_banned: !!p.is_banned,
+            ban_reason: p.ban_reason || "",
+            ban_until: p.ban_until || null,
+          };
+        },
+      );
 
       return combined;
     },
   });
 
   const updateProfileMutation = useMutation({
-    mutationFn: async ({ id, subscription_tier, role }: { id: string; subscription_tier: string; role: string }) => {
+    mutationFn: async ({
+      id,
+      subscription_tier,
+      role,
+    }: {
+      id: string;
+      subscription_tier: string;
+      role: string;
+    }) => {
       if (currentUserId && id === currentUserId) {
-        throw new Error("Security policy violation: You cannot edit your own role or subscription tier.");
+        throw new Error(
+          "Security policy violation: You cannot edit your own role or subscription tier.",
+        );
       }
 
       const updatePayload = {
@@ -168,7 +216,9 @@ export function AdminPilotsTable() {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-profiles-with-emails-correct-schema-v8"] });
+      queryClient.invalidateQueries({
+        queryKey: ["admin-profiles-with-emails-correct-schema-v8"],
+      });
       queryClient.invalidateQueries({ queryKey: ["admin-audit-logs-list"] });
       toast.success("Pilot tier & role updated & logged successfully");
       setEditingId(null);
@@ -179,21 +229,35 @@ export function AdminPilotsTable() {
   });
 
   const toggleBanMutation = useMutation({
-    mutationFn: async ({ p, is_banned, ban_reason, ban_until }: { p: ProfileWithEmail; is_banned: boolean; ban_reason?: string; ban_until?: string | null }) => {
+    mutationFn: async ({
+      p,
+      is_banned,
+      ban_reason,
+      ban_until,
+    }: {
+      p: ProfileWithEmail;
+      is_banned: boolean;
+      ban_reason?: string;
+      ban_until?: string | null;
+    }) => {
       if (currentUserId && p.id === currentUserId) {
         throw new Error("Security policy violation: You cannot ban yourself.");
       }
 
       const roleLower = (p.role || "").toLowerCase();
       if (is_banned && (roleLower === "admin" || roleLower === "dev")) {
-        throw new Error("Security policy violation: Administrators and developers cannot be banned.");
+        throw new Error(
+          "Security policy violation: Administrators and developers cannot be banned.",
+        );
       }
 
       const updatePayload: any = {
         is_banned,
-        ban_reason: is_banned ? (ban_reason || "Violation of community safety guidelines") : null,
+        ban_reason: is_banned
+          ? ban_reason || "Violation of community safety guidelines"
+          : null,
         banned_at: is_banned ? new Date().toISOString() : null,
-        ban_until: is_banned ? (ban_until || null) : null,
+        ban_until: is_banned ? ban_until || null : null,
       };
 
       const { error } = await db_request({
@@ -234,10 +298,16 @@ export function AdminPilotsTable() {
       }
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["admin-profiles-with-emails-correct-schema-v8"] });
+      queryClient.invalidateQueries({
+        queryKey: ["admin-profiles-with-emails-correct-schema-v8"],
+      });
       queryClient.invalidateQueries({ queryKey: ["admin-audit-logs-list"] });
       setSelectedPilotToBan(null);
-      toast.success(variables.is_banned ? "Pilot has been banned successfully" : "Pilot has been unbanned successfully");
+      toast.success(
+        variables.is_banned
+          ? "Pilot has been banned successfully"
+          : "Pilot has been unbanned successfully",
+      );
     },
     onError: (err: any) => {
       toast.error(`Failed to update ban status: ${err.message}`);
@@ -246,7 +316,9 @@ export function AdminPilotsTable() {
 
   const handleStartEdit = (profile: ProfileWithEmail) => {
     if (currentUserId && profile.id === currentUserId) {
-      toast.error("Safety guardrail: You cannot edit your own role or subscription tier.");
+      toast.error(
+        "Safety guardrail: You cannot edit your own role or subscription tier.",
+      );
       return;
     }
     setEditingId(profile.id);
@@ -259,7 +331,11 @@ export function AdminPilotsTable() {
       toast.error("Safety guardrail: You cannot edit your own role.");
       return;
     }
-    updateProfileMutation.mutate({ id, subscription_tier: selectedTier, role: selectedRole });
+    updateProfileMutation.mutate({
+      id,
+      subscription_tier: selectedTier,
+      role: selectedRole,
+    });
   };
 
   const handleOpenBanModal = (p: ProfileWithEmail) => {
@@ -270,7 +346,9 @@ export function AdminPilotsTable() {
 
     const roleLower = (p.role || "").toLowerCase();
     if (!p.is_banned && (roleLower === "admin" || roleLower === "dev")) {
-      toast.error("Safety guardrail: Administrators and developers cannot be banned.");
+      toast.error(
+        "Safety guardrail: Administrators and developers cannot be banned.",
+      );
       return;
     }
 
@@ -283,8 +361,17 @@ export function AdminPilotsTable() {
     }
   };
 
-  const handleConfirmBanFromModal = (pilot: ProfileWithEmail, reason: string, banUntil: string | null) => {
-    toggleBanMutation.mutate({ p: pilot, is_banned: true, ban_reason: reason, ban_until: banUntil });
+  const handleConfirmBanFromModal = (
+    pilot: ProfileWithEmail,
+    reason: string,
+    banUntil: string | null,
+  ) => {
+    toggleBanMutation.mutate({
+      p: pilot,
+      is_banned: true,
+      ban_reason: reason,
+      ban_until: banUntil,
+    });
   };
 
   const filteredProfiles = (profiles || []).filter((p) => {
@@ -306,10 +393,13 @@ export function AdminPilotsTable() {
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
               <CardTitle className="flex items-center gap-2 font-mono">
-                <Users className="h-5 w-5 text-primary" /> Pilot Directory & Role Management
+                <Users className="h-5 w-5 text-primary" /> Pilot Directory &
+                Role Management
               </CardTitle>
               <CardDescription>
-                Manage pilot roles (User, Admin, Dev) and subscription tiers. Banning opens a secure modal requiring a mandatory reason and duration.
+                Manage pilot roles (User, Admin, Dev) and subscription tiers.
+                Banning opens a secure modal requiring a mandatory reason and
+                duration.
               </CardDescription>
             </div>
             <div className="relative w-full md:w-72">
@@ -325,13 +415,17 @@ export function AdminPilotsTable() {
         </CardHeader>
         <CardContent>
           {profilesErrorLoading ? (
-            <div className="py-12 text-center text-muted-foreground font-mono">Syncing secure pilot directory & auth users...</div>
+            <div className="py-12 text-center text-muted-foreground font-mono">
+              Syncing secure pilot directory & auth users...
+            </div>
           ) : profilesError ? (
             <div className="py-12 text-center text-destructive">
               Failed to load pilot profiles: {(profilesError as Error).message}
             </div>
           ) : filteredProfiles.length === 0 ? (
-            <div className="py-12 text-center text-muted-foreground">No pilot profiles match your search.</div>
+            <div className="py-12 text-center text-muted-foreground">
+              No pilot profiles match your search.
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
@@ -340,16 +434,21 @@ export function AdminPilotsTable() {
                     <th className="pb-3 font-medium">Pilot Identity (Email)</th>
                     <th className="pb-3 font-medium">Role & Callsign</th>
                     <th className="pb-3 font-medium">Subscription Tier</th>
-                    <th className="pb-3 font-medium">Status & Admin Ban Reason</th>
+                    <th className="pb-3 font-medium">
+                      Status & Admin Ban Reason
+                    </th>
                     <th className="pb-3 font-medium text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/50">
                   {filteredProfiles.map((p) => {
                     const isEditing = editingId === p.id;
-                    const tierValue = (p.subscription_tier || "free").toLowerCase();
+                    const tierValue = (
+                      p.subscription_tier || "free"
+                    ).toLowerCase();
                     const roleLower = (p.role || "user").toLowerCase();
-                    const isAdminOrDev = roleLower === "admin" || roleLower === "dev";
+                    const isAdminOrDev =
+                      roleLower === "admin" || roleLower === "dev";
                     const isSelf = currentUserId === p.id;
 
                     return (
@@ -358,7 +457,10 @@ export function AdminPilotsTable() {
                           <div className="font-medium text-foreground text-sm flex items-center gap-2">
                             {p.email}
                             {isSelf && (
-                              <Badge variant="outline" className="text-[9px] font-mono border-primary/40 text-primary bg-primary/5">
+                              <Badge
+                                variant="outline"
+                                className="text-[9px] font-mono border-primary/40 text-primary bg-primary/5"
+                              >
                                 YOU
                               </Badge>
                             )}
@@ -369,7 +471,10 @@ export function AdminPilotsTable() {
                         </td>
                         <td className="py-3">
                           {isEditing ? (
-                            <Select value={selectedRole} onValueChange={setSelectedRole}>
+                            <Select
+                              value={selectedRole}
+                              onValueChange={setSelectedRole}
+                            >
                               <SelectTrigger className="h-8 w-32 text-xs font-mono">
                                 <SelectValue />
                               </SelectTrigger>
@@ -382,15 +487,24 @@ export function AdminPilotsTable() {
                           ) : (
                             <div className="flex flex-col gap-1">
                               <span className="font-medium text-foreground text-xs font-mono">
-                                {p.callsign ? `@${p.callsign}` : p.display_name || "Pilot"}
+                                {p.callsign
+                                  ? `@${p.callsign}`
+                                  : p.display_name || "Pilot"}
                               </span>
                               <div className="flex items-center gap-1.5">
                                 {isAdminOrDev ? (
-                                  <Badge variant="default" className="font-mono text-[9px] gap-1 bg-warning/20 text-warning border-warning/40 w-fit">
-                                    <Shield className="h-2.5 w-2.5" /> {roleLower.toUpperCase()}
+                                  <Badge
+                                    variant="default"
+                                    className="font-mono text-[9px] gap-1 bg-warning/20 text-warning border-warning/40 w-fit"
+                                  >
+                                    <Shield className="h-2.5 w-2.5" />{" "}
+                                    {roleLower.toUpperCase()}
                                   </Badge>
                                 ) : (
-                                  <Badge variant="outline" className="font-mono text-[9px] text-muted-foreground w-fit">
+                                  <Badge
+                                    variant="outline"
+                                    className="font-mono text-[9px] text-muted-foreground w-fit"
+                                  >
                                     {roleLower}
                                   </Badge>
                                 )}
@@ -400,7 +514,10 @@ export function AdminPilotsTable() {
                         </td>
                         <td className="py-3">
                           {isEditing ? (
-                            <Select value={selectedTier} onValueChange={setSelectedTier}>
+                            <Select
+                              value={selectedTier}
+                              onValueChange={setSelectedTier}
+                            >
                               <SelectTrigger className="h-8 w-32 text-xs font-mono">
                                 <SelectValue />
                               </SelectTrigger>
@@ -408,12 +525,20 @@ export function AdminPilotsTable() {
                                 <SelectItem value="free">free</SelectItem>
                                 <SelectItem value="pro">pro</SelectItem>
                                 <SelectItem value="elite">elite</SelectItem>
-                                <SelectItem value="enterprise">enterprise</SelectItem>
+                                <SelectItem value="enterprise">
+                                  enterprise
+                                </SelectItem>
                               </SelectContent>
                             </Select>
                           ) : (
                             <Badge
-                              variant={tierValue === "pro" || tierValue === "elite" || tierValue === "enterprise" ? "default" : "outline"}
+                              variant={
+                                tierValue === "pro" ||
+                                tierValue === "elite" ||
+                                tierValue === "enterprise"
+                                  ? "default"
+                                  : "outline"
+                              }
                               className="font-mono text-[10px]"
                             >
                               {tierValue}
@@ -424,24 +549,38 @@ export function AdminPilotsTable() {
                           {p.is_banned ? (
                             <div className="flex flex-col gap-1.5">
                               <div className="flex items-center gap-2">
-                                <Badge variant="destructive" className="font-mono text-[10px] gap-1 w-fit">
+                                <Badge
+                                  variant="destructive"
+                                  className="font-mono text-[10px] gap-1 w-fit"
+                                >
                                   <ShieldAlert className="h-3 w-3" /> Banned
                                 </Badge>
-{p.ban_until && (
-                  <Badge variant="outline" className="font-mono text-[9px] text-warning border-warning/40 gap-1">
-                                    <Calendar className="h-2.5 w-2.5" /> Until {new Date(p.ban_until).toLocaleDateString()}
+                                {p.ban_until && (
+                                  <Badge
+                                    variant="outline"
+                                    className="font-mono text-[9px] text-warning border-warning/40 gap-1"
+                                  >
+                                    <Calendar className="h-2.5 w-2.5" /> Until{" "}
+                                    {new Date(p.ban_until).toLocaleDateString()}
                                   </Badge>
                                 )}
                               </div>
                               <div className="flex items-center gap-1 text-[11px] text-warning bg-primary/10 px-2 py-1 rounded border border-primary/10">
                                 <Lock className="h-3 w-3 shrink-0 text-warning" />
-                                <span className="truncate" title={`Admin-Only Ban Reason: ${p.ban_reason}`}>
-                                  <b>Reason:</b> {p.ban_reason || "No reason specified"}
+                                <span
+                                  className="truncate"
+                                  title={`Admin-Only Ban Reason: ${p.ban_reason}`}
+                                >
+                                  <b>Reason:</b>{" "}
+                                  {p.ban_reason || "No reason specified"}
                                 </span>
                               </div>
                             </div>
                           ) : (
-                            <Badge variant="secondary" className="font-mono text-[10px] gap-1 text-success bg-success/10 border-success/30">
+                            <Badge
+                              variant="secondary"
+                              className="font-mono text-[10px] gap-1 text-success bg-success/10 border-success/30"
+                            >
                               <ShieldCheck className="h-3 w-3" /> Active
                             </Badge>
                           )}
@@ -476,17 +615,33 @@ export function AdminPilotsTable() {
                                   className={`h-8 text-xs gap-1 font-mono ${isSelf ? "opacity-50 cursor-not-allowed" : ""}`}
                                   onClick={() => handleStartEdit(p)}
                                   disabled={isSelf}
-                                  title={isSelf ? "You cannot edit your own role or tier" : "Edit Role & Tier"}
+                                  title={
+                                    isSelf
+                                      ? "You cannot edit your own role or tier"
+                                      : "Edit Role & Tier"
+                                  }
                                 >
                                   <Edit2 className="h-3 w-3" /> Edit
                                 </Button>
                                 <Button
                                   size="sm"
-                                  variant={p.is_banned ? "outline" : "destructive"}
+                                  variant={
+                                    p.is_banned ? "outline" : "destructive"
+                                  }
                                   className={`h-8 text-xs gap-1 font-mono ${(isAdminOrDev && !p.is_banned) || isSelf ? "opacity-50 cursor-not-allowed" : ""}`}
                                   onClick={() => handleOpenBanModal(p)}
-                                  disabled={toggleBanMutation.isPending || (isAdminOrDev && !p.is_banned) || isSelf}
-                                  title={isSelf ? "You cannot ban yourself" : isAdminOrDev && !p.is_banned ? "Administrators and developers cannot be banned" : undefined}
+                                  disabled={
+                                    toggleBanMutation.isPending ||
+                                    (isAdminOrDev && !p.is_banned) ||
+                                    isSelf
+                                  }
+                                  title={
+                                    isSelf
+                                      ? "You cannot ban yourself"
+                                      : isAdminOrDev && !p.is_banned
+                                        ? "Administrators and developers cannot be banned"
+                                        : undefined
+                                  }
                                 >
                                   {p.is_banned ? "Unban" : "Ban"}
                                 </Button>

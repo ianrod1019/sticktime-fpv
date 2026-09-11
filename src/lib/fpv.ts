@@ -30,7 +30,10 @@ export const SIM_PLATFORMS = [
   "FPV SkyDive",
 ];
 
-export const DURATION_BLOCKS = Array.from({ length: 48 }, (_, i) => (i + 1) * 5);
+export const DURATION_BLOCKS = Array.from(
+  { length: 48 },
+  (_, i) => (i + 1) * 5,
+);
 
 export function formatHours(minutes: number): string {
   const h = Math.floor(minutes / 60);
@@ -44,7 +47,9 @@ export function toDateKey(d: Date): string {
 }
 
 /** Consecutive days (ending today or yesterday) with at least one logged session. */
-export function computeStreak(sessions: Pick<SessionRow, "flown_on">[]): number {
+export function computeStreak(
+  sessions: Pick<SessionRow, "flown_on">[],
+): number {
   const days = new Set(sessions.map((s) => s.flown_on));
   if (days.size === 0) return 0;
   const cursor = new Date();
@@ -60,13 +65,15 @@ export function computeStreak(sessions: Pick<SessionRow, "flown_on">[]): number 
 /** Consecutive days (ending today or yesterday) with sessions flown in each mode.
  * Returns an object with streaks for 'sim' and 'real' modes, plus a 'combined' streak
  * for days flown in either mode. */
-export function computeStreakByMode(sessions: Pick<SessionRow, "flown_on" | "session_type">[]): {
+export function computeStreakByMode(
+  sessions: Pick<SessionRow, "flown_on" | "session_type">[],
+): {
   sim: number;
   real: number;
   combined: number;
 } {
   // Group sessions by date and mode to know what was flown each day
-  const dayModes = new Map<string, Set<'sim' | 'real'>>();
+  const dayModes = new Map<string, Set<"sim" | "real">>();
 
   for (const s of sessions) {
     const day = s.flown_on;
@@ -74,10 +81,10 @@ export function computeStreakByMode(sessions: Pick<SessionRow, "flown_on" | "ses
     if (!dayModes.has(day)) {
       dayModes.set(day, new Set());
     }
-    dayModes.get(day)!.add(mode as 'sim' | 'real');
+    dayModes.get(day)!.add(mode as "sim" | "real");
   }
 
-  const getStreakForMode = (mode: 'sim' | 'real'): number => {
+  const getStreakForMode = (mode: "sim" | "real"): number => {
     const daysWithMode = new Set<string>();
     for (const [day, modes] of dayModes.entries()) {
       if (modes.has(mode)) {
@@ -120,9 +127,9 @@ export function computeStreakByMode(sessions: Pick<SessionRow, "flown_on" | "ses
   };
 
   return {
-    sim: getStreakForMode('sim'),
-    real: getStreakForMode('real'),
-    combined: getCombinedStreak()
+    sim: getStreakForMode("sim"),
+    real: getStreakForMode("real"),
+    combined: getCombinedStreak(),
   };
 }
 
@@ -155,11 +162,17 @@ export function monthlyVolume(sessions: SessionRow[], months = 12) {
       real: 0,
     });
   }
-  const firstKey = new Date(now.getFullYear(), now.getMonth() - (months - 1), 1);
+  const firstKey = new Date(
+    now.getFullYear(),
+    now.getMonth() - (months - 1),
+    1,
+  );
   for (const s of sessions) {
     const d = new Date(`${s.flown_on}T00:00:00`);
     if (d < firstKey) continue;
-    const idx = (d.getFullYear() - firstKey.getFullYear()) * 12 + (d.getMonth() - firstKey.getMonth());
+    const idx =
+      (d.getFullYear() - firstKey.getFullYear()) * 12 +
+      (d.getMonth() - firstKey.getMonth());
     const bucket = buckets[idx];
     if (!bucket) continue;
     bucket[s.session_type] += Math.round((s.duration_minutes / 60) * 100) / 100;
@@ -168,7 +181,10 @@ export function monthlyVolume(sessions: SessionRow[], months = 12) {
 }
 
 export function partHealth(minutesUsed: number, lifespan: number) {
-  const pct = lifespan > 0 ? Math.min(100, Math.round((minutesUsed / lifespan) * 100)) : 0;
+  const pct =
+    lifespan > 0
+      ? Math.min(100, Math.round((minutesUsed / lifespan) * 100))
+      : 0;
   const status = pct >= 100 ? "replace" : pct >= 80 ? "worn" : "healthy";
   return { pct, status } as const;
 }
@@ -181,7 +197,10 @@ export function toCsv(rows: Record<string, unknown>[]): string {
     const s = typeof v === "object" ? JSON.stringify(v) : String(v);
     return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   };
-  return [headers.join(","), ...rows.map((r) => headers.map((h) => escape(r[h])).join(","))].join("\n");
+  return [
+    headers.join(","),
+    ...rows.map((r) => headers.map((h) => escape(r[h])).join(",")),
+  ].join("\n");
 }
 
 export function downloadFile(filename: string, content: string, mime: string) {

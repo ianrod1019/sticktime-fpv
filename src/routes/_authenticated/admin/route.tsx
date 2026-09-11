@@ -26,7 +26,8 @@ export const Route = createFileRoute("/_authenticated/admin")({
       }
 
       if (!isAllowed) {
-        const { data: rpcData, error: rpcError } = await supabase.rpc("check_is_admin");
+        const { data: rpcData, error: rpcError } =
+          await supabase.rpc("check_is_admin");
         if (!rpcError && rpcData === true) {
           isAllowed = true;
         }

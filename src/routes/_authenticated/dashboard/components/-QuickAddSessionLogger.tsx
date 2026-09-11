@@ -209,65 +209,93 @@ export function QuickAddSessionLogger({
   const { data: gearData } = useQuery<GearOption[]>({
     queryKey: ["quick-add-gear"],
     queryFn: async () => {
-      const [batteries, drones, transmitters, goggles, otherGear] = await Promise.all([
-        db_request({
-          mode: "query",
-          schema: "personal_gear",
-          table: "batteries",
-          operation: "select",
-          selectColumns: "id, name, total_minutes, minutes_since_service, pack_count",
-          orderBy: { column: "name" },
-        }),
-        db_request({
-          mode: "query",
-          schema: "personal_gear",
-          table: "drones",
-          operation: "select",
-          selectColumns: "id, name, total_minutes, minutes_since_service, pack_count",
-          orderBy: { column: "name" },
-        }),
-        db_request({
-          mode: "query",
-          schema: "personal_gear",
-          table: "transmitters",
-          operation: "select",
-          selectColumns: "id, name, total_minutes, minutes_since_service, pack_count",
-          orderBy: { column: "name" },
-        }),
-        db_request({
-          mode: "query",
-          schema: "personal_gear",
-          table: "goggles",
-          operation: "select",
-          selectColumns: "id, name, total_minutes, minutes_since_service, pack_count",
-          orderBy: { column: "name" },
-        }),
-        db_request({
-          mode: "query",
-          schema: "personal_gear",
-          table: "other_gear",
-          operation: "select",
-          selectColumns: "id, name, total_minutes, minutes_since_service, pack_count",
-          orderBy: { column: "name" },
-        }),
-      ]);
+      const [batteries, drones, transmitters, goggles, otherGear] =
+        await Promise.all([
+          db_request({
+            mode: "query",
+            schema: "personal_gear",
+            table: "batteries",
+            operation: "select",
+            selectColumns:
+              "id, name, total_minutes, minutes_since_service, pack_count",
+            orderBy: { column: "name" },
+          }),
+          db_request({
+            mode: "query",
+            schema: "personal_gear",
+            table: "drones",
+            operation: "select",
+            selectColumns:
+              "id, name, total_minutes, minutes_since_service, pack_count",
+            orderBy: { column: "name" },
+          }),
+          db_request({
+            mode: "query",
+            schema: "personal_gear",
+            table: "transmitters",
+            operation: "select",
+            selectColumns:
+              "id, name, total_minutes, minutes_since_service, pack_count",
+            orderBy: { column: "name" },
+          }),
+          db_request({
+            mode: "query",
+            schema: "personal_gear",
+            table: "goggles",
+            operation: "select",
+            selectColumns:
+              "id, name, total_minutes, minutes_since_service, pack_count",
+            orderBy: { column: "name" },
+          }),
+          db_request({
+            mode: "query",
+            schema: "personal_gear",
+            table: "other_gear",
+            operation: "select",
+            selectColumns:
+              "id, name, total_minutes, minutes_since_service, pack_count",
+            orderBy: { column: "name" },
+          }),
+        ]);
 
       const results: GearOption[] = [
-        ...((batteries.data as GearOption[] | null) ?? []).map((r) => ({ ...r, gear_type: "battery" as const })),
-        ...((drones.data as GearOption[] | null) ?? []).map((r) => ({ ...r, gear_type: "quad" as const })),
-        ...((transmitters.data as GearOption[] | null) ?? []).map((r) => ({ ...r, gear_type: "transmitter" as const })),
-        ...((goggles.data as GearOption[] | null) ?? []).map((r) => ({ ...r, gear_type: "goggles" as const })),
-        ...((otherGear.data as GearOption[] | null) ?? []).map((r) => ({ ...r, gear_type: "other" as const })),
+        ...((batteries.data as GearOption[] | null) ?? []).map((r) => ({
+          ...r,
+          gear_type: "battery" as const,
+        })),
+        ...((drones.data as GearOption[] | null) ?? []).map((r) => ({
+          ...r,
+          gear_type: "quad" as const,
+        })),
+        ...((transmitters.data as GearOption[] | null) ?? []).map((r) => ({
+          ...r,
+          gear_type: "transmitter" as const,
+        })),
+        ...((goggles.data as GearOption[] | null) ?? []).map((r) => ({
+          ...r,
+          gear_type: "goggles" as const,
+        })),
+        ...((otherGear.data as GearOption[] | null) ?? []).map((r) => ({
+          ...r,
+          gear_type: "other" as const,
+        })),
       ];
 
-      const errors = [batteries.error, drones.error, transmitters.error, goggles.error, otherGear.error].filter(Boolean);
+      const errors = [
+        batteries.error,
+        drones.error,
+        transmitters.error,
+        goggles.error,
+        otherGear.error,
+      ].filter(Boolean);
       if (errors.length) throw errors[0];
 
       return results;
     },
   });
 
-  const controllerData = gearData?.filter((g) => g.gear_type === "transmitter") ?? [];
+  const controllerData =
+    gearData?.filter((g) => g.gear_type === "transmitter") ?? [];
   const gogglesData = gearData?.filter((g) => g.gear_type === "goggles") ?? [];
 
   // Subscribe to the global timer so it keeps running in the background
@@ -394,57 +422,57 @@ export function QuickAddSessionLogger({
       if (error) throw error;
 
       if (rigId) {
-      const rig = gearData?.find((g) => g.id === rigId);
-      if (rig) {
-      const table = getTableForGearType(rig.gear_type);
-      await db_request({
-      mode: "query",
-      schema: "personal_gear",
-      table,
-      operation: "update",
-      data: {
-      total_minutes: (rig.total_minutes ?? 0) + finalDuration,
-      minutes_since_service:
-      (rig.minutes_since_service ?? 0) + finalDuration,
-      pack_count: (rig.pack_count ?? 0) + packs,
-      },
-      filters: { id: rigId },
-      }) as DbRequestResult<GearOption[]>;
-      }
+        const rig = gearData?.find((g) => g.id === rigId);
+        if (rig) {
+          const table = getTableForGearType(rig.gear_type);
+          (await db_request({
+            mode: "query",
+            schema: "personal_gear",
+            table,
+            operation: "update",
+            data: {
+              total_minutes: (rig.total_minutes ?? 0) + finalDuration,
+              minutes_since_service:
+                (rig.minutes_since_service ?? 0) + finalDuration,
+              pack_count: (rig.pack_count ?? 0) + packs,
+            },
+            filters: { id: rigId },
+          })) as DbRequestResult<GearOption[]>;
+        }
       }
 
       if (controllerId) {
-      const ctrl = gearData?.find((g) => g.id === controllerId);
-      if (ctrl) {
-      const table = getTableForGearType(ctrl.gear_type);
-      await db_request({
-      mode: "query",
-      schema: "personal_gear",
-      table,
-      operation: "update",
-      data: {
-      total_minutes: (ctrl.total_minutes ?? 0) + finalDuration,
-      },
-      filters: { id: controllerId },
-      }) as DbRequestResult<GearOption[]>;
-      }
+        const ctrl = gearData?.find((g) => g.id === controllerId);
+        if (ctrl) {
+          const table = getTableForGearType(ctrl.gear_type);
+          (await db_request({
+            mode: "query",
+            schema: "personal_gear",
+            table,
+            operation: "update",
+            data: {
+              total_minutes: (ctrl.total_minutes ?? 0) + finalDuration,
+            },
+            filters: { id: controllerId },
+          })) as DbRequestResult<GearOption[]>;
+        }
       }
 
       if (gogglesId) {
-      const gog = gearData?.find((g) => g.id === gogglesId);
-      if (gog) {
-      const table = getTableForGearType(gog.gear_type);
-      await db_request({
-      mode: "query",
-      schema: "personal_gear",
-      table,
-      operation: "update",
-      data: {
-      total_minutes: (gog.total_minutes ?? 0) + finalDuration,
-      },
-      filters: { id: gogglesId },
-      }) as DbRequestResult<GearOption[]>;
-      }
+        const gog = gearData?.find((g) => g.id === gogglesId);
+        if (gog) {
+          const table = getTableForGearType(gog.gear_type);
+          (await db_request({
+            mode: "query",
+            schema: "personal_gear",
+            table,
+            operation: "update",
+            data: {
+              total_minutes: (gog.total_minutes ?? 0) + finalDuration,
+            },
+            filters: { id: gogglesId },
+          })) as DbRequestResult<GearOption[]>;
+        }
       }
 
       return session;
@@ -487,7 +515,7 @@ export function QuickAddSessionLogger({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[600px] max-h-[90vh] overflow-y-auto p-6">
+      <DialogContent className="max-w-150 max-h-[90vh] overflow-y-auto p-6">
         <DialogHeader>
           <div className="flex items-center gap-2">
             <Zap className="h-5 w-5 text-primary" />
@@ -554,11 +582,13 @@ export function QuickAddSessionLogger({
                   <SelectValue placeholder="Pick a rig" />
                 </SelectTrigger>
                 <SelectContent>
-                  {gearData?.filter((g) => g.gear_type === "quad").map((g) => (
-                    <SelectItem key={g.id} value={g.id}>
-                      {g.name}
-                    </SelectItem>
-                  ))}
+                  {gearData
+                    ?.filter((g) => g.gear_type === "quad")
+                    .map((g) => (
+                      <SelectItem key={g.id} value={g.id}>
+                        {g.name}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
@@ -622,8 +652,8 @@ export function QuickAddSessionLogger({
                   placeholder="Min"
                 />
               </div>
-              <div className="flex flex-col items-start gap-3 pt-1 min-w-[200px]">
-                <div className="flex flex-col items-center justify-center min-w-[110px] px-4 py-3 bg-muted rounded-md border border-border">
+              <div className="flex flex-col items-start gap-3 pt-1 min-w-50">
+                <div className="flex flex-col items-center justify-center min-w-27.5 px-4 py-3 bg-muted rounded-md border border-border">
                   <Clock className="h-4 w-4 text-muted-foreground mb-1" />
                   <span className="font-mono text-base font-semibold">
                     {formatElapsed(elapsedSeconds)}
@@ -638,7 +668,7 @@ export function QuickAddSessionLogger({
                     variant={isRunning ? "outline" : "default"}
                     size="icon"
                     onClick={isRunning ? stopStopwatch : startStopwatch}
-                    className="flex items-center gap-2 px-3 py-2 text-sm min-w-[90px]"
+                    className="flex items-center gap-2 px-3 py-2 text-sm min-w-22.5"
                   >
                     {isRunning ? (
                       <>
@@ -657,7 +687,7 @@ export function QuickAddSessionLogger({
                     variant="ghost"
                     size="icon"
                     onClick={resetStopwatch}
-                    className="flex items-center gap-2 px-3 py-2 text-sm min-w-[90px]"
+                    className="flex items-center gap-2 px-3 py-2 text-sm min-w-22.5"
                   >
                     <Clock className="h-4 w-4 mr-1.5" />
                     Reset

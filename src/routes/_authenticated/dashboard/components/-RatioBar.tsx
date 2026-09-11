@@ -3,7 +3,10 @@ interface RatioBarProps {
   realMinutes: number;
 }
 
-export function RatioBar({ simMinutes: sim, realMinutes: real }: RatioBarProps) {
+export function RatioBar({
+  simMinutes: sim,
+  realMinutes: real,
+}: RatioBarProps) {
   const total = sim + real;
   if (total === 0) {
     return (
@@ -19,12 +22,12 @@ export function RatioBar({ simMinutes: sim, realMinutes: real }: RatioBarProps) 
   return (
     <div className="flex h-6 items-center gap-2 rounded-full bg-muted/50 overflow-hidden">
       <div
-        className="rounded-t-md bg-[var(--sim)] border border-[var(--sim)]/20"
+        className="rounded-t-md bg-sim border border-sim/20"
         style={{ width: `${simPct}%` }}
         aria-label="Sim airtime"
       />
       <div
-        className="rounded-b-md bg-[var(--primary)] border border-[var(--primary)]/30"
+        className="rounded-b-md bg-primary border border-primary/30"
         style={{ width: `${realPct}%` }}
         aria-label="Real airtime"
       />

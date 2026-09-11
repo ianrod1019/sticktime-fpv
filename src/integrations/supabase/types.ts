@@ -40,7 +40,6 @@ export type Database = {
           brand: string | null;
           crash_count: number;
           created_at: string;
-          current_value: number;
           gear_type: Database["public"]["Enums"]["gear_type"];
           id: string;
           minutes_since_service: number;
@@ -49,7 +48,7 @@ export type Database = {
           notes: string | null;
           pack_count: number;
           purchase_cost: number;
-          purchase_date: string | null;
+
           retired: boolean;
           service_interval_minutes: number;
           total_minutes: number;
@@ -60,7 +59,6 @@ export type Database = {
           brand?: string | null;
           crash_count?: number;
           created_at?: string;
-          current_value?: number;
           gear_type?: Database["public"]["Enums"]["gear_type"];
           id?: string;
           minutes_since_service?: number;
@@ -69,7 +67,6 @@ export type Database = {
           notes?: string | null;
           pack_count?: number;
           purchase_cost?: number;
-          purchase_date?: string | null;
           retired?: boolean;
           service_interval_minutes?: number;
           total_minutes?: number;
@@ -80,7 +77,6 @@ export type Database = {
           brand?: string | null;
           crash_count?: number;
           created_at?: string;
-          current_value?: number;
           gear_type?: Database["public"]["Enums"]["gear_type"];
           id?: string;
           minutes_since_service?: number;
@@ -89,7 +85,6 @@ export type Database = {
           notes?: string | null;
           pack_count?: number;
           purchase_cost?: number;
-          purchase_date?: string | null;
           retired?: boolean;
           service_interval_minutes?: number;
           total_minutes?: number;
@@ -105,13 +100,12 @@ export type Database = {
           connector_type: string | null;
           crash_count: number;
           created_at: string;
-          current_value: number;
           id: string;
           minutes_since_service: number;
           name: string;
           pack_count: number;
           purchase_cost: number;
-          purchase_date: string | null;
+
           service_interval_minutes: number;
           total_minutes: number;
           updated_at: string;
@@ -123,13 +117,11 @@ export type Database = {
           connector_type?: string | null;
           crash_count?: number;
           created_at?: string;
-          current_value?: number;
           id?: string;
           minutes_since_service?: number;
           name: string;
           pack_count?: number;
           purchase_cost?: number;
-          purchase_date?: string | null;
           service_interval_minutes?: number;
           total_minutes?: number;
           updated_at?: string;
@@ -141,13 +133,11 @@ export type Database = {
           connector_type?: string | null;
           crash_count?: number;
           created_at?: string;
-          current_value?: number;
           id?: string;
           minutes_since_service?: number;
           name?: string;
           pack_count?: number;
           purchase_cost?: number;
-          purchase_date?: string | null;
           service_interval_minutes?: number;
           total_minutes?: number;
           updated_at?: string;
@@ -162,13 +152,12 @@ export type Database = {
           connector_type: string | null;
           crash_count: number;
           created_at: string;
-          current_value: number;
           id: string;
           minutes_since_service: number;
           name: string;
           pack_count: number;
           purchase_cost: number;
-          purchase_date: string | null;
+
           service_interval_minutes: number;
           total_minutes: number;
           updated_at: string;
@@ -180,13 +169,11 @@ export type Database = {
           connector_type?: string | null;
           crash_count?: number;
           created_at?: string;
-          current_value?: number;
           id?: string;
           minutes_since_service?: number;
           name: string;
           pack_count?: number;
           purchase_cost?: number;
-          purchase_date?: string | null;
           service_interval_minutes?: number;
           total_minutes?: number;
           updated_at?: string;
@@ -198,13 +185,11 @@ export type Database = {
           connector_type?: string | null;
           crash_count?: number;
           created_at?: string;
-          current_value?: number;
           id?: string;
           minutes_since_service?: number;
           name?: string;
           pack_count?: number;
           purchase_cost?: number;
-          purchase_date?: string | null;
           service_interval_minutes?: number;
           total_minutes?: number;
           updated_at?: string;
@@ -219,13 +204,12 @@ export type Database = {
           connector_type: string | null;
           crash_count: number;
           created_at: string;
-          current_value: number;
           id: string;
           minutes_since_service: number;
           name: string;
           pack_count: number;
           purchase_cost: number;
-          purchase_date: string | null;
+
           service_interval_minutes: number;
           total_minutes: number;
           updated_at: string;
@@ -237,13 +221,11 @@ export type Database = {
           connector_type?: string | null;
           crash_count?: number;
           created_at?: string;
-          current_value?: number;
           id?: string;
           minutes_since_service?: number;
           name: string;
           pack_count?: number;
           purchase_cost?: number;
-          purchase_date?: string | null;
           service_interval_minutes?: number;
           total_minutes?: number;
           updated_at?: string;
@@ -255,13 +237,11 @@ export type Database = {
           connector_type?: string | null;
           crash_count?: number;
           created_at?: string;
-          current_value?: number;
           id?: string;
           minutes_since_service?: number;
           name?: string;
           pack_count?: number;
           purchase_cost?: number;
-          purchase_date?: string | null;
           service_interval_minutes?: number;
           total_minutes?: number;
           updated_at?: string;
@@ -276,13 +256,12 @@ export type Database = {
           connector_type: string | null;
           crash_count: number;
           created_at: string;
-          current_value: number;
           id: string;
           minutes_since_service: number;
           name: string;
           pack_count: number;
           purchase_cost: number;
-          purchase_date: string | null;
+
           service_interval_minutes: number;
           total_minutes: number;
           updated_at: string;
@@ -294,13 +273,11 @@ export type Database = {
           connector_type?: string | null;
           crash_count?: number;
           created_at?: string;
-          current_value?: number;
           id?: string;
           minutes_since_service?: number;
           name: string;
           pack_count?: number;
           purchase_cost?: number;
-          purchase_date?: string | null;
           service_interval_minutes?: number;
           total_minutes?: number;
           updated_at?: string;
@@ -312,13 +289,11 @@ export type Database = {
           connector_type?: string | null;
           crash_count?: number;
           created_at?: string;
-          current_value?: number;
           id?: string;
           minutes_since_service?: number;
           name?: string;
           pack_count?: number;
           purchase_cost?: number;
-          purchase_date?: string | null;
           service_interval_minutes?: number;
           total_minutes?: number;
           updated_at?: string;
@@ -333,13 +308,12 @@ export type Database = {
           connector_type: string | null;
           crash_count: number;
           created_at: string;
-          current_value: number;
           id: string;
           minutes_since_service: number;
           name: string;
           pack_count: number;
           purchase_cost: number;
-          purchase_date: string | null;
+
           service_interval_minutes: number;
           total_minutes: number;
           updated_at: string;
@@ -351,13 +325,11 @@ export type Database = {
           connector_type?: string | null;
           crash_count?: number;
           created_at?: string;
-          current_value?: number;
           id?: string;
           minutes_since_service?: number;
           name: string;
           pack_count?: number;
           purchase_cost?: number;
-          purchase_date?: string | null;
           service_interval_minutes?: number;
           total_minutes?: number;
           updated_at?: string;
@@ -369,13 +341,11 @@ export type Database = {
           connector_type?: string | null;
           crash_count?: number;
           created_at?: string;
-          current_value?: number;
           id?: string;
           minutes_since_service?: number;
           name?: string;
           pack_count?: number;
           purchase_cost?: number;
-          purchase_date?: string | null;
           service_interval_minutes?: number;
           total_minutes?: number;
           updated_at?: string;
@@ -863,7 +833,7 @@ export type Database = {
           internal_resistance_milliohm: number;
           max_capacity_mah: number;
           pack_number: number;
-          purchase_date: string | null;
+
           serial_number: string | null;
           total_cycles: number;
           updated_at: string;
@@ -879,7 +849,6 @@ export type Database = {
           internal_resistance_milliohm?: number;
           max_capacity_mah?: number;
           pack_number: number;
-          purchase_date?: string | null;
           serial_number?: string | null;
           total_cycles?: number;
           updated_at?: string;
@@ -895,7 +864,6 @@ export type Database = {
           internal_resistance_milliohm?: number;
           max_capacity_mah?: number;
           pack_number?: number;
-          purchase_date?: string | null;
           serial_number?: string | null;
           total_cycles?: number;
           updated_at?: string;

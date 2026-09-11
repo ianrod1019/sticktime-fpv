@@ -1,21 +1,21 @@
-import { supabase } from '@/integrations/supabase/client'
+import { supabase } from "@/integrations/supabase/client";
 
 export interface UpdateProfileInput {
-  display_name?: string
-  accent_color?: string
-  avatar_url?: string
-  tier?: string
+  display_name?: string;
+  accent_color?: string;
+  avatar_url?: string;
+  tier?: string;
 }
 
 export async function updateProfile(
   userId: string,
-  data: UpdateProfileInput
+  data: UpdateProfileInput,
 ): Promise<boolean> {
   const { error } = await supabase
-    .from('profiles')
+    .from("profiles")
     .update(data)
-    .eq('id', userId)
+    .eq("id", userId);
 
-  if (error) throw error
-  return true
+  if (error) throw error;
+  return true;
 }

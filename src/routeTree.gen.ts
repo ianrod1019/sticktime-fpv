@@ -14,15 +14,12 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
-import { Route as AuthenticatedBatteryHealthRouteImport } from './routes/_authenticated/battery-health'
 import { Route as AuthenticatedHangerRouteImport } from './routes/_authenticated/hanger'
-import { Route as AuthenticatedLedgerRouteImport } from './routes/_authenticated/ledger'
 import { Route as AuthenticatedLogRouteImport } from './routes/_authenticated/log'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedTeamsRouteImport } from './routes/_authenticated/teams'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdmin_lookupUuidRouteImport } from './routes/_authenticated/admin_lookup.$uuid'
-import { Route as AuthenticatedAnalyticsIndexRouteImport } from './routes/_authenticated/analytics/index'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
 import { Route as AuthenticatedSquadronIndexRouteImport } from './routes/_authenticated/squadron/index'
 import { Route as AuthenticatedSquadronSquadronIdRouteImport } from './routes/_authenticated/squadron/$squadronId'
@@ -53,20 +50,9 @@ const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedBatteryHealthRoute =
-  AuthenticatedBatteryHealthRouteImport.update({
-    id: '/battery-health',
-    path: '/battery-health',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedHangerRoute = AuthenticatedHangerRouteImport.update({
   id: '/hanger',
   path: '/hanger',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedLedgerRoute = AuthenticatedLedgerRouteImport.update({
-  id: '/ledger',
-  path: '/ledger',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedLogRoute = AuthenticatedLogRouteImport.update({
@@ -93,12 +79,6 @@ const AuthenticatedAdmin_lookupUuidRoute =
   AuthenticatedAdmin_lookupUuidRouteImport.update({
     id: '/admin_lookup/$uuid',
     path: '/admin_lookup/$uuid',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAnalyticsIndexRoute =
-  AuthenticatedAnalyticsIndexRouteImport.update({
-    id: '/analytics/',
-    path: '/analytics/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedDashboardIndexRoute =
@@ -137,9 +117,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
-  '/battery-health': typeof AuthenticatedBatteryHealthRoute
   '/hanger': typeof AuthenticatedHangerRoute
-  '/ledger': typeof AuthenticatedLedgerRoute
   '/log': typeof AuthenticatedLogRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/teams': typeof AuthenticatedTeamsRouteWithChildren
@@ -147,7 +125,6 @@ export interface FileRoutesByFullPath {
   '/squadron/$squadronId': typeof AuthenticatedSquadronSquadronIdRoute
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
-  '/analytics/': typeof AuthenticatedAnalyticsIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/squadron/': typeof AuthenticatedSquadronIndexRoute
   '/squadron/manage/$uuid': typeof AuthenticatedSquadronManageUuidRoute
@@ -156,9 +133,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
-  '/battery-health': typeof AuthenticatedBatteryHealthRoute
   '/hanger': typeof AuthenticatedHangerRoute
-  '/ledger': typeof AuthenticatedLedgerRoute
   '/log': typeof AuthenticatedLogRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/teams': typeof AuthenticatedTeamsRouteWithChildren
@@ -166,7 +141,6 @@ export interface FileRoutesByTo {
   '/squadron/$squadronId': typeof AuthenticatedSquadronSquadronIdRoute
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
-  '/analytics': typeof AuthenticatedAnalyticsIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/squadron': typeof AuthenticatedSquadronIndexRoute
   '/squadron/manage/$uuid': typeof AuthenticatedSquadronManageUuidRoute
@@ -178,9 +152,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
-  '/_authenticated/battery-health': typeof AuthenticatedBatteryHealthRoute
   '/_authenticated/hanger': typeof AuthenticatedHangerRoute
-  '/_authenticated/ledger': typeof AuthenticatedLedgerRoute
   '/_authenticated/log': typeof AuthenticatedLogRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/teams': typeof AuthenticatedTeamsRouteWithChildren
@@ -188,7 +160,6 @@ export interface FileRoutesById {
   '/_authenticated/squadron/$squadronId': typeof AuthenticatedSquadronSquadronIdRoute
   '/_authenticated/teams/$teamId': typeof AuthenticatedTeamsTeamIdRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
-  '/_authenticated/analytics/': typeof AuthenticatedAnalyticsIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/squadron/': typeof AuthenticatedSquadronIndexRoute
   '/_authenticated/squadron/manage/$uuid': typeof AuthenticatedSquadronManageUuidRoute
@@ -200,9 +171,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/admin'
-    | '/battery-health'
     | '/hanger'
-    | '/ledger'
     | '/log'
     | '/settings'
     | '/teams'
@@ -210,7 +179,6 @@ export interface FileRouteTypes {
     | '/squadron/$squadronId'
     | '/teams/$teamId'
     | '/admin/'
-    | '/analytics/'
     | '/dashboard/'
     | '/squadron/'
     | '/squadron/manage/$uuid'
@@ -219,9 +187,7 @@ export interface FileRouteTypes {
     | '/'
     | '/privacy'
     | '/terms'
-    | '/battery-health'
     | '/hanger'
-    | '/ledger'
     | '/log'
     | '/settings'
     | '/teams'
@@ -229,7 +195,6 @@ export interface FileRouteTypes {
     | '/squadron/$squadronId'
     | '/teams/$teamId'
     | '/admin'
-    | '/analytics'
     | '/dashboard'
     | '/squadron'
     | '/squadron/manage/$uuid'
@@ -240,9 +205,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/_authenticated/admin'
-    | '/_authenticated/battery-health'
     | '/_authenticated/hanger'
-    | '/_authenticated/ledger'
     | '/_authenticated/log'
     | '/_authenticated/settings'
     | '/_authenticated/teams'
@@ -250,7 +213,6 @@ export interface FileRouteTypes {
     | '/_authenticated/squadron/$squadronId'
     | '/_authenticated/teams/$teamId'
     | '/_authenticated/admin/'
-    | '/_authenticated/analytics/'
     | '/_authenticated/dashboard/'
     | '/_authenticated/squadron/'
     | '/_authenticated/squadron/manage/$uuid'
@@ -300,25 +262,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/battery-health': {
-      id: '/_authenticated/battery-health'
-      path: '/battery-health'
-      fullPath: '/battery-health'
-      preLoaderRoute: typeof AuthenticatedBatteryHealthRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/hanger': {
       id: '/_authenticated/hanger'
       path: '/hanger'
       fullPath: '/hanger'
       preLoaderRoute: typeof AuthenticatedHangerRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/ledger': {
-      id: '/_authenticated/ledger'
-      path: '/ledger'
-      fullPath: '/ledger'
-      preLoaderRoute: typeof AuthenticatedLedgerRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/log': {
@@ -354,13 +302,6 @@ declare module '@tanstack/react-router' {
       path: '/admin_lookup/$uuid'
       fullPath: '/admin_lookup/$uuid'
       preLoaderRoute: typeof AuthenticatedAdmin_lookupUuidRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/analytics/': {
-      id: '/_authenticated/analytics/'
-      path: '/analytics'
-      fullPath: '/analytics/'
-      preLoaderRoute: typeof AuthenticatedAnalyticsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/dashboard/': {
@@ -428,15 +369,12 @@ const AuthenticatedTeamsRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
-  AuthenticatedBatteryHealthRoute: typeof AuthenticatedBatteryHealthRoute
   AuthenticatedHangerRoute: typeof AuthenticatedHangerRoute
-  AuthenticatedLedgerRoute: typeof AuthenticatedLedgerRoute
   AuthenticatedLogRoute: typeof AuthenticatedLogRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedTeamsRoute: typeof AuthenticatedTeamsRouteWithChildren
   AuthenticatedAdmin_lookupUuidRoute: typeof AuthenticatedAdmin_lookupUuidRoute
   AuthenticatedSquadronSquadronIdRoute: typeof AuthenticatedSquadronSquadronIdRoute
-  AuthenticatedAnalyticsIndexRoute: typeof AuthenticatedAnalyticsIndexRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
   AuthenticatedSquadronIndexRoute: typeof AuthenticatedSquadronIndexRoute
   AuthenticatedSquadronManageUuidRoute: typeof AuthenticatedSquadronManageUuidRoute
@@ -444,15 +382,12 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
-  AuthenticatedBatteryHealthRoute: AuthenticatedBatteryHealthRoute,
   AuthenticatedHangerRoute: AuthenticatedHangerRoute,
-  AuthenticatedLedgerRoute: AuthenticatedLedgerRoute,
   AuthenticatedLogRoute: AuthenticatedLogRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedTeamsRoute: AuthenticatedTeamsRouteWithChildren,
   AuthenticatedAdmin_lookupUuidRoute: AuthenticatedAdmin_lookupUuidRoute,
   AuthenticatedSquadronSquadronIdRoute: AuthenticatedSquadronSquadronIdRoute,
-  AuthenticatedAnalyticsIndexRoute: AuthenticatedAnalyticsIndexRoute,
   AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   AuthenticatedSquadronIndexRoute: AuthenticatedSquadronIndexRoute,
   AuthenticatedSquadronManageUuidRoute: AuthenticatedSquadronManageUuidRoute,

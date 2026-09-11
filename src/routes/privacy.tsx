@@ -3,7 +3,7 @@ import { TopNav } from "@/components/top-nav";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
-    title: "Privacy — StickTime FPV"
+    title: "Privacy — StickTime FPV",
   }),
   component: Privacy,
 });
@@ -16,7 +16,9 @@ function Privacy() {
         <main className="mx-auto max-w-6xl px-6 pb-16 pt-12 lg:pt-24">
           <section className="mb-16">
             <h1 className="text-5xl font-bold mb-4">Privacy Policy</h1>
-            <p className="text-zinc-400 text-lg">Last Updated: September 2026</p>
+            <p className="text-zinc-400 text-lg">
+              Last Updated: September 2026
+            </p>
           </section>
 
           <section className="bg-zinc-900/50 backdrop-blur-sm rounded-2xl p-8 mb-12">
@@ -50,10 +52,10 @@ function Privacy() {
                   Drone Telemetry
                 </h3>
                 <p className="text-zinc-400">
-                  Flight data including GPS coordinates, altitude, speed, battery
-                  levels, telemetry logs, flight duration, gear usage statistics,
-                  controller and goggles information, weather data, and pilot
-                  notes.
+                  Flight data including GPS coordinates, altitude, speed,
+                  battery levels, telemetry logs, flight duration, gear usage
+                  statistics, controller and goggles information, weather data,
+                  and pilot notes.
                 </p>
               </div>
               <div>
@@ -78,7 +80,9 @@ function Privacy() {
           </section>
 
           <section className="mb-12">
-            <h2 className="text-2xl font-semibold mb-4">How We Use Your Data</h2>
+            <h2 className="text-2xl font-semibold mb-4">
+              How We Use Your Data
+            </h2>
             <div className="space-y-4">
               <div>
                 <h3 className="text-xl font-medium text-zinc-200 mb-2">
@@ -86,8 +90,8 @@ function Privacy() {
                 </h3>
                 <p className="text-zinc-400">
                   Your data enables us to provide accurate flight tracking,
-                  generate performance reports, and deliver the core functionality
-                  of StickTime FPV.
+                  generate performance reports, and deliver the core
+                  functionality of StickTime FPV.
                 </p>
               </div>
               <div>
@@ -120,8 +124,8 @@ function Privacy() {
             <p className="text-zinc-400">
               We comply with COPPA and FERPA regulations for any educational or
               student-related data collected through our platform. Parental
-              consent is required for minors, and we do not sell any personal data
-              to third parties.
+              consent is required for minors, and we do not sell any personal
+              data to third parties.
             </p>
             <p className="text-zinc-400 mt-4">
               School-owned accounts and team data are protected separately, with
@@ -137,7 +141,9 @@ function Privacy() {
                   Encryption
                 </h3>
                 <p className="text-zinc-400">
-                  All data in transit and at rest is securely encrypted using industry-standard protocols to protect your personal information and flight data.
+                  All data in transit and at rest is securely encrypted using
+                  industry-standard protocols to protect your personal
+                  information and flight data.
                 </p>
               </div>
               <div>
@@ -145,7 +151,9 @@ function Privacy() {
                   Access Control
                 </h3>
                 <p className="text-zinc-400">
-                  Role-based access controls restrict data visibility to authorized personnel only. Multi-factor authentication is required for administrative functions.
+                  Role-based access controls restrict data visibility to
+                  authorized personnel only. Multi-factor authentication is
+                  required for administrative functions.
                 </p>
               </div>
             </div>
@@ -161,8 +169,8 @@ function Privacy() {
                   Data Access
                 </h3>
                 <p className="text-zinc-400">
-                  You can request copies of your personal data at any time through
-                  our support channel.
+                  You can request copies of your personal data at any time
+                  through our support channel.
                 </p>
               </div>
               <div>
@@ -177,12 +185,17 @@ function Privacy() {
             </div>
           </section>
 
-<section className="border-t border-zinc-800 pt-8">
-             <h2 className="text-2xl font-semibold mb-4">Governing Law & Oklahoma Jurisdiction</h2>
-             <p className="text-zinc-400 text-sm mb-4">
-               StickTime FPV is operated from the State of Oklahoma. These Privacy Policy terms and any disputes arising herefrom shall be governed by and construed in accordance with the laws of the State of Oklahoma, without regard to its conflict of law provisions.
-             </p>
-           </section>
+          <section className="border-t border-zinc-800 pt-8">
+            <h2 className="text-2xl font-semibold mb-4">
+              Governing Law & Oklahoma Jurisdiction
+            </h2>
+            <p className="text-zinc-400 text-sm mb-4">
+              StickTime FPV is operated from the State of Oklahoma. These
+              Privacy Policy terms and any disputes arising herefrom shall be
+              governed by and construed in accordance with the laws of the State
+              of Oklahoma, without regard to its conflict of law provisions.
+            </p>
+          </section>
         </main>
       </div>
     </>

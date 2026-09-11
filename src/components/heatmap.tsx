@@ -1,5 +1,10 @@
 import { heatmapDays, type SessionRow } from "@/lib/fpv";
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 
 const LEVEL_STYLE = [
   "bg-muted/40 border border-border/60",

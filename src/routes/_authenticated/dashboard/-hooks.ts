@@ -8,14 +8,27 @@ export function useDashboardTotals(userId: string | null) {
   return useQuery({
     queryKey: ["session-totals", userId],
     queryFn: async () => {
-      if (!userId) return { total_sim_minutes: 0, total_real_minutes: 0, total_sessions: 0, total_packs: 0 };
+      if (!userId)
+        return {
+          total_sim_minutes: 0,
+          total_real_minutes: 0,
+          total_sessions: 0,
+          total_packs: 0,
+        };
       const result = await db_request({
         mode: "rpc",
         rpcFunction: "get_user_session_totals",
         rpcParams: { p_user_id: userId },
       });
       if (result.error) throw result.error;
-      return result.data?.[0] ?? { total_sim_minutes: 0, total_real_minutes: 0, total_sessions: 0, total_packs: 0 };
+      return (
+        result.data?.[0] ?? {
+          total_sim_minutes: 0,
+          total_real_minutes: 0,
+          total_sessions: 0,
+          total_packs: 0,
+        }
+      );
     },
     enabled: !!userId,
   });
@@ -62,7 +75,9 @@ export function useRecentSessions(userId: string | null) {
       if (!userId) return [];
       const result = await supabase
         .from("sessions")
-        .select("id, session_type, flown_on, duration_minutes, gear_id, controller_id, goggles_id, location_id, track_id, sim_platform, packs_flown, crashes, battery_notes, weather, rating, notes")
+        .select(
+          "id, session_type, flown_on, duration_minutes, gear_id, controller_id, goggles_id, location_id, track_id, sim_platform, packs_flown, crashes, battery_notes, weather, rating, notes",
+        )
         .eq("user_id", userId)
         .order("flown_on", { ascending: false });
       if (result.error) throw result.error;
@@ -79,7 +94,7 @@ export function useActiveRigs(userId: string | null) {
       if (!userId) return 0;
       const oneMonthAgo = new Date();
       oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-      const oneMonthAgoStr = oneMonthAgo.toISOString().split('T')[0];
+      const oneMonthAgoStr = oneMonthAgo.toISOString().split("T")[0];
 
       // Fetch sessions from the last month for the user
       const sessionsResult = await db_request({
@@ -92,7 +107,9 @@ export function useActiveRigs(userId: string | null) {
         },
       });
       if (sessionsResult.error) throw sessionsResult.error;
-      const sessionGearIds = (sessionsResult.data as { gear_id: string }[]).map(row => row.gear_id).filter((id): id is string => id !== null);
+      const sessionGearIds = (sessionsResult.data as { gear_id: string }[])
+        .map((row) => row.gear_id)
+        .filter((id): id is string => id !== null);
 
       // Fetch user's drones
       const dronesResult = await db_request({
@@ -105,11 +122,15 @@ export function useActiveRigs(userId: string | null) {
         },
       });
       if (dronesResult.error) throw dronesResult.error;
-      const droneIds = (dronesResult.data as { id: string }[]).map(row => row.id);
+      const droneIds = (dronesResult.data as { id: string }[]).map(
+        (row) => row.id,
+      );
 
       // Count distinct gear_ids from sessions that are in the user's non-retired drones
       const uniqueSessionGearIds = new Set(sessionGearIds);
-      const activeCount = [...uniqueSessionGearIds].filter(id => droneIds.includes(id)).length;
+      const activeCount = [...uniqueSessionGearIds].filter((id) =>
+        droneIds.includes(id),
+      ).length;
 
       return activeCount;
     },
@@ -133,7 +154,10 @@ export function useCurrentStreak(userId: string | null) {
         limit: 500,
       });
       if (result.error) throw result.error;
-      const sessions = result.data as Pick<SessionRow, "flown_on" | "session_type">[];
+      const sessions = result.data as Pick<
+        SessionRow,
+        "flown_on" | "session_type"
+      >[];
       return computeStreakByMode(sessions);
     },
     enabled: !!userId,
@@ -168,8 +192,13 @@ export function useWeeklyGoal(userId: string | null) {
         },
       });
       if (result.error) throw result.error;
-      const sessions = (result.data as { flown_on: string; duration_minutes: number }[] | null) ?? [];
-      const totalMinutes = sessions.reduce((sum, s) => sum + s.duration_minutes, 0);
+      const sessions =
+        (result.data as
+          { flown_on: string; duration_minutes: number }[] | null) ?? [];
+      const totalMinutes = sessions.reduce(
+        (sum, s) => sum + s.duration_minutes,
+        0,
+      );
       return totalMinutes;
     },
     enabled: !!userId,

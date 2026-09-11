@@ -1,7 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { Check, Download, Settings as SettingsIcon, LockKeyhole } from "lucide-react";
+import {
+  Check,
+  Download,
+  Settings as SettingsIcon,
+  LockKeyhole,
+} from "lucide-react";
 import { PageHeader } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,14 +22,17 @@ export const Route = createFileRoute("/_authenticated/settings")({
 
 function Settings() {
   const { profile, email, updateProfile } = usePilot();
-  
+
   // Pilot profile states
   const [goal, setGoal] = useState("5");
   const [privateProfile, setPrivateProfile] = useState(false);
 
   useEffect(() => {
     if (profile) {
-      if (profile.weekly_goal_hours !== undefined && profile.weekly_goal_hours !== null) {
+      if (
+        profile.weekly_goal_hours !== undefined &&
+        profile.weekly_goal_hours !== null
+      ) {
         setGoal(String(profile.weekly_goal_hours));
       }
       if (profile.is_private !== undefined) {
@@ -41,25 +49,94 @@ function Settings() {
       });
       toast.success("Pilot profile saved successfully");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not save profile");
+      toast.error(
+        error instanceof Error ? error.message : "Could not save profile",
+      );
     }
   }
 
   async function exportData() {
     try {
-      const [sessions, batteries, drones, transmitters, goggles, otherGear, batteryParts, droneParts, transmitterParts, gogglesParts, otherParts, records] = await Promise.all([
+      const [
+        sessions,
+        batteries,
+        drones,
+        transmitters,
+        goggles,
+        otherGear,
+        batteryParts,
+        droneParts,
+        transmitterParts,
+        gogglesParts,
+        otherParts,
+        records,
+      ] = await Promise.all([
         db_request({ mode: "query", table: "sessions", operation: "select" }),
-        db_request({ mode: "query", schema: "personal_gear", table: "batteries", operation: "select" }),
-        db_request({ mode: "query", schema: "personal_gear", table: "drones", operation: "select" }),
-        db_request({ mode: "query", schema: "personal_gear", table: "transmitters", operation: "select" }),
-        db_request({ mode: "query", schema: "personal_gear", table: "goggles", operation: "select" }),
-        db_request({ mode: "query", schema: "personal_gear", table: "other_gear", operation: "select" }),
-        db_request({ mode: "query", schema: "personal_gear", table: "battery_parts", operation: "select" }),
-        db_request({ mode: "query", schema: "personal_gear", table: "drone_parts", operation: "select" }),
-        db_request({ mode: "query", schema: "personal_gear", table: "transmitter_parts", operation: "select" }),
-        db_request({ mode: "query", schema: "personal_gear", table: "goggles_parts", operation: "select" }),
-        db_request({ mode: "query", schema: "personal_gear", table: "other_parts", operation: "select" }),
-        db_request({ mode: "query", table: "personal_records", operation: "select" }),
+        db_request({
+          mode: "query",
+          schema: "personal_gear",
+          table: "batteries",
+          operation: "select",
+        }),
+        db_request({
+          mode: "query",
+          schema: "personal_gear",
+          table: "drones",
+          operation: "select",
+        }),
+        db_request({
+          mode: "query",
+          schema: "personal_gear",
+          table: "transmitters",
+          operation: "select",
+        }),
+        db_request({
+          mode: "query",
+          schema: "personal_gear",
+          table: "goggles",
+          operation: "select",
+        }),
+        db_request({
+          mode: "query",
+          schema: "personal_gear",
+          table: "other_gear",
+          operation: "select",
+        }),
+        db_request({
+          mode: "query",
+          schema: "personal_gear",
+          table: "battery_parts",
+          operation: "select",
+        }),
+        db_request({
+          mode: "query",
+          schema: "personal_gear",
+          table: "drone_parts",
+          operation: "select",
+        }),
+        db_request({
+          mode: "query",
+          schema: "personal_gear",
+          table: "transmitter_parts",
+          operation: "select",
+        }),
+        db_request({
+          mode: "query",
+          schema: "personal_gear",
+          table: "goggles_parts",
+          operation: "select",
+        }),
+        db_request({
+          mode: "query",
+          schema: "personal_gear",
+          table: "other_parts",
+          operation: "select",
+        }),
+        db_request({
+          mode: "query",
+          table: "personal_records",
+          operation: "select",
+        }),
       ]);
 
       // Combine all gear tables into one gear array
@@ -86,10 +163,12 @@ function Settings() {
         ["gear_parts", parts],
         ["personal_records", records.data ?? []],
       ] as const;
-      const content =
-        tables
-          .map(([table, rows]) => `# ${table}\n${toCsv(rows as Record<string, unknown>[])}`)
-          .join("\n\n");
+      const content = tables
+        .map(
+          ([table, rows]) =>
+            `# ${table}\n${toCsv(rows as Record<string, unknown>[])}`,
+        )
+        .join("\n\n");
       downloadFile("sticktime-export.csv", content, "text/csv");
       toast.success("CSV export ready");
     } catch (err) {
@@ -110,8 +189,12 @@ function Settings() {
             <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full pointer-events-none" />
             <div className="flex items-center justify-between">
               <div>
-                <span className="label-mono text-primary">Profile controls</span>
-                <h2 className="mt-2 text-xl font-semibold">{profile?.callsign || email || "Pilot"}</h2>
+                <span className="label-mono text-primary">
+                  Profile controls
+                </span>
+                <h2 className="mt-2 text-xl font-semibold">
+                  {profile?.callsign || email || "Pilot"}
+                </h2>
                 <p className="text-sm text-muted-foreground">{email}</p>
               </div>
             </div>
@@ -131,7 +214,8 @@ function Settings() {
                 <div>
                   <p className="font-medium">Private pilot profile</p>
                   <p className="text-sm text-muted-foreground">
-                    Hide your public callsign and profile details from leaderboards.
+                    Hide your public callsign and profile details from
+                    leaderboards.
                   </p>
                 </div>
                 <Switch
@@ -141,9 +225,9 @@ function Settings() {
                 />
               </div>
               <div className="pt-2">
-                <Button 
-                  onClick={saveProfile} 
-                  disabled={updateProfile?.isPending} 
+                <Button
+                  onClick={saveProfile}
+                  disabled={updateProfile?.isPending}
                   className="bg-primary hover:bg-primary/90 text-primary-foreground"
                 >
                   <Check className="mr-2 h-4 w-4" />
@@ -166,7 +250,11 @@ function Settings() {
               Export your logbook, gear, and pilot records.
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
-              <Button variant="outline" className="border-primary/30 text-primary hover:bg-primary/10 hover:text-primary/90" onClick={() => exportData()}>
+              <Button
+                variant="outline"
+                className="border-primary/30 text-primary hover:bg-primary/10 hover:text-primary/90"
+                onClick={() => exportData()}
+              >
                 <Download className="mr-2 h-4 w-4" />
                 Export Data
               </Button>

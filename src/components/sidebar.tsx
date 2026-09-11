@@ -8,8 +8,6 @@ import {
   ShieldCheck,
   Settings,
   LogOut,
-  BarChart3,
-  DollarSign,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/auth-context";
@@ -18,7 +16,6 @@ const BASE_NAV = [
   { to: "/dashboard", icon: LayoutDashboard },
   { to: "/log", icon: Timer },
   { to: "/hanger", icon: Wrench },
-  { to: "/ledger", icon: BarChart3 },
   { to: "/squadron", icon: Users },
 ] as const;
 

@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Plus, Minus, BatteryCharging, X } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Plus,
+  Minus,
+  BatteryCharging,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GearItem } from "./types";
 
@@ -66,14 +73,15 @@ export function GearCardBatteries({
 
       <div
         style={{
-          transition: "max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+          transition:
+            "max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
           overflow: "hidden",
           maxHeight: isPacksCollapsed ? "0px" : "250px",
           opacity: isPacksCollapsed ? 0 : 1,
         }}
       >
         {gear.pack_count > 0 ? (
-          <div className="space-y-1.5 pt-1 pr-1 max-h-[120px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-secondary/20 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/50 hover:[&::-webkit-scrollbar-thumb]:bg-primary">
+          <div className="space-y-1.5 pt-1 pr-1 max-h-30 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-secondary/20 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/50 hover:[&::-webkit-scrollbar-thumb]:bg-primary">
             {Array.from({ length: gear.pack_count }).map((_, idx) => (
               <div
                 key={idx}
