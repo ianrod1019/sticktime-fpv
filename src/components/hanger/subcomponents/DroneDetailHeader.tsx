@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { HangerItem } from "@/hooks/useHangerItem";
 import { toast } from "sonner";
+import { db_request } from "@/lib/db_request";
 
 interface DroneDetailHeaderProps {
   item: HangerItem;

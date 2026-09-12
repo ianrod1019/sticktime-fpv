@@ -57,7 +57,7 @@ export function useHangerItem(
   const { profile, isAdminOrDev } = usePilot();
 
   const { data, error, isLoading } = useQuery<HangerItem | null>({
-    queryKey: ["hanger-item", type, uuid],
+    queryKey: ["hanger-item", profile?.id ?? null, type, uuid],
     queryFn: async () => {
       if (!type || !uuid) {
         return null;
@@ -112,8 +112,6 @@ export function useHangerItem(
     },
     enabled: !!type && !!uuid,
     staleTime: 30000,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
   });
 
   const canEdit = data !== null && data !== undefined && !!profile?.id && profile.id === data.user_id;

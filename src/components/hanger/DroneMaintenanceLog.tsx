@@ -115,8 +115,12 @@ export function DroneMaintenanceLog({ droneId, onRefresh }: DroneMaintenanceLogP
     <div className="space-y-6">
       <DroneMaintenanceLogStats
         maintenanceLogs={maintenanceLogs}
-        serviceInterval={item?.service_interval_minutes}
-        minutesSinceService={item?.minutes_since_service}
+        {...(item?.service_interval_minutes !== undefined
+          ? { serviceInterval: item.service_interval_minutes }
+          : {})}
+        {...(item?.minutes_since_service !== undefined
+          ? { minutesSinceService: item.minutes_since_service }
+          : {})}
       />
 
       <Card className="bg-card/50 border-primary/10">

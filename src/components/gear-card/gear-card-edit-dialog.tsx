@@ -231,7 +231,11 @@ export function GearCardEditDialog({
                 min={1}
                 max={20}
                 value={packCount}
-                onChange={(e) => setPackCount(Number(e.target.value))}
+                onChange={(e) =>
+                  setPackCount(
+                    Math.min(20, Math.max(1, Number(e.target.value) || 1)),
+                  )
+                }
               />
             </div>
           ) : (
@@ -265,8 +269,10 @@ export function GearCardEditDialog({
                   <Input
                     id={`edit-interval-${gear.id}`}
                     type="number"
-                    value={interval}
-                    onChange={(e) => setIntervalMinutes(Number(e.target.value))}
+                  value={interval}
+                  onChange={(e) =>
+                    setIntervalMinutes(Math.max(1, Number(e.target.value) || 0))
+                  }
                   />
                 </div>
               )}
@@ -289,7 +295,9 @@ export function GearCardEditDialog({
                 min={0}
                 step={0.01}
                 value={String(purchaseCost)}
-                onChange={(e) => setPurchaseCost(Number(e.target.value))}
+                onChange={(e) =>
+                  setPurchaseCost(Math.max(0, Number(e.target.value) || 0))
+                }
                 placeholder="0.00"
               />
             </div>

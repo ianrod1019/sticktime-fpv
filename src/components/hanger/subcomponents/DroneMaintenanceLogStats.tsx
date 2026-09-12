@@ -76,7 +76,7 @@ export function DroneMaintenanceLogStats({
                 <TrendingUp className="h-5 w-5 text-primary" />
               </div>
               <div className="text-2xl font-mono font-bold text-foreground">
-                {serviceInterval - minutesSinceService}
+                {(serviceInterval ?? 0) - (minutesSinceService ?? 0)}
               </div>
               <div className="text-xs uppercase font-semibold tracking-wider text-muted-foreground mt-1">
                 Min Until Service

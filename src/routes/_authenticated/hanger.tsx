@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -8,11 +8,13 @@ import {
   Radio,
   Glasses,
   ShieldAlert,
+  BatteryCharging,
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
 import { db_request } from "@/lib/db_request";
 import { usePilot } from "@/hooks/use-pilot";
+import { GEAR_REGISTRY, GEAR_TYPES, type GearTypeUi } from "@/lib/gear-registry";
 import { PageHeader } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,8 +35,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { GearCard } from "@/components/gear-card";
+import { EmptyState } from "@/components/state-panels";
+import { useGearCardData } from "@/components/gear-card/use-gear-card-data";
 
 export const Route = createFileRoute("/_authenticated/hanger")({
+  validateSearch: (search: Record<string, unknown>): { add?: string } => {
+    // ?add=1 — deep link that auto-opens the Add-gear dialog (used by the
+    // Cost Ledger so gear entry has a single home). Accept "1" in any
+    // serialization ("1", 1, true) for robustness.
+    const v = search["add"];
+    return v !== undefined && v !== null && v !== "" && v !== "0"
+      ? { add: "1" }
+      : {};
+  },
   head: () => ({
     meta: [
       { title: "Hanger — StickTime FPV" },
@@ -45,25 +58,53 @@ export const Route = createFileRoute("/_authenticated/hanger")({
       },
     ],
   }),
+  loader: async ({ context }) => {
+    // Cached-first: resolves instantly from the persisted cache when fresh;
+    // otherwise kicks off (and awaits) the fetch before render.
+    const { queryClient } = context;
+    const session = await queryClient.fetchQuery({
+      queryKey: ["auth-session"],
+      queryFn: async () => {
+        const { data } = await (await import("@/integrations/supabase/client")).supabase.auth.getSession();
+        return data.session;
+      },
+      staleTime: 60_000,
+    });
+    const userId = session?.user?.id;
+    if (!userId) return;
+    await Promise.all(
+      (Object.keys(GEAR_REGISTRY) as GearType[]).map((type) =>
+        queryClient.ensureQueryData({
+          queryKey: ["hanger", userId, type],
+          queryFn: async () => {
+            const { db_request } = await import("@/lib/db_request");
+            const { data, error } = await db_request({
+              mode: "query",
+              schema: "personal_gear",
+              table: GEAR_REGISTRY[type].table,
+              operation: "select",
+              selectColumns: "*",
+              orderBy: { column: "created_at" },
+            });
+            if (error) throw error;
+            return (data ?? []).map((g: Record<string, any>) => ({
+              ...g,
+              gear_type: type,
+            }));
+          },
+          staleTime: 30_000,
+        }),
+      ),
+    );
+  },
   component: Garage,
 });
 
-const GEAR_TYPES = [
-  "quad",
-  "transmitter",
-  "goggles",
-  "battery",
-  "other",
-] as const;
-type GearType = (typeof GEAR_TYPES)[number];
+type GearType = GearTypeUi;
 
-const TYPE_LABELS: Record<GearType, string> = {
-  quad: "Drone / Quad",
-  transmitter: "Controller / Radio",
-  goggles: "Goggles",
-  battery: "Battery Set",
-  other: "Other Gear",
-};
+const TYPE_LABELS: Record<GearType, string> = Object.fromEntries(
+  Object.entries(GEAR_REGISTRY).map(([key, entry]) => [key, entry.label]),
+) as Record<GearType, string>;
 
 const GEAR_SECTIONS: {
   key: GearType;
@@ -96,7 +137,7 @@ const GEAR_SECTIONS: {
     title: "Battery Sets",
     blurb:
       "LiPo / Li-Ion battery sets, pack counts, cell count, connector types and individual pack management.",
-    icon: ShieldAlert,
+    icon: BatteryCharging,
   },
   {
     key: "other",
@@ -107,31 +148,22 @@ const GEAR_SECTIONS: {
   },
 ];
 
-function BatteryChargingRef(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <path d="M15 7h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2" />
-      <path d="M6 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h1" />
-      <line x1="22" x2="22" y1="11" y2="13" />
-      <polygon points="11 6 7 12 13 12 9 18" />
-    </svg>
-  );
-}
-
 function Garage() {
   const queryClient = useQueryClient();
+  const { profile } = usePilot();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const { add: addParam } = Route.useSearch();
   const [gearOpen, setGearOpen] = useState(false);
+  // Deep link ?add=1 (from the Cost Ledger): the dialog is open whenever the
+  // param is present. Derived from the URL — not an effect — so it survives
+  // the auth layer's layout remount during async bootstrap. Closing the
+  // dialog strips the param.
+  const addDeepLink =
+    addParam === "1" || (addParam as unknown) === 1;
+  const handleGearDialogChange = (open: boolean) => {
+    setGearOpen(open);
+    if (!open && addDeepLink) navigate({ search: {}, replace: true });
+  };
   const [name, setName] = useState("");
   const [gearType, setGearType] = useState<GearType>("quad");
   const [brand, setBrand] = useState("");
@@ -143,9 +175,6 @@ function Garage() {
   const [cells, setCells] = useState<number>(6);
   const [connectorType, setConnectorType] = useState<string>("XT60");
   const [purchaseCost, setPurchaseCost] = useState<number>(0);
-  const [hoveredDeleteGearId, setHoveredDeleteGearId] = useState<string | null>(
-    null,
-  );
   const [deletingGearId, setDeletingGearId] = useState<string | null>(null);
   const [collapsedSections, setCollapsedSections] = useState<
     Record<GearType, boolean>
@@ -161,142 +190,37 @@ function Garage() {
     setCollapsedSections((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const { data } = useQuery({
-    queryKey: ["hanger"],
-    queryFn: async () => {
-      const [
-        batteries,
-        drones,
-        transmitters,
-        goggles,
-        otherGear,
-        batteryParts,
-        droneParts,
-        transmitterParts,
-        gogglesParts,
-        otherParts,
-        logs,
-      ] = await Promise.all([
-        db_request({
+  // Per-gear-table queries (RLS scopes rows to the pilot). Each table is its
+  // own cache entry so realtime events invalidate only what changed. Parts
+  // and logs are NOT fetched up-front: they load lazily per card, keeping
+  // first paint fast regardless of fleet size.
+  const gearQueries = GEAR_TYPES.map((type) =>
+    useQuery({
+      queryKey: ["hanger", profile?.id ?? null, type],
+      queryFn: async () => {
+        const { data, error } = await db_request({
           mode: "query",
           schema: "personal_gear",
-          table: "batteries",
+          table: GEAR_REGISTRY[type].table,
           operation: "select",
           selectColumns: "*",
           orderBy: { column: "created_at" },
-        }),
-        db_request({
-          mode: "query",
-          schema: "personal_gear",
-          table: "drones",
-          operation: "select",
-          selectColumns: "*",
-          orderBy: { column: "created_at" },
-        }),
-        db_request({
-          mode: "query",
-          schema: "personal_gear",
-          table: "transmitters",
-          operation: "select",
-          selectColumns: "*",
-          orderBy: { column: "created_at" },
-        }),
-        db_request({
-          mode: "query",
-          schema: "personal_gear",
-          table: "goggles",
-          operation: "select",
-          selectColumns: "*",
-          orderBy: { column: "created_at" },
-        }),
-        db_request({
-          mode: "query",
-          schema: "personal_gear",
-          table: "other_gear",
-          operation: "select",
-          selectColumns: "*",
-          orderBy: { column: "created_at" },
-        }),
-        db_request({
-          mode: "query",
-          schema: "personal_gear",
-          table: "battery_parts",
-          operation: "select",
-          selectColumns: "*",
-        }),
-        db_request({
-          mode: "query",
-          schema: "personal_gear",
-          table: "drone_parts",
-          operation: "select",
-          selectColumns: "*",
-        }),
-        db_request({
-          mode: "query",
-          schema: "personal_gear",
-          table: "transmitter_parts",
-          operation: "select",
-          selectColumns: "*",
-        }),
-        db_request({
-          mode: "query",
-          schema: "personal_gear",
-          table: "goggles_parts",
-          operation: "select",
-          selectColumns: "*",
-        }),
-        db_request({
-          mode: "query",
-          schema: "personal_gear",
-          table: "other_parts",
-          operation: "select",
-          selectColumns: "*",
-        }),
-        db_request({
-          mode: "query",
-          schema: "personal_gear",
-          table: "maintenance_logs",
-          operation: "select",
-          selectColumns: "*",
-          orderBy: { column: "performed_on", ascending: false },
-        }),
-      ]);
-      const allGear = [
-        ...(batteries.data ?? []).map((g) => ({
+        });
+        if (error) throw error;
+        return (data ?? []).map((g: Record<string, any>) => ({
           ...g,
-          gear_type: "battery" as const,
-        })),
-        ...(drones.data ?? []).map((g) => ({
-          ...g,
-          gear_type: "quad" as const,
-        })),
-        ...(transmitters.data ?? []).map((g) => ({
-          ...g,
-          gear_type: "transmitter" as const,
-        })),
-        ...(goggles.data ?? []).map((g) => ({
-          ...g,
-          gear_type: "goggles" as const,
-        })),
-        ...(otherGear.data ?? []).map((g) => ({
-          ...g,
-          gear_type: "other" as const,
-        })),
-      ];
-      const allParts = [
-        ...(batteryParts.data ?? []),
-        ...(droneParts.data ?? []),
-        ...(transmitterParts.data ?? []),
-        ...(gogglesParts.data ?? []),
-        ...(otherParts.data ?? []),
-      ];
-      return { gear: allGear, parts: allParts, logs: logs.data ?? [] };
-    },
-  });
+          gear_type: type,
+        }));
+      },
+      enabled: !!profile?.id,
+      staleTime: 30_000,
+      placeholderData: keepPreviousData,
+    }),
+  );
 
-  const gear = data?.gear ?? [];
-  const parts = data?.parts ?? [];
-  const logs = data?.logs ?? [];
+  const gear = gearQueries.flatMap((q) => q.data ?? []);
+  const isLoadingGear = gearQueries.some((q) => q.isLoading);
+  const isErrorGear = gearQueries.some((q) => q.isError);
 
   async function getTableNameForGearId(gearId: string): Promise<string> {
     const tables = [
@@ -372,22 +296,35 @@ function Garage() {
           tableName = "other_gear";
       }
 
+      // Live schema: pack_count exists on batteries/drones/other_gear only;
+      // cells + connector_type exist on batteries/drones only. Sending a
+      // column a table lacks 400s with a schema-cache error.
+      const data: Record<string, unknown> = {
+        name,
+        brand: brand || null,
+        service_interval_minutes: finalInterval,
+        purchase_cost: purchaseCost,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      if (gearType === "battery") {
+        data["pack_count"] = finalPackCount;
+        data["cells"] = finalCells;
+        data["connector_type"] = finalConnector || null;
+      } else if (gearType === "quad") {
+        data["pack_count"] = 0;
+        data["cells"] = finalCells;
+        data["connector_type"] = finalConnector || null;
+      } else if (gearType === "other") {
+        data["pack_count"] = 0;
+      }
+
       const { error } = await db_request({
         mode: "query",
         schema: "personal_gear",
         table: tableName,
         operation: "insert",
-        data: {
-          name,
-          brand: brand || null,
-          service_interval_minutes: finalInterval,
-          pack_count: finalPackCount,
-          cells: finalCells,
-          connector_type: finalConnector || null,
-          purchase_cost: purchaseCost,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
+        data,
       });
       if (error) throw error;
     },
@@ -458,9 +395,11 @@ function Garage() {
     mutationFn: async ({
       gearId,
       newCount,
+      previousCount,
     }: {
       gearId: string;
       newCount: number;
+      previousCount?: number;
     }) => {
       const table = await getTableNameForGearId(gearId);
       if (!table) throw new Error("Gear not found");
@@ -474,8 +413,32 @@ function Garage() {
       });
       if (error) throw error;
     },
-    onSuccess: () => {
-      toast.success("Battery set updated");
+    onSuccess: (_data, variables) => {
+      // Lowering the count prunes surplus packs, but packs holding recorded
+      // IR readings survive server-side, so nothing here is destructive —
+      // restoring the previous count puts the set back exactly as it was.
+      const removed =
+        variables.previousCount !== undefined &&
+        variables.newCount < variables.previousCount
+          ? variables.previousCount - variables.newCount
+          : 0;
+      if (removed > 0 && variables.previousCount !== undefined) {
+        const prev = variables.previousCount;
+        const gearId = variables.gearId;
+        toast.success(
+          `Removed ${removed} pack${removed > 1 ? "s" : ""} from the set`,
+          {
+            description: "Packs with recorded IR readings are kept and come back if you undo.",
+            action: {
+              label: "Undo",
+              onClick: () => updatePackCount.mutate({ gearId, newCount: prev }),
+            },
+            duration: 8000,
+          },
+        );
+      } else {
+        toast.success("Battery set updated");
+      }
       queryClient.invalidateQueries({ queryKey: ["hanger"] });
     },
     onError: (e: Error) => toast.error(e.message),
@@ -494,6 +457,20 @@ function Garage() {
       description: string;
     }) => {
       const targetGear = await findGearById(gearId);
+      if (targetGear?.gear_type === "quad") {
+        // Quad hardware lives in the master inventory (drone_parts) and is
+        // installed from the gear detail page — not per-gear parts rows.
+        throw new Error(
+          "Quad hardware is managed on the drone's detail page (Add hardware).",
+        );
+      }
+      if (targetGear?.gear_type === "battery") {
+        // Batteries have pack counts and IR readings, not per-gear parts rows
+        // (there is no battery_parts table).
+        throw new Error(
+          "Battery sets are managed with pack counts and IR readings — no parts to add.",
+        );
+      }
       const isTransmitter = targetGear?.gear_type === "transmitter";
       const isGoggles = targetGear?.gear_type === "goggles";
       const finalName =
@@ -502,9 +479,7 @@ function Garage() {
           : partName;
       const table = await getTableNameForGearId(gearId);
       let partsTable: string;
-      if (table === "batteries") partsTable = "battery_parts";
-      else if (table === "drones") partsTable = "drone_parts";
-      else if (table === "transmitters") partsTable = "transmitter_parts";
+      if (table === "transmitters") partsTable = "transmitter_parts";
       else if (table === "goggles") partsTable = "goggles_parts";
       else partsTable = "other_parts";
 
@@ -575,9 +550,9 @@ function Garage() {
   const removePart = useMutation({
     mutationFn: async (id: string) => {
       let part: { gear_id: string } | null = null;
+      // drone_parts intentionally excluded — quad hardware is master-inventory
+      // data managed on the gear detail page, not hanger per-gear parts.
       const partTables = [
-        "battery_parts",
-        "drone_parts",
         "transmitter_parts",
         "goggles_parts",
         "other_parts",
@@ -604,7 +579,6 @@ function Garage() {
 
       const partsTableMap: Record<string, string> = {
         battery: "battery_parts",
-        quad: "drone_parts",
         transmitter: "transmitter_parts",
         goggles: "goggles_parts",
         other: "other_parts",
@@ -666,9 +640,7 @@ function Garage() {
           filters: { id },
         });
         let partsTable: string;
-        if (table === "batteries") partsTable = "battery_parts";
-        else if (table === "drones") partsTable = "drone_parts";
-        else if (table === "transmitters") partsTable = "transmitter_parts";
+        if (table === "transmitters") partsTable = "transmitter_parts";
         else if (table === "goggles") partsTable = "goggles_parts";
         else partsTable = "other_parts";
         await db_request({
@@ -689,12 +661,10 @@ function Garage() {
     },
     onSuccess: () => {
       setDeletingGearId(null);
-      setHoveredDeleteGearId(null);
       queryClient.invalidateQueries();
     },
     onError: (e: Error) => {
       setDeletingGearId(null);
-      setHoveredDeleteGearId(null);
       toast.error(e.message);
     },
   });
@@ -732,22 +702,20 @@ function Garage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const handleDeleteClick = (id: string, _gearName: string) => {
+  const handleDeleteClick = (id: string) => {
     setDeletingGearId(id);
-    setHoveredDeleteGearId(id);
-    setTimeout(() => removeGear.mutate(id), 600);
+    removeGear.mutate(id);
   };
 
   return (
     <>
-      <style>{`@keyframes ultraSubtleShake { 0% { transform: translate(0, 0) rotate(0deg); } 25% { transform: translate(-0.3px, 0.2px) rotate(-0.08deg); } 50% { transform: translate(0.3px, -0.2px) rotate(0.08deg); } 75% { transform: translate(-0.2px, -0.15px) rotate(-0.04deg); } 100% { transform: translate(0, 0) rotate(0deg); } } .animate-subtle-shake { animation: ultraSubtleShake 0.5s ease-in-out infinite; }`}</style>
       <PageHeader
         title="Gear Hanger"
         subtitle="Manage your complete fleet across quads, transmitters, goggles, battery sets and equipment."
         action={
-          <Dialog open={gearOpen} onOpenChange={setGearOpen}>
+          <Dialog open={gearOpen || addDeepLink} onOpenChange={handleGearDialogChange}>
             <DialogTrigger asChild>
-              <Button className="bg-primary hover:bg-primary/80 text-primary-foreground font-medium shadow-lg shadow-primary/20">
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium shadow-[inset_0_1px_0_oklch(1_0_0/0.18),0_1px_2px_oklch(0_0_0/0.3),0_6px_16px_-8px_var(--primary)]">
                 <Plus className="mr-1.5 h-4 w-4" /> Add gear
               </Button>
             </DialogTrigger>
@@ -859,7 +827,11 @@ function Garage() {
                       min={1}
                       max={20}
                       value={packCount}
-                      onChange={(e) => setPackCount(Number(e.target.value))}
+                      onChange={(e) =>
+                        setPackCount(
+                          Math.min(20, Math.max(1, Number(e.target.value) || 1)),
+                        )
+                      }
                       placeholder="e.g. 4"
                     />
                     <p className="text-[11px] text-muted-foreground">
@@ -900,7 +872,9 @@ function Garage() {
                           type="number"
                           value={interval}
                           onChange={(e) =>
-                            setIntervalMinutes(Number(e.target.value))
+                            setIntervalMinutes(
+                              Math.max(1, Number(e.target.value) || 0),
+                            )
                           }
                         />
                       </div>
@@ -918,7 +892,11 @@ function Garage() {
                     min={0}
                     step={0.01}
                     value={String(purchaseCost)}
-                    onChange={(e) => setPurchaseCost(Number(e.target.value))}
+                    onChange={(e) =>
+                      setPurchaseCost(
+                        Math.max(0, Number(e.target.value) || 0),
+                      )
+                    }
                     placeholder="0.00"
                   />
                 </div>
@@ -937,25 +915,19 @@ function Garage() {
         }
       />
       {gear.length === 0 && (
-        <div className="hud-panel p-12 text-center text-sm text-muted-foreground border-primary/20 max-w-xl mx-auto my-12">
-          <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-4 border border-primary/20">
-            <Cpu className="h-6 w-6" />
-          </div>
-          <p className="font-display font-semibold text-foreground text-lg mb-1">
-            Your hanger is currently empty.
-          </p>
-          <p className="mb-6 text-xs text-muted-foreground">
-            Register your quads, radio transmitters, FPV goggles, battery sets
-            or field gear to track telemetry, airtime, and maintenance
-            intervals.
-          </p>
-          <Button
-            onClick={() => setGearOpen(true)}
-            className="bg-primary hover:bg-primary/80 text-primary-foreground"
-          >
-            <Plus className="mr-1.5 h-4 w-4" /> Add your first piece of gear
-          </Button>
-        </div>
+        <EmptyState
+          icon={Cpu}
+          title="Your hanger is currently empty."
+          description="Register your quads, radio transmitters, FPV goggles, battery sets or field gear to track telemetry, airtime, and maintenance intervals."
+          action={
+            <Button
+              onClick={() => setGearOpen(true)}
+              className="bg-primary hover:bg-primary/80 text-primary-foreground"
+            >
+              <Plus className="mr-1.5 h-4 w-4" /> Add your first piece of gear
+            </Button>
+          }
+        />
       )}
       <div className="space-y-12 pb-16">
         {GEAR_SECTIONS.map((section) => {
@@ -965,18 +937,22 @@ function Garage() {
           return (
             <section key={section.key} className="space-y-4">
               <div
-                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-primary/20 pb-3 cursor-pointer select-none group pt-2"
-                onClick={() => toggleSectionCollapse(section.key)}
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-primary/20 pb-3 pt-2"
               >
-                <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  className="flex items-center gap-3 cursor-pointer select-none group text-left"
+                  onClick={() => toggleSectionCollapse(section.key)}
+                  aria-expanded={!isSectionCollapsed}
+                >
                   <div className="p-2.5 rounded-xl bg-primary/10 text-primary border border-primary/20 shadow-sm group-hover:bg-primary/20 transition-colors">
-                    <IconComponent className="h-5 w-5" />
+                    <IconComponent className="h-5 w-5" aria-hidden />
                   </div>
                   <div>
                     <div className="flex items-center gap-2.5">
                       <h2 className="font-display text-base font-bold uppercase tracking-wider text-foreground flex items-center gap-2">
                         {section.title}
-                        <span className="text-primary">
+                        <span className="text-primary" aria-hidden>
                           {isSectionCollapsed ? (
                             <ChevronDown className="h-4 w-4 inline" />
                           ) : (
@@ -992,7 +968,7 @@ function Garage() {
                       {section.blurb}
                     </p>
                   </div>
-                </div>
+                </button>
                 <div onClick={(e) => e.stopPropagation()}>
                   <Button
                     variant="outline"
@@ -1009,15 +985,13 @@ function Garage() {
                 </div>
               </div>
               <div
-                style={{
-                  transition:
-                    "max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin-bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-                  overflow: "hidden",
-                  maxHeight: isSectionCollapsed ? "0px" : "2000px",
-                  opacity: isSectionCollapsed ? 0 : 1,
-                  marginBottom: isSectionCollapsed ? "0px" : "16px",
-                }}
+                className={`grid transition-[grid-template-rows,opacity,margin-bottom] duration-300 ease-out ${
+                  isSectionCollapsed
+                    ? "grid-rows-[0fr] opacity-0 mb-0"
+                    : "grid-rows-[1fr] opacity-100 mb-4"
+                }`}
               >
+                <div className="overflow-hidden">
                 {items.length === 0 ? (
                   <div className="hud-panel p-8 text-center text-xs text-muted-foreground/70 border-dashed border-primary/20 bg-card/20 rounded-xl my-2">
                     No {TYPE_LABELS[section.key].toLowerCase()} registered yet.
@@ -1026,14 +1000,12 @@ function Garage() {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 pt-2 pb-2">
                     {items.map((g) => {
-                      const gParts = parts.filter((p) => p.gear_id === g.id);
-                      const gLogs = logs.filter((l) => l.gear_id === g.id);
+                      // Parts and logs load lazily per card (paged for logs)
+                      // so hanger first paint only waits on the gear tables.
                       return (
                         <GearCard
                           key={g.id}
                           gear={g}
-                          parts={gParts}
-                          logs={gLogs}
                           onDeleteGear={handleDeleteClick}
                           onUpdateGear={(
                             gearId,
@@ -1057,7 +1029,11 @@ function Garage() {
                             })
                           }
                           onUpdatePackCount={(gearId, newCount) =>
-                            updatePackCount.mutate({ gearId, newCount })
+                            updatePackCount.mutate({
+                              gearId,
+                              newCount,
+                              previousCount: g.pack_count,
+                            })
                           }
                           onAddPart={(
                             gearId,
@@ -1081,13 +1057,12 @@ function Garage() {
                             serviceGear.mutate({ gearId, minutes, notes })
                           }
                           isDeleting={deletingGearId === g.id}
-                          isHoveredDelete={hoveredDeleteGearId === g.id}
-                          onHoverDelete={(id) => setHoveredDeleteGearId(id)}
                         />
                       );
                     })}
                   </div>
                 )}
+                </div>
               </div>
             </section>
           );

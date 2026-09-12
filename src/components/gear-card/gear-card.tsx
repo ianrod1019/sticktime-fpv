@@ -1,46 +1,37 @@
 import { useState } from "react";
-import { GearItem } from "./types";
+import { useNavigate } from "@tanstack/react-router";
+import { GearCardProps } from "./types";
+import { useGearCardData } from "./use-gear-card-data";
 import { GearCardHeader } from "./gear-card-header";
 import { GearCardStats } from "./gear-card-stats";
 import { GearCardBatteries } from "./gear-card-batteries";
+import { GearCardParts } from "./gear-card-parts";
+import { GearCardLogs } from "./gear-card-logs";
 import { GearCardServiceDialog } from "./gear-card-service-dialog";
-import { useNavigate } from "@tanstack/react-router";
-
-interface GearCardProps {
-  gear: GearItem;
-  isDeleting: boolean;
-  isHoveredDelete: boolean;
-  onHoverDelete: (id: string | null) => void;
-  onDeleteGear: (id: string, name: string) => void;
-  onUpdateGear: (
-    gearId: string,
-    name: string,
-    brand: string,
-    serviceInterval: number,
-    packCount: number,
-    cells: number,
-    connectorType: string,
-    purchaseCost: number,
-  ) => void;
-  onUpdatePackCount?: (gearId: string, newCount: number) => void;
-  onService: (gearId: string, minutes: number, notes: string) => void;
-}
 
 export function GearCard({
   gear,
   isDeleting,
-  isHoveredDelete,
-  onHoverDelete,
   onDeleteGear,
   onUpdateGear,
   onUpdatePackCount,
   onService,
+  onAddPart,
+  onRemovePart,
+  onAddLog,
+  onRemoveLog,
 }: GearCardProps) {
-  const navigate = useNavigate();
   const [serviceDialogOpen, setServiceDialogOpen] = useState(false);
+  const navigate = useNavigate();
+
+  // Lazy per-card data: parts + paged logs are fetched (and cached) by the
+  // card itself rather than up-front for the whole hanger.
+  const { parts, logs, logsHaveMore } = useGearCardData(gear.id, gear.gear_type);
 
   const isQuad = gear.gear_type === "quad";
   const isBattery = gear.gear_type === "battery";
+  const isTransmitter = gear.gear_type === "transmitter";
+  const isGoggles = gear.gear_type === "goggles";
 
   const isAsNeeded = gear.service_interval_minutes <= 0;
   const servicePct = isAsNeeded
@@ -52,13 +43,38 @@ export function GearCard({
         ),
       );
 
+  const detailHref =
+    gear.gear_type === "quad"
+      ? {
+          to: "/gear/$type/$uuid",
+          params: { type: "drone", uuid: gear.id },
+        }
+      : {
+          to: "/gear/$type/$uuid",
+          params: { type: gear.gear_type, uuid: gear.id },
+        };
+
+  // Click anywhere on the card opens the detail view. Clicks on interactive
+  // controls (buttons, links, inputs) are left alone.
   const handleCardClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const detailType = gear.gear_type === "quad" ? "drone" : gear.gear_type;
-    if (detailType === "drone") {
-      navigate({ to: "/drone/$uuid", params: { uuid: gear.id } });
+    const target = e.target as HTMLElement;
+    if (
+      target.closest(
+        "button, a, input, select, textarea, label, [role='button'], [role='tab'], [role='dialog']",
+      )
+    ) {
+      return;
+    }
+    if (gear.gear_type === "quad") {
+      navigate({
+        to: "/gear/$type/$uuid",
+        params: { type: "drone", uuid: gear.id },
+      });
     } else {
-      navigate({ to: "/hanger/$type/$uuid", params: { type: detailType, uuid: gear.id } });
+      navigate({
+        to: "/gear/$type/$uuid",
+        params: { type: gear.gear_type, uuid: gear.id },
+      });
     }
   };
 
@@ -68,7 +84,7 @@ export function GearCard({
         transitionProperty: "all",
         transitionDuration: "400ms",
         transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
-        maxHeight: isDeleting ? "0px" : "1000px",
+        maxHeight: isDeleting ? "0px" : "1500px",
         opacity: isDeleting ? 0 : 1,
         transform: isDeleting
           ? "scale(0.92) translateY(-16px)"
@@ -79,26 +95,26 @@ export function GearCard({
         paddingBottom: isDeleting ? "0px" : undefined,
         overflow: "hidden",
       }}
-      className={`relative group bg-card/50 border rounded-xl p-4 ${
-        isHoveredDelete && !isDeleting
-          ? "border-destructive/40 bg-destructive/5 shadow-lg shadow-destructive/10 ring-1 ring-destructive/20"
-          : "border-primary/10 hover:border-primary/30"
-      } ${isDeleting ? "border-transparent! p-0! m-0! shadow-none!" : ""} cursor-pointer`}
       onClick={handleCardClick}
+      className={`relative group bg-card/50 bg-gradient-to-b from-white/[0.03] to-transparent border rounded-xl p-4 cursor-pointer shadow-[0_1px_2px_oklch(0_0_0/0.25),0_12px_32px_-24px_oklch(0_0_0/0.6)] transition-[border-color,box-shadow] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:shadow-[0_1px_2px_oklch(0_0_0/0.25),0_20px_44px_-24px_oklch(0_0_0/0.7)] ${
+        isDeleting
+          ? "border-transparent! p-0! m-0! shadow-none! cursor-default!"
+          : "border-primary/10 hover:border-primary/30"
+      }`}
     >
       <div
         className={`transition-opacity duration-200 ${isDeleting ? "opacity-0 pointer-events-none" : "opacity-100"}`}
       >
-        {/* Header */}
+        {/* Header (whole card is clickable; edit/delete/service actions) */}
         <GearCardHeader
           gear={gear}
-          servicePct={servicePct}
+          detailHref={detailHref}
           isAsNeeded={isAsNeeded}
           isBattery={isBattery}
           isDeleting={isDeleting}
-          onHoverDelete={onHoverDelete}
           onDeleteGear={onDeleteGear}
           onUpdateGear={onUpdateGear}
+          onOpenService={() => setServiceDialogOpen(true)}
         />
 
         <div className="space-y-4">
@@ -109,28 +125,53 @@ export function GearCard({
             isBattery={isBattery}
             isAsNeeded={isAsNeeded}
             servicePct={servicePct}
-            activeHighlight={isHoveredDelete}
           />
 
           {/* Battery Packs Section */}
           {isBattery && (
-            <div className="space-y-4">
-              <GearCardBatteries
-                gear={gear}
-                onUpdatePackCount={onUpdatePackCount}
-                isDeleting={isDeleting}
-              />
-            </div>
+            <GearCardBatteries
+              gear={gear}
+              onUpdatePackCount={onUpdatePackCount}
+              isDeleting={isDeleting}
+            />
           )}
 
-          {/* Service Dialog */}
-          <GearCardServiceDialog
-            gear={gear}
-            isOpen={serviceDialogOpen}
-            onOpenChange={setServiceDialogOpen}
-            onService={onService}
-            isDeleting={isDeleting}
-          />
+          {/* Components section (radios, goggles, other — quad hardware
+              lives on the drone detail page via the master inventory) */}
+          {onAddPart && onRemovePart && !isBattery && !isQuad && (
+            <GearCardParts
+              gear={gear}
+              parts={parts}
+              isTransmitter={isTransmitter}
+              isGoggles={isGoggles}
+              isDeleting={isDeleting}
+              onAddPart={onAddPart}
+              onRemovePart={onRemovePart}
+            />
+          )}
+
+          {/* Maintenance log section (non-battery) */}
+          {onAddLog && onRemoveLog && !isBattery && (
+            <GearCardLogs
+              gear={gear}
+              logs={logs}
+              hasMore={logsHaveMore}
+              isDeleting={isDeleting}
+              onAddLog={onAddLog}
+              onRemoveLog={onRemoveLog}
+            />
+          )}
+
+          {/* Service Dialog — batteries have no service tracking */}
+          {!isBattery && (
+            <GearCardServiceDialog
+              gear={gear}
+              isOpen={serviceDialogOpen}
+              onOpenChange={setServiceDialogOpen}
+              onService={onService}
+              isDeleting={isDeleting}
+            />
+          )}
         </div>
       </div>
     </div>

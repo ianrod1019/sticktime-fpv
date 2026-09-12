@@ -97,9 +97,19 @@ export interface MaintenanceLog {
 export interface GearCardProps {
   gear: GearItem;
   isDeleting: boolean;
-  isHoveredDelete: boolean;
-  onHoverDelete: (id: string | null) => void;
   onDeleteGear: (id: string, name: string) => void;
+  onAddPart?:
+    | ((
+        gearId: string,
+        partName: string,
+        category: string,
+        description: string,
+      ) => void)
+    | undefined;
+  onRemovePart?: ((partId: string) => void) | undefined;
+  onAddLog?:
+    ((gearId: string, description: string, cost: string) => void) | undefined;
+  onRemoveLog?: ((logId: string) => void) | undefined;
   onUpdateGear: (
     gearId: string,
     name: string,
@@ -110,6 +120,11 @@ export interface GearCardProps {
     connectorType: string,
     purchaseCost: number,
   ) => void;
+  /**
+   * Adds or removes packs in the set. Decreasing the count only prunes
+   * pack rows that carry no recorded IR readings, so the caller can always
+   * restore the previous count to undo an accidental removal.
+   */
   onUpdatePackCount?: (gearId: string, newCount: number) => void;
   onService: (gearId: string, minutes: number, notes: string) => void;
 }

@@ -7,6 +7,9 @@ interface DroneServicePanelProps {
 
 export function DroneServicePanel({ droneId, onLogAdded }: DroneServicePanelProps) {
   return (
-    <DroneMaintenanceLog droneId={droneId} onRefresh={onLogAdded} />
+    <DroneMaintenanceLog
+      droneId={droneId}
+      {...(onLogAdded ? { onRefresh: onLogAdded } : {})}
+    />
   );
 }

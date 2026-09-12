@@ -142,8 +142,6 @@ export function useDroneDetail(uuid: string): UseDroneDetailResult {
     },
     enabled: !!uuid,
     staleTime: 30000,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
   });
 
   const canEdit = !!data && (profile?.id === data.item.user_id || false);

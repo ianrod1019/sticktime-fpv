@@ -1,17 +1,30 @@
-import { useState, useEffect, useRef } from "react";
-import { Trash2, Check, X } from "lucide-react";
+import { Pencil, Trash2, Wrench } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 import { GearItem } from "./types";
 import { GearCardEditDialog } from "./gear-card-edit-dialog";
 
 interface GearCardHeaderProps {
   gear: GearItem;
-  servicePct: number;
+  detailHref: {
+    to: string;
+    params: { uuid: string };
+  };
   isAsNeeded: boolean;
   isBattery: boolean;
   isDeleting: boolean;
-  onHoverDelete: (id: string | null) => void;
   onDeleteGear: (id: string, name: string) => void;
   onUpdateGear: (
     gearId: string,
@@ -23,53 +36,19 @@ interface GearCardHeaderProps {
     connectorType: string,
     purchaseCost: number,
   ) => void;
+  onOpenService: () => void;
 }
 
 export function GearCardHeader({
   gear,
-  servicePct,
+  detailHref,
   isAsNeeded,
   isBattery,
   isDeleting,
-  onHoverDelete,
   onDeleteGear,
   onUpdateGear,
+  onOpenService,
 }: GearCardHeaderProps) {
-  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, []);
-
-  const handleStartDeletePrompt = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (isConfirmingDelete) return;
-    setIsConfirmingDelete(true);
-    onHoverDelete(gear.id);
-
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => {
-      setIsConfirmingDelete(false);
-      onHoverDelete(null);
-    }, 4000);
-  };
-
-  const handleCancelDelete = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    setIsConfirmingDelete(false);
-    onHoverDelete(null);
-  };
-
-  const handleExecuteDelete = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    onDeleteGear(gear.id, gear.name);
-  };
-
   const typeLabel =
     gear.gear_type === "quad"
       ? "Drone / Quad"
@@ -88,14 +67,18 @@ export function GearCardHeader({
           className="text-base font-semibold tracking-tight truncate text-foreground"
           title={gear.name}
         >
-          {gear.name}
+          <Link
+            to={detailHref.to}
+            params={detailHref.params}
+            className="hover:text-primary transition-colors"
+          >
+            {gear.name}
+          </Link>
         </h3>
         <p className="text-[11px] text-muted-foreground truncate mt-0.5">
           {gear.brand ? (
             <span className="text-primary font-medium">{gear.brand}</span>
-          ) : (
-            ""
-          )}
+          ) : null}
           {gear.brand ? " · " : ""}
           <span className="uppercase tracking-wider text-[10px]">
             {typeLabel}
@@ -113,54 +96,65 @@ export function GearCardHeader({
           </Badge>
         )}
 
-        {/* Edit Button Dialog */}
+        {/* Log service (opens the service dialog) — batteries have no
+            service clock, so the control is hidden for them */}
+        {!isBattery && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 transition-all duration-200 ease-out text-muted-foreground hover:text-primary hover:bg-primary/20 active:scale-[0.95] border border-transparent"
+            aria-label={`Log service for ${gear.name}`}
+            title="Log service"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenService();
+            }}
+            disabled={isDeleting}
+          >
+            <Wrench className="h-3.5 w-3.5" />
+          </Button>
+        )}
+
+        {/* Edit dialog */}
         <GearCardEditDialog
           gear={gear}
           onUpdateGear={onUpdateGear}
           isDeleting={isDeleting}
         />
 
-        {/* Inline Confirmation or Trash Button */}
-        {isConfirmingDelete ? (
-          <div className="flex items-center gap-1 bg-destructive/15 border border-destructive/40 rounded-md p-0.5 animate-in fade-in zoom-in-95 duration-150">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 px-2 text-[10px] font-medium bg-destructive text-destructive-foreground hover:bg-destructive/80 hover:text-destructive-foreground rounded"
-              onClick={handleExecuteDelete}
-              disabled={isDeleting}
-            >
-              <Check className="h-3 w-3 mr-0.5" /> Confirm
-            </Button>
+        {/* Delete with confirmation dialog */}
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
             <Button
               variant="ghost"
               size="icon"
-              className="h-6 w-6 text-muted-foreground hover:text-foreground hover:bg-secondary/80 rounded"
-              onClick={handleCancelDelete}
+              className="h-7 w-7 transition-all duration-200 ease-out text-muted-foreground hover:text-destructive hover:bg-destructive/20 active:scale-[0.95] border border-transparent"
+              aria-label={`Delete ${gear.name}`}
               disabled={isDeleting}
-              title="Cancel"
             >
-              <X className="h-3 w-3" />
+              <Trash2 className="h-3.5 w-3.5" />
             </Button>
-          </div>
-        ) : (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7 transition-all duration-200 ease-out text-muted-foreground hover:text-destructive hover:bg-destructive/20 hover:border-destructive/40 active:bg-destructive/30 active:scale-[0.95] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed border border-transparent"
-            aria-label={`Remove ${gear.name}`}
-            disabled={isDeleting}
-            onMouseEnter={() => onHoverDelete(gear.id)}
-            onMouseLeave={() => {
-              if (!isConfirmingDelete && !isDeleting) {
-                onHoverDelete(null);
-              }
-            }}
-            onClick={handleStartDeletePrompt}
-          >
-            <Trash2 className="h-3.5 w-3.5 transition-colors text-destructive" />
-          </Button>
-        )}
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete {gear.name}?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This permanently removes the gear, its logged maintenance
+                history, and unlinks any flight sessions that reference it. This
+                action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                onClick={() => onDeleteGear(gear.id, gear.name)}
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );

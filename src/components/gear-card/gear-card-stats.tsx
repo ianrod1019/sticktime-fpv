@@ -7,7 +7,6 @@ interface GearCardStatsProps {
   isBattery: boolean;
   isAsNeeded: boolean;
   servicePct: number;
-  activeHighlight: boolean;
 }
 
 export function GearCardStats({
@@ -16,7 +15,6 @@ export function GearCardStats({
   isBattery,
   isAsNeeded,
   servicePct,
-  activeHighlight,
 }: GearCardStatsProps) {
   // If it's as-needed (and not battery), flight time takes the full width (col-span-2)
   const isFullWidthFlightTime = isAsNeeded && !isBattery;
@@ -121,9 +119,9 @@ export function GearCardStats({
           </div>
           <div className="text-xs font-mono text-muted-foreground bg-background/50 px-2 py-1 rounded border border-border/50">
             {(gear.crash_count || 0) === 0
-              ? "Clean pilot 🏆"
+              ? "Clean pilot"
               : (gear.crash_count || 0) > 5
-                ? "Send it! 🔥"
+                ? "Send it!"
                 : "Moderate"}
           </div>
         </div>
