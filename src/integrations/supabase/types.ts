@@ -105,7 +105,9 @@ export type Database = {
           name: string;
           pack_count: number;
           purchase_cost: number;
-
+          storage_voltage_per_cell: number | null;
+          full_voltage_per_cell: number | null;
+          empty_voltage_per_cell: number | null;
           service_interval_minutes: number;
           total_minutes: number;
           updated_at: string;
@@ -122,6 +124,9 @@ export type Database = {
           name: string;
           pack_count?: number;
           purchase_cost?: number;
+          storage_voltage_per_cell?: number | null;
+          full_voltage_per_cell?: number | null;
+          empty_voltage_per_cell?: number | null;
           service_interval_minutes?: number;
           total_minutes?: number;
           updated_at?: string;
@@ -138,6 +143,9 @@ export type Database = {
           name?: string;
           pack_count?: number;
           purchase_cost?: number;
+          storage_voltage_per_cell?: number | null;
+          full_voltage_per_cell?: number | null;
+          empty_voltage_per_cell?: number | null;
           service_interval_minutes?: number;
           total_minutes?: number;
           updated_at?: string;
@@ -876,75 +884,6 @@ export type Database = {
             columns: ["gear_id"];
             isOneToOne: false;
             referencedRelation: "personal_gear";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
-      battery_health_readings: {
-        Row: {
-          ambient_temperature_celsius: number | null;
-          battery_pack_id: string;
-          calculated_internal_resistance_milliohm: number | null;
-          created_at: string;
-          current_draw_amps: number;
-          flight_duration_seconds: number | null;
-          id: string;
-          recorded_at: string;
-          session_id: string | null;
-          throttle_percent_avg: number | null;
-          updated_at: string;
-          user_id: string;
-          voltage_at_rest_volts: number;
-          voltage_sag_percent: number | null;
-          voltage_under_load_volts: number;
-        };
-        Insert: {
-          ambient_temperature_celsius?: number | null;
-          battery_pack_id: string;
-          calculated_internal_resistance_milliohm?: number | null;
-          created_at?: string;
-          current_draw_amps: number;
-          flight_duration_seconds?: number | null;
-          id?: string;
-          recorded_at?: string;
-          session_id?: string | null;
-          throttle_percent_avg?: number | null;
-          updated_at?: string;
-          user_id: string;
-          voltage_at_rest_volts: number;
-          voltage_sag_percent?: number | null;
-          voltage_under_load_volts: number;
-        };
-        Update: {
-          ambient_temperature_celsius?: number | null;
-          battery_pack_id?: string;
-          calculated_internal_resistance_milliohm?: number | null;
-          created_at?: string;
-          current_draw_amps?: number;
-          flight_duration_seconds?: number | null;
-          id?: string;
-          recorded_at?: string;
-          session_id?: string | null;
-          throttle_percent_avg?: number | null;
-          updated_at?: string;
-          user_id?: string;
-          voltage_at_rest_volts?: number;
-          voltage_sag_percent?: number | null;
-          voltage_under_load_volts?: number;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "battery_health_readings_battery_pack_id_fkey";
-            columns: ["battery_pack_id"];
-            isOneToOne: false;
-            referencedRelation: "battery_packs";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "battery_health_readings_session_id_fkey";
-            columns: ["session_id"];
-            isOneToOne: false;
-            referencedRelation: "sessions";
             referencedColumns: ["id"];
           },
         ];
