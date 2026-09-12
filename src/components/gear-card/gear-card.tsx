@@ -1,16 +1,16 @@
 import { useState } from "react";
-import { GearItem, GearPart, MaintenanceLog } from "./types";
+import { GearItem } from "./types";
 import { GearCardHeader } from "./gear-card-header";
 import { GearCardStats } from "./gear-card-stats";
 import { GearCardBatteries } from "./gear-card-batteries";
-import { GearCardParts } from "./gear-card-parts";
-import { GearCardLogs } from "./gear-card-logs";
 import { GearCardServiceDialog } from "./gear-card-service-dialog";
+import { useNavigate } from "@tanstack/react-router";
 
 interface GearCardProps {
   gear: GearItem;
-  parts: GearPart[];
-  logs: MaintenanceLog[];
+  isDeleting: boolean;
+  isHoveredDelete: boolean;
+  onHoverDelete: (id: string | null) => void;
   onDeleteGear: (id: string, name: string) => void;
   onUpdateGear: (
     gearId: string,
@@ -22,45 +22,25 @@ interface GearCardProps {
     connectorType: string,
     purchaseCost: number,
   ) => void;
-  onAddPart: (
-    gearId: string,
-    partName: string,
-    category: string,
-    description: string,
-  ) => void;
-  onRemovePart: (partId: string) => void;
-  onAddLog: (gearId: string, description: string, cost: string) => void;
-  onRemoveLog: (logId: string) => void;
-  onService: (gearId: string, minutes: number, notes: string) => void;
   onUpdatePackCount?: (gearId: string, newCount: number) => void;
-  isDeleting: boolean;
-  isHoveredDelete: boolean;
-  onHoverDelete: (id: string | null) => void;
+  onService: (gearId: string, minutes: number, notes: string) => void;
 }
 
 export function GearCard({
   gear,
-  parts,
-  logs,
-  onDeleteGear,
-  onUpdateGear,
-  onAddPart,
-  onRemovePart,
-  onAddLog,
-  onRemoveLog,
-  onService,
-  onUpdatePackCount,
   isDeleting,
   isHoveredDelete,
   onHoverDelete,
+  onDeleteGear,
+  onUpdateGear,
+  onUpdatePackCount,
+  onService,
 }: GearCardProps) {
+  const navigate = useNavigate();
   const [serviceDialogOpen, setServiceDialogOpen] = useState(false);
 
   const isQuad = gear.gear_type === "quad";
-  const isTransmitter = gear.gear_type === "transmitter";
-  const isGoggles = gear.gear_type === "goggles";
   const isBattery = gear.gear_type === "battery";
-  const isOther = gear.gear_type === "other";
 
   const isAsNeeded = gear.service_interval_minutes <= 0;
   const servicePct = isAsNeeded
@@ -71,6 +51,16 @@ export function GearCard({
           (gear.minutes_since_service / gear.service_interval_minutes) * 100,
         ),
       );
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const detailType = gear.gear_type === "quad" ? "drone" : gear.gear_type;
+    if (detailType === "drone") {
+      navigate({ to: "/drone/$uuid", params: { uuid: gear.id } });
+    } else {
+      navigate({ to: "/hanger/$type/$uuid", params: { type: detailType, uuid: gear.id } });
+    }
+  };
 
   return (
     <div
@@ -93,7 +83,8 @@ export function GearCard({
         isHoveredDelete && !isDeleting
           ? "border-destructive/40 bg-destructive/5 shadow-lg shadow-destructive/10 ring-1 ring-destructive/20"
           : "border-primary/10 hover:border-primary/30"
-      } ${isDeleting ? "border-transparent! p-0! m-0! shadow-none!" : ""}`}
+      } ${isDeleting ? "border-transparent! p-0! m-0! shadow-none!" : ""} cursor-pointer`}
+      onClick={handleCardClick}
     >
       <div
         className={`transition-opacity duration-200 ${isDeleting ? "opacity-0 pointer-events-none" : "opacity-100"}`}
@@ -130,30 +121,6 @@ export function GearCard({
                 isDeleting={isDeleting}
               />
             </div>
-          )}
-
-          {/* Parts/Upgrades Section */}
-          {(isTransmitter || isGoggles || isQuad || isOther) && (
-            <GearCardParts
-              gear={gear}
-              parts={parts}
-              isTransmitter={isTransmitter}
-              isGoggles={isGoggles}
-              isDeleting={isDeleting}
-              onAddPart={onAddPart}
-              onRemovePart={onRemovePart}
-            />
-          )}
-
-          {/* Maintenance Logs Section - omitted entirely for batteries */}
-          {!isBattery && (
-            <GearCardLogs
-              gear={gear}
-              logs={logs}
-              isDeleting={isDeleting}
-              onAddLog={onAddLog}
-              onRemoveLog={onRemoveLog}
-            />
           )}
 
           {/* Service Dialog */}

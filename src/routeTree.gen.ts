@@ -21,9 +21,11 @@ import { Route as AuthenticatedTeamsRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdmin_lookupUuidRouteImport } from './routes/_authenticated/admin_lookup.$uuid'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
+import { Route as AuthenticatedDroneUuidRouteImport } from './routes/_authenticated/drone/$uuid'
 import { Route as AuthenticatedSquadronIndexRouteImport } from './routes/_authenticated/squadron/index'
 import { Route as AuthenticatedSquadronSquadronIdRouteImport } from './routes/_authenticated/squadron/$squadronId'
 import { Route as AuthenticatedTeamsTeamIdRouteImport } from './routes/_authenticated/teams/$teamId'
+import { Route as AuthenticatedHangerTypeUuidRouteImport } from './routes/_authenticated/hanger/$type/$uuid'
 import { Route as AuthenticatedSquadronManageUuidRouteImport } from './routes/_authenticated/squadron/manage.$uuid'
 
 const IndexRoute = IndexRouteImport.update({
@@ -87,6 +89,11 @@ const AuthenticatedDashboardIndexRoute =
     path: '/dashboard/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedDroneUuidRoute = AuthenticatedDroneUuidRouteImport.update({
+  id: '/drone/$uuid',
+  path: '/drone/$uuid',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSquadronIndexRoute =
   AuthenticatedSquadronIndexRouteImport.update({
     id: '/squadron/',
@@ -105,6 +112,12 @@ const AuthenticatedTeamsTeamIdRoute =
     path: '/$teamId',
     getParentRoute: () => AuthenticatedTeamsRoute,
   } as any)
+const AuthenticatedHangerTypeUuidRoute =
+  AuthenticatedHangerTypeUuidRouteImport.update({
+    id: '/$type/$uuid',
+    path: '/$type/$uuid',
+    getParentRoute: () => AuthenticatedHangerRoute,
+  } as any)
 const AuthenticatedSquadronManageUuidRoute =
   AuthenticatedSquadronManageUuidRouteImport.update({
     id: '/squadron/manage/$uuid',
@@ -117,32 +130,36 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
-  '/hanger': typeof AuthenticatedHangerRoute
+  '/hanger': typeof AuthenticatedHangerRouteWithChildren
   '/log': typeof AuthenticatedLogRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/teams': typeof AuthenticatedTeamsRouteWithChildren
   '/admin_lookup/$uuid': typeof AuthenticatedAdmin_lookupUuidRoute
+  '/drone/$uuid': typeof AuthenticatedDroneUuidRoute
   '/squadron/$squadronId': typeof AuthenticatedSquadronSquadronIdRoute
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/squadron/': typeof AuthenticatedSquadronIndexRoute
+  '/hanger/$type/$uuid': typeof AuthenticatedHangerTypeUuidRoute
   '/squadron/manage/$uuid': typeof AuthenticatedSquadronManageUuidRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
-  '/hanger': typeof AuthenticatedHangerRoute
+  '/hanger': typeof AuthenticatedHangerRouteWithChildren
   '/log': typeof AuthenticatedLogRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/teams': typeof AuthenticatedTeamsRouteWithChildren
   '/admin_lookup/$uuid': typeof AuthenticatedAdmin_lookupUuidRoute
+  '/drone/$uuid': typeof AuthenticatedDroneUuidRoute
   '/squadron/$squadronId': typeof AuthenticatedSquadronSquadronIdRoute
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/squadron': typeof AuthenticatedSquadronIndexRoute
+  '/hanger/$type/$uuid': typeof AuthenticatedHangerTypeUuidRoute
   '/squadron/manage/$uuid': typeof AuthenticatedSquadronManageUuidRoute
 }
 export interface FileRoutesById {
@@ -152,16 +169,18 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
-  '/_authenticated/hanger': typeof AuthenticatedHangerRoute
+  '/_authenticated/hanger': typeof AuthenticatedHangerRouteWithChildren
   '/_authenticated/log': typeof AuthenticatedLogRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/teams': typeof AuthenticatedTeamsRouteWithChildren
   '/_authenticated/admin_lookup/$uuid': typeof AuthenticatedAdmin_lookupUuidRoute
+  '/_authenticated/drone/$uuid': typeof AuthenticatedDroneUuidRoute
   '/_authenticated/squadron/$squadronId': typeof AuthenticatedSquadronSquadronIdRoute
   '/_authenticated/teams/$teamId': typeof AuthenticatedTeamsTeamIdRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/squadron/': typeof AuthenticatedSquadronIndexRoute
+  '/_authenticated/hanger/$type/$uuid': typeof AuthenticatedHangerTypeUuidRoute
   '/_authenticated/squadron/manage/$uuid': typeof AuthenticatedSquadronManageUuidRoute
 }
 export interface FileRouteTypes {
@@ -176,11 +195,13 @@ export interface FileRouteTypes {
     | '/settings'
     | '/teams'
     | '/admin_lookup/$uuid'
+    | '/drone/$uuid'
     | '/squadron/$squadronId'
     | '/teams/$teamId'
     | '/admin/'
     | '/dashboard/'
     | '/squadron/'
+    | '/hanger/$type/$uuid'
     | '/squadron/manage/$uuid'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -192,11 +213,13 @@ export interface FileRouteTypes {
     | '/settings'
     | '/teams'
     | '/admin_lookup/$uuid'
+    | '/drone/$uuid'
     | '/squadron/$squadronId'
     | '/teams/$teamId'
     | '/admin'
     | '/dashboard'
     | '/squadron'
+    | '/hanger/$type/$uuid'
     | '/squadron/manage/$uuid'
   id:
     | '__root__'
@@ -210,11 +233,13 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/_authenticated/teams'
     | '/_authenticated/admin_lookup/$uuid'
+    | '/_authenticated/drone/$uuid'
     | '/_authenticated/squadron/$squadronId'
     | '/_authenticated/teams/$teamId'
     | '/_authenticated/admin/'
     | '/_authenticated/dashboard/'
     | '/_authenticated/squadron/'
+    | '/_authenticated/hanger/$type/$uuid'
     | '/_authenticated/squadron/manage/$uuid'
   fileRoutesById: FileRoutesById
 }
@@ -311,6 +336,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/drone/$uuid': {
+      id: '/_authenticated/drone/$uuid'
+      path: '/drone/$uuid'
+      fullPath: '/drone/$uuid'
+      preLoaderRoute: typeof AuthenticatedDroneUuidRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/squadron/': {
       id: '/_authenticated/squadron/'
       path: '/squadron'
@@ -331,6 +363,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/teams/$teamId'
       preLoaderRoute: typeof AuthenticatedTeamsTeamIdRouteImport
       parentRoute: typeof AuthenticatedTeamsRoute
+    }
+    '/_authenticated/hanger/$type/$uuid': {
+      id: '/_authenticated/hanger/$type/$uuid'
+      path: '/$type/$uuid'
+      fullPath: '/hanger/$type/$uuid'
+      preLoaderRoute: typeof AuthenticatedHangerTypeUuidRouteImport
+      parentRoute: typeof AuthenticatedHangerRoute
     }
     '/_authenticated/squadron/manage/$uuid': {
       id: '/_authenticated/squadron/manage/$uuid'
@@ -356,6 +395,17 @@ const AuthenticatedAdminRouteRouteWithChildren =
     AuthenticatedAdminRouteRouteChildren,
   )
 
+interface AuthenticatedHangerRouteChildren {
+  AuthenticatedHangerTypeUuidRoute: typeof AuthenticatedHangerTypeUuidRoute
+}
+
+const AuthenticatedHangerRouteChildren: AuthenticatedHangerRouteChildren = {
+  AuthenticatedHangerTypeUuidRoute: AuthenticatedHangerTypeUuidRoute,
+}
+
+const AuthenticatedHangerRouteWithChildren =
+  AuthenticatedHangerRoute._addFileChildren(AuthenticatedHangerRouteChildren)
+
 interface AuthenticatedTeamsRouteChildren {
   AuthenticatedTeamsTeamIdRoute: typeof AuthenticatedTeamsTeamIdRoute
 }
@@ -369,11 +419,12 @@ const AuthenticatedTeamsRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
-  AuthenticatedHangerRoute: typeof AuthenticatedHangerRoute
+  AuthenticatedHangerRoute: typeof AuthenticatedHangerRouteWithChildren
   AuthenticatedLogRoute: typeof AuthenticatedLogRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedTeamsRoute: typeof AuthenticatedTeamsRouteWithChildren
   AuthenticatedAdmin_lookupUuidRoute: typeof AuthenticatedAdmin_lookupUuidRoute
+  AuthenticatedDroneUuidRoute: typeof AuthenticatedDroneUuidRoute
   AuthenticatedSquadronSquadronIdRoute: typeof AuthenticatedSquadronSquadronIdRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
   AuthenticatedSquadronIndexRoute: typeof AuthenticatedSquadronIndexRoute
@@ -382,11 +433,12 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
-  AuthenticatedHangerRoute: AuthenticatedHangerRoute,
+  AuthenticatedHangerRoute: AuthenticatedHangerRouteWithChildren,
   AuthenticatedLogRoute: AuthenticatedLogRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedTeamsRoute: AuthenticatedTeamsRouteWithChildren,
   AuthenticatedAdmin_lookupUuidRoute: AuthenticatedAdmin_lookupUuidRoute,
+  AuthenticatedDroneUuidRoute: AuthenticatedDroneUuidRoute,
   AuthenticatedSquadronSquadronIdRoute: AuthenticatedSquadronSquadronIdRoute,
   AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   AuthenticatedSquadronIndexRoute: AuthenticatedSquadronIndexRoute,

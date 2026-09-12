@@ -5,7 +5,12 @@ import { PageHeader } from "@/components/app-shell";
 import { LogSessionList } from "@/components/log/LogSessionList";
 import { LogSessionDialog } from "@/components/log/LogSessionDialog";
 import { Timer, Monitor } from "lucide-react";
-import { DURATION_BLOCKS, SIM_PLATFORMS, formatHours, toDateKey } from "@/lib/fpv";
+import {
+  DURATION_BLOCKS,
+  SIM_PLATFORMS,
+  formatHours,
+  toDateKey,
+} from "@/lib/fpv";
 
 export const Route = createFileRoute("/_authenticated/log")({
   validateSearch: (
@@ -72,11 +77,11 @@ function LogPage() {
         title="Flight Logs"
         subtitle="Manual entry in 5-minute blocks — sim and real world tracked separately."
         action={
-<LogSessionDialog
-              open={open}
-              onOpenChange={setOpen}
-              initialTab={activeTab}
-            />
+          <LogSessionDialog
+            open={open}
+            onOpenChange={setOpen}
+            initialTab={activeTab}
+          />
         }
       />
 
@@ -117,7 +122,9 @@ function LogPage() {
           <div
             key={activeTab}
             className={`w-full ${
-              activeTab === "sim" ? "animate-pure-slide-right" : "animate-pure-slide-left"
+              activeTab === "sim"
+                ? "animate-pure-slide-right"
+                : "animate-pure-slide-left"
             }`}
           >
             <LogSessionList

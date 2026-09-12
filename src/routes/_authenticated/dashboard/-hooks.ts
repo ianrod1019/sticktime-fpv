@@ -211,12 +211,19 @@ export function useRigUsage(userId: string | null) {
     queryFn: async () => {
       if (!userId) return [];
       const result = await db_request({
-        mode: "rpc",
-        rpcFunction: "get_user_rig_usage",
-        rpcParams: { p_user_id: userId },
+        mode: "query",
+        schema: "personal_gear",
+        table: "drones",
+        operation: "select",
+        selectColumns: "id,name,total_minutes",
+        filters: { user_id: userId },
       });
       if (result.error) throw result.error;
-      return result.data ?? [];
+      return (result.data ?? []).map((item) => ({
+        drone_id: item.id,
+        name: item.name,
+        hours: Math.round(((item.total_minutes ?? 0) / 60) * 100) / 100,
+      }));
     },
     enabled: !!userId,
   });

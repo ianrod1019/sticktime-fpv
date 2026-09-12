@@ -96,22 +96,10 @@ export interface MaintenanceLog {
 
 export interface GearCardProps {
   gear: GearItem;
-  parts: GearPart[];
-  logs: MaintenanceLog[];
-  onDeleteGear: (id: string, name: string) => void;
-  onAddPart: (
-    gearId: string,
-    partName: string,
-    category: string,
-    description: string,
-  ) => void;
-  onRemovePart: (partId: string) => void;
-  onAddLog: (gearId: string, description: string, cost: string) => void;
-  onRemoveLog: (logId: string) => void;
-  onUpdatePackCount?: (gearId: string, newCount: number) => void;
   isDeleting: boolean;
   isHoveredDelete: boolean;
   onHoverDelete: (id: string | null) => void;
+  onDeleteGear: (id: string, name: string) => void;
   onUpdateGear: (
     gearId: string,
     name: string,
@@ -122,5 +110,6 @@ export interface GearCardProps {
     connectorType: string,
     purchaseCost: number,
   ) => void;
+  onUpdatePackCount?: (gearId: string, newCount: number) => void;
   onService: (gearId: string, minutes: number, notes: string) => void;
 }

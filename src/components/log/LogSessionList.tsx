@@ -14,7 +14,7 @@ interface LogSessionListProps {
 export function LogSessionList({
   sessions,
   kind,
-  onRemove
+  onRemove,
 }: LogSessionListProps) {
   const rows = sessions.filter((s) => s.session_type === kind);
   const total = rows.reduce((a, s) => a + s.duration_minutes, 0);

@@ -184,9 +184,7 @@ Deno.serve(async (req) => {
       transmitter: session.controller_id
         ? (transmitterMap.get(session.controller_id) ?? null)
         : null,
-      drone: session.drone_id
-        ? (droneMap.get(session.drone_id) ?? null)
-        : null,
+      drone: session.drone_id ? (droneMap.get(session.drone_id) ?? null) : null,
       goggles: session.goggles_id
         ? (gogglesMap.get(session.goggles_id) ?? null)
         : null,

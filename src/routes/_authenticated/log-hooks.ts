@@ -36,16 +36,15 @@ export function useLogData() {
       const currentList = dataQuery.data?.sessions ?? [];
       const sessionToDelete = currentList.find((s) => s.id === id);
 
-      queryClient.setQueryData<{ sessions: SessionRow[]; gear: SessionRow[] } | undefined>(
-        ["log-data"],
-        (old) => {
-          if (!old) return undefined;
-          return {
-            sessions: old.sessions.filter((s) => s.id !== id),
-            gear: old.gear,
-          };
-        }
-      );
+      queryClient.setQueryData<
+        { sessions: SessionRow[]; gear: SessionRow[] } | undefined
+      >(["log-data"], (old) => {
+        if (!old) return undefined;
+        return {
+          sessions: old.sessions.filter((s) => s.id !== id),
+          gear: old.gear,
+        };
+      });
 
       if (sessionToDelete && !id.startsWith("local-")) {
         const { error } = await db_request({

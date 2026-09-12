@@ -44,19 +44,19 @@ export function TopNav() {
         </Link>
         <div className="hidden md:flex space-x-6">
           <Link
-            to="/features"
+            to="/dashboard"
             className="text-foreground hover:text-primary transition-colors font-mono text-sm"
           >
             Features
           </Link>
           <Link
-            to="/docs"
+            to="/privacy"
             className="text-foreground hover:text-primary transition-colors font-mono text-sm"
           >
             Docs
           </Link>
           <Link
-            to="/pricing"
+            to="/terms"
             className="text-foreground hover:text-primary transition-colors font-mono text-sm"
           >
             Pricing
