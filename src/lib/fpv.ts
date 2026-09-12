@@ -7,6 +7,8 @@ export type SessionRow = {
   drone_id: string | null;
   controller_id: string | null;
   goggles_id: string | null;
+  /** Battery SET that powered a real session; packs_flown accrue to it. */
+  battery_set_id?: string | null;
   location_id: string | null;
   track_id: string | null;
   sim_platform: string | null;

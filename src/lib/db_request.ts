@@ -1,6 +1,21 @@
 import { supabase } from "@/integrations/supabase/client";
 import { isAdmin } from "./role-verification";
 
+/**
+ * Safety cap: any select without an explicit limit pulls at most this many
+ * rows. Prevents an unbounded query from draining the user's bandwidth or
+ * enumerating a whole table in one request. Callers needing more must page
+ * (see `pagination` below).
+ */
+const MAX_ROWS_PER_QUERY = 500;
+
+export interface Pagination {
+  /** Zero-based page index. */
+  index: number;
+  /** Rows per page (>0). */
+  size: number;
+}
+
 const PERSONAL_GEAR_SCHEMA = "personal_gear";
 const PERSONAL_GEAR_TABLES = new Set([
   "batteries",
@@ -8,8 +23,8 @@ const PERSONAL_GEAR_TABLES = new Set([
   "transmitters",
   "goggles",
   "other_gear",
-  "battery_parts",
   "drone_parts",
+  "drone_part_installs",
   "transmitter_parts",
   "goggles_parts",
   "other_parts",
@@ -35,6 +50,7 @@ export async function db_request<T = any>({
   filters,
   orderBy,
   limit,
+  pagination,
   head,
   single,
   count,
@@ -52,6 +68,8 @@ export async function db_request<T = any>({
   filters?: Record<string, any>;
   orderBy?: { column: string; ascending?: boolean };
   limit?: number;
+  /** Keyset-free range pagination: .range(index*size, index*size+size-1). */
+  pagination?: Pagination;
   head?: boolean;
   single?: boolean;
   count?: "exact" | "planned" | "estimated";
@@ -96,13 +114,19 @@ export async function db_request<T = any>({
     return base;
   };
 
-  // Auto-inject user_id into insert data for personal_gear tables
+  // Auto-inject user_id into insert data for personal_gear tables.
+  // Applies to admins too: RLS WITH CHECK (user_id = auth.uid()) still applies
+  // to the authenticated role even for admin users, so an insert without
+  // user_id would fail. Explicitly-provided user_id is never overwritten
+  // (allows admin "on behalf of" inserts).
   const injectOwner = (payload: any) => {
-    if (!isPersonalGear || isAdminUser || !userId || !payload) return payload;
+    if (!isPersonalGear || !userId || !payload) return payload;
     if (Array.isArray(payload)) {
-      return payload.map((row: any) => ({ ...row, user_id: userId }));
+      return payload.map((row: any) =>
+        row && row.user_id == null ? { ...row, user_id: userId } : row,
+      );
     }
-    return { ...payload, user_id: userId };
+    return payload.user_id == null ? { ...payload, user_id: userId } : payload;
   };
 
   try {
@@ -159,8 +183,15 @@ export async function db_request<T = any>({
     };
 
     const applyLimit = (query: any) => {
-      if (limit !== undefined) {
-        query = query.limit(limit);
+      if (pagination !== undefined) {
+        const size = Math.max(1, pagination.size);
+        const index = Math.max(0, pagination.index);
+        query = query.range(index * size, index * size + size - 1);
+      } else if (limit !== undefined) {
+        query = query.limit(Math.min(limit, MAX_ROWS_PER_QUERY));
+      } else {
+        // Hard safety cap — no unbounded client query.
+        query = query.limit(MAX_ROWS_PER_QUERY);
       }
       return query;
     };
@@ -168,11 +199,13 @@ export async function db_request<T = any>({
     switch (operation ?? "select") {
       case "select": {
         const selectStr = selectColumns ?? "*";
+        // Range pagination needs an exact count alongside the page rows.
+        const wantsCount = count !== undefined || pagination !== undefined;
         let query = fromBuilder.select(
           selectStr,
-          count !== undefined ? { count } : undefined,
+          wantsCount ? { count: count ?? "exact" } : undefined,
         );
-        query = applyFilters(query);
+        query = applyFilters(query, filters);
         query = applyOrder(query);
         query = applyLimit(query);
 
@@ -219,10 +252,14 @@ export async function db_request<T = any>({
         if (insertError) {
           return { data: null, error: insertError };
         }
+        // With single:true supabase-js resolves to a single object, not an
+        // array — indexing [0] would always yield undefined.
         return {
-          data: (Array.isArray(data)
+          data: (single
             ? insertResult
-            : (insertResult?.[0] ?? null)) as T,
+            : Array.isArray(data)
+              ? insertResult
+              : (insertResult?.[0] ?? null)) as T,
           error: null,
         };
       }
@@ -286,7 +323,7 @@ export async function db_request<T = any>({
         let query = fromBuilder.select(selectColumns ?? "*", {
           count: count ?? "exact",
         });
-        query = applyFilters(query);
+        query = applyFilters(query, filters);
         const { count: rowCount, error: countError } = await query;
         if (countError) {
           return { data: null, error: countError };
@@ -317,6 +354,8 @@ export interface DbRequestOptions {
   filters?: Record<string, any>;
   orderBy?: { column: string; ascending?: boolean };
   limit?: number;
+  /** Keyset-free range pagination: .range(index*size, index*size+size-1). */
+  pagination?: Pagination;
   head?: boolean;
   single?: boolean;
   count?: "exact" | "planned" | "estimated";

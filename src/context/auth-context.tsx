@@ -8,7 +8,11 @@ import {
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { db_request } from "@/lib/db_request";
+import { purgePersistedCache } from "@/lib/query-client";
 import { useQueryClient } from "@tanstack/react-query";
+import type { Database } from "@/integrations/supabase/types";
+
+type AppRole = Database["public"]["Enums"]["app_role"];
 
 interface AuthContextType {
   user: User | null;
@@ -17,6 +21,8 @@ interface AuthContextType {
   userRole: string | null;
   userTier: string | null;
   isAdminOrDev: boolean;
+  /** True when the user's role is one of the given app roles. */
+  hasAnyRole: (roles: AppRole[]) => boolean;
   signOut: () => Promise<void>;
   refreshRoleAndTier: () => Promise<void>;
 }
@@ -28,6 +34,7 @@ const AuthContext = createContext<AuthContextType>({
   userRole: null,
   userTier: null,
   isAdminOrDev: false,
+  hasAnyRole: () => false,
   signOut: async () => {},
   refreshRoleAndTier: async () => {},
 });
@@ -48,7 +55,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         mode: "query",
         table: "profiles",
         operation: "select",
-        selectColumns: "role, tier, subscription_tier",
+        // Live profiles table only has: id, role, tier, created_at, updated_at
+        selectColumns: "role, tier",
         filters: { id: userId },
         head: true,
       });
@@ -62,11 +70,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (data) {
         resolvedRole = (data.role || "user").toLowerCase();
-        resolvedTier = (
-          data.tier ||
-          data.subscription_tier ||
-          "free"
-        ).toLowerCase();
+        resolvedTier = (data.tier || "free").toLowerCase();
       }
 
       // 2. Fallback check via RPC if role is still user
@@ -86,15 +90,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUserRole(resolvedRole);
       setUserTier(resolvedTier);
       setIsAdminOrDev(isAdm);
-
-      // Cache locally for instant reads
-      try {
-        sessionStorage.setItem(`sticktime_user_role_${userId}`, resolvedRole);
-        sessionStorage.setItem(
-          `sticktime_user_role_ts_${userId}`,
-          String(Date.now()),
-        );
-      } catch {}
     } catch (err) {
       console.error("Exception fetching role/tier:", err);
       setUserRole("user");
@@ -176,7 +171,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signOut = async () => {
     try {
-      sessionStorage.clear();
+      // Purge the persisted query cache + auth storage. Sign-out must leave
+      // nothing of this user behind on the machine.
+      purgePersistedCache();
+      queryClient.clear();
       await supabase.auth.signOut();
     } catch (err) {
       console.error("Error signing out:", err);
@@ -186,9 +184,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUserRole(null);
       setUserTier(null);
       setIsAdminOrDev(false);
-      queryClient.clear();
     }
   };
+
+  const hasAnyRole = useCallback(
+    (roles: AppRole[]) => {
+      if (!userRole) return false;
+      return roles.some((role) => role.toLowerCase() === userRole);
+    },
+    [userRole],
+  );
 
   return (
     <AuthContext.Provider
@@ -199,6 +204,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         userRole,
         userTier,
         isAdminOrDev,
+        hasAnyRole,
         signOut,
         refreshRoleAndTier,
       }}
