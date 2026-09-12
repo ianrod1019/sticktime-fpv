@@ -1,7 +1,10 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+// CORS is locked to the app origin (env-configured) instead of "*".
+const allowedOrigin = Deno.env.get("APP_ORIGIN") ?? "";
+
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": allowedOrigin,
   "Access-Control-Allow-Headers":
     "authorization, x-client-apikey, content-type",
 };
@@ -35,9 +38,16 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY");
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    // Forward the caller's JWT so RLS sees the real user for every query.
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      global: {
+        headers: {
+          Authorization: req.headers.get("Authorization") ?? "",
+        },
+      },
+    });
 
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
@@ -77,6 +87,19 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Only well-formed UUIDs may pass through to the query.
+    const UUID_RE =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const validIds = sessionIds.filter(
+      (id: unknown) => typeof id === "string" && UUID_RE.test(id),
+    );
+    if (validIds.length !== sessionIds.length) {
+      return new Response(
+        JSON.stringify({ error: "sessionIds must be UUID strings" }),
+        { status: 400, headers: corsHeaders },
+      );
+    }
+
     const { data: sessions, error: sessionError } = await supabase
       .from("sessions")
       .select(
@@ -97,11 +120,14 @@ Deno.serve(async (req) => {
         weather,
         notes,
         created_at,
-        updated_at
+        updated_at,
+        goggles_id
       `,
       )
+      // Defense in depth: enforce ownership in the WHERE clause, not just via
+      // the token client (RLS may not apply to edge-function queries).
       .eq("user_id", user.id)
-      .in("id", sessionIds)
+      .in("id", validIds)
       .order("id");
 
     if (sessionError) {

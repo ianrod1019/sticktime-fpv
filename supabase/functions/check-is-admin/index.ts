@@ -1,7 +1,10 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+// CORS is locked to the app origin (env-configured) instead of "*".
+const allowedOrigin = Deno.env.get("APP_ORIGIN") ?? "";
+
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": allowedOrigin,
   "Access-Control-Allow-Headers":
     "authorization, x-client-apikey, content-type",
 };
@@ -12,9 +15,16 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY");
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    // Forward the caller's JWT so RLS / check_is_admin() see the real user.
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      global: {
+        headers: {
+          Authorization: req.headers.get("Authorization") ?? "",
+        },
+      },
+    });
 
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {

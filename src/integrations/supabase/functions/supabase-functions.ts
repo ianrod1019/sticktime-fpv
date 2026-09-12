@@ -1,4 +1,4 @@
-import { supabase } from "./client";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SessionGearData {
   id: string;
