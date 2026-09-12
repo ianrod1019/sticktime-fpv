@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   Check,
@@ -8,6 +9,9 @@ import {
   ShieldAlert,
   UserX,
   Loader2,
+  CalendarClock,
+  Undo2,
+  AlertTriangle,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -26,7 +30,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { usePilot } from "@/hooks/use-pilot";
-import { useAuth } from "@/context/auth-context";
 import { downloadFile, toCsv } from "@/lib/fpv";
 import { db_request } from "@/lib/db_request";
 import { scrubUuidsFromRows } from "@/lib/export-scrub";
@@ -35,35 +38,104 @@ export const Route = createFileRoute("/_authenticated/settings")({
   component: Settings,
 });
 
+interface DeletionStatus {
+  pending: boolean;
+  requested_at?: string;
+  scheduled_for?: string;
+  grace_days?: number;
+}
+
 function Settings() {
   const { profile, email, updateProfile } = usePilot();
-  const { signOut } = useAuth();
+  const queryClient = useQueryClient();
 
   // Pilot profile states
   const [goal, setGoal] = useState("5");
   const [privateProfile, setPrivateProfile] = useState(false);
   const [exportingJson, setExportingJson] = useState(false);
-  const [anonymizing, setAnonymizing] = useState(false);
 
-  // Danger zone: typed confirmation + brief countdown before delete fires.
-  const confirmText = "delete my account";
+  // ---------------------------------------------------------------------------
+  // Account deletion: three explicit confirmations, then a 30-day grace period.
+  // Nothing is purged until the scheduled date; the pilot can cancel any time
+  // from the pending-deletion card that replaces this section.
+  // ---------------------------------------------------------------------------
+  const step1Phrase = "delete my account";
+  const step2Phrase = "this is not reversible";
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleteConfirmInput, setDeleteConfirmInput] = useState("");
-  const [countdown, setCountdown] = useState(0);
+  const [deleteStep, setDeleteStep] = useState<1 | 2 | 3>(1);
+  const [step1Input, setStep1Input] = useState("");
+  const [step2Input, setStep2Input] = useState("");
+  const [step3Ack1, setStep3Ack1] = useState(false);
+  const [step3Ack2, setStep3Ack2] = useState(false);
 
   function resetDeleteFlow() {
-    setDeleteConfirmInput("");
-    setCountdown(0);
+    setDeleteStep(1);
+    setStep1Input("");
+    setStep2Input("");
+    setStep3Ack1(false);
+    setStep3Ack2(false);
   }
 
-  useEffect(() => {
-    if (!deleteOpen || deleteConfirmInput !== confirmText) return;
-    setCountdown(5);
-    const timer = setInterval(() => {
-      setCountdown((c) => (c <= 1 ? 0 : c - 1));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [deleteOpen, deleteConfirmInput]);
+  // Pending deletion status — kept fresh so the cancel card never lies.
+  const { data: deletion } = useQuery<DeletionStatus>({
+    queryKey: ["account-deletion-status"],
+    queryFn: async () => {
+      const { data, error } = await db_request({
+        mode: "rpc",
+        rpcFunction: "get_account_deletion_status",
+        operation: "select",
+      });
+      if (error) throw new Error(error.message);
+      return (data ?? { pending: false }) as DeletionStatus;
+    },
+    refetchInterval: 60_000,
+  });
+  const pendingDeletion = deletion?.pending === true;
+
+  const requestDeletion = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await db_request({
+        mode: "rpc",
+        rpcFunction: "request_account_deletion",
+        operation: "select",
+      });
+      if (error) throw new Error(error.message);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["account-deletion-status"] });
+      setDeleteOpen(false);
+      toast.success(
+        "Deletion scheduled. Your account will be permanently deleted in 30 days — cancel any time before then from Settings.",
+        { duration: 8000 },
+      );
+    },
+    onError: (err) => {
+      toast.error(
+        err instanceof Error ? err.message : "Failed to schedule deletion",
+      );
+    },
+  });
+
+  const cancelDeletion = useMutation({
+    mutationFn: async () => {
+      const { error } = await db_request({
+        mode: "rpc",
+        rpcFunction: "cancel_account_deletion",
+        operation: "select",
+      });
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["account-deletion-status"] });
+      toast.success("Deletion cancelled. Your account is safe.");
+    },
+    onError: (err) => {
+      toast.error(
+        err instanceof Error ? err.message : "Failed to cancel deletion",
+      );
+    },
+  });
 
   useEffect(() => {
     if (profile) {
@@ -225,28 +297,13 @@ function Settings() {
     }
   }
 
-  // GDPR Art. 17: self-service erasure. Hard-deletes all content, then
-  // irreversibly pseudonymizes the identity row. Signs the pilot out.
-  async function anonymizeAccount() {
-    setAnonymizing(true);
-    try {
-      const { error } = await db_request({
-        mode: "rpc",
-        rpcFunction: "anonymize_my_data",
-        operation: "select",
-      });
-      if (error) throw new Error(error.message);
-      toast.success(
-        "Account deleted. Your data has been permanently erased.",
-      );
-      await signOut();
-    } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to delete account",
-      );
-    } finally {
-      setAnonymizing(false);
-    }
+  function formatDeletionDate(iso?: string) {
+    if (!iso) return "in 30 days";
+    return new Date(iso).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   }
 
   return (
@@ -347,112 +404,273 @@ function Settings() {
             </div>
           </section>
 
-          {/* Danger zone — account deletion (GDPR Art. 17) */}
-          <section className="hud-panel p-6 border-destructive/30 relative overflow-hidden">
-            <div className="flex items-center gap-2">
-              <ShieldAlert className="h-4 w-4 text-destructive" />
-              <span className="label-mono text-destructive">Danger zone</span>
-            </div>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Permanently delete your account and everything in it — sessions,
-              gear, parts, maintenance logs and records. This cannot be
-              undone.
-            </p>
-            <AlertDialog
-              open={deleteOpen}
-              onOpenChange={(o) => {
-                setDeleteOpen(o);
-                if (!o) resetDeleteFlow();
-              }}
-            >
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="mt-5 border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                >
-                  <UserX className="mr-2 h-4 w-4" />
-                  Delete account
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Delete your account?</AlertDialogTitle>
-                  <AlertDialogDescription asChild>
-                    <div className="space-y-3">
-                      <p>
-                        This permanently erases all of your flights, gear,
-                        parts and maintenance history, and anonymizes your
-                        profile. <strong>It cannot be reversed — even by
-                        platform admins.</strong>
-                      </p>
-                      <ul className="list-disc pl-4 space-y-1 text-xs">
-                        <li>All logged sessions and airtime are erased</li>
-                        <li>All gear, parts and service history are erased</li>
-                        <li>Your callsign and email become unrecoverable</li>
-                        <li>You are signed out immediately</li>
-                      </ul>
-                      <p className="text-xs">
-                        Want a copy first?{" "}
-                        <button
-                          type="button"
-                          className="underline underline-offset-2 text-primary hover:text-primary/80"
-                          onClick={() => {
-                            setDeleteOpen(false);
-                            void exportFullJson();
+          {/* Danger zone — account deletion (GDPR Art. 17, 30-day grace) */}
+          {pendingDeletion ? (
+            <section className="hud-panel p-6 border-destructive/50 relative overflow-hidden">
+              <div className="flex items-center gap-2">
+                <CalendarClock className="h-4 w-4 text-destructive" />
+                <span className="label-mono text-destructive">
+                  Deletion pending
+                </span>
+              </div>
+              <p className="mt-3 text-sm">
+                Your account is scheduled for permanent deletion on{" "}
+                <strong className="font-mono">
+                  {formatDeletionDate(deletion?.scheduled_for)}
+                </strong>
+                .
+              </p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Everything — sessions, gear, parts, logs and your identity —
+                will be erased on that date. This is your grace period: cancel
+                now and nothing happens.
+              </p>
+              <Button
+                variant="outline"
+                className="mt-5 border-primary/40 text-primary hover:bg-primary/10 hover:text-primary/90"
+                disabled={cancelDeletion.isPending}
+                onClick={() => cancelDeletion.mutate()}
+              >
+                {cancelDeletion.isPending ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Undo2 className="mr-2 h-4 w-4" />
+                )}
+                Cancel deletion
+              </Button>
+            </section>
+          ) : (
+            <section className="hud-panel p-6 border-destructive/30 relative overflow-hidden">
+              <div className="flex items-center gap-2">
+                <ShieldAlert className="h-4 w-4 text-destructive" />
+                <span className="label-mono text-destructive">
+                  Danger zone
+                </span>
+              </div>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Delete your account and everything in it — sessions, gear,
+                parts, maintenance logs and records. Deletion is scheduled 30
+                days after you confirm, and can be cancelled any time before
+                then.
+              </p>
+              <AlertDialog
+                open={deleteOpen}
+                onOpenChange={(o) => {
+                  setDeleteOpen(o);
+                  if (!o) resetDeleteFlow();
+                }}
+              >
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="mt-5 border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                  >
+                    <UserX className="mr-2 h-4 w-4" />
+                    Delete account
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  {deleteStep === 1 && (
+                    <>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Step 1 of 3 — Confirm it's you
+                        </AlertDialogTitle>
+                        <AlertDialogDescription asChild>
+                          <div className="space-y-3">
+                            <p>
+                              This starts the deletion process for{" "}
+                              <strong>{email}</strong>. Three more
+                              confirmations follow this one.
+                            </p>
+                            <div>
+                              <Label
+                                htmlFor="delete-step1"
+                                className="text-xs"
+                              >
+                                Type{" "}
+                                <span className="font-mono text-foreground">
+                                  {step1Phrase}
+                                </span>
+                              </Label>
+                              <Input
+                                id="delete-step1"
+                                value={step1Input}
+                                onChange={(e) =>
+                                  setStep1Input(e.target.value)
+                                }
+                                placeholder={step1Phrase}
+                                autoComplete="off"
+                                className="mt-1.5 font-mono"
+                              />
+                            </div>
+                          </div>
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Keep my account</AlertDialogCancel>
+                        <AlertDialogAction
+                          disabled={step1Input !== step1Phrase}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setDeleteStep(2);
                           }}
                         >
-                          Export everything (JSON)
-                        </button>
-                      </p>
-                      <div className="pt-1">
-                        <Label htmlFor="delete-confirm" className="text-xs">
-                          Type{" "}
-                          <span className="font-mono text-foreground">
-                            {confirmText}
-                          </span>{" "}
-                          to confirm
-                        </Label>
-                        <Input
-                          id="delete-confirm"
-                          value={deleteConfirmInput}
-                          onChange={(e) => setDeleteConfirmInput(e.target.value)}
-                          placeholder={confirmText}
-                          autoComplete="off"
-                          className="mt-1.5 font-mono"
-                        />
-                      </div>
-                    </div>
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Keep my account</AlertDialogCancel>
-                  <Button
-                    variant="destructive"
-                    disabled={
-                      deleteConfirmInput !== confirmText ||
-                      anonymizing ||
-                      countdown > 0
-                    }
-                    onClick={anonymizeAccount}
-                  >
-                    {anonymizing ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Deleting…
-                      </>
-                    ) : countdown > 0 ? (
-                      `Hold on… (${countdown})`
-                    ) : (
-                      <>
-                        <UserX className="mr-2 h-4 w-4" />
-                        Delete forever
-                      </>
-                    )}
-                  </Button>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </section>
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </>
+                  )}
+
+                  {deleteStep === 2 && (
+                    <>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Step 2 of 3 — What happens next
+                        </AlertDialogTitle>
+                        <AlertDialogDescription asChild>
+                          <div className="space-y-3">
+                            <ul className="list-disc pl-4 space-y-1 text-xs">
+                              <li>
+                                Deletion is scheduled for{" "}
+                                <strong>30 days from now</strong>
+                              </li>
+                              <li>
+                                You keep using the platform normally until
+                                then
+                              </li>
+                              <li>
+                                You can cancel from Settings any time during
+                                those 30 days
+                              </li>
+                              <li>
+                                On the scheduled date everything is erased
+                                permanently
+                              </li>
+                            </ul>
+                            <p className="text-xs">
+                              Want a copy first?{" "}
+                              <button
+                                type="button"
+                                className="underline underline-offset-2 text-primary hover:text-primary/80"
+                                onClick={() => {
+                                  void exportFullJson();
+                                }}
+                              >
+                                Export everything (JSON)
+                              </button>
+                            </p>
+                            <div>
+                              <Label
+                                htmlFor="delete-step2"
+                                className="text-xs"
+                              >
+                                Type{" "}
+                                <span className="font-mono text-foreground">
+                                  {step2Phrase}
+                                </span>
+                              </Label>
+                              <Input
+                                id="delete-step2"
+                                value={step2Input}
+                                onChange={(e) =>
+                                  setStep2Input(e.target.value)
+                                }
+                                placeholder={step2Phrase}
+                                autoComplete="off"
+                                className="mt-1.5 font-mono"
+                              />
+                            </div>
+                          </div>
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Keep my account</AlertDialogCancel>
+                        <Button
+                          variant="destructive"
+                          disabled={step2Input !== step2Phrase}
+                          onClick={() => setDeleteStep(3)}
+                        >
+                          Schedule deletion
+                        </Button>
+                      </AlertDialogFooter>
+                    </>
+                  )}
+
+                  {deleteStep === 3 && (
+                    <>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Step 3 of 3 — Final confirmation
+                        </AlertDialogTitle>
+                        <AlertDialogDescription asChild>
+                          <div className="space-y-3">
+                            <p className="text-xs flex items-start gap-2">
+                              <AlertTriangle className="h-4 w-4 shrink-0 text-destructive mt-0.5" />
+                              Last check. After this, the deletion date is
+                              locked in and only you can stop it.
+                            </p>
+                            <label className="flex items-start gap-2 text-xs cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={step3Ack1}
+                                onChange={(e) =>
+                                  setStep3Ack1(e.target.checked)
+                                }
+                                className="mt-0.5"
+                              />
+                              <span>
+                                All logged sessions, gear, parts, maintenance
+                                history and my identity will be permanently
+                                erased.
+                              </span>
+                            </label>
+                            <label className="flex items-start gap-2 text-xs cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={step3Ack2}
+                                onChange={(e) =>
+                                  setStep3Ack2(e.target.checked)
+                                }
+                                className="mt-0.5"
+                              />
+                              <span>
+                                I understand the purge runs on{" "}
+                                {formatDeletionDate()} and can only be
+                                prevented by me, before that date.
+                              </span>
+                            </label>
+                          </div>
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Keep my account</AlertDialogCancel>
+                        <Button
+                          variant="destructive"
+                          disabled={
+                            !step3Ack1 || !step3Ack2 || requestDeletion.isPending
+                          }
+                          onClick={() => requestDeletion.mutate()}
+                        >
+                          {requestDeletion.isPending ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Scheduling…
+                            </>
+                          ) : (
+                            <>
+                              <UserX className="mr-2 h-4 w-4" />
+                              I understand — schedule deletion
+                            </>
+                          )}
+                        </Button>
+                      </AlertDialogFooter>
+                    </>
+                  )}
+                </AlertDialogContent>
+              </AlertDialog>
+            </section>
+          )}
         </div>
       </div>
     </>

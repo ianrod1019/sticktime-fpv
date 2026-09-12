@@ -33,7 +33,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { BanPilotModal } from "./BanPilotModal";
-import { AdminPilotOverviewDialog } from "./AdminPilotOverviewDialog";
 
 export interface ProfileWithEmail {
   id: string;
@@ -59,8 +58,6 @@ export function AdminPilotsTable() {
   // Modal state for banning pilot
   const [selectedPilotToBan, setSelectedPilotToBan] =
     useState<ProfileWithEmail | null>(null);
-  // Aggregate-only pilot overview (GDPR-safe support view).
-  const [overviewPilot, setOverviewPilot] = useState<ProfileWithEmail | null>(null);
 
   // Get current user id to prevent self-role editing
   useQuery({
@@ -596,15 +593,6 @@ export function AdminPilotsTable() {
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  className="h-8 text-xs gap-1 font-mono"
-                                  onClick={() => setOverviewPilot(p)}
-                                  title="Aggregate overview — counts only, no private content"
-                                >
-                                  <Search className="h-3 w-3" /> Overview
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
                                   className={`h-8 text-xs gap-1 font-mono ${isSelf ? "opacity-50 cursor-not-allowed" : ""}`}
                                   onClick={() => handleStartEdit(p)}
                                   disabled={isSelf}
@@ -660,14 +648,6 @@ export function AdminPilotsTable() {
         isLoading={toggleBanMutation.isPending}
       />
 
-      <AdminPilotOverviewDialog
-        pilotId={overviewPilot?.id ?? null}
-        pilotEmail={overviewPilot?.email}
-        open={!!overviewPilot}
-        onOpenChange={(o) => {
-          if (!o) setOverviewPilot(null);
-        }}
-      />
     </>
   );
 }
