@@ -91,7 +91,7 @@ export function AdminAuditLogsView() {
 
         if (fallbackErr) throw fallbackErr;
 
-        profilesList = (fallbackProfiles || []).map((p) => {
+        profilesList = (fallbackProfiles || []).map((p: any) => {
           const userId = p.id || p.uuid;
           const userEmail =
             emailMap[userId] ||
@@ -108,7 +108,7 @@ export function AdminAuditLogsView() {
       }
 
       // Filter specifically for administrators or developers (role in 'admin', 'dev')
-      const filteredAdmins = profilesList.filter((p) => {
+      const filteredAdmins = profilesList.filter((p: any) => {
         const r = (p.role || "").toLowerCase();
         return r === "admin" || r === "dev";
       });
@@ -132,14 +132,14 @@ export function AdminAuditLogsView() {
 
       const countMap: Record<string, number> = {};
       if (auditLogs) {
-        auditLogs.forEach((log) => {
+        (auditLogs as any[]).forEach((log) => {
           if (log.actor_id) {
             countMap[log.actor_id] = (countMap[log.actor_id] || 0) + 1;
           }
         });
       }
 
-      return targetAdmins.map((p) => {
+      return targetAdmins.map((p: any) => {
         const userId = p.id || p.uuid;
         const userEmail =
           emailMap[userId] ||

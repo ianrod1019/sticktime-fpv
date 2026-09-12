@@ -3,7 +3,7 @@ import { TopNav } from "@/components/top-nav";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
-    title: "Privacy — StickTime FPV",
+    meta: [{ title: "Privacy — StickTime FPV" }],
   }),
   component: Privacy,
 });

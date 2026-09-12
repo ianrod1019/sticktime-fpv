@@ -5,7 +5,7 @@ import {
   Plus,
   Key,
   Radio,
-  Shield,
+  ShieldAlert,
   ExternalLink,
   Trash2,
   Calendar,
@@ -87,46 +87,25 @@ function SquadronPortalPage() {
       name: string;
       description: string;
     }) => {
-      const { data, error } = await supabase.rpc("create_team_with_owner", {
-        team_name: name,
-        team_desc: description,
+      // Atomic RPC: team + owner membership in one statement. Returns the
+      // team id directly.
+      const { data, error } = await supabase.rpc("create_squadron", {
+        _name: name.trim(),
+        _description: description.trim() || null,
       });
-
-      if (error) {
-        // Fallback manual insert if RPC fails
-        const teamResult = await db_request({
-          mode: "query",
-          table: "teams",
-          operation: "upsert",
-          data: { name, description, owner_id: user!.id },
-          single: true,
-        });
-
-        if (teamResult.error) throw teamResult.error;
-
-        const memberResult = await db_request({
-          mode: "query",
-          table: "team_members",
-          operation: "insert",
-          data: {
-            team_id: teamResult.data?.id,
-            user_id: user!.id,
-            team_role: "owner",
-          },
-        });
-
-        if (memberResult.error) throw memberResult.error;
-
-        return teamResult.data?.id;
-      }
-      return data;
+      if (error) throw error;
+      return data as string;
     },
-    onSuccess: () => {
+    onSuccess: (teamId: string) => {
       queryClient.invalidateQueries({ queryKey: ["user-squadrons"] });
       toast.success("Squadron established successfully!");
       setShowCreateModal(false);
       setNewSquadName("");
       setNewSquadDesc("");
+      navigate({
+        to: "/squadron/$squadronId",
+        params: { squadronId: teamId },
+      });
     },
     onError: (err: any) => {
       toast.error(err.message || "Failed to create squadron.");
@@ -135,17 +114,24 @@ function SquadronPortalPage() {
 
   const joinSquadronMutation = useMutation({
     mutationFn: async (code: string) => {
+      // The RPC returns the joined team id (uuid) — navigate straight there.
       const { data, error } = await supabase.rpc("join_team_with_code", {
-        invite_code_input: code.trim().toUpperCase(),
+        _code: code.trim().toUpperCase(),
       });
       if (error) throw error;
-      return data;
+      return data as string;
     },
-    onSuccess: () => {
+    onSuccess: (teamId: string) => {
       queryClient.invalidateQueries({ queryKey: ["user-squadrons"] });
       toast.success("Successfully joined squadron!");
       setShowJoinModal(false);
       setJoinCode("");
+      if (teamId) {
+        navigate({
+          to: "/squadron/$squadronId",
+          params: { squadronId: teamId },
+        });
+      }
     },
     onError: (err: any) => {
       toast.error(err.message || "Invalid or expired invite code.");

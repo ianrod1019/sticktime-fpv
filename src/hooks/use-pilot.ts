@@ -42,13 +42,21 @@ export function usePilot() {
   const userId = session?.user?.id;
   const email = session?.user?.email;
 
+  // Role/tier come from the signed JWT app_metadata claims when present
+  // (set by the custom-access-token-hook edge function; verified server-side
+  // on every request). The profiles query is the fallback while claims are
+  // not yet provisioned — the DB remains the source of truth either way.
+  const jwtRole = (session?.user?.app_metadata?.["role"] as string) ?? null;
+  const jwtTier = (session?.user?.app_metadata?.["tier"] as string) ?? null;
+  const hasJwtClaims = !!jwtRole;
+
   // Use centralized role verification strictly for own user id
-  const { data: roleData } = useRoleVerification(userId);
+  const { data: roleData } = useRoleVerification(hasJwtClaims ? undefined : userId);
 
   // Fetch combined profile data strictly for own user id
   const { data: profile, isLoading } = useQuery({
     queryKey: ["pilot-settings", userId],
-    enabled: !!userId,
+    enabled: !!userId && !hasJwtClaims,
     queryFn: async () => {
       if (!userId) return null;
 
@@ -68,8 +76,8 @@ export function usePilot() {
           mode: "query",
           table: "profiles",
           operation: "select",
-          selectColumns:
-            "id, role, tier, accent_color, avatar_url, display_name, created_at",
+          // Live profiles table only has: id, role, tier, created_at, updated_at
+          selectColumns: "id, role, tier, created_at",
           filters: { id: userId },
           head: true,
         }),
@@ -116,14 +124,12 @@ export function usePilot() {
         callsign:
           settingsData?.callsign ?? (email ? email.split("@")[0] : "Pilot"),
         display_name:
-          profilesData?.display_name ??
-          settingsData?.callsign ??
-          (email ? email.split("@")[0] : "Pilot"),
+          settingsData?.callsign ?? (email ? email.split("@")[0] : "Pilot"),
         bio: settingsData?.bio ?? "",
         tier: profilesData?.tier ?? "free",
         role: profilesData?.role ?? "user",
-        accent_color: profilesData?.accent_color ?? "#6366f1",
-        avatar_url: profilesData?.avatar_url ?? null,
+        accent_color: "#6366f1",
+        avatar_url: null,
         created_at: profilesData?.created_at ?? new Date().toISOString(),
         updated_at: settingsData?.updated_at ?? new Date().toISOString(),
       };
@@ -131,6 +137,12 @@ export function usePilot() {
       return merged;
     },
   });
+
+  // Effective role/tier: JWT claims win; DB-backed values are the fallback.
+  const effectiveRole = (jwtRole ?? profile?.role ?? roleData?.role ?? "user").toLowerCase();
+  const effectiveTier = (jwtTier ?? profile?.tier ?? roleData?.tier ?? "free").toLowerCase();
+  const effectiveIsAdmin =
+    effectiveRole === "admin" || effectiveRole === "dev";
 
   const updateProfile = useMutation({
     mutationFn: async (updates: Partial<PilotProfile>) => {
@@ -143,7 +155,8 @@ export function usePilot() {
         allowedUpdates.is_private = updates.is_private;
       if (updates.callsign !== undefined)
         allowedUpdates.callsign = updates.callsign;
-      if (updates.bio !== undefined) allowedUpdates.bio = updates.bio;
+      if (updates.bio !== undefined)
+        allowedUpdates.bio = updates.bio;
 
       if (Object.keys(allowedUpdates).length === 0) {
         return profile;
@@ -177,8 +190,8 @@ export function usePilot() {
     profile,
     isLoading,
     updateProfile,
-    role: roleData?.role,
-    tier: roleData?.tier,
-    isAdminOrDev: roleData?.isAdminOrDev ?? false,
+    role: effectiveRole,
+    tier: effectiveTier,
+    isAdminOrDev: effectiveIsAdmin,
   };
 }

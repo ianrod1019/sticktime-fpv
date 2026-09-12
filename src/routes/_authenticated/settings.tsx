@@ -5,16 +5,31 @@ import {
   Check,
   Download,
   Settings as SettingsIcon,
-  LockKeyhole,
+  ShieldAlert,
+  UserX,
+  Loader2,
 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { PageHeader } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { usePilot } from "@/hooks/use-pilot";
+import { useAuth } from "@/context/auth-context";
 import { downloadFile, toCsv } from "@/lib/fpv";
 import { db_request } from "@/lib/db_request";
+import { scrubUuidsFromRows } from "@/lib/export-scrub";
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({ meta: [{ title: "Settings — StickTime FPV" }] }),
   component: Settings,
@@ -22,10 +37,33 @@ export const Route = createFileRoute("/_authenticated/settings")({
 
 function Settings() {
   const { profile, email, updateProfile } = usePilot();
+  const { signOut } = useAuth();
 
   // Pilot profile states
   const [goal, setGoal] = useState("5");
   const [privateProfile, setPrivateProfile] = useState(false);
+  const [exportingJson, setExportingJson] = useState(false);
+  const [anonymizing, setAnonymizing] = useState(false);
+
+  // Danger zone: typed confirmation + brief countdown before delete fires.
+  const confirmText = "delete my account";
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteConfirmInput, setDeleteConfirmInput] = useState("");
+  const [countdown, setCountdown] = useState(0);
+
+  function resetDeleteFlow() {
+    setDeleteConfirmInput("");
+    setCountdown(0);
+  }
+
+  useEffect(() => {
+    if (!deleteOpen || deleteConfirmInput !== confirmText) return;
+    setCountdown(5);
+    const timer = setInterval(() => {
+      setCountdown((c) => (c <= 1 ? 0 : c - 1));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [deleteOpen, deleteConfirmInput]);
 
   useEffect(() => {
     if (profile) {
@@ -64,12 +102,10 @@ function Settings() {
         transmitters,
         goggles,
         otherGear,
-        batteryParts,
         droneParts,
         transmitterParts,
         gogglesParts,
         otherParts,
-        records,
       ] = await Promise.all([
         db_request({ mode: "query", table: "sessions", operation: "select" }),
         db_request({
@@ -105,12 +141,6 @@ function Settings() {
         db_request({
           mode: "query",
           schema: "personal_gear",
-          table: "battery_parts",
-          operation: "select",
-        }),
-        db_request({
-          mode: "query",
-          schema: "personal_gear",
           table: "drone_parts",
           operation: "select",
         }),
@@ -132,11 +162,6 @@ function Settings() {
           table: "other_parts",
           operation: "select",
         }),
-        db_request({
-          mode: "query",
-          table: "personal_records",
-          operation: "select",
-        }),
       ]);
 
       // Combine all gear tables into one gear array
@@ -150,7 +175,6 @@ function Settings() {
 
       // Combine all parts tables into one parts array
       const parts = [
-        ...(batteryParts.data ?? []),
         ...(droneParts.data ?? []),
         ...(transmitterParts.data ?? []),
         ...(gogglesParts.data ?? []),
@@ -158,10 +182,9 @@ function Settings() {
       ];
 
       const tables = [
-        ["sessions", sessions.data ?? []],
-        ["gear", gear],
-        ["gear_parts", parts],
-        ["personal_records", records.data ?? []],
+        ["sessions", scrubUuidsFromRows(sessions.data ?? [])],
+        ["gear", scrubUuidsFromRows(gear)],
+        ["gear_parts", scrubUuidsFromRows(parts)],
       ] as const;
       const content = tables
         .map(
@@ -173,6 +196,56 @@ function Settings() {
       toast.success("CSV export ready");
     } catch (err) {
       toast.error("Failed to export data");
+    }
+  }
+
+  // GDPR Art. 15/20: full structured export of everything stored about the
+  // caller, via the SECURITY DEFINER RPC (server-side scoped to auth.uid()).
+  async function exportFullJson() {
+    setExportingJson(true);
+    try {
+      const { data, error } = await db_request({
+        mode: "rpc",
+        rpcFunction: "export_my_data",
+        operation: "select",
+      });
+      if (error) throw new Error(error.message);
+      downloadFile(
+        `sticktime-export-${new Date().toISOString().slice(0, 10)}.json`,
+        JSON.stringify(data, null, 2),
+        "application/json",
+      );
+      toast.success("Full data export ready (JSON)");
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Failed to export full data",
+      );
+    } finally {
+      setExportingJson(false);
+    }
+  }
+
+  // GDPR Art. 17: self-service erasure. Hard-deletes all content, then
+  // irreversibly pseudonymizes the identity row. Signs the pilot out.
+  async function anonymizeAccount() {
+    setAnonymizing(true);
+    try {
+      const { error } = await db_request({
+        mode: "rpc",
+        rpcFunction: "anonymize_my_data",
+        operation: "select",
+      });
+      if (error) throw new Error(error.message);
+      toast.success(
+        "Account deleted. Your data has been permanently erased.",
+      );
+      await signOut();
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Failed to delete account",
+      );
+    } finally {
+      setAnonymizing(false);
     }
   }
 
@@ -256,9 +329,129 @@ function Settings() {
                 onClick={() => exportData()}
               >
                 <Download className="mr-2 h-4 w-4" />
-                Export Data
+                Export CSV
+              </Button>
+              <Button
+                variant="outline"
+                className="border-primary/30 text-primary hover:bg-primary/10 hover:text-primary/90"
+                onClick={exportFullJson}
+                disabled={exportingJson}
+              >
+                {exportingJson ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Download className="mr-2 h-4 w-4" />
+                )}
+                Export everything (JSON)
               </Button>
             </div>
+          </section>
+
+          {/* Danger zone — account deletion (GDPR Art. 17) */}
+          <section className="hud-panel p-6 border-destructive/30 relative overflow-hidden">
+            <div className="flex items-center gap-2">
+              <ShieldAlert className="h-4 w-4 text-destructive" />
+              <span className="label-mono text-destructive">Danger zone</span>
+            </div>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Permanently delete your account and everything in it — sessions,
+              gear, parts, maintenance logs and records. This cannot be
+              undone.
+            </p>
+            <AlertDialog
+              open={deleteOpen}
+              onOpenChange={(o) => {
+                setDeleteOpen(o);
+                if (!o) resetDeleteFlow();
+              }}
+            >
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="mt-5 border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                >
+                  <UserX className="mr-2 h-4 w-4" />
+                  Delete account
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete your account?</AlertDialogTitle>
+                  <AlertDialogDescription asChild>
+                    <div className="space-y-3">
+                      <p>
+                        This permanently erases all of your flights, gear,
+                        parts and maintenance history, and anonymizes your
+                        profile. <strong>It cannot be reversed — even by
+                        platform admins.</strong>
+                      </p>
+                      <ul className="list-disc pl-4 space-y-1 text-xs">
+                        <li>All logged sessions and airtime are erased</li>
+                        <li>All gear, parts and service history are erased</li>
+                        <li>Your callsign and email become unrecoverable</li>
+                        <li>You are signed out immediately</li>
+                      </ul>
+                      <p className="text-xs">
+                        Want a copy first?{" "}
+                        <button
+                          type="button"
+                          className="underline underline-offset-2 text-primary hover:text-primary/80"
+                          onClick={() => {
+                            setDeleteOpen(false);
+                            void exportFullJson();
+                          }}
+                        >
+                          Export everything (JSON)
+                        </button>
+                      </p>
+                      <div className="pt-1">
+                        <Label htmlFor="delete-confirm" className="text-xs">
+                          Type{" "}
+                          <span className="font-mono text-foreground">
+                            {confirmText}
+                          </span>{" "}
+                          to confirm
+                        </Label>
+                        <Input
+                          id="delete-confirm"
+                          value={deleteConfirmInput}
+                          onChange={(e) => setDeleteConfirmInput(e.target.value)}
+                          placeholder={confirmText}
+                          autoComplete="off"
+                          className="mt-1.5 font-mono"
+                        />
+                      </div>
+                    </div>
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Keep my account</AlertDialogCancel>
+                  <Button
+                    variant="destructive"
+                    disabled={
+                      deleteConfirmInput !== confirmText ||
+                      anonymizing ||
+                      countdown > 0
+                    }
+                    onClick={anonymizeAccount}
+                  >
+                    {anonymizing ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Deleting…
+                      </>
+                    ) : countdown > 0 ? (
+                      `Hold on… (${countdown})`
+                    ) : (
+                      <>
+                        <UserX className="mr-2 h-4 w-4" />
+                        Delete forever
+                      </>
+                    )}
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </section>
         </div>
       </div>

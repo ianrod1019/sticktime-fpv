@@ -31,6 +31,7 @@ export function useDashboardTotals(userId: string | null) {
       );
     },
     enabled: !!userId,
+    staleTime: 60_000,
   });
 }
 
@@ -48,6 +49,7 @@ export function useDashboardMonthlyVolume(userId: string | null) {
       return result.data ?? [];
     },
     enabled: !!userId,
+    staleTime: 60_000,
   });
 }
 
@@ -65,6 +67,7 @@ export function useDashboardHeatmap(userId: string | null) {
       return result.data ?? [];
     },
     enabled: !!userId,
+    staleTime: 60_000,
   });
 }
 
@@ -76,14 +79,17 @@ export function useRecentSessions(userId: string | null) {
       const result = await supabase
         .from("sessions")
         .select(
-          "id, session_type, flown_on, duration_minutes, drone_id, controller_id, goggles_id, location_id, track_id, sim_platform, packs_flown, crashes, battery_notes, weather, rating, notes",
+          // sessions has no rating column in the live schema
+          "id, session_type, flown_on, duration_minutes, drone_id, controller_id, goggles_id, location_id, track_id, sim_platform, packs_flown, crashes, battery_notes, weather, notes",
         )
         .eq("user_id", userId)
-        .order("flown_on", { ascending: false });
+        .order("flown_on", { ascending: false })
+        .limit(100);
       if (result.error) throw result.error;
       return result.data ?? [];
     },
     enabled: !!userId,
+    staleTime: 60_000,
   });
 }
 
@@ -135,6 +141,7 @@ export function useActiveRigs(userId: string | null) {
       return activeCount;
     },
     enabled: !!userId,
+    staleTime: 60_000,
   });
 }
 
@@ -161,6 +168,7 @@ export function useCurrentStreak(userId: string | null) {
       return computeStreakByMode(sessions);
     },
     enabled: !!userId,
+    staleTime: 60_000,
   });
 }
 
@@ -202,6 +210,7 @@ export function useWeeklyGoal(userId: string | null) {
       return totalMinutes;
     },
     enabled: !!userId,
+    staleTime: 60_000,
   });
 }
 
@@ -219,12 +228,15 @@ export function useRigUsage(userId: string | null) {
         filters: { user_id: userId },
       });
       if (result.error) throw result.error;
-      return (result.data ?? []).map((item) => ({
-        drone_id: item.id,
-        name: item.name,
-        hours: Math.round(((item.total_minutes ?? 0) / 60) * 100) / 100,
-      }));
+      return (result.data ?? []).map(
+        (item: { id: string; name: string; total_minutes: number | null }) => ({
+          drone_id: item.id,
+          name: item.name,
+          hours: Math.round(((item.total_minutes ?? 0) / 60) * 100) / 100,
+        }),
+      );
     },
     enabled: !!userId,
+    staleTime: 60_000,
   });
 }

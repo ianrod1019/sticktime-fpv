@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { BanPilotModal } from "./BanPilotModal";
+import { AdminPilotOverviewDialog } from "./AdminPilotOverviewDialog";
 
 export interface ProfileWithEmail {
   id: string;
@@ -58,6 +59,8 @@ export function AdminPilotsTable() {
   // Modal state for banning pilot
   const [selectedPilotToBan, setSelectedPilotToBan] =
     useState<ProfileWithEmail | null>(null);
+  // Aggregate-only pilot overview (GDPR-safe support view).
+  const [overviewPilot, setOverviewPilot] = useState<ProfileWithEmail | null>(null);
 
   // Get current user id to prevent self-role editing
   useQuery({
@@ -172,9 +175,10 @@ export function AdminPilotsTable() {
         );
       }
 
+      // profiles has no subscription_tier / uuid columns — write only the
+      // real ones (tier, role). The DB trigger guard still blocks non-admins.
       const updatePayload = {
         tier: subscription_tier,
-        subscription_tier,
         role,
       };
 
@@ -187,17 +191,7 @@ export function AdminPilotsTable() {
         requireAdmin: true,
       });
 
-      if (error) {
-        const { error: err2 } = await db_request({
-          mode: "query",
-          table: "profiles",
-          operation: "update",
-          data: updatePayload,
-          filters: { uuid: id },
-          requireAdmin: true,
-        });
-        if (err2) throw err2;
-      }
+      if (error) throw error;
 
       const { data: userData } = await supabase.auth.getUser();
       if (userData.user) {
@@ -209,7 +203,7 @@ export function AdminPilotsTable() {
             actor_id: userData.user.id,
             action: "update_pilot_profile_and_role",
             target_id: id,
-            payload: { subscription_tier, role },
+            payload: { tier: subscription_tier, role },
           },
           requireAdmin: true,
         });
@@ -269,17 +263,7 @@ export function AdminPilotsTable() {
         requireAdmin: true,
       });
 
-      if (error) {
-        const { error: err2 } = await db_request({
-          mode: "query",
-          table: "profiles",
-          operation: "update",
-          data: updatePayload,
-          filters: { uuid: p.id },
-          requireAdmin: true,
-        });
-        if (err2) throw err2;
-      }
+      if (error) throw error;
 
       const { data: userData } = await supabase.auth.getUser();
       if (userData.user) {
@@ -612,6 +596,15 @@ export function AdminPilotsTable() {
                                 <Button
                                   size="sm"
                                   variant="outline"
+                                  className="h-8 text-xs gap-1 font-mono"
+                                  onClick={() => setOverviewPilot(p)}
+                                  title="Aggregate overview — counts only, no private content"
+                                >
+                                  <Search className="h-3 w-3" /> Overview
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
                                   className={`h-8 text-xs gap-1 font-mono ${isSelf ? "opacity-50 cursor-not-allowed" : ""}`}
                                   onClick={() => handleStartEdit(p)}
                                   disabled={isSelf}
@@ -665,6 +658,15 @@ export function AdminPilotsTable() {
         pilot={selectedPilotToBan}
         onConfirmBan={handleConfirmBanFromModal}
         isLoading={toggleBanMutation.isPending}
+      />
+
+      <AdminPilotOverviewDialog
+        pilotId={overviewPilot?.id ?? null}
+        pilotEmail={overviewPilot?.email}
+        open={!!overviewPilot}
+        onOpenChange={(o) => {
+          if (!o) setOverviewPilot(null);
+        }}
       />
     </>
   );

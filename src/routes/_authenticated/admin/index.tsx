@@ -1,11 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/app-shell";
-import { Users, Shield, Megaphone, ShieldCheck } from "lucide-react";
+import { Users, Shield, Megaphone, ShieldCheck, BarChart3 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
-import { AdminStatsCards } from "@/components/admin/AdminStatsCards";
+import { AdminAnalyticsDashboard } from "@/components/admin/AdminAnalyticsDashboard";
 import { AdminPilotsTable } from "@/components/admin/AdminPilotsTable";
 import { SecurityLogsView } from "@/components/admin/SecurityLogsView";
 import { BroadcastNotificationsView } from "@/components/admin/BroadcastNotificationsView";
@@ -16,7 +15,7 @@ export const Route = createFileRoute("/_authenticated/admin/")({
 });
 
 function AdminPanelComponent() {
-  const [activeTab, setActiveTab] = useState<string>("pilots");
+  const [activeTab, setActiveTab] = useState<string>("analytics");
 
   return (
     <div className="space-y-8 animate-fadeIn pb-12">
@@ -35,27 +34,32 @@ function AdminPanelComponent() {
         }
       />
 
-      <AdminStatsCards />
-
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
         className="space-y-6"
       >
-        <TabsList className="grid w-full max-w-3xl grid-cols-4">
+        <TabsList className="grid w-full max-w-4xl grid-cols-5">
+          <TabsTrigger value="analytics" className="gap-2 font-mono text-xs">
+            <BarChart3 className="h-4 w-4" /> Analytics
+          </TabsTrigger>
           <TabsTrigger value="pilots" className="gap-2 font-mono text-xs">
-            <Users className="h-4 w-4" /> Pilot Directory
+            <Users className="h-4 w-4" /> Pilots
           </TabsTrigger>
           <TabsTrigger value="security" className="gap-2 font-mono text-xs">
-            <Shield className="h-4 w-4" /> Security Logs
+            <Shield className="h-4 w-4" /> Security
           </TabsTrigger>
           <TabsTrigger value="audit" className="gap-2 font-mono text-xs">
-            <ShieldCheck className="h-4 w-4" /> Admin Audit
+            <ShieldCheck className="h-4 w-4" /> Audit
           </TabsTrigger>
           <TabsTrigger value="broadcast" className="gap-2 font-mono text-xs">
             <Megaphone className="h-4 w-4" /> Broadcasts
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="analytics" className="space-y-6">
+          <AdminAnalyticsDashboard />
+        </TabsContent>
 
         <TabsContent value="pilots" className="space-y-6">
           <AdminPilotsTable />

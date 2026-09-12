@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { usePilot } from "@/hooks/use-pilot";
 import { DashboardContent } from "./components/-DashboardContent";
-import { useDashboardTotals } from "./-hooks";
-import { useDashboardMonthlyVolume } from "./-hooks";
-import { useDashboardHeatmap } from "./-hooks";
-import { useRecentSessions } from "./-hooks";
 import {
+  useDashboardTotals,
+  useDashboardMonthlyVolume,
+  useDashboardHeatmap,
+  useRecentSessions,
   useActiveRigs,
   useRigUsage,
   useCurrentStreak,
@@ -13,6 +13,8 @@ import {
 } from "./-hooks";
 import { useQuery } from "@tanstack/react-query";
 import { db_request } from "@/lib/db_request";
+import { GEAR_REGISTRY } from "@/lib/gear-registry";
+import type { SessionRow } from "@/lib/fpv";
 
 export const Route = createFileRoute("/_authenticated/dashboard/")({
   head: () => ({
@@ -49,131 +51,36 @@ function Dashboard() {
     queryFn: async () => {
       if (!user) return [];
 
-      const [
-        { data: batteries, error: batteriesError },
-        { data: drones, error: dronesError },
-        { data: transmitters, error: transmittersError },
-        { data: goggles, error: gogglesError },
-        { data: otherGear, error: otherGearError },
-      ] = await Promise.all([
-        db_request({
-          mode: "query",
-          schema: "personal_gear",
-          table: "batteries",
-          operation: "select",
-          selectColumns: "id,name,total_minutes,service_interval_minutes",
-          filters: { user_id: user },
-        }) as Promise<{
-          data: Array<{
-            id: string;
-            name: string;
-            total_minutes: number;
-            service_interval_minutes: number;
-          }>;
-          error: Error | null;
-        }>,
-        db_request({
-          mode: "query",
-          schema: "personal_gear",
-          table: "drones",
-          operation: "select",
-          selectColumns: "id,name,total_minutes,service_interval_minutes",
-          filters: { user_id: user },
-        }) as Promise<{
-          data: Array<{
-            id: string;
-            name: string;
-            total_minutes: number;
-            service_interval_minutes: number;
-          }>;
-          error: Error | null;
-        }>,
-        db_request({
-          mode: "query",
-          schema: "personal_gear",
-          table: "transmitters",
-          operation: "select",
-          selectColumns: "id,name,total_minutes,service_interval_minutes",
-          filters: { user_id: user },
-        }) as Promise<{
-          data: Array<{
-            id: string;
-            name: string;
-            total_minutes: number;
-            service_interval_minutes: number;
-          }>;
-          error: Error | null;
-        }>,
-        db_request({
-          mode: "query",
-          schema: "personal_gear",
-          table: "goggles",
-          operation: "select",
-          selectColumns: "id,name,total_minutes,service_interval_minutes",
-          filters: { user_id: user },
-        }) as Promise<{
-          data: Array<{
-            id: string;
-            name: string;
-            total_minutes: number;
-            service_interval_minutes: number;
-          }>;
-          error: Error | null;
-        }>,
-        db_request({
-          mode: "query",
-          schema: "personal_gear",
-          table: "other_gear",
-          operation: "select",
-          selectColumns: "id,name,total_minutes,service_interval_minutes",
-          filters: { user_id: user },
-        }) as Promise<{
-          data: Array<{
-            id: string;
-            name: string;
-            total_minutes: number;
-            service_interval_minutes: number;
-          }>;
-          error: Error | null;
-        }>,
-      ]);
+      const gearTypes = Object.keys(GEAR_REGISTRY) as Array<
+        keyof typeof GEAR_REGISTRY
+      >;
+      const results = await Promise.all(
+        gearTypes.map((type) =>
+          db_request({
+            mode: "query",
+            schema: "personal_gear",
+            table: GEAR_REGISTRY[type].table,
+            operation: "select",
+            selectColumns: "id,name,total_minutes,service_interval_minutes",
+            filters: { user_id: user },
+          }),
+        ),
+      );
 
-      if (batteriesError) throw batteriesError;
-      if (dronesError) throw dronesError;
-      if (transmittersError) throw transmittersError;
-      if (gogglesError) throw gogglesError;
-      if (otherGearError) throw otherGearError;
+      for (const result of results) {
+        if (result.error) throw result.error;
+      }
 
-      const gear = [
-        ...(batteries ?? []).map((item) => ({
+      return results.flatMap((result, i) =>
+        (result.data ?? []).map((item: Record<string, any>) => ({
           ...item,
-          is_as_needed: item.service_interval_minutes <= 0,
-          gear_type: "battery" as const,
+          is_as_needed: item["service_interval_minutes"] <= 0,
+          gear_type: gearTypes[i],
         })),
-        ...(drones ?? []).map((item) => ({
-          ...item,
-          is_as_needed: item.service_interval_minutes <= 0,
-          gear_type: "quad" as const,
-        })),
-        ...(transmitters ?? []).map((item) => ({
-          ...item,
-          is_as_needed: item.service_interval_minutes <= 0,
-          gear_type: "transmitter" as const,
-        })),
-        ...(goggles ?? []).map((item) => ({
-          ...item,
-          is_as_needed: item.service_interval_minutes <= 0,
-          gear_type: "goggles" as const,
-        })),
-        ...(otherGear ?? []).map((item) => ({
-          ...item,
-          is_as_needed: item.service_interval_minutes <= 0,
-          gear_type: "other" as const,
-        })),
-      ];
-
-      return gear;
+      );
     },
+    enabled: !!user,
+    staleTime: 60_000,
   });
 
   const simMinutes = totalsData?.total_sim_minutes ?? 0;
@@ -182,7 +89,9 @@ function Dashboard() {
   const totalSessions = totalsData?.total_sessions ?? 0;
   const totalPacks = totalsData?.total_packs ?? 0;
   const gear = gearData ?? [];
-  const recentSessions = recentSessionsData ?? [];
+  // The live sessions table has no rating column; the type carries it as
+  // optional so dashboard consumers can render it when present.
+  const recentSessions = (recentSessionsData ?? []) as SessionRow[];
   const activeRigs = activeRigCount ?? 0;
   const rigUsageData = rigUsage ?? [];
   const streak = streakData ?? { sim: 0, real: 0, combined: 0 };

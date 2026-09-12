@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { db_request } from "@/lib/db_request";
 import {
@@ -27,11 +27,9 @@ import {
   Cpu,
   Search,
   RefreshCw,
-  Play,
   Eye,
   Lock,
   ShieldAlert,
-  RefreshCcw,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -89,7 +87,7 @@ export function SecurityLogsView() {
         },
         async (payload) => {
           toast.warning("New security alert detected!", {
-            description: `Unauthorized access attempt at ${payload.new.path}`,
+            description: `Unauthorized access attempt at ${(payload.new as Record<string, unknown>)["path"]}`,
             icon: <ShieldAlert className="h-4 w-4 text-destructive" />,
           });
           refetchLogs();
@@ -104,50 +102,9 @@ export function SecurityLogsView() {
     };
   }, [refetchLogs]);
 
-  const simulateLogMutation = useMutation({
-    mutationFn: async () => {
-      const paths = [
-        "/admin/settings",
-        "/api/v1/intel",
-        "/firmware/secure-flash",
-        "/billing/override",
-      ];
-      const actions = [
-        "unauthorized_access_attempt",
-        "privilege_escalation_attempt",
-        "api_key_abuse",
-      ];
-      const randomPath = paths[Math.floor(Math.random() * paths.length)];
-      const randomAction = actions[Math.floor(Math.random() * actions.length)];
-
-      const { data, error } = await supabase.rpc("log_and_force_retoken", {
-        attempted_path: randomPath,
-        attempted_action: randomAction,
-        client_ip: "192.168.1." + Math.floor(Math.random() * 254 + 1),
-        client_ua: navigator.userAgent,
-      });
-
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: async () => {
-      toast.warning("Security event logged! Refreshing session token...", {
-        icon: <RefreshCcw className="h-4 w-4 text-warning animate-spin" />,
-      });
-
-      const { error: refreshError } = await supabase.auth.refreshSession();
-      if (refreshError) {
-        toast.error(`Retoken failed: ${refreshError.message}`);
-      } else {
-        toast.success("Session token successfully refreshed & verified!");
-      }
-
-      refetchLogs();
-    },
-    onError: (err: any) => {
-      toast.error(`Simulation failed: ${err.message}`);
-    },
-  });
+  // NOTE: the old "Simulate Attempt & Retoken" demo button was removed —
+  // it fabricated security events and force-refreshed the admin's session
+  // token in production. Real events arrive via the realtime feed.
 
   const filteredLogs = securityLogs.filter((log) => {
     const matchesSearch =
@@ -269,15 +226,6 @@ export function SecurityLogsView() {
               className={`h-3.5 w-3.5 ${logsLoading ? "animate-spin" : ""}`}
             />{" "}
             Refresh
-          </Button>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => simulateLogMutation.mutate()}
-            disabled={simulateLogMutation.isPending}
-            className="h-9 gap-1.5 font-mono"
-          >
-            <Play className="h-3.5 w-3.5" /> Simulate Attempt & Retoken
           </Button>
         </div>
       </div>

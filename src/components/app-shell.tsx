@@ -1,11 +1,12 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useState, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { usePilot } from "@/hooks/use-pilot";
 import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
-import { db_request, DbRequestResult } from "@/lib/db_request";
-import { supabase } from "@/integrations/supabase/client";
+import { purgePersistedCache } from "@/lib/query-client";
+import { useRealtimeInvalidation } from "@/lib/realtime-invalidation";
 import { SidebarNavigation } from "@/components/sidebar";
 
 export function PageHeader({
@@ -18,126 +19,56 @@ export function PageHeader({
   action?: ReactNode;
 }) {
   return (
-    <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+    <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h1 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+        <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent">
           {title}
         </h1>
         {subtitle && (
-          <p className="text-sm text-muted-foreground mt-0.5">{subtitle}</p>
+          <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
         )}
       </div>
-      {action && <div className="flex items-center gap-2">{action}</div>}
+      {action && (
+        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+          {action}
+        </div>
+      )}
     </div>
   );
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const { profile } = usePilot();
-  const {
-    user,
-    isAdminOrDev: authIsAdminOrDev,
-    signOut: authSignOut,
-  } = useAuth();
+  const queryClient = useQueryClient();
+  const { profile, isAdminOrDev } = usePilot();
+  const { user, signOut: authSignOut } = useAuth();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-  const [isAdminAllowed, setIsAdminAllowed] =
-    useState<boolean>(authIsAdminOrDev);
-  const [isClientReady, setIsClientReady] = useState<boolean>(false);
-  const [isCheckingAdmin, setIsCheckingAdmin] = useState<boolean>(true);
+  // Live catch-up: realtime events invalidate affected caches app-wide.
+  useRealtimeInvalidation(user?.id ?? profile?.id ?? null);
 
   const isAdminRoute = pathname.startsWith("/admin");
 
-  useEffect(() => {
-    setIsClientReady(true);
-  }, []);
+  // Single source of truth for admin status: usePilot (JWT claims, falling
+  // back to the profiles-backed role verification). No separate fetch here.
+  const effectiveAdmin = isAdminOrDev;
 
   useEffect(() => {
-    if (authIsAdminOrDev) {
-      setIsAdminAllowed(true);
-      setIsCheckingAdmin(false);
-      return;
+    if (isAdminRoute && !!user && !effectiveAdmin) {
+      navigate({ to: "/dashboard", replace: true });
     }
-
-    let isMounted = true;
-
-    async function checkAdminStatus() {
-      if (!user?.id) {
-        if (isMounted) {
-          setIsAdminAllowed(false);
-          setIsCheckingAdmin(false);
-        }
-        return;
-      }
-
-      try {
-        let allowed = false;
-
-        const { data, error }: DbRequestResult<any> = await db_request({
-          mode: "query",
-          table: "profiles",
-          operation: "select",
-          selectColumns: "role",
-          filters: { id: user.id },
-          head: true,
-        });
-
-        if (!error && data?.role) {
-          const r = data.role.toLowerCase();
-          if (r === "admin" || r === "dev") {
-            allowed = true;
-          }
-        }
-
-        if (!allowed) {
-          const { data: rpcData, error: rpcError } =
-            await supabase.rpc("check_is_admin");
-          if (!rpcError && rpcData === true) {
-            allowed = true;
-          }
-        }
-
-        if (isMounted) {
-          setIsAdminAllowed(allowed);
-          setIsCheckingAdmin(false);
-        }
-
-        if (isAdminRoute && !allowed) {
-          navigate({ to: "/dashboard", replace: true });
-        }
-      } catch (err) {
-        console.error("Admin check error in AppShell:", err);
-        if (isMounted) {
-          setIsAdminAllowed(authIsAdminOrDev);
-          setIsCheckingAdmin(false);
-        }
-        if (isAdminRoute && !authIsAdminOrDev) {
-          navigate({ to: "/dashboard", replace: true });
-        }
-      }
-    }
-
-    checkAdminStatus();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [user?.id, pathname, navigate, isAdminRoute, authIsAdminOrDev]);
+  }, [isAdminRoute, user, effectiveAdmin, navigate]);
 
   async function signOut() {
-    sessionStorage.clear();
+    // Purge the local caches (persisted storage + memory) so the next user
+    // on this machine can never see the previous one's data.
+    purgePersistedCache();
+    queryClient.clear();
     await authSignOut();
     navigate({ to: "/", replace: true });
   }
 
-  const effectiveAdmin = Boolean(
-    isAdminAllowed ||
-    authIsAdminOrDev ||
-    (profile?.role && ["admin", "dev"].includes(profile.role.toLowerCase())),
-  );
-
-  if (isAdminRoute && isCheckingAdmin && !effectiveAdmin) {
+  if (isAdminRoute && !user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
@@ -154,7 +85,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen md:flex relative">
       <div className="fixed left-0 inset-y-0 w-20 bg-sidebar border-r border-sidebar-border p-4 z-20">
         <SidebarNavigation
-          isClientReady={isClientReady}
+          isClientReady={true}
           effectiveAdmin={effectiveAdmin}
           profile={profile}
         />

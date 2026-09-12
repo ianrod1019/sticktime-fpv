@@ -10,6 +10,7 @@ import {
   Radio,
   Package,
   Calendar,
+  BatteryCharging,
   Radio as TransmitterIcon,
   RectangleGoggles,
 } from "lucide-react";
@@ -203,6 +204,7 @@ export function QuickAddSessionLogger({
   const [packs, setPacks] = useState(0);
   const [controllerId, setControllerId] = useState("");
   const [gogglesId, setGogglesId] = useState("");
+  const [batterySetId, setBatterySetId] = useState("");
   const [isRunning, setIsRunning] = useState(moduleIsRunning);
   const [elapsedSeconds, setElapsedSeconds] = useState(moduleElapsedSeconds);
 
@@ -234,8 +236,8 @@ export function QuickAddSessionLogger({
             schema: "personal_gear",
             table: "transmitters",
             operation: "select",
-            selectColumns:
-              "id, name, total_minutes, minutes_since_service, pack_count",
+            // transmitters/goggles have no pack_count column
+            selectColumns: "id, name, total_minutes, minutes_since_service",
             orderBy: { column: "name" },
           }),
           db_request({
@@ -243,8 +245,7 @@ export function QuickAddSessionLogger({
             schema: "personal_gear",
             table: "goggles",
             operation: "select",
-            selectColumns:
-              "id, name, total_minutes, minutes_since_service, pack_count",
+            selectColumns: "id, name, total_minutes, minutes_since_service",
             orderBy: { column: "name" },
           }),
           db_request({
@@ -298,6 +299,27 @@ export function QuickAddSessionLogger({
     gearData?.filter((g) => g.gear_type === "transmitter") ?? [];
   const gogglesData = gearData?.filter((g) => g.gear_type === "goggles") ?? [];
 
+  // Battery SETS power real sessions — packs_flown are attributed to the
+  // chosen set's lifetime total for the cost ledger.
+  const { data: batterySets } = useQuery({
+    queryKey: ["quick-add-battery-sets"],
+    queryFn: async () => {
+      const { data, error } = await db_request({
+        mode: "query",
+        schema: "personal_gear",
+        table: "batteries",
+        operation: "select",
+        selectColumns: "id, name, brand",
+        orderBy: { column: "name" },
+      });
+      if (error) throw error;
+      return (
+        (data as { id: string; name: string; brand: string | null }[]) ?? []
+      );
+    },
+    staleTime: 60_000,
+  });
+
   // Subscribe to the global timer so it keeps running in the background
   useEffect(() => {
     return subscribeToTimer((seconds, running) => {
@@ -319,6 +341,7 @@ export function QuickAddSessionLogger({
       setPacks(0);
       setControllerId("");
       setGogglesId("");
+      setBatterySetId("");
     }
   }, [open]);
 
@@ -385,6 +408,7 @@ export function QuickAddSessionLogger({
         drone_id: rigId,
         controller_id: controllerId || null,
         goggles_id: gogglesId || null,
+        battery_set_id: batterySetId || null,
         location_id: null,
         track_id: null,
         sim_platform: null,
@@ -409,6 +433,7 @@ export function QuickAddSessionLogger({
           drone_id: rigId,
           controller_id: controllerId || null,
           goggles_id: gogglesId || null,
+          battery_set_id: batterySetId || null,
           location_id: null,
           track_id: null,
           sim_platform: null,
@@ -425,17 +450,23 @@ export function QuickAddSessionLogger({
         const rig = gearData?.find((g) => g.id === rigId);
         if (rig) {
           const table = getTableForGearType(rig.gear_type);
+          const update: Record<string, number> = {
+            total_minutes: (rig.total_minutes ?? 0) + finalDuration,
+          };
+          // Batteries have no service clock — only bump minutes-since-service
+          // for gear that actually tracks servicing. NOTE: pack_count is
+          // ownership (packs in the set) and is deliberately NOT touched —
+          // packs flown accrue to the battery set via battery_set_id.
+          if (rig.gear_type !== "battery") {
+            update["minutes_since_service"] =
+              (rig.minutes_since_service ?? 0) + finalDuration;
+          }
           (await db_request({
             mode: "query",
             schema: "personal_gear",
             table,
             operation: "update",
-            data: {
-              total_minutes: (rig.total_minutes ?? 0) + finalDuration,
-              minutes_since_service:
-                (rig.minutes_since_service ?? 0) + finalDuration,
-              pack_count: (rig.pack_count ?? 0) + packs,
-            },
+            data: update,
             filters: { id: rigId },
           })) as DbRequestResult<GearOption[]>;
         }
@@ -492,6 +523,7 @@ export function QuickAddSessionLogger({
       setLocation("");
       setControllerId("");
       setGogglesId("");
+      setBatterySetId("");
     },
     onError: (e: Error) => {
       import("sonner").then(({ toast }) => toast.error(e.message));
@@ -592,6 +624,34 @@ export function QuickAddSessionLogger({
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="quick-battery-set">Battery set</Label>
+            <div className="relative">
+              <BatteryCharging className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
+              <Select
+                value={batterySetId}
+                onValueChange={setBatterySetId}
+              >
+                <SelectTrigger className="pl-9">
+                  <SelectValue placeholder="Which set did you fly?" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">None</SelectItem>
+                  {(batterySets ?? []).map((b) => (
+                    <SelectItem key={b.id} value={b.id}>
+                      {b.name}
+                      {b.brand ? ` (${b.brand})` : ""}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Packs flown are added to this set's lifetime total for the cost
+              ledger.
+            </p>
           </div>
 
           <div className="space-y-2">

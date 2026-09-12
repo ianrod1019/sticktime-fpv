@@ -29,9 +29,9 @@ interface AdminLookupSearch {
 
 export const Route = createFileRoute("/_authenticated/admin_lookup/$uuid")({
   validateSearch: (search: Record<string, unknown>): AdminLookupSearch => {
-    return {
-      token: typeof search.token === "string" ? search.token : undefined,
-    };
+    // token is optional: only include it when actually present so the
+    // exactOptionalPropertyTypes contract holds.
+    return typeof search["token"] === "string" ? { token: search["token"] } : {};
   },
   beforeLoad: async () => {
     const { data: userData } = await supabase.auth.getUser();
@@ -199,7 +199,7 @@ function AdminUserLookupComponent() {
           className="border-success/40 text-success bg-success/10 font-mono text-xs"
         >
           Token Verified:{" "}
-          {search.token ? search.token.slice(0, 8) + "..." : "Active"}
+          {search["token"] ? search["token"].slice(0, 8) + "..." : "Active"}
         </Badge>
       </div>
 

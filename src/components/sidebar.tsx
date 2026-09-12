@@ -4,6 +4,8 @@ import {
   LayoutDashboard,
   Timer,
   Wrench,
+  Boxes,
+  CircleDollarSign,
   Users,
   ShieldCheck,
   Settings,
@@ -11,38 +13,21 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/auth-context";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
+import { DroneIcon } from "@/components/icons";
 
 const BASE_NAV = [
-  { to: "/dashboard", icon: LayoutDashboard },
-  { to: "/log", icon: Timer },
-  { to: "/hanger", icon: Wrench },
-  { to: "/squadron", icon: Users },
+  { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  { to: "/log", icon: Timer, label: "Flight Logs" },  { to: "/hanger", icon: Wrench, label: "Gear Hanger" },
+  { to: "/gear/inventory", icon: Boxes, label: "Bench Inventory" },
+  { to: "/gear/ledger", icon: CircleDollarSign, label: "Cost Ledger" },
+  { to: "/squadron", icon: Users, label: "Squadrons" },
 ] as const;
-
-function DroneIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <rect x="9" y="9" width="6" height="6" rx="1.5" />
-      <line x1="4" y1="4" x2="9" y2="9" />
-      <line x1="20" y1="4" x2="15" y2="9" />
-      <line x1="4" y1="20" x2="9" y2="15" />
-      <line x1="20" y1="20" x2="15" y2="15" />
-      <circle cx="3.5" cy="3.5" r="2" />
-      <circle cx="20.5" cy="3.5" r="2" />
-      <circle cx="3.5" cy="20.5" r="2" />
-      <circle cx="20.5" cy="20.5" r="2" />
-    </svg>
-  );
-}
 
 export function SidebarNavigation({
   isClientReady,
@@ -57,59 +42,115 @@ export function SidebarNavigation({
   const { signOut } = useAuth();
 
   return (
-    <div className="flex h-full flex-col overflow-hidden">
-      <Link to="/" className="mb-8 flex items-center justify-center px-2">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary border border-primary/20">
-          <DroneIcon className="h-5 w-5" />
-        </div>
-      </Link>
+    <TooltipProvider delayDuration={200}>
+      <div className="flex h-full flex-col overflow-hidden">
+        <Link to="/" className="mb-8 flex items-center justify-center px-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary border border-primary/20">
+            <DroneIcon className="h-5 w-5" aria-hidden />
+          </div>
+        </Link>
 
-      <nav className="flex flex-1 flex-col gap-1">
-        {BASE_NAV.map(({ to, icon: Icon }) => (
-          <Link
-            key={to}
-            to={to}
-            className={cn(
-              "flex items-center justify-center rounded-md px-3 py-2 transition-colors",
-              pathname === to && "bg-sidebar-accent text-primary font-semibold",
-            )}
-          >
-            <Icon className="h-4 w-4 shrink-0" />
-          </Link>
-        ))}
+        <nav
+          className="flex flex-1 flex-col gap-1"
+          aria-label="Main navigation"
+        >
+          {BASE_NAV.map(({ to, icon: Icon, label }) => (
+            <Tooltip key={to}>
+              <TooltipTrigger asChild>
+                <Link
+                  to={to}
+                  aria-label={label}
+                  aria-current={pathname === to ? "page" : undefined}
+                  className={cn(
+                    "relative flex items-center justify-center rounded-md px-3 py-2 transition-colors duration-200",
+                    pathname === to
+                      ? "bg-sidebar-accent text-primary font-semibold shadow-[inset_0_0_0_1px_oklch(0.72_0.19_35/0.18),0_0_12px_-4px_var(--primary)]"
+                      : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/60",
+                  )}
+                >
+                  <Icon className="h-4 w-4 shrink-0" aria-hidden />
+                  {pathname === to && (
+                    <span
+                      className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-[2px] rounded-full bg-primary"
+                      aria-hidden
+                    />
+                  )}
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right">{label}</TooltipContent>
+            </Tooltip>
+          ))}
 
-        {isClientReady && effectiveAdmin && (
-          <Link
-            to="/admin"
-            className={cn(
-              "flex items-center justify-center rounded-md px-3 py-2 transition-colors",
-              pathname === "/admin" &&
-                "bg-sidebar-accent text-primary font-semibold",
-            )}
-          >
-            <ShieldCheck className="h-4 w-4 shrink-0 text-primary" />
-          </Link>
-        )}
-      </nav>
+          {isClientReady && effectiveAdmin && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  to="/admin"
+                  aria-label="Admin"
+                  aria-current={pathname === "/admin" ? "page" : undefined}
+                  className={cn(
+                    "relative flex items-center justify-center rounded-md px-3 py-2 transition-colors duration-200",
+                    pathname === "/admin"
+                      ? "bg-sidebar-accent text-primary font-semibold shadow-[inset_0_0_0_1px_oklch(0.72_0.19_35/0.18),0_0_12px_-4px_var(--primary)]"
+                      : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/60",
+                  )}
+                >
+                  <ShieldCheck className="h-4 w-4 shrink-0" aria-hidden />
+                  {pathname === "/admin" && (
+                    <span
+                      className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-[2px] rounded-full bg-primary"
+                      aria-hidden
+                    />
+                  )}
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right">Admin</TooltipContent>
+            </Tooltip>
+          )}
+        </nav>
 
-      <Link
-        to="/settings"
-        className={cn(
-          "flex items-center justify-center rounded-md px-3 py-2 transition-colors",
-          pathname === "/settings" &&
-            "bg-sidebar-accent text-primary font-semibold",
-        )}
-      >
-        <Settings className="h-4 w-4 shrink-0 text-sidebar-foreground/70" />
-      </Link>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Link
+              to="/settings"
+              aria-label="Settings"
+              aria-current={pathname === "/settings" ? "page" : undefined}
+              className={cn(
+                "relative flex items-center justify-center rounded-md px-3 py-2 transition-colors duration-200",
+                pathname === "/settings"
+                  ? "bg-sidebar-accent text-primary shadow-[inset_0_0_0_1px_oklch(0.72_0.19_35/0.18),0_0_12px_-4px_var(--primary)]"
+                  : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/60",
+              )}
+            >
+              <Settings className="h-4 w-4 shrink-0" aria-hidden />
+              {pathname === "/settings" && (
+                <span
+                  className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-[2px] rounded-full bg-primary"
+                  aria-hidden
+                />
+              )}
+            </Link>
+          </TooltipTrigger>
+          <TooltipContent side="right">Settings</TooltipContent>
+        </Tooltip>
 
-      <button
-        type="button"
-        className="mt-2 flex items-center justify-center rounded-md px-3 py-2 text-sm transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-        onClick={() => signOut()}
-      >
-        <LogOut className="h-4 w-4 shrink-0 text-sidebar-foreground/70" />
-      </button>
-    </div>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              className="mt-2 flex items-center justify-center rounded-md px-3 py-2 text-sm transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              aria-label="Sign out"
+              onClick={() => signOut()}
+            >
+              <LogOut
+                className="h-4 w-4 shrink-0 text-sidebar-foreground/70"
+                aria-hidden
+              />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="right">Sign out</TooltipContent>
+        </Tooltip>
+      </div>
+    </TooltipProvider>
   );
 }

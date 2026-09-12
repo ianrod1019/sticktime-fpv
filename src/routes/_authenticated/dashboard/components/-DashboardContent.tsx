@@ -13,7 +13,6 @@ import {
 import { Flame, Timer, Gauge, Battery, Cpu, Plus } from "lucide-react";
 import { useState } from "react";
 import { Heatmap } from "@/components/heatmap";
-import { Progress } from "@/components/ui/progress";
 import { PageHeader } from "@/components/app-shell";
 import { formatHours, type SessionRow } from "@/lib/fpv";
 import { StatCard } from "./-StatCard";
@@ -85,12 +84,13 @@ export function DashboardContent({
 
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
 
-  const handleQuickAddSubmit = (session: SessionRow) => {
-    // In a real implementation, we would save this to the database
-    // For now, we'll just close the form and show a success message
+  const percentOfTotal = (part: number) =>
+    totalMinutes > 0 ? Math.round((part / totalMinutes) * 100) : 0;
+
+  // QuickAddSessionLogger persists the session and invalidates the dashboard
+  // queries itself; this callback only mirrors the open state.
+  const handleQuickAddSubmit = (_session: SessionRow) => {
     setIsQuickAddOpen(false);
-    // TODO: Implement actual session saving
-    console.log("Quick add session:", session);
   };
 
   return (
@@ -101,9 +101,9 @@ export function DashboardContent({
         action={
           <button
             onClick={() => setIsQuickAddOpen(true)}
-            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+            className="flex items-center gap-2 bg-primary hover:bg-primary/90 active:scale-[0.97] text-primary-foreground font-medium py-2 px-4 rounded-lg transition-[background-color,transform] duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] shadow-[inset_0_1px_0_oklch(1_0_0/0.18),0_1px_2px_oklch(0_0_0/0.3),0_6px_16px_-8px_var(--primary)]"
           >
-            <Plus className="mr-1 h-4 w-4" /> Quick Log
+            <Plus className="mr-1 h-4 w-4" aria-hidden /> Quick Log
           </button>
         }
       />
@@ -157,12 +157,10 @@ export function DashboardContent({
             <RatioBar simMinutes={simMinutes} realMinutes={realMinutes} />
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>
-                {formatHours(simMinutes)} (
-                {Math.round((simMinutes / totalMinutes) * 100)}%)
+                {formatHours(simMinutes)} ({percentOfTotal(simMinutes)}%)
               </span>
               <span>
-                {formatHours(realMinutes)} (
-                {Math.round((realMinutes / totalMinutes) * 100)}%)
+                {formatHours(realMinutes)} ({percentOfTotal(realMinutes)}%)
               </span>
             </div>
           </div>

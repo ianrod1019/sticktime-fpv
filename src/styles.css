@@ -59,11 +59,17 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  --shadow-panel: 0 20px 50px -30px oklch(0 0 0 / 0.9);
+  /* Layered panel shadow: hairline top highlight + tight contact + ambient */
+  --shadow-panel:
+    inset 0 1px 0 oklch(1 0 0 / 0.035), 0 1px 2px oklch(0 0 0 / 0.35),
+    0 16px 40px -24px oklch(0 0 0 / 0.75);
+
+  /* iOS sheet curve — used by app motion */
+  --ease-apple: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 :root {
-  --radius: 0.5rem;
+  --radius: 0.625rem;
 
   /* Background: dark charcoal (#1a1a1e) */
   --background: oklch(0.18 0 0);
@@ -76,7 +82,7 @@
   --secondary: oklch(0.25 0 0);
   --secondary-foreground: oklch(0.88 0.02 240);
   --muted: oklch(0.24 0 0);
-  --muted-foreground: oklch(0.65 0.02 250);
+  --muted-foreground: oklch(0.68 0.015 255);
   --accent: oklch(0.27 0 0);
   --accent-foreground: oklch(0.9 0.02 240);
   --destructive: oklch(0.6 0.2 25);
@@ -91,9 +97,9 @@
 
   --sim: oklch(0.65 0.14 240);
   --real: var(--primary);
-  /* Thin, sharp, low-contrast border for surface separation */
-  --border: oklch(0.28 0 0);
-  --input: oklch(0.28 0 0);
+  /* Hairline border, softly translucent so it reads on stacked surfaces */
+  --border: oklch(0.31 0.008 255 / 0.85);
+  --input: oklch(0.3 0.008 255);
   --ring: var(--primary);
 
   --chart-1: var(--primary);
@@ -128,6 +134,9 @@
     background-image: none;
     background-size: initial;
     background-attachment: initial;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   h1,
@@ -135,11 +144,26 @@
   h3,
   h4 {
     font-family: var(--font-display);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::selection {
+    background-color: oklch(0.72 0.19 35 / 0.35);
+    color: oklch(0.98 0.005 250);
   }
 }
 
 @utility hud-panel {
+  background-image: linear-gradient(
+    180deg,
+    oklch(1 0 0 / 0.025),
+    transparent 30%
+  );
   background-color: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
@@ -168,8 +192,9 @@
 
 @utility label-mono {
   font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.16em;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted-foreground);
 }
@@ -180,7 +205,7 @@
 }
 
 @utility btn-primary-hover {
-  background-color: var(--primary) / 0.9;
+  background-color: color-mix(in oklab, var(--primary) 90%, transparent);
 }
 
 @utility badge-primary {
@@ -257,4 +282,42 @@
 
 .animate-pure-slide-left {
   animation: pureSlideInLeft 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Respect users who prefer reduced motion: kill decorative animation */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Thin dark scrollbars — native ones glare against the charcoal theme */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0.35 0.005 255 / 0.8) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: oklch(0.35 0.005 255 / 0.8);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: oklch(0.45 0.01 255 / 0.9);
 }

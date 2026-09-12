@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Trash2, Monitor, Clock } from "lucide-react";
 import { type SessionRow } from "@/lib/fpv";
 import { type GearItem } from "@/components/gear-card/types";
 import { formatHours } from "@/lib/fpv";
@@ -34,38 +34,11 @@ export function LogSessionList({
         <div className="flex items-center gap-2">
           {isSim ? (
             <span className="flex h-6 w-6 items-center justify-center text-sim">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                <line x1="8" y1="21" x2="16" y2="21"></line>
-                <line x1="12" y1="17" x2="12" y2="21"></line>
-              </svg>
+              <Monitor className="h-5 w-5" aria-hidden />
             </span>
           ) : (
             <span className="flex h-6 w-6 items-center justify-center text-primary">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
+              <Clock className="h-5 w-5" aria-hidden />
             </span>
           )}
           <span className="label-mono font-semibold">
@@ -82,7 +55,7 @@ export function LogSessionList({
         return (
           <div
             key={s.id}
-            className="flex items-center justify-between gap-4 p-4 hover:bg-muted/20 transition-colors"
+            className="flex items-center justify-between gap-4 p-4 hover:bg-muted/20 transition-colors duration-200"
           >
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
@@ -93,7 +66,7 @@ export function LogSessionList({
                 {s.drone_name && s.drone_name.length > 0 && (
                   <Badge
                     variant="secondary"
-                    className="rounded-full bg-primary px-2 py-0.5 font-mono text-[10px] font-semibold text-white transition-colors hover:bg-primary/90"
+                    className="rounded-full bg-primary px-2 py-0.5 font-mono text-[10px] font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
                   >
                     {s.drone_name}
                   </Badge>
@@ -101,7 +74,7 @@ export function LogSessionList({
                 {s.transmitter_name && s.transmitter_name.length > 0 && (
                   <Badge
                     variant="secondary"
-                    className="rounded-full bg-primary px-2 py-0.5 font-mono text-[10px] font-semibold text-white transition-colors hover:bg-primary/90"
+                    className="rounded-full bg-primary px-2 py-0.5 font-mono text-[10px] font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
                   >
                     {s.transmitter_name}
                   </Badge>
@@ -109,7 +82,7 @@ export function LogSessionList({
                 {s.goggles_name && s.goggles_name.length > 0 && (
                   <Badge
                     variant="secondary"
-                    className="rounded-full bg-primary px-2 py-0.5 font-mono text-[10px] font-semibold text-white transition-colors hover:bg-primary/90"
+                    className="rounded-full bg-primary px-2 py-0.5 font-mono text-[10px] font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
                   >
                     {s.goggles_name}
                   </Badge>

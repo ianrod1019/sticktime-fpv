@@ -96,11 +96,10 @@ function Landing() {
             Built for Precision Flying
           </h2>
 
-          <div className="grid gap-4">
-            {/* Bento Grid Layout */}
-            <div className="grid gap-4">
-              {/* Large Feature - Flight Time */}
-              <article className="col-span-2 row-span-2 bg-card/50 border border-border/30 p-6">
+          {/* Bento Grid Layout */}
+          <div className="grid gap-4 md:grid-cols-3">
+            {/* Large Feature - Flight Time */}
+            <article className="md:col-span-2 md:row-span-2 bg-card/50 border border-border/30 p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <Timer className="h-6 w-6 text-primary" />
                   <div>
@@ -217,7 +216,6 @@ function Landing() {
                   </p>
                 </div>
               </article>
-            </div>
           </div>
         </section>
 

@@ -36,14 +36,15 @@ function SquadronManagePage() {
   });
 
   const { data: profile } = useQuery({
-    queryKey: ["user-profile", user?.id],
+    queryKey: ["user-pilot-settings", user?.id],
     enabled: !!user?.id,
     queryFn: async () => {
+      // Callsign lives in pilot_settings, not profiles.
       const { data } = await supabase
-        .from("profiles")
-        .select("display_name, callsign")
-        .eq("id", user!.id)
-        .single();
+        .from("pilot_settings")
+        .select("callsign")
+        .eq("user_id", user!.id)
+        .maybeSingle();
       return data;
     },
   });
@@ -256,10 +257,7 @@ function SquadronManagePage() {
               isOwner={isOwner}
               userId={user.id}
               userCallsignOrName={
-                profile?.callsign ||
-                profile?.display_name ||
-                user.email ||
-                "Pilot"
+                profile?.callsign || user.email || "Pilot"
               }
             />
           )}

@@ -43,6 +43,7 @@ export function LogSessionDialog({
   const [controllerId, setControllerId] = useState<string>("none");
   const [gogglesId, setGogglesId] = useState<string>("none");
   const [droneId, setDroneId] = useState<string>("none");
+  const [batterySetId, setBatterySetId] = useState<string>("none");
   const [platform, setPlatform] = useState<string>(SIM_PLATFORMS[0]!);
   const [packs, setPacks] = useState(0);
   const [crashes, setCrashes] = useState(0);
@@ -58,6 +59,9 @@ export function LogSessionDialog({
     { id: string; name: string; brand: string | null }[]
   >([]);
   const [goggles, setGoggles] = useState<
+    { id: string; name: string; brand: string | null }[]
+  >([]);
+  const [batterySets, setBatterySets] = useState<
     { id: string; name: string; brand: string | null }[]
   >([]);
 
@@ -114,6 +118,25 @@ export function LogSessionDialog({
       setControllers(c);
       setDrones(d);
       setGoggles(g);
+
+      // Battery SETS power real sessions — the pack counter attributes
+      // packs_flown to the chosen set.
+      const batteriesResult = await db_request({
+        mode: "query",
+        schema: "personal_gear",
+        table: "batteries",
+        operation: "select",
+        selectColumns: "id, name, brand",
+        orderBy: { column: "name" },
+      });
+      if (batteriesResult.error) throw batteriesResult.error;
+      setBatterySets(
+        (batteriesResult.data ?? []) as {
+          id: string;
+          name: string;
+          brand: string | null;
+        }[],
+      );
     } catch (err: unknown) {
       setGearError(err instanceof Error ? err.message : "Failed to load gear");
     } finally {
@@ -146,6 +169,8 @@ export function LogSessionDialog({
           drone_id: type === "real" && droneId !== "none" ? droneId : null,
           controller_id: controllerId !== "none" ? controllerId : null,
           goggles_id: gogglesId !== "none" ? gogglesId : null,
+          battery_set_id:
+            type === "real" && batterySetId !== "none" ? batterySetId : null,
           location_id: null,
           track_id: null,
           sim_platform: type === "sim" ? platform : null,
@@ -173,6 +198,7 @@ export function LogSessionDialog({
     droneId,
     controllerId,
     gogglesId,
+    batterySetId,
     platform,
     packs,
     crashes,
@@ -278,6 +304,33 @@ export function LogSessionDialog({
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+          )}
+
+          {type === "real" && (
+            <div className="space-y-2">
+              <Label>Battery Set</Label>
+              <Select value={batterySetId} onValueChange={setBatterySetId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Pick a battery set" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  {gearLoading && (
+                    <SelectItem value="loading">Loading...</SelectItem>
+                  )}
+                  {batterySets.map((b) => (
+                    <SelectItem key={b.id} value={b.id}>
+                      {b.name}
+                      {b.brand ? ` (${b.brand})` : ""}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-[11px] text-muted-foreground">
+                Packs flown are added to this set's lifetime total for the
+                cost ledger.
+              </p>
             </div>
           )}
 

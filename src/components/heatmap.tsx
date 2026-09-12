@@ -17,7 +17,8 @@ const LEVEL_STYLE = [
 function levelFor(minutes: number, thresholds: number[]) {
   if (minutes === 0) return 0;
   for (let i = 0; i < thresholds.length; i++) {
-    if (minutes <= thresholds[i]) return i + 1;
+    const t = thresholds[i];
+    if (t !== undefined && minutes <= t) return i + 1;
   }
   return thresholds.length;
 }
