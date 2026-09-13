@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ContactShadows } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { cn } from "@/lib/utils";
 import { CanvasBase } from "@/components/three/canvas-base";
@@ -118,6 +119,14 @@ export function DroneHeroScene() {
             <FpvDrone />
             {!reducedMotion && <HudRings />}
           </group>
+          <ContactShadows
+            position={[1.35, -0.44, 0]}
+            opacity={0.32}
+            scale={4.8}
+            blur={2.6}
+            far={4}
+            color="#f97316"
+          />
           {!reducedMotion && (
             <ParticleField count={160} spread={[9, 6, 6]} speed={0.8} />
           )}

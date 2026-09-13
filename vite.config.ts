@@ -24,6 +24,9 @@ export default defineConfig({
         }),
       },
     ],
+    server: {
+      allowedHosts: ["5173-idwunrvrravx2hwdvlh6h-a5496ad8.us1.manus.computer"],
+    },
   },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).

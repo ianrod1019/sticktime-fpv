@@ -16,6 +16,7 @@ import { StatCard } from "./-StatCard";
 import { RatioBar } from "./-RatioBar";
 import { QuickAddSessionLogger } from "./-QuickAddSessionLogger";
 import { MonthlyVolumeChart, ChartTooltip } from "./-MonthlyVolumeChart";
+import { FlightReadiness } from "./-FlightReadiness";
 
 interface DashboardContentProps {
   simMinutes: number;
@@ -106,30 +107,37 @@ export function DashboardContent({
         }
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard
-          icon={Timer}
-          label="Total airtime"
-          value={formatHours(totalMinutes)}
-          hint={`${totalSessions} sessions logged`}
-        />
-        <StatCard
-          icon={Flame}
-          label="Current streak"
-          value={`${streak.combined} ${streak.combined === 1 ? "day" : "days"}`}
-          hint={`Sim: ${streak.sim}d, Real: ${streak.real}d`}
-        />
-        <StatCard
-          icon={Battery}
-          label="Packs flown"
-          value={String(packs)}
-          hint="Real-world packs"
-        />
-        <StatCard
-          icon={Cpu}
-          label="Active rigs"
-          value={String(activeDrones)}
-          hint="Unique drones flown last 30d"
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-4">
+          <StatCard
+            icon={Timer}
+            label="Total airtime"
+            value={formatHours(totalMinutes)}
+            hint={`${totalSessions} sessions logged`}
+          />
+          <StatCard
+            icon={Flame}
+            label="Current streak"
+            value={`${streak.combined} ${streak.combined === 1 ? "day" : "days"}`}
+            hint={`Sim: ${streak.sim}d, Real: ${streak.real}d`}
+          />
+          <StatCard
+            icon={Battery}
+            label="Packs flown"
+            value={String(packs)}
+            hint="Real-world packs"
+          />
+          <StatCard
+            icon={Cpu}
+            label="Active rigs"
+            value={String(activeDrones)}
+            hint="Unique drones flown last 30d"
+          />
+        </div>
+        <FlightReadiness
+          activeDrones={activeDrones}
+          totalMinutes={totalMinutes}
+          packs={packs}
         />
       </div>
 
