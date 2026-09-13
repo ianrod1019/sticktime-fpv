@@ -14,14 +14,37 @@ import { supabase } from "@/integrations/supabase/client";
 
 const TABLE_QUERY_KEYS: Record<string, string[]> = {
   // gear tables feed hanger, detail pages and dashboard rig stats
-  "personal_gear:batteries": ["hanger", "gear-item", "gear", "drone-options", "cost-ledger"],
-  "personal_gear:drones": ["hanger", "gear-item", "gear", "drone-build", "drone-options", "cost-ledger", "active-rigs", "rig-usage"],
+  "personal_gear:batteries": [
+    "hanger",
+    "gear-item",
+    "gear",
+    "drone-options",
+    "cost-ledger",
+  ],
+  "personal_gear:drones": [
+    "hanger",
+    "gear-item",
+    "gear",
+    "drone-build",
+    "drone-options",
+    "cost-ledger",
+    "active-rigs",
+    "rig-usage",
+  ],
   "personal_gear:transmitters": ["hanger", "gear-item", "gear", "cost-ledger"],
   "personal_gear:goggles": ["hanger", "gear-item", "gear", "cost-ledger"],
   "personal_gear:other_gear": ["hanger", "gear-item", "gear", "cost-ledger"],
   // parts / installs feed the bench inventory and build sheets
-  "personal_gear:drone_parts": ["master-inventory", "drone-build", "gear-parts"],
-  "personal_gear:drone_part_installs": ["part-installs", "drone-build", "master-inventory"],
+  "personal_gear:drone_parts": [
+    "master-inventory",
+    "drone-build",
+    "gear-parts",
+  ],
+  "personal_gear:drone_part_installs": [
+    "part-installs",
+    "drone-build",
+    "master-inventory",
+  ],
   "personal_gear:transmitter_parts": ["hanger", "gear-parts"],
   "personal_gear:goggles_parts": ["hanger", "gear-parts"],
   "personal_gear:other_parts": ["hanger", "gear-parts"],
@@ -29,14 +52,50 @@ const TABLE_QUERY_KEYS: Record<string, string[]> = {
   "personal_gear:maintenance_logs": ["gear-logs", "hanger", "cost-ledger"],
   "personal_gear:battery_packs": ["battery-packs"],
   "personal_gear:battery_ir_readings": ["battery-ir"],
+  // squadron org_gear fleet feeds the org hanger + org ledger. The legacy
+  // org_gear.squadron_gear checkout tables are intentionally absent: no
+  // mounted screen reads them anymore (the hanger page reads the per-type
+  // tables directly), so subscribing would only waste a channel entry.
+  "org_gear:drones": ["hanger-org", "hanger-org-ledger"],
+  "org_gear:batteries": ["hanger-org", "hanger-org-ledger"],
+  "org_gear:transmitters": ["hanger-org", "hanger-org-ledger"],
+  "org_gear:goggles": ["hanger-org", "hanger-org-ledger"],
+  "org_gear:other_gear": ["hanger-org", "hanger-org-ledger"],
+  "org_gear:drone_parts": [
+    "hanger-org",
+    "hanger-org-ledger",
+    "org-failure-analytics",
+  ],
+  "org_gear:drone_part_installs": ["hanger-org", "hanger-org-ledger"],
+  "org_gear:transmitter_parts": ["hanger-org"],
+  "org_gear:goggles_parts": ["hanger-org"],
+  "org_gear:other_parts": ["hanger-org"],
+  "org_gear:maintenance_logs": [
+    "hanger-org",
+    "hanger-org-ledger",
+    "org-failure-analytics",
+  ],
   // sessions drive the flight log and every dashboard metric
-  "public:sessions": ["log-data", "session-totals", "monthly-volume", "heatmap", "recent-sessions", "active-rigs", "current-streak", "weekly-goal", "cost-ledger"],
+  "public:sessions": [
+    "log-data",
+    "session-totals",
+    "monthly-volume",
+    "heatmap",
+    "recent-sessions",
+    "active-rigs",
+    "current-streak",
+    "weekly-goal",
+    "cost-ledger",
+  ],
 };
 
 /** Keys that must never trigger a refetch storm from realtime. */
 const SENSITIVE_PREFIXES = new Set(["admin-", "role-and-tier", "pro-access"]);
 
-function invalidateForTable(queryClient: ReturnType<typeof useQueryClient>, tableRef: string) {
+function invalidateForTable(
+  queryClient: ReturnType<typeof useQueryClient>,
+  tableRef: string,
+) {
   const prefixes = TABLE_QUERY_KEYS[tableRef];
   if (!prefixes) return;
   for (const prefix of prefixes) {

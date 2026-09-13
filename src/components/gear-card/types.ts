@@ -97,6 +97,12 @@ export interface MaintenanceLog {
 export interface GearCardProps {
   gear: GearItem;
   isDeleting: boolean;
+  /** May the viewer mutate this gear (personal hanger: owner; org: member). */
+  canEdit?: boolean;
+  /** May the viewer write money fields (org hangers: owner/manager only). */
+  canEditMoney?: boolean;
+  /** False when clicking the card body must not open the detail page. */
+  canOpenDetail?: boolean;
   onDeleteGear: (id: string, name: string) => void;
   onAddPart?:
     | ((

@@ -1,10 +1,5 @@
 import { useMemo, useState } from "react";
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { db_request } from "@/lib/db_request";
 import { usePilot } from "@/hooks/use-pilot";
@@ -33,46 +28,16 @@ export const DEFAULT_FILTERS: InventoryFilters = {
 
 const INVENTORY_KEY = "master-inventory";
 
-/** Server-side page size for the bench inventory grid. */
-export const INVENTORY_PAGE_SIZE = 60;
-
+/**
+ * The bench reads the whole parts list through the delta-sync layer (warm
+ * visits transfer 0 rows) and filters/paginates client-side — changing a
+ * filter or page refetches nothing. The row cache degrades gracefully to
+ * paged streaming above 2000 parts, so the bench never loads unbounded.
+ */
 export function invalidateInventory(queryClient: {
   invalidateQueries: (opts: { queryKey: readonly unknown[] }) => void;
 }) {
   queryClient.invalidateQueries({ queryKey: [INVENTORY_KEY] });
-}
-
-interface FetchPartsArgs {
-  filters: InventoryFilters;
-  pageIndex: number;
-}
-
-async function fetchPartsPage({
-  filters,
-  pageIndex,
-}: FetchPartsArgs): Promise<{ parts: DronePart[]; total: number }> {
-  const filters_: Record<string, unknown> = {};
-  if (filters.category !== "all") filters_["category"] = filters.category;
-  if (filters.status !== "all") filters_["status"] = filters.status;
-  if (filters.search.trim()) {
-    // Server-side substring match on name/brand (PostgREST `ilike.*term*`).
-    const term = filters.search.trim();
-    filters_['or'] = `(name.ilike.*${term}*,brand.ilike.*${term}*)`;
-  }
-
-  const { data, error, count } = await db_request({
-    mode: "query",
-    schema: "personal_gear",
-    table: PARTS_TABLE,
-    operation: "select",
-    selectColumns: "*",
-    filters: filters_,
-    orderBy: { column: "created_at", ascending: false },
-    pagination: { index: pageIndex, size: INVENTORY_PAGE_SIZE },
-  });
-
-  if (error) throw error;
-  return { parts: (data ?? []) as DronePart[], total: count ?? 0 };
 }
 
 export interface UseInventoryResult {
@@ -101,18 +66,22 @@ export function useInventory(): UseInventoryResult {
   const [pageIndex, setPageIndex] = useState(0);
 
   const query = useQuery({
-    queryKey: [
-      INVENTORY_KEY,
-      profile?.id ?? null,
-      filters.category,
-      filters.status,
-      filters.search,
-      pageIndex,
-    ],
-    queryFn: () => fetchPartsPage({ filters, pageIndex }),
+    queryKey: [INVENTORY_KEY, profile?.id ?? null],
+    queryFn: async () => {
+      const { data, error } = await db_request({
+        mode: "query",
+        schema: "personal_gear",
+        table: PARTS_TABLE,
+        operation: "select",
+        selectColumns: "*",
+        orderBy: { column: "created_at", ascending: false },
+        sync: "delta",
+      });
+      if (error) throw error;
+      return (data ?? []) as DronePart[];
+    },
     enabled: !!profile?.id,
     staleTime: 30_000,
-    placeholderData: keepPreviousData,
   });
 
   const invalidate = () =>
@@ -186,9 +155,44 @@ export function useInventory(): UseInventoryResult {
   const isMutating =
     addPart.isPending || updatePart.isPending || deletePart.isPending;
 
-  const parts = query.data?.parts ?? [];
-  const total = query.data?.total ?? 0;
-  const pageCount = Math.max(1, Math.ceil(total / INVENTORY_PAGE_SIZE));
+  // ---- Client-side filter + pagination (0 network on change) --------------
+  const allParts = query.data ?? [];
+  const filtered = useMemo(() => {
+    const q = filters.search.trim().toLowerCase();
+    if (filters.category === "all" && filters.status === "all" && !q) {
+      return allParts;
+    }
+    return allParts.filter((part) => {
+      if (filters.category !== "all" && part.category !== filters.category) {
+        return false;
+      }
+      if (filters.status !== "all" && part.status !== filters.status) {
+        return false;
+      }
+      if (
+        q &&
+        !part.name.toLowerCase().includes(q) &&
+        !(part.brand ?? "").toLowerCase().includes(q)
+      ) {
+        return false;
+      }
+      return true;
+    });
+  }, [allParts, filters]);
+
+  const pageCount = Math.max(
+    1,
+    Math.ceil(filtered.length / INVENTORY_PAGE_SIZE),
+  );
+  const safePageIndex = Math.min(pageIndex, pageCount - 1);
+  const parts = useMemo(
+    () =>
+      filtered.slice(
+        safePageIndex * INVENTORY_PAGE_SIZE,
+        (safePageIndex + 1) * INVENTORY_PAGE_SIZE,
+      ),
+    [filtered, safePageIndex],
+  );
 
   const bumpToFirstPage = (
     updater: (prev: InventoryFilters) => InventoryFilters,
@@ -199,14 +203,15 @@ export function useInventory(): UseInventoryResult {
 
   return {
     parts,
-    total,
-    pageIndex,
+    total: filtered.length,
+    pageIndex: safePageIndex,
     pageCount,
     setPage: setPageIndex,
     isLoading: query.isLoading,
     isError: query.isError,
     filters,
-    setCategory: (category) => bumpToFirstPage((prev) => ({ ...prev, category })),
+    setCategory: (category) =>
+      bumpToFirstPage((prev) => ({ ...prev, category })),
     setStatus: (status) => bumpToFirstPage((prev) => ({ ...prev, status })),
     setSearch: (search) => bumpToFirstPage((prev) => ({ ...prev, search })),
     resetFilters: () => {
@@ -223,3 +228,6 @@ export function useInventory(): UseInventoryResult {
     isMutating,
   };
 }
+
+/** Client-side page size for the bench inventory grid. */
+export const INVENTORY_PAGE_SIZE = 60;

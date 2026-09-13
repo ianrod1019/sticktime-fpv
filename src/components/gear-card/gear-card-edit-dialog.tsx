@@ -33,6 +33,8 @@ interface GearCardEditDialogProps {
     purchaseCost: number,
   ) => void;
   isDeleting: boolean;
+  /** May the viewer write money fields (org hangers: owner/manager only). */
+  canEditMoney?: boolean;
 }
 
 const PRESET_CONNECTORS = [
@@ -50,6 +52,7 @@ export function GearCardEditDialog({
   gear,
   onUpdateGear,
   isDeleting,
+  canEditMoney = true,
 }: GearCardEditDialogProps) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(gear.name);
@@ -269,39 +272,43 @@ export function GearCardEditDialog({
                   <Input
                     id={`edit-interval-${gear.id}`}
                     type="number"
-                  value={interval}
-                  onChange={(e) =>
-                    setIntervalMinutes(Math.max(1, Number(e.target.value) || 0))
-                  }
+                    value={interval}
+                    onChange={(e) =>
+                      setIntervalMinutes(
+                        Math.max(1, Number(e.target.value) || 0),
+                      )
+                    }
                   />
                 </div>
               )}
             </>
           )}
 
-          <div className="space-y-3 pt-2 border-t border-border">
-            <div className="flex items-center gap-2">
-              <Label className="text-sm font-semibold">
-                Cost Tracking (Pro Feature)
-              </Label>
+          {canEditMoney && (
+            <div className="space-y-3 pt-2 border-t border-border">
+              <div className="flex items-center gap-2">
+                <Label className="text-sm font-semibold">
+                  Cost Tracking (Pro Feature)
+                </Label>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor={`edit-purchase-cost-${gear.id}`}>
+                  Purchase Cost ($)
+                </Label>
+                <Input
+                  id={`edit-purchase-cost-${gear.id}`}
+                  type="number"
+                  min={0}
+                  step={0.01}
+                  value={String(purchaseCost)}
+                  onChange={(e) =>
+                    setPurchaseCost(Math.max(0, Number(e.target.value) || 0))
+                  }
+                  placeholder="0.00"
+                />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor={`edit-purchase-cost-${gear.id}`}>
-                Purchase Cost ($)
-              </Label>
-              <Input
-                id={`edit-purchase-cost-${gear.id}`}
-                type="number"
-                min={0}
-                step={0.01}
-                value={String(purchaseCost)}
-                onChange={(e) =>
-                  setPurchaseCost(Math.max(0, Number(e.target.value) || 0))
-                }
-                placeholder="0.00"
-              />
-            </div>
-          </div>
+          )}
         </div>
         <DialogFooter>
           <Button

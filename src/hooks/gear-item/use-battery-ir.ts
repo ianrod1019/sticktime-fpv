@@ -144,7 +144,9 @@ export function useIrReadings(batteryId: string) {
   });
 
   const invalidate = () =>
-    queryClient.invalidateQueries({ queryKey: ["battery-ir", profile?.id ?? null, batteryId] });
+    queryClient.invalidateQueries({
+      queryKey: ["battery-ir", profile?.id ?? null, batteryId],
+    });
 
   // One multi-row insert = one request, one toast, all-or-nothing save.
   const addMutation = useMutation({

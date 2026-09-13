@@ -1,4 +1,5 @@
 export { InventoryProBanner } from "./inventory-pro-banner";
+export { OrgPartInstallPanel } from "./org-part-install-panel";
 export { InventoryFilterBar } from "./inventory-filter-bar";
 export { InventoryStatsBar } from "./inventory-stats-bar";
 export { PartCard } from "./part-card";

@@ -1,0 +1,446 @@
+
+> dev
+> vite dev --port 5175 --strictPort
+
+[33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
+Warning: Route file "D:/Projects/sticktime-fpv/src/routes/_authenticated/log-hooks.ts" does not export a Route. This file will not be included in the route tree.
+
+If this file is not intended to be a route, you can exclude it using one of these options:
+  1. Rename the file to "D:\Projects\sticktime-fpv\src\routes\_authenticated\-log-hooks.ts" (prefix with "-")
+  2. Use 'routeFileIgnorePattern' in your config to match this file
+
+Current configuration:
+  routeFileIgnorePrefix: "-"
+  routeFileIgnorePattern: undefined
+
+  [32m[1mVITE[22m v8.1.5[39m  [2mready in [0m[1m1234[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5175[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.0.167:[1m5175[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://172.22.160.1:[1m5175[22m/[39m
+[2m8:33:29 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m connected.
+[2m8:41:53 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m8:42:01 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+Warning: Route file "D:/Projects/sticktime-fpv/src/routes/_authenticated/log-hooks.ts" does not export a Route. This file will not be included in the route tree.
+
+If this file is not intended to be a route, you can exclude it using one of these options:
+  1. Rename the file to "D:\Projects\sticktime-fpv\src\routes\_authenticated\-log-hooks.ts" (prefix with "-")
+  2. Use 'routeFileIgnorePattern' in your config to match this file
+
+Current configuration:
+  routeFileIgnorePrefix: "-"
+  routeFileIgnorePattern: undefined
+[2m8:44:40 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/squadron/$squadronId.tsx[22m
+[2m8:44:40 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/squadron/$squadronId.tsx[22m
+[2m8:44:40 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m8:45:07 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+Warning: Route file "D:/Projects/sticktime-fpv/src/routes/_authenticated/log-hooks.ts" does not export a Route. This file will not be included in the route tree.
+
+If this file is not intended to be a route, you can exclude it using one of these options:
+  1. Rename the file to "D:\Projects\sticktime-fpv\src\routes\_authenticated\-log-hooks.ts" (prefix with "-")
+  2. Use 'routeFileIgnorePattern' in your config to match this file
+
+Current configuration:
+  routeFileIgnorePrefix: "-"
+  routeFileIgnorePattern: undefined
+[2m8:45:07 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/squadron/$squadronId.tsx[22m
+[2m8:45:07 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/squadron/$squadronId.tsx[22m
+Warning: Route file "D:/Projects/sticktime-fpv/src/routes/_authenticated/log-hooks.ts" does not export a Route. This file will not be included in the route tree.
+
+If this file is not intended to be a route, you can exclude it using one of these options:
+  1. Rename the file to "D:\Projects\sticktime-fpv\src\routes\_authenticated\-log-hooks.ts" (prefix with "-")
+  2. Use 'routeFileIgnorePattern' in your config to match this file
+
+Current configuration:
+  routeFileIgnorePrefix: "-"
+  routeFileIgnorePattern: undefined
+[2m8:47:04 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/hanger.squadron.$uuid.tsx, /src/routes/_authenticated/hanger.squadron.$uuid.tsx?tsr-split=component[22m
+[2m8:47:04 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/hanger.squadron.$uuid.tsx[22m
+[2m8:51:00 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/log.tsx, /src/routes/_authenticated/hanger.personal.tsx, /src/context/auth-context.tsx, /src/components/app-shell.tsx, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component, /src/components/gear-card/gear-card.tsx, /src/pages/gear/ledger.tsx, /src/components/gear-detail/other-details.tsx, /src/routes/_authenticated/gear/$type.$uuid.tsx?tsr-split=component, /src/components/gear-detail/drone-details.tsx and 8 more[22m
+[2m8:51:00 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/delta-sync.ts[22m
+[2m8:51:00 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m8:51:01 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mUnexpected token
+     [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/lib/delta-sync.ts:546:1 [38;5;246m][0m
+     [38;5;246m│[0m
+ [38;5;246m546 │[0m export[38;5;249m [0m[38;5;249mf[0m[38;5;249mu[0m[38;5;249mn[0m[38;5;249mc[0m[38;5;249mt[0m[38;5;249mi[0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249m [0m[38;5;249md[0m[38;5;249me[0m[38;5;249ml[0m[38;5;249mt[0m[38;5;249ma[0m[38;5;249mS[0m[38;5;249my[0m[38;5;249mn[0m[38;5;249mc[0m[38;5;249mR[0m[38;5;249me[0m[38;5;249mm[0m[38;5;249mo[0m[38;5;249mv[0m[38;5;249me[0m[38;5;249mL[0m[38;5;249mo[0m[38;5;249mc[0m[38;5;249ma[0m[38;5;249ml[0m[38;5;249m([0m
+ [38;5;240m    │[0m ───┬──  
+ [38;5;240m    │[0m    ╰──── 
+[38;5;246m─────╯[0m
+
+  Plugin: [35mvite:oxc[39m
+  File: [36mD:/Projects/sticktime-fpv/src/lib/delta-sync.ts[39m
+[2m8:51:01 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mUnexpected token
+     [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/lib/delta-sync.ts:546:1 [38;5;246m][0m
+     [38;5;246m│[0m
+ [38;5;246m546 │[0m export[38;5;249m [0m[38;5;249mf[0m[38;5;249mu[0m[38;5;249mn[0m[38;5;249mc[0m[38;5;249mt[0m[38;5;249mi[0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249m [0m[38;5;249md[0m[38;5;249me[0m[38;5;249ml[0m[38;5;249mt[0m[38;5;249ma[0m[38;5;249mS[0m[38;5;249my[0m[38;5;249mn[0m[38;5;249mc[0m[38;5;249mR[0m[38;5;249me[0m[38;5;249mm[0m[38;5;249mo[0m[38;5;249mv[0m[38;5;249me[0m[38;5;249mL[0m[38;5;249mo[0m[38;5;249mc[0m[38;5;249ma[0m[38;5;249ml[0m[38;5;249m([0m
+ [38;5;240m    │[0m ───┬──  
+ [38;5;240m    │[0m    ╰──── 
+[38;5;246m─────╯[0m
+[39m
+  Plugin: [35mvite:oxc[39m
+  File: [36mD:/Projects/sticktime-fpv/src/lib/delta-sync.ts[39m
+      at transformWithOxc (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:4033:19)
+      at TransformPluginContext.transform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:4104:26)
+      at EnvironmentPluginContainer.transform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:30201:51)
+      at async loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20124:26)
+      at async viteTransformMiddleware (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:24604:20)
+Error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mUnexpected token
+     [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/lib/delta-sync.ts:546:1 [38;5;246m][0m
+     [38;5;246m│[0m
+ [38;5;246m546 │[0m export[38;5;249m [0m[38;5;249mf[0m[38;5;249mu[0m[38;5;249mn[0m[38;5;249mc[0m[38;5;249mt[0m[38;5;249mi[0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249m [0m[38;5;249md[0m[38;5;249me[0m[38;5;249ml[0m[38;5;249mt[0m[38;5;249ma[0m[38;5;249mS[0m[38;5;249my[0m[38;5;249mn[0m[38;5;249mc[0m[38;5;249mR[0m[38;5;249me[0m[38;5;249mm[0m[38;5;249mo[0m[38;5;249mv[0m[38;5;249me[0m[38;5;249mL[0m[38;5;249mo[0m[38;5;249mc[0m[38;5;249ma[0m[38;5;249ml[0m[38;5;249m([0m
+ [38;5;240m    │[0m ───┬──  
+ [38;5;240m    │[0m    ╰──── 
+[38;5;246m─────╯[0m
+
+    at transformWithOxc (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:4033:19)
+    at TransformPluginContext.transform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:4104:26)
+    at EnvironmentPluginContainer.transform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:30201:51)
+    at async loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20124:26)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13) (status 500)
+caused by: Error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mUnexpected token
+     [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/lib/delta-sync.ts:546:1 [38;5;246m][0m
+     [38;5;246m│[0m
+ [38;5;246m546 │[0m export[38;5;249m [0m[38;5;249mf[0m[38;5;249mu[0m[38;5;249mn[0m[38;5;249mc[0m[38;5;249mt[0m[38;5;249mi[0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249m [0m[38;5;249md[0m[38;5;249me[0m[38;5;249ml[0m[38;5;249mt[0m[38;5;249ma[0m[38;5;249mS[0m[38;5;249my[0m[38;5;249mn[0m[38;5;249mc[0m[38;5;249mR[0m[38;5;249me[0m[38;5;249mm[0m[38;5;249mo[0m[38;5;249mv[0m[38;5;249me[0m[38;5;249mL[0m[38;5;249mo[0m[38;5;249mc[0m[38;5;249ma[0m[38;5;249ml[0m[38;5;249m([0m
+ [38;5;240m    │[0m ───┬──  
+ [38;5;240m    │[0m    ╰──── 
+[38;5;246m─────╯[0m
+
+    at transformWithOxc (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:4033:19)
+    at TransformPluginContext.transform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:4104:26)
+    at EnvironmentPluginContainer.transform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:30201:51)
+    at async loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20124:26)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13)
+Error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mUnexpected token
+     [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/lib/delta-sync.ts:546:1 [38;5;246m][0m
+     [38;5;246m│[0m
+ [38;5;246m546 │[0m export[38;5;249m [0m[38;5;249mf[0m[38;5;249mu[0m[38;5;249mn[0m[38;5;249mc[0m[38;5;249mt[0m[38;5;249mi[0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249m [0m[38;5;249md[0m[38;5;249me[0m[38;5;249ml[0m[38;5;249mt[0m[38;5;249ma[0m[38;5;249mS[0m[38;5;249my[0m[38;5;249mn[0m[38;5;249mc[0m[38;5;249mR[0m[38;5;249me[0m[38;5;249mm[0m[38;5;249mo[0m[38;5;249mv[0m[38;5;249me[0m[38;5;249mL[0m[38;5;249mo[0m[38;5;249mc[0m[38;5;249ma[0m[38;5;249ml[0m[38;5;249m([0m
+ [38;5;240m    │[0m ───┬──  
+ [38;5;240m    │[0m    ╰──── 
+[38;5;246m─────╯[0m
+
+    at transformWithOxc (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:4033:19)
+    at TransformPluginContext.transform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:4104:26)
+    at EnvironmentPluginContainer.transform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:30201:51)
+    at async loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20124:26)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13) (status 500)
+caused by: Error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mUnexpected token
+     [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/lib/delta-sync.ts:546:1 [38;5;246m][0m
+     [38;5;246m│[0m
+ [38;5;246m546 │[0m export[38;5;249m [0m[38;5;249mf[0m[38;5;249mu[0m[38;5;249mn[0m[38;5;249mc[0m[38;5;249mt[0m[38;5;249mi[0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249m [0m[38;5;249md[0m[38;5;249me[0m[38;5;249ml[0m[38;5;249mt[0m[38;5;249ma[0m[38;5;249mS[0m[38;5;249my[0m[38;5;249mn[0m[38;5;249mc[0m[38;5;249mR[0m[38;5;249me[0m[38;5;249mm[0m[38;5;249mo[0m[38;5;249mv[0m[38;5;249me[0m[38;5;249mL[0m[38;5;249mo[0m[38;5;249mc[0m[38;5;249ma[0m[38;5;249ml[0m[38;5;249m([0m
+ [38;5;240m    │[0m ───┬──  
+ [38;5;240m    │[0m    ╰──── 
+[38;5;246m─────╯[0m
+
+    at transformWithOxc (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:4033:19)
+    at TransformPluginContext.transform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:4104:26)
+    at EnvironmentPluginContainer.transform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:30201:51)
+    at async loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20124:26)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13)
+[2m8:53:30 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/log.tsx, /src/routes/_authenticated/hanger.personal.tsx, /src/context/auth-context.tsx, /src/components/app-shell.tsx, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component, /src/components/gear-card/gear-card.tsx, /src/pages/gear/ledger.tsx, /src/components/gear-detail/other-details.tsx, /src/routes/_authenticated/gear/$type.$uuid.tsx?tsr-split=component, /src/components/gear-detail/drone-details.tsx and 8 more[22m
+[2m8:53:30 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/delta-sync.ts[22m
+[2m8:53:54 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/log.tsx, /src/routes/_authenticated/hanger.personal.tsx, /src/context/auth-context.tsx, /src/components/app-shell.tsx, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component, /src/components/gear-card/gear-card.tsx, /src/pages/gear/ledger.tsx, /src/components/gear-detail/other-details.tsx, /src/routes/_authenticated/gear/$type.$uuid.tsx?tsr-split=component, /src/components/gear-detail/drone-details.tsx and 8 more[22m
+[2m8:53:54 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/db_request.ts[22m
+[2m8:53:54 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m8:54:09 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/log.tsx, /src/routes/_authenticated/hanger.personal.tsx, /src/context/auth-context.tsx, /src/components/app-shell.tsx, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component, /src/components/gear-card/gear-card.tsx, /src/pages/gear/ledger.tsx, /src/components/gear-detail/other-details.tsx, /src/routes/_authenticated/gear/$type.$uuid.tsx?tsr-split=component, /src/components/gear-detail/drone-details.tsx and 8 more[22m
+[2m8:54:09 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/db_request.ts[22m
+[2m8:54:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/log.tsx, /src/routes/_authenticated/hanger.personal.tsx, /src/context/auth-context.tsx, /src/components/app-shell.tsx, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component, /src/components/gear-card/gear-card.tsx, /src/pages/gear/ledger.tsx, /src/components/gear-detail/other-details.tsx, /src/routes/_authenticated/gear/$type.$uuid.tsx?tsr-split=component, /src/components/gear-detail/drone-details.tsx and 8 more[22m
+[2m8:54:39 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/delta-sync.ts[22m
+[2m8:55:31 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/log.tsx, /src/routes/_authenticated/hanger.personal.tsx, /src/context/auth-context.tsx, /src/components/app-shell.tsx, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component, /src/components/gear-card/gear-card.tsx, /src/pages/gear/ledger.tsx, /src/components/gear-detail/other-details.tsx, /src/routes/_authenticated/gear/$type.$uuid.tsx?tsr-split=component, /src/components/gear-detail/drone-details.tsx and 8 more[22m
+[2m8:55:31 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/delta-sync.ts[22m
+[2m8:55:43 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/log.tsx, /src/routes/_authenticated/hanger.personal.tsx, /src/context/auth-context.tsx, /src/components/app-shell.tsx, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component, /src/components/gear-card/gear-card.tsx, /src/pages/gear/ledger.tsx, /src/components/gear-detail/other-details.tsx, /src/routes/_authenticated/gear/$type.$uuid.tsx?tsr-split=component, /src/components/gear-detail/drone-details.tsx and 8 more[22m
+[2m8:55:43 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/delta-sync.ts[22m
+[2m8:56:07 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/log.tsx, /src/routes/_authenticated/hanger.personal.tsx, /src/context/auth-context.tsx, /src/components/app-shell.tsx, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component, /src/components/gear-card/gear-card.tsx, /src/pages/gear/ledger.tsx, /src/components/gear-detail/other-details.tsx, /src/routes/_authenticated/gear/$type.$uuid.tsx?tsr-split=component, /src/components/gear-detail/drone-details.tsx and 8 more[22m
+[2m8:56:07 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/delta-sync.ts[22m
+[2m8:56:12 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/log.tsx, /src/routes/_authenticated/hanger.personal.tsx, /src/context/auth-context.tsx, /src/components/app-shell.tsx, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component, /src/components/gear-card/gear-card.tsx, /src/pages/gear/ledger.tsx, /src/components/gear-detail/other-details.tsx, /src/routes/_authenticated/gear/$type.$uuid.tsx?tsr-split=component, /src/components/gear-detail/drone-details.tsx and 8 more[22m
+[2m8:56:12 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/delta-sync.ts[22m
+[2m8:56:44 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/log.tsx, /src/routes/_authenticated/hanger.personal.tsx, /src/context/auth-context.tsx, /src/components/app-shell.tsx, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component, /src/components/gear-card/gear-card.tsx, /src/pages/gear/ledger.tsx, /src/components/gear-detail/other-details.tsx, /src/routes/_authenticated/gear/$type.$uuid.tsx?tsr-split=component, /src/components/gear-detail/drone-details.tsx and 8 more[22m
+[2m8:56:44 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/db_request.ts[22m
+[2m8:57:00 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+Warning: Route file "D:/Projects/sticktime-fpv/src/routes/_authenticated/log-hooks.ts" does not export a Route. This file will not be included in the route tree.
+
+If this file is not intended to be a route, you can exclude it using one of these options:
+  1. Rename the file to "D:\Projects\sticktime-fpv\src\routes\_authenticated\-log-hooks.ts" (prefix with "-")
+  2. Use 'routeFileIgnorePattern' in your config to match this file
+
+Current configuration:
+  routeFileIgnorePrefix: "-"
+  routeFileIgnorePattern: undefined
+[2m8:57:55 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/hanger.personal.tsx, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component[22m
+[2m8:57:55 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/hanger.personal.tsx[22m
+[2m8:58:34 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m8:58:50 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/gear/$type.$uuid.tsx?tsr-split=component, /src/components/gear-detail/drone-details.tsx, /src/components/gear-detail/transmitter-details.tsx, /src/components/gear-detail/other-details.tsx, /src/components/gear-detail/drone-parts-panel.tsx[22m
+[2m8:58:50 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/gear/$type.$uuid.tsx?tsr-split=component, /src/components/gear-detail/drone-details.tsx, /src/components/gear-detail/transmitter-details.tsx, /src/components/gear-detail/other-details.tsx, /src/components/gear-detail/drone-parts-panel.tsx[22m
+[2m8:58:51 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m8:58:58 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card.tsx[22m
+[2m8:59:44 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/log.tsx, /src/routes/_authenticated/hanger.personal.tsx, /src/context/auth-context.tsx, /src/components/app-shell.tsx, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component, /src/components/gear-card/gear-card.tsx, /src/pages/gear/ledger.tsx, /src/components/gear-detail/other-details.tsx, /src/routes/_authenticated/gear/$type.$uuid.tsx?tsr-split=component, /src/components/gear-detail/drone-details.tsx and 20 more[22m
+[2m8:59:44 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/db_request.ts[22m
+[2m8:59:44 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m8:59:44 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/context/auth-context.tsx[22m Could not Fast Refresh ("useAuth" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m8:59:44 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/__root.tsx, /src/routes/index.tsx?tsr-split=component, /src/components/auth/protected-route.tsx, /src/components/app-shell.tsx, /src/components/top-nav.tsx, /src/components/sidebar.tsx[22m
+[2m8:59:44 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/analytics/squadron-failure-analytics.tsx[22m Could not Fast Refresh ("buildOrgRollup" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m8:59:44 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/_authenticated/analytics.tsx?tsr-split=component, /src/routes/_authenticated/squadron/$squadronId.tsx?tsr-split=component[22m
+[2m8:59:44 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/analytics/failure-analytics-dashboard.tsx[22m Could not Fast Refresh ("FAILURE_CATEGORIES" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m8:59:44 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/_authenticated/analytics.tsx?tsr-split=component, /src/routes/_authenticated/squadron/$squadronId.tsx?tsr-split=component, /src/components/analytics/squadron-failure-analytics.tsx[22m
+[2m8:59:52 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-detail/drone-parts-panel.tsx, /src/components/inventory/part-form-modal.tsx, /src/pages/gear/inventory/index.tsx, /src/components/inventory/part-detail-modal.tsx[22m
+[2m9:00:10 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/pages/gear/ledger.tsx[22m
+[2m9:00:34 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/pages/gear/ledger.tsx[22m
+[2m9:11:45 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component, /src/components/gear-card/gear-card-parts.tsx[22m
+[2m9:11:45 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card.tsx[22m
+[2m9:12:25 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card.tsx[22m
+[2m9:12:25 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mAdjacent JSX elements must be wrapped in an enclosing tag.
+     [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/components/gear-card/gear-card.tsx:184:5 [38;5;246m][0m
+     [38;5;246m│[0m
+ [38;5;246m184 │[0m [38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m<[38;5;249m/[0m[38;5;249md[0m[38;5;249mi[0m[38;5;249mv[0m[38;5;249m>[0m
+ [38;5;240m    │[0m     ┬  
+ [38;5;240m    │[0m     ╰── 
+ [38;5;240m    │[0m 
+ [38;5;240m    │[0m [38;5;115mHelp[0m: Did you want a JSX fragment `<>...</>`?
+[38;5;246m─────╯[0m
+[39m
+  Plugin: [35mvite:oxc[39m
+  File: [36mD:/Projects/sticktime-fpv/src/components/gear-card/gear-card.tsx[39m
+      at transformWithOxc (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:4033:19)
+      at TransformPluginContext.transform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:4104:26)
+      at EnvironmentPluginContainer.transform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:30201:51)
+      at async loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20124:26)
+      at async viteTransformMiddleware (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:24604:20)
+[2m9:12:58 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card.tsx[22m
+[2m9:12:58 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mUnexpected token. Did you mean `{'}'}` or `&rbrace;`?
+     [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/components/gear-card/gear-card.tsx:183:10 [38;5;246m][0m
+     [38;5;246m│[0m
+ [38;5;246m183 │[0m [38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m)[0m[38;5;249m}[0m
+ [38;5;240m    │[0m          │ 
+ [38;5;240m    │[0m          ╰─ 
+[38;5;246m─────╯[0m
+[39m
+  Plugin: [35mvite:oxc[39m
+  File: [36mD:/Projects/sticktime-fpv/src/components/gear-card/gear-card.tsx[39m
+      at transformWithOxc (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:4033:19)
+      at TransformPluginContext.transform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:4104:26)
+      at EnvironmentPluginContainer.transform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:30201:51)
+      at async loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20124:26)
+      at async viteTransformMiddleware (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:24604:20)
+[2m9:13:42 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card-header.tsx[22m
+[2m9:14:06 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card-edit-dialog.tsx[22m
+[2m9:14:37 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card-logs.tsx[22m
+Warning: Route file "D:/Projects/sticktime-fpv/src/routes/_authenticated/log-hooks.ts" does not export a Route. This file will not be included in the route tree.
+
+If this file is not intended to be a route, you can exclude it using one of these options:
+  1. Rename the file to "D:\Projects\sticktime-fpv\src\routes\_authenticated\-log-hooks.ts" (prefix with "-")
+  2. Use 'routeFileIgnorePattern' in your config to match this file
+
+Current configuration:
+  routeFileIgnorePrefix: "-"
+  routeFileIgnorePattern: undefined
+[2m9:16:38 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/hanger.squadron.$uuid.tsx, /src/routes/_authenticated/hanger.squadron.$uuid.tsx?tsr-split=component[22m
+[2m9:16:38 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/hanger.squadron.$uuid.tsx[22m
+[2m9:16:38 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mUnexpected token. Did you mean `{'}'}` or `&rbrace;`?
+     [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/components/gear-card/gear-card.tsx:183:10 [38;5;246m][0m
+     [38;5;246m│[0m
+ [38;5;246m183 │[0m [38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m)[0m[38;5;249m}[0m
+ [38;5;240m    │[0m          │ 
+ [38;5;240m    │[0m          ╰─ 
+[38;5;246m─────╯[0m
+
+  Plugin: [35mvite:oxc[39m
+  File: [36mD:/Projects/sticktime-fpv/src/components/gear-card/gear-card.tsx[39m
+[2m9:16:38 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mUnexpected token. Did you mean `{'}'}` or `&rbrace;`?
+     [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/components/gear-card/gear-card.tsx:183:10 [38;5;246m][0m
+     [38;5;246m│[0m
+ [38;5;246m183 │[0m [38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m)[0m[38;5;249m}[0m
+ [38;5;240m    │[0m          │ 
+ [38;5;240m    │[0m          ╰─ 
+[38;5;246m─────╯[0m
+[39m
+  Plugin: [35mvite:oxc[39m
+  File: [36mD:/Projects/sticktime-fpv/src/components/gear-card/gear-card.tsx[39m
+      at transformWithOxc (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:4033:19)
+      at TransformPluginContext.transform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:4104:26)
+      at EnvironmentPluginContainer.transform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:30201:51)
+      at async loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20124:26)
+      at async viteTransformMiddleware (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:24604:20)
+[2m9:17:26 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card.tsx[22m
+[2m9:17:26 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component, /src/routes/_authenticated/hanger.squadron.$uuid.tsx?tsr-split=component, /src/components/gear-card/gear-card-parts.tsx[22m
+Warning: Route file "D:/Projects/sticktime-fpv/src/routes/_authenticated/log-hooks.ts" does not export a Route. This file will not be included in the route tree.
+
+If this file is not intended to be a route, you can exclude it using one of these options:
+  1. Rename the file to "D:\Projects\sticktime-fpv\src\routes\_authenticated\-log-hooks.ts" (prefix with "-")
+  2. Use 'routeFileIgnorePattern' in your config to match this file
+
+Current configuration:
+  routeFileIgnorePrefix: "-"
+  routeFileIgnorePattern: undefined
+[2m9:17:43 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/hanger.squadron.$uuid.tsx, /src/routes/_authenticated/hanger.squadron.$uuid.tsx?tsr-split=component[22m
+[2m9:17:43 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/hanger.squadron.$uuid.tsx[22m
+[2m9:17:43 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m9:18:06 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/app-shell.tsx[22m
+[2m9:19:28 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/app-shell.tsx[22m
+[2m9:19:57 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card.tsx[22m
+Warning: Route file "D:/Projects/sticktime-fpv/src/routes/_authenticated/log-hooks.ts" does not export a Route. This file will not be included in the route tree.
+
+If this file is not intended to be a route, you can exclude it using one of these options:
+  1. Rename the file to "D:\Projects\sticktime-fpv\src\routes\_authenticated\-log-hooks.ts" (prefix with "-")
+  2. Use 'routeFileIgnorePattern' in your config to match this file
+
+Current configuration:
+  routeFileIgnorePrefix: "-"
+  routeFileIgnorePattern: undefined
+[2m9:20:46 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/hanger.squadron.$uuid.tsx, /src/routes/_authenticated/hanger.squadron.$uuid.tsx?tsr-split=component[22m
+[2m9:20:46 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/hanger.squadron.$uuid.tsx[22m
+[2m9:21:53 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/app-shell.tsx[22m
+Warning: Route file "D:/Projects/sticktime-fpv/src/routes/_authenticated/log-hooks.ts" does not export a Route. This file will not be included in the route tree.
+
+If this file is not intended to be a route, you can exclude it using one of these options:
+  1. Rename the file to "D:\Projects\sticktime-fpv\src\routes\_authenticated\-log-hooks.ts" (prefix with "-")
+  2. Use 'routeFileIgnorePattern' in your config to match this file
+
+Current configuration:
+  routeFileIgnorePrefix: "-"
+  routeFileIgnorePattern: undefined
+[2m9:22:06 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/hanger.personal.tsx, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component[22m
+[2m9:22:06 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/hanger.personal.tsx[22m
+[2m9:22:06 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/pages/gear/ledger.tsx[22m
+[2m9:22:06 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-detail/drone-parts-panel.tsx, /src/components/inventory/part-form-modal.tsx, /src/pages/gear/inventory/index.tsx, /src/components/inventory/part-detail-modal.tsx[22m
+[2m9:22:06 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/lib/gear-scope.tsx[22m
+[2m9:22:06 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/log.tsx, /src/routes/_authenticated/hanger.personal.tsx, /src/context/auth-context.tsx, /src/components/app-shell.tsx, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component, /src/components/gear-card/gear-card.tsx, /src/pages/gear/ledger.tsx, /src/components/gear-detail/other-details.tsx, /src/routes/_authenticated/gear/$type.$uuid.tsx?tsr-split=component, /src/components/gear-detail/drone-details.tsx and 21 more[22m
+[2m9:22:06 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/delta-sync.ts[22m
+[2m9:22:06 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/app-shell.tsx[22m
+[2m9:22:06 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-detail/battery-ir-tracker.tsx[22m
+[2m9:22:06 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card.tsx[22m
+[2m9:22:06 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card-edit-dialog.tsx[22m
+[2m9:22:06 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/gear/$type.$uuid.tsx?tsr-split=component, /src/components/gear-detail/drone-details.tsx, /src/components/gear-detail/transmitter-details.tsx, /src/components/gear-detail/other-details.tsx, /src/components/gear-detail/drone-parts-panel.tsx, /src/components/inventory/part-form-modal.tsx[22m
+[2m9:22:06 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card.tsx[22m
+[2m9:22:06 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card-logs.tsx[22m
+[2m9:22:06 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card-parts.tsx[22m
+Warning: Route file "D:/Projects/sticktime-fpv/src/routes/_authenticated/log-hooks.ts" does not export a Route. This file will not be included in the route tree.
+
+If this file is not intended to be a route, you can exclude it using one of these options:
+  1. Rename the file to "D:\Projects\sticktime-fpv\src\routes\_authenticated\-log-hooks.ts" (prefix with "-")
+  2. Use 'routeFileIgnorePattern' in your config to match this file
+
+Current configuration:
+  routeFileIgnorePrefix: "-"
+  routeFileIgnorePattern: undefined
+[2m9:22:06 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/hanger.squadron.$uuid.tsx, /src/routes/_authenticated/hanger.squadron.$uuid.tsx?tsr-split=component[22m
+[2m9:22:06 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/hanger.squadron.$uuid.tsx[22m
+[2m9:22:06 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/context/auth-context.tsx[22m Could not Fast Refresh ("useAuth" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m9:22:06 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/__root.tsx, /src/routes/index.tsx?tsr-split=component, /src/components/auth/protected-route.tsx, /src/components/app-shell.tsx, /src/components/top-nav.tsx, /src/components/sidebar.tsx[22m
+[2m9:28:45 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/lib/gear-scope.tsx[22m
+[2m9:28:45 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/lib/gear-scope.tsx[22m Could not Fast Refresh ("useGearScope" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m9:28:45 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/_authenticated/hanger.squadron.$uuid.tsx?tsr-split=component[22m
+[2m9:33:53 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/analytics/failure-analytics-dashboard.tsx[22m
+[2m9:33:53 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card-header.tsx[22m
+[2m9:33:53 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card-edit-dialog.tsx[22m
+[2m9:33:53 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component, /src/routes/_authenticated/hanger.squadron.$uuid.tsx?tsr-split=component, /src/components/gear-card/gear-card-parts.tsx[22m
+[2m9:33:53 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card.tsx[22m
+[2m9:33:53 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/gear/$type.$uuid.tsx?tsr-split=component, /src/components/gear-detail/drone-details.tsx, /src/components/gear-detail/transmitter-details.tsx, /src/components/gear-detail/other-details.tsx, /src/components/gear-detail/drone-parts-panel.tsx[22m
+[2m9:33:53 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/gear/$type.$uuid.tsx?tsr-split=component, /src/components/gear-detail/drone-details.tsx, /src/components/gear-detail/transmitter-details.tsx, /src/components/gear-detail/other-details.tsx, /src/components/gear-detail/drone-parts-panel.tsx[22m
+[2m9:33:53 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/log.tsx, /src/routes/_authenticated/hanger.personal.tsx, /src/context/auth-context.tsx, /src/components/app-shell.tsx, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component, /src/components/gear-card/gear-card.tsx, /src/pages/gear/ledger.tsx, /src/components/gear-detail/other-details.tsx, /src/routes/_authenticated/gear/$type.$uuid.tsx?tsr-split=component, /src/components/gear-detail/drone-details.tsx and 21 more[22m
+[2m9:33:53 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/db_request.ts[22m
+[2m9:33:53 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/pages/gear/ledger.tsx[22m
+[2m9:33:54 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/analytics/failure-analytics-dashboard.tsx[22m Could not Fast Refresh ("FAILURE_CATEGORIES" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m9:33:54 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/_authenticated/analytics.tsx?tsr-split=component, /src/routes/_authenticated/squadron/$squadronId.tsx?tsr-split=component, /src/components/analytics/squadron-failure-analytics.tsx[22m
+[2m9:33:54 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/analytics/squadron-failure-analytics.tsx[22m Could not Fast Refresh ("buildOrgRollup" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m9:33:54 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/_authenticated/analytics.tsx?tsr-split=component, /src/routes/_authenticated/squadron/$squadronId.tsx?tsr-split=component[22m
+[2m9:54:15 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/log.tsx, /src/routes/_authenticated/hanger.personal.tsx, /src/context/auth-context.tsx, /src/components/app-shell.tsx, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component, /src/components/gear-card/gear-card.tsx, /src/pages/gear/ledger.tsx, /src/components/gear-detail/other-details.tsx, /src/routes/_authenticated/gear/$type.$uuid.tsx?tsr-split=component, /src/components/gear-detail/drone-details.tsx and 21 more[22m
+[2m9:54:15 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/db_request.ts[22m
+[2m9:54:15 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m9:54:15 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/context/auth-context.tsx[22m Could not Fast Refresh ("useAuth" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m9:54:15 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/__root.tsx, /src/routes/index.tsx?tsr-split=component, /src/components/auth/protected-route.tsx, /src/components/app-shell.tsx, /src/components/top-nav.tsx, /src/components/sidebar.tsx[22m
+[2m9:56:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component, /src/routes/_authenticated/hanger.squadron.$uuid.tsx?tsr-split=component, /src/components/gear-card/gear-card-parts.tsx[22m
+[2m9:57:18 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card-header.tsx[22m
+[2m9:57:59 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card-header.tsx[22m
+[2m9:58:31 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card.tsx[22m
+[2m9:59:19 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card-edit-dialog.tsx[22m
+[2m10:00:51 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card-edit-dialog.tsx[22m
+[2m10:01:56 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/analytics/failure-analytics-dashboard.tsx[22m
+Warning: Route file "D:/Projects/sticktime-fpv/src/routes/_authenticated/log-hooks.ts" does not export a Route. This file will not be included in the route tree.
+
+If this file is not intended to be a route, you can exclude it using one of these options:
+  1. Rename the file to "D:\Projects\sticktime-fpv\src\routes\_authenticated\-log-hooks.ts" (prefix with "-")
+  2. Use 'routeFileIgnorePattern' in your config to match this file
+
+Current configuration:
+  routeFileIgnorePrefix: "-"
+  routeFileIgnorePattern: undefined
+[2m10:03:00 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/hanger.squadron.$uuid.tsx, /src/routes/_authenticated/hanger.squadron.$uuid.tsx?tsr-split=component[22m
+[2m10:03:00 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/hanger.squadron.$uuid.tsx[22m
+[2m10:04:48 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/log.tsx, /src/routes/_authenticated/hanger.personal.tsx, /src/context/auth-context.tsx, /src/components/app-shell.tsx, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component, /src/components/gear-card/gear-card.tsx, /src/pages/gear/ledger.tsx, /src/components/gear-detail/other-details.tsx, /src/routes/_authenticated/gear/$type.$uuid.tsx?tsr-split=component, /src/components/gear-detail/drone-details.tsx and 21 more[22m
+[2m10:04:48 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/db_request.ts[22m
+[2m10:04:48 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/context/auth-context.tsx[22m Could not Fast Refresh ("useAuth" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m10:04:48 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/__root.tsx, /src/routes/index.tsx?tsr-split=component, /src/components/auth/protected-route.tsx, /src/components/app-shell.tsx, /src/components/top-nav.tsx, /src/components/sidebar.tsx[22m
+Warning: Route file "D:/Projects/sticktime-fpv/src/routes/_authenticated/log-hooks.ts" does not export a Route. This file will not be included in the route tree.
+
+If this file is not intended to be a route, you can exclude it using one of these options:
+  1. Rename the file to "D:\Projects\sticktime-fpv\src\routes\_authenticated\-log-hooks.ts" (prefix with "-")
+  2. Use 'routeFileIgnorePattern' in your config to match this file
+
+Current configuration:
+  routeFileIgnorePrefix: "-"
+  routeFileIgnorePattern: undefined
+[2m10:08:14 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/hanger.squadron.$uuid.tsx, /src/routes/_authenticated/hanger.squadron.$uuid.tsx?tsr-split=component[22m
+[2m10:08:14 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/hanger.squadron.$uuid.tsx[22m
+[2m10:09:03 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card.tsx[22m
+[2m10:09:44 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card.tsx[22m
+[2m10:10:51 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/gear-card/gear-card-header.tsx[22m
+Warning: Route file "D:/Projects/sticktime-fpv/src/routes/_authenticated/log-hooks.ts" does not export a Route. This file will not be included in the route tree.
+
+If this file is not intended to be a route, you can exclude it using one of these options:
+  1. Rename the file to "D:\Projects\sticktime-fpv\src\routes\_authenticated\-log-hooks.ts" (prefix with "-")
+  2. Use 'routeFileIgnorePattern' in your config to match this file
+
+Current configuration:
+  routeFileIgnorePrefix: "-"
+  routeFileIgnorePattern: undefined
+[2m10:16:45 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/hanger.squadron.$uuid.tsx, /src/routes/_authenticated/hanger.squadron.$uuid.tsx?tsr-split=component[22m
+[2m10:16:45 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/hanger.squadron.$uuid.tsx[22m
+Warning: Route file "D:/Projects/sticktime-fpv/src/routes/_authenticated/log-hooks.ts" does not export a Route. This file will not be included in the route tree.
+
+If this file is not intended to be a route, you can exclude it using one of these options:
+  1. Rename the file to "D:\Projects\sticktime-fpv\src\routes\_authenticated\-log-hooks.ts" (prefix with "-")
+  2. Use 'routeFileIgnorePattern' in your config to match this file
+
+Current configuration:
+  routeFileIgnorePrefix: "-"
+  routeFileIgnorePattern: undefined
+[2m10:47:24 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/hanger.personal.tsx, /src/routes/_authenticated/hanger.personal.tsx?tsr-split=component[22m
+[2m10:47:24 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/hanger.personal.tsx[22m
+Warning: Route file "D:/Projects/sticktime-fpv/src/routes/_authenticated/log-hooks.ts" does not export a Route. This file will not be included in the route tree.
+
+If this file is not intended to be a route, you can exclude it using one of these options:
+  1. Rename the file to "D:\Projects\sticktime-fpv\src\routes\_authenticated\-log-hooks.ts" (prefix with "-")
+  2. Use 'routeFileIgnorePattern' in your config to match this file
+
+Current configuration:
+  routeFileIgnorePrefix: "-"
+  routeFileIgnorePattern: undefined
+[2m10:48:57 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/hanger.squadron.$uuid.tsx, /src/routes/_authenticated/hanger.squadron.$uuid.tsx?tsr-split=component[22m
+[2m10:48:57 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/hanger.squadron.$uuid.tsx[22m

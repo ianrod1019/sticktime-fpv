@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -50,6 +50,11 @@ interface PartFormModalProps {
   suppressInstallSection?: boolean;
   /** Hides the status field (used when the host controls status semantics). */
   suppressStatusField?: boolean;
+  /**
+   * Org benches: hides the purchase block (squadron money fields are
+   * owner/manager-locked, so plain members never see them).
+   */
+  suppressPurchaseFields?: boolean;
 }
 
 interface FormState {
@@ -123,9 +128,14 @@ export function PartFormModal({
   part,
   suppressInstallSection = false,
   suppressStatusField = false,
+  suppressPurchaseFields = false,
 }: PartFormModalProps) {
   const [state, setState] = useState<FormState>(() => stateFromPart(part));
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Synchronous guard: state updates land on the NEXT render, so the
+  // disabled-button state alone still lets rapid re-clicks in the same tick
+  // fire several onSubmit calls (observed 3 duplicate rows in playtest).
+  const submittingRef = useRef(false);
   const isEdit = !!part;
 
   // Install-step state lives outside `state` so it never leaks into the
@@ -166,6 +176,7 @@ export function PartFormModal({
     }));
 
   const handleSubmit = async () => {
+    if (submittingRef.current) return;
     if (!state.name.trim()) {
       toast.error("Give the part a name first");
       return;
@@ -184,14 +195,18 @@ export function PartFormModal({
       return;
     }
 
+    submittingRef.current = true;
     setIsSubmitting(true);
     const specs: Record<string, string> = { ...state.specs };
     if (state.notes.trim()) specs["notes"] = state.notes.trim();
     specs["quantity"] = String(state.quantity);
     const costValue =
-      state.purchaseCost.trim() === "" ? null : Number(state.purchaseCost);
+      !suppressPurchaseFields && state.purchaseCost.trim() !== ""
+        ? Number(state.purchaseCost)
+        : null;
     if (costValue !== null && Number.isNaN(costValue)) {
       toast.error("Purchase cost must be a number");
+      submittingRef.current = false;
       setIsSubmitting(false);
       return;
     }
@@ -202,10 +217,11 @@ export function PartFormModal({
       status: state.status,
       specs,
       purchase_cost: costValue,
-      purchase_date: state.purchaseDate || null,
-      vendor: state.vendor.trim() || null,
+      purchase_date: suppressPurchaseFields ? null : state.purchaseDate || null,
+      vendor: suppressPurchaseFields ? null : state.vendor.trim() || null,
     });
     if (!result) {
+      submittingRef.current = false;
       setIsSubmitting(false);
       return;
     }
@@ -226,6 +242,7 @@ export function PartFormModal({
         toast.error(
           "Part saved, but the install could not be recorded. Open the part and assign it from there.",
         );
+        submittingRef.current = false;
         setIsSubmitting(false);
         return;
       }
@@ -234,6 +251,7 @@ export function PartFormModal({
       toast.success(`Installed on ${droneName}`);
     }
 
+    submittingRef.current = false;
     setIsSubmitting(false);
     onOpenChange(false);
   };
@@ -342,56 +360,58 @@ export function PartFormModal({
             </p>
           </div>
 
-          <div className="space-y-3 rounded-lg border border-primary/15 bg-muted/20 p-3">
-            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Purchase (for the cost ledger)
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <Label htmlFor="part-cost">Cost</Label>
-                <Input
-                  id="part-cost"
-                  type="number"
-                  min={0}
-                  step="0.01"
-                  inputMode="decimal"
-                  value={state.purchaseCost}
-                  onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      purchaseCost: e.target.value,
-                    }))
-                  }
-                  placeholder="e.g. 24.99"
-                />
+          {!suppressPurchaseFields && (
+            <div className="space-y-3 rounded-lg border border-primary/15 bg-muted/20 p-3">
+              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Purchase (for the cost ledger)
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="part-cost">Cost</Label>
+                  <Input
+                    id="part-cost"
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    inputMode="decimal"
+                    value={state.purchaseCost}
+                    onChange={(e) =>
+                      setState((prev) => ({
+                        ...prev,
+                        purchaseCost: e.target.value,
+                      }))
+                    }
+                    placeholder="e.g. 24.99"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="part-purchase-date">Purchase date</Label>
+                  <Input
+                    id="part-purchase-date"
+                    type="date"
+                    value={state.purchaseDate}
+                    onChange={(e) =>
+                      setState((prev) => ({
+                        ...prev,
+                        purchaseDate: e.target.value,
+                      }))
+                    }
+                  />
+                </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="part-purchase-date">Purchase date</Label>
+                <Label htmlFor="part-vendor">Vendor</Label>
                 <Input
-                  id="part-purchase-date"
-                  type="date"
-                  value={state.purchaseDate}
+                  id="part-vendor"
+                  value={state.vendor}
                   onChange={(e) =>
-                    setState((prev) => ({
-                      ...prev,
-                      purchaseDate: e.target.value,
-                    }))
+                    setState((prev) => ({ ...prev, vendor: e.target.value }))
                   }
+                  placeholder="e.g. RaceDayQuads"
                 />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="part-vendor">Vendor</Label>
-              <Input
-                id="part-vendor"
-                value={state.vendor}
-                onChange={(e) =>
-                  setState((prev) => ({ ...prev, vendor: e.target.value }))
-                }
-                placeholder="e.g. RaceDayQuads"
-              />
-            </div>
-          </div>
+          )}
 
           {isInstalled && !suppressInstallSection && (
             <div className="space-y-3 rounded-lg border border-primary/25 bg-primary/5 p-3">

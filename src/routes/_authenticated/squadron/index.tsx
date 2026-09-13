@@ -164,7 +164,7 @@ function SquadronPortalPage() {
         }
       />
 
-      {isLoading ? (
+      {isLoading || !user ? (
         <div className="p-12 text-center font-mono text-muted-foreground animate-pulse">
           Scanning frequencies for assigned squadrons...
         </div>

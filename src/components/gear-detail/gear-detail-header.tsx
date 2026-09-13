@@ -74,7 +74,7 @@ export function GearDetailHeader({
     <div className="space-y-4">
       <button
         type="button"
-        onClick={() => navigate({ to: "/hanger" })}
+        onClick={() => navigate({ to: "/hanger/personal" })}
         className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
       >
         <ArrowLeft className="h-4 w-4" aria-hidden />

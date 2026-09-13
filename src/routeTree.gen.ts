@@ -14,23 +14,38 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
+import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
 import { Route as AuthenticatedHangerRouteImport } from './routes/_authenticated/hanger'
+import { Route as AuthenticatedLedgerRouteImport } from './routes/_authenticated/ledger'
 import { Route as AuthenticatedLogRouteImport } from './routes/_authenticated/log'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedTeamsRouteImport } from './routes/_authenticated/teams'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdmin_lookupUuidRouteImport } from './routes/_authenticated/admin_lookup.$uuid'
+import { Route as AuthenticatedAnalyticsIndexRouteImport } from './routes/_authenticated/analytics.index'
+import { Route as AuthenticatedAnalyticsPersonalRouteImport } from './routes/_authenticated/analytics.personal'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
 import { Route as AuthenticatedDroneUuidRouteImport } from './routes/_authenticated/drone/$uuid'
 import { Route as AuthenticatedGearIndexRouteImport } from './routes/_authenticated/gear/index'
+import { Route as AuthenticatedGearInventoryRouteImport } from './routes/_authenticated/gear/inventory'
 import { Route as AuthenticatedGearLedgerRouteImport } from './routes/_authenticated/gear/ledger'
+import { Route as AuthenticatedHangerIndexRouteImport } from './routes/_authenticated/hanger.index'
+import { Route as AuthenticatedHangerPersonalRouteImport } from './routes/_authenticated/hanger.personal'
+import { Route as AuthenticatedLedgerIndexRouteImport } from './routes/_authenticated/ledger.index'
+import { Route as AuthenticatedLedgerPersonalRouteImport } from './routes/_authenticated/ledger.personal'
 import { Route as AuthenticatedSquadronIndexRouteImport } from './routes/_authenticated/squadron/index'
 import { Route as AuthenticatedSquadronSquadronIdRouteImport } from './routes/_authenticated/squadron/$squadronId'
 import { Route as AuthenticatedTeamsTeamIdRouteImport } from './routes/_authenticated/teams/$teamId'
 import { Route as AuthenticatedGearTypeIndexRouteImport } from './routes/_authenticated/gear/$type.index'
 import { Route as AuthenticatedGearTypeUuidRouteImport } from './routes/_authenticated/gear/$type.$uuid'
 import { Route as AuthenticatedGearInventoryIndexRouteImport } from './routes/_authenticated/gear/inventory.index'
+import { Route as AuthenticatedGearInventoryPersonalRouteImport } from './routes/_authenticated/gear/inventory.personal'
 import { Route as AuthenticatedHangerTypeUuidRouteImport } from './routes/_authenticated/hanger/$type/$uuid'
+import { Route as AuthenticatedHangerSquadronUuidRouteImport } from './routes/_authenticated/hanger.squadron.$uuid'
+import { Route as AuthenticatedLedgerSquadronUuidRouteImport } from './routes/_authenticated/ledger.squadron.$uuid'
+import { Route as AuthenticatedSquadronSquadronIdIndexRouteImport } from './routes/_authenticated/squadron/$squadronId.index'
+import { Route as AuthenticatedSquadronSquadronIdAnalyticsRouteImport } from './routes/_authenticated/squadron/$squadronId.analytics'
+import { Route as AuthenticatedSquadronSquadronIdInventoryRouteImport } from './routes/_authenticated/squadron/$squadronId.inventory'
 import { Route as AuthenticatedSquadronManageUuidRouteImport } from './routes/_authenticated/squadron/manage.$uuid'
 
 const IndexRoute = IndexRouteImport.update({
@@ -57,9 +72,19 @@ const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAnalyticsRoute = AuthenticatedAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedHangerRoute = AuthenticatedHangerRouteImport.update({
   id: '/hanger',
   path: '/hanger',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLedgerRoute = AuthenticatedLedgerRouteImport.update({
+  id: '/ledger',
+  path: '/ledger',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedLogRoute = AuthenticatedLogRouteImport.update({
@@ -88,6 +113,18 @@ const AuthenticatedAdmin_lookupUuidRoute =
     path: '/admin_lookup/$uuid',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAnalyticsIndexRoute =
+  AuthenticatedAnalyticsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAnalyticsRoute,
+  } as any)
+const AuthenticatedAnalyticsPersonalRoute =
+  AuthenticatedAnalyticsPersonalRouteImport.update({
+    id: '/personal',
+    path: '/personal',
+    getParentRoute: () => AuthenticatedAnalyticsRoute,
+  } as any)
 const AuthenticatedDashboardIndexRoute =
   AuthenticatedDashboardIndexRouteImport.update({
     id: '/dashboard/',
@@ -104,11 +141,41 @@ const AuthenticatedGearIndexRoute = AuthenticatedGearIndexRouteImport.update({
   path: '/gear/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedGearInventoryRoute =
+  AuthenticatedGearInventoryRouteImport.update({
+    id: '/gear/inventory',
+    path: '/gear/inventory',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedGearLedgerRoute = AuthenticatedGearLedgerRouteImport.update({
   id: '/gear/ledger',
   path: '/gear/ledger',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedHangerIndexRoute =
+  AuthenticatedHangerIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedHangerRoute,
+  } as any)
+const AuthenticatedHangerPersonalRoute =
+  AuthenticatedHangerPersonalRouteImport.update({
+    id: '/personal',
+    path: '/personal',
+    getParentRoute: () => AuthenticatedHangerRoute,
+  } as any)
+const AuthenticatedLedgerIndexRoute =
+  AuthenticatedLedgerIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedLedgerRoute,
+  } as any)
+const AuthenticatedLedgerPersonalRoute =
+  AuthenticatedLedgerPersonalRouteImport.update({
+    id: '/personal',
+    path: '/personal',
+    getParentRoute: () => AuthenticatedLedgerRoute,
+  } as any)
 const AuthenticatedSquadronIndexRoute =
   AuthenticatedSquadronIndexRouteImport.update({
     id: '/squadron/',
@@ -141,15 +208,51 @@ const AuthenticatedGearTypeUuidRoute =
   } as any)
 const AuthenticatedGearInventoryIndexRoute =
   AuthenticatedGearInventoryIndexRouteImport.update({
-    id: '/gear/inventory/',
-    path: '/gear/inventory/',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedGearInventoryRoute,
+  } as any)
+const AuthenticatedGearInventoryPersonalRoute =
+  AuthenticatedGearInventoryPersonalRouteImport.update({
+    id: '/personal',
+    path: '/personal',
+    getParentRoute: () => AuthenticatedGearInventoryRoute,
   } as any)
 const AuthenticatedHangerTypeUuidRoute =
   AuthenticatedHangerTypeUuidRouteImport.update({
     id: '/$type/$uuid',
     path: '/$type/$uuid',
     getParentRoute: () => AuthenticatedHangerRoute,
+  } as any)
+const AuthenticatedHangerSquadronUuidRoute =
+  AuthenticatedHangerSquadronUuidRouteImport.update({
+    id: '/squadron/$uuid',
+    path: '/squadron/$uuid',
+    getParentRoute: () => AuthenticatedHangerRoute,
+  } as any)
+const AuthenticatedLedgerSquadronUuidRoute =
+  AuthenticatedLedgerSquadronUuidRouteImport.update({
+    id: '/squadron/$uuid',
+    path: '/squadron/$uuid',
+    getParentRoute: () => AuthenticatedLedgerRoute,
+  } as any)
+const AuthenticatedSquadronSquadronIdIndexRoute =
+  AuthenticatedSquadronSquadronIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedSquadronSquadronIdRoute,
+  } as any)
+const AuthenticatedSquadronSquadronIdAnalyticsRoute =
+  AuthenticatedSquadronSquadronIdAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
+    getParentRoute: () => AuthenticatedSquadronSquadronIdRoute,
+  } as any)
+const AuthenticatedSquadronSquadronIdInventoryRoute =
+  AuthenticatedSquadronSquadronIdInventoryRouteImport.update({
+    id: '/inventory',
+    path: '/inventory',
+    getParentRoute: () => AuthenticatedSquadronSquadronIdRoute,
   } as any)
 const AuthenticatedSquadronManageUuidRoute =
   AuthenticatedSquadronManageUuidRouteImport.update({
@@ -163,47 +266,72 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/analytics': typeof AuthenticatedAnalyticsRouteWithChildren
   '/hanger': typeof AuthenticatedHangerRouteWithChildren
+  '/ledger': typeof AuthenticatedLedgerRouteWithChildren
   '/log': typeof AuthenticatedLogRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/teams': typeof AuthenticatedTeamsRouteWithChildren
   '/admin_lookup/$uuid': typeof AuthenticatedAdmin_lookupUuidRoute
+  '/analytics/personal': typeof AuthenticatedAnalyticsPersonalRoute
   '/drone/$uuid': typeof AuthenticatedDroneUuidRoute
+  '/gear/inventory': typeof AuthenticatedGearInventoryRouteWithChildren
   '/gear/ledger': typeof AuthenticatedGearLedgerRoute
-  '/squadron/$squadronId': typeof AuthenticatedSquadronSquadronIdRoute
+  '/hanger/personal': typeof AuthenticatedHangerPersonalRoute
+  '/ledger/personal': typeof AuthenticatedLedgerPersonalRoute
+  '/squadron/$squadronId': typeof AuthenticatedSquadronSquadronIdRouteWithChildren
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/analytics/': typeof AuthenticatedAnalyticsIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/gear/': typeof AuthenticatedGearIndexRoute
+  '/hanger/': typeof AuthenticatedHangerIndexRoute
+  '/ledger/': typeof AuthenticatedLedgerIndexRoute
   '/squadron/': typeof AuthenticatedSquadronIndexRoute
   '/gear/$type/$uuid': typeof AuthenticatedGearTypeUuidRoute
+  '/gear/inventory/personal': typeof AuthenticatedGearInventoryPersonalRoute
   '/hanger/$type/$uuid': typeof AuthenticatedHangerTypeUuidRoute
+  '/hanger/squadron/$uuid': typeof AuthenticatedHangerSquadronUuidRoute
+  '/ledger/squadron/$uuid': typeof AuthenticatedLedgerSquadronUuidRoute
+  '/squadron/$squadronId/analytics': typeof AuthenticatedSquadronSquadronIdAnalyticsRoute
+  '/squadron/$squadronId/inventory': typeof AuthenticatedSquadronSquadronIdInventoryRoute
   '/squadron/manage/$uuid': typeof AuthenticatedSquadronManageUuidRoute
   '/gear/$type/': typeof AuthenticatedGearTypeIndexRoute
   '/gear/inventory/': typeof AuthenticatedGearInventoryIndexRoute
+  '/squadron/$squadronId/': typeof AuthenticatedSquadronSquadronIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
-  '/hanger': typeof AuthenticatedHangerRouteWithChildren
   '/log': typeof AuthenticatedLogRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/teams': typeof AuthenticatedTeamsRouteWithChildren
   '/admin_lookup/$uuid': typeof AuthenticatedAdmin_lookupUuidRoute
+  '/analytics/personal': typeof AuthenticatedAnalyticsPersonalRoute
   '/drone/$uuid': typeof AuthenticatedDroneUuidRoute
   '/gear/ledger': typeof AuthenticatedGearLedgerRoute
-  '/squadron/$squadronId': typeof AuthenticatedSquadronSquadronIdRoute
+  '/hanger/personal': typeof AuthenticatedHangerPersonalRoute
+  '/ledger/personal': typeof AuthenticatedLedgerPersonalRoute
   '/teams/$teamId': typeof AuthenticatedTeamsTeamIdRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/analytics': typeof AuthenticatedAnalyticsIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/gear': typeof AuthenticatedGearIndexRoute
+  '/hanger': typeof AuthenticatedHangerIndexRoute
+  '/ledger': typeof AuthenticatedLedgerIndexRoute
   '/squadron': typeof AuthenticatedSquadronIndexRoute
   '/gear/$type/$uuid': typeof AuthenticatedGearTypeUuidRoute
+  '/gear/inventory/personal': typeof AuthenticatedGearInventoryPersonalRoute
   '/hanger/$type/$uuid': typeof AuthenticatedHangerTypeUuidRoute
+  '/hanger/squadron/$uuid': typeof AuthenticatedHangerSquadronUuidRoute
+  '/ledger/squadron/$uuid': typeof AuthenticatedLedgerSquadronUuidRoute
+  '/squadron/$squadronId/analytics': typeof AuthenticatedSquadronSquadronIdAnalyticsRoute
+  '/squadron/$squadronId/inventory': typeof AuthenticatedSquadronSquadronIdInventoryRoute
   '/squadron/manage/$uuid': typeof AuthenticatedSquadronManageUuidRoute
   '/gear/$type': typeof AuthenticatedGearTypeIndexRoute
   '/gear/inventory': typeof AuthenticatedGearInventoryIndexRoute
+  '/squadron/$squadronId': typeof AuthenticatedSquadronSquadronIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -212,24 +340,39 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/_authenticated/analytics': typeof AuthenticatedAnalyticsRouteWithChildren
   '/_authenticated/hanger': typeof AuthenticatedHangerRouteWithChildren
+  '/_authenticated/ledger': typeof AuthenticatedLedgerRouteWithChildren
   '/_authenticated/log': typeof AuthenticatedLogRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/teams': typeof AuthenticatedTeamsRouteWithChildren
   '/_authenticated/admin_lookup/$uuid': typeof AuthenticatedAdmin_lookupUuidRoute
+  '/_authenticated/analytics/personal': typeof AuthenticatedAnalyticsPersonalRoute
   '/_authenticated/drone/$uuid': typeof AuthenticatedDroneUuidRoute
+  '/_authenticated/gear/inventory': typeof AuthenticatedGearInventoryRouteWithChildren
   '/_authenticated/gear/ledger': typeof AuthenticatedGearLedgerRoute
-  '/_authenticated/squadron/$squadronId': typeof AuthenticatedSquadronSquadronIdRoute
+  '/_authenticated/hanger/personal': typeof AuthenticatedHangerPersonalRoute
+  '/_authenticated/ledger/personal': typeof AuthenticatedLedgerPersonalRoute
+  '/_authenticated/squadron/$squadronId': typeof AuthenticatedSquadronSquadronIdRouteWithChildren
   '/_authenticated/teams/$teamId': typeof AuthenticatedTeamsTeamIdRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/analytics/': typeof AuthenticatedAnalyticsIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/gear/': typeof AuthenticatedGearIndexRoute
+  '/_authenticated/hanger/': typeof AuthenticatedHangerIndexRoute
+  '/_authenticated/ledger/': typeof AuthenticatedLedgerIndexRoute
   '/_authenticated/squadron/': typeof AuthenticatedSquadronIndexRoute
   '/_authenticated/gear/$type/$uuid': typeof AuthenticatedGearTypeUuidRoute
+  '/_authenticated/gear/inventory/personal': typeof AuthenticatedGearInventoryPersonalRoute
   '/_authenticated/hanger/$type/$uuid': typeof AuthenticatedHangerTypeUuidRoute
+  '/_authenticated/hanger/squadron/$uuid': typeof AuthenticatedHangerSquadronUuidRoute
+  '/_authenticated/ledger/squadron/$uuid': typeof AuthenticatedLedgerSquadronUuidRoute
+  '/_authenticated/squadron/$squadronId/analytics': typeof AuthenticatedSquadronSquadronIdAnalyticsRoute
+  '/_authenticated/squadron/$squadronId/inventory': typeof AuthenticatedSquadronSquadronIdInventoryRoute
   '/_authenticated/squadron/manage/$uuid': typeof AuthenticatedSquadronManageUuidRoute
   '/_authenticated/gear/$type/': typeof AuthenticatedGearTypeIndexRoute
   '/_authenticated/gear/inventory/': typeof AuthenticatedGearInventoryIndexRoute
+  '/_authenticated/squadron/$squadronId/': typeof AuthenticatedSquadronSquadronIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -238,47 +381,72 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/admin'
+    | '/analytics'
     | '/hanger'
+    | '/ledger'
     | '/log'
     | '/settings'
     | '/teams'
     | '/admin_lookup/$uuid'
+    | '/analytics/personal'
     | '/drone/$uuid'
+    | '/gear/inventory'
     | '/gear/ledger'
+    | '/hanger/personal'
+    | '/ledger/personal'
     | '/squadron/$squadronId'
     | '/teams/$teamId'
     | '/admin/'
+    | '/analytics/'
     | '/dashboard/'
     | '/gear/'
+    | '/hanger/'
+    | '/ledger/'
     | '/squadron/'
     | '/gear/$type/$uuid'
+    | '/gear/inventory/personal'
     | '/hanger/$type/$uuid'
+    | '/hanger/squadron/$uuid'
+    | '/ledger/squadron/$uuid'
+    | '/squadron/$squadronId/analytics'
+    | '/squadron/$squadronId/inventory'
     | '/squadron/manage/$uuid'
     | '/gear/$type/'
     | '/gear/inventory/'
+    | '/squadron/$squadronId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/privacy'
     | '/terms'
-    | '/hanger'
     | '/log'
     | '/settings'
     | '/teams'
     | '/admin_lookup/$uuid'
+    | '/analytics/personal'
     | '/drone/$uuid'
     | '/gear/ledger'
-    | '/squadron/$squadronId'
+    | '/hanger/personal'
+    | '/ledger/personal'
     | '/teams/$teamId'
     | '/admin'
+    | '/analytics'
     | '/dashboard'
     | '/gear'
+    | '/hanger'
+    | '/ledger'
     | '/squadron'
     | '/gear/$type/$uuid'
+    | '/gear/inventory/personal'
     | '/hanger/$type/$uuid'
+    | '/hanger/squadron/$uuid'
+    | '/ledger/squadron/$uuid'
+    | '/squadron/$squadronId/analytics'
+    | '/squadron/$squadronId/inventory'
     | '/squadron/manage/$uuid'
     | '/gear/$type'
     | '/gear/inventory'
+    | '/squadron/$squadronId'
   id:
     | '__root__'
     | '/'
@@ -286,24 +454,39 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/_authenticated/admin'
+    | '/_authenticated/analytics'
     | '/_authenticated/hanger'
+    | '/_authenticated/ledger'
     | '/_authenticated/log'
     | '/_authenticated/settings'
     | '/_authenticated/teams'
     | '/_authenticated/admin_lookup/$uuid'
+    | '/_authenticated/analytics/personal'
     | '/_authenticated/drone/$uuid'
+    | '/_authenticated/gear/inventory'
     | '/_authenticated/gear/ledger'
+    | '/_authenticated/hanger/personal'
+    | '/_authenticated/ledger/personal'
     | '/_authenticated/squadron/$squadronId'
     | '/_authenticated/teams/$teamId'
     | '/_authenticated/admin/'
+    | '/_authenticated/analytics/'
     | '/_authenticated/dashboard/'
     | '/_authenticated/gear/'
+    | '/_authenticated/hanger/'
+    | '/_authenticated/ledger/'
     | '/_authenticated/squadron/'
     | '/_authenticated/gear/$type/$uuid'
+    | '/_authenticated/gear/inventory/personal'
     | '/_authenticated/hanger/$type/$uuid'
+    | '/_authenticated/hanger/squadron/$uuid'
+    | '/_authenticated/ledger/squadron/$uuid'
+    | '/_authenticated/squadron/$squadronId/analytics'
+    | '/_authenticated/squadron/$squadronId/inventory'
     | '/_authenticated/squadron/manage/$uuid'
     | '/_authenticated/gear/$type/'
     | '/_authenticated/gear/inventory/'
+    | '/_authenticated/squadron/$squadronId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -350,11 +533,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/analytics': {
+      id: '/_authenticated/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AuthenticatedAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/hanger': {
       id: '/_authenticated/hanger'
       path: '/hanger'
       fullPath: '/hanger'
       preLoaderRoute: typeof AuthenticatedHangerRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/ledger': {
+      id: '/_authenticated/ledger'
+      path: '/ledger'
+      fullPath: '/ledger'
+      preLoaderRoute: typeof AuthenticatedLedgerRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/log': {
@@ -392,6 +589,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdmin_lookupUuidRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/analytics/': {
+      id: '/_authenticated/analytics/'
+      path: '/'
+      fullPath: '/analytics/'
+      preLoaderRoute: typeof AuthenticatedAnalyticsIndexRouteImport
+      parentRoute: typeof AuthenticatedAnalyticsRoute
+    }
+    '/_authenticated/analytics/personal': {
+      id: '/_authenticated/analytics/personal'
+      path: '/personal'
+      fullPath: '/analytics/personal'
+      preLoaderRoute: typeof AuthenticatedAnalyticsPersonalRouteImport
+      parentRoute: typeof AuthenticatedAnalyticsRoute
+    }
     '/_authenticated/dashboard/': {
       id: '/_authenticated/dashboard/'
       path: '/dashboard'
@@ -413,12 +624,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGearIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/gear/inventory': {
+      id: '/_authenticated/gear/inventory'
+      path: '/gear/inventory'
+      fullPath: '/gear/inventory'
+      preLoaderRoute: typeof AuthenticatedGearInventoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/gear/ledger': {
       id: '/_authenticated/gear/ledger'
       path: '/gear/ledger'
       fullPath: '/gear/ledger'
       preLoaderRoute: typeof AuthenticatedGearLedgerRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/hanger/': {
+      id: '/_authenticated/hanger/'
+      path: '/'
+      fullPath: '/hanger/'
+      preLoaderRoute: typeof AuthenticatedHangerIndexRouteImport
+      parentRoute: typeof AuthenticatedHangerRoute
+    }
+    '/_authenticated/hanger/personal': {
+      id: '/_authenticated/hanger/personal'
+      path: '/personal'
+      fullPath: '/hanger/personal'
+      preLoaderRoute: typeof AuthenticatedHangerPersonalRouteImport
+      parentRoute: typeof AuthenticatedHangerRoute
+    }
+    '/_authenticated/ledger/': {
+      id: '/_authenticated/ledger/'
+      path: '/'
+      fullPath: '/ledger/'
+      preLoaderRoute: typeof AuthenticatedLedgerIndexRouteImport
+      parentRoute: typeof AuthenticatedLedgerRoute
+    }
+    '/_authenticated/ledger/personal': {
+      id: '/_authenticated/ledger/personal'
+      path: '/personal'
+      fullPath: '/ledger/personal'
+      preLoaderRoute: typeof AuthenticatedLedgerPersonalRouteImport
+      parentRoute: typeof AuthenticatedLedgerRoute
     }
     '/_authenticated/squadron/': {
       id: '/_authenticated/squadron/'
@@ -457,10 +703,17 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/gear/inventory/': {
       id: '/_authenticated/gear/inventory/'
-      path: '/gear/inventory'
+      path: '/'
       fullPath: '/gear/inventory/'
       preLoaderRoute: typeof AuthenticatedGearInventoryIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedGearInventoryRoute
+    }
+    '/_authenticated/gear/inventory/personal': {
+      id: '/_authenticated/gear/inventory/personal'
+      path: '/personal'
+      fullPath: '/gear/inventory/personal'
+      preLoaderRoute: typeof AuthenticatedGearInventoryPersonalRouteImport
+      parentRoute: typeof AuthenticatedGearInventoryRoute
     }
     '/_authenticated/hanger/$type/$uuid': {
       id: '/_authenticated/hanger/$type/$uuid'
@@ -468,6 +721,41 @@ declare module '@tanstack/react-router' {
       fullPath: '/hanger/$type/$uuid'
       preLoaderRoute: typeof AuthenticatedHangerTypeUuidRouteImport
       parentRoute: typeof AuthenticatedHangerRoute
+    }
+    '/_authenticated/hanger/squadron/$uuid': {
+      id: '/_authenticated/hanger/squadron/$uuid'
+      path: '/squadron/$uuid'
+      fullPath: '/hanger/squadron/$uuid'
+      preLoaderRoute: typeof AuthenticatedHangerSquadronUuidRouteImport
+      parentRoute: typeof AuthenticatedHangerRoute
+    }
+    '/_authenticated/ledger/squadron/$uuid': {
+      id: '/_authenticated/ledger/squadron/$uuid'
+      path: '/squadron/$uuid'
+      fullPath: '/ledger/squadron/$uuid'
+      preLoaderRoute: typeof AuthenticatedLedgerSquadronUuidRouteImport
+      parentRoute: typeof AuthenticatedLedgerRoute
+    }
+    '/_authenticated/squadron/$squadronId/': {
+      id: '/_authenticated/squadron/$squadronId/'
+      path: '/'
+      fullPath: '/squadron/$squadronId/'
+      preLoaderRoute: typeof AuthenticatedSquadronSquadronIdIndexRouteImport
+      parentRoute: typeof AuthenticatedSquadronSquadronIdRoute
+    }
+    '/_authenticated/squadron/$squadronId/analytics': {
+      id: '/_authenticated/squadron/$squadronId/analytics'
+      path: '/analytics'
+      fullPath: '/squadron/$squadronId/analytics'
+      preLoaderRoute: typeof AuthenticatedSquadronSquadronIdAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedSquadronSquadronIdRoute
+    }
+    '/_authenticated/squadron/$squadronId/inventory': {
+      id: '/_authenticated/squadron/$squadronId/inventory'
+      path: '/inventory'
+      fullPath: '/squadron/$squadronId/inventory'
+      preLoaderRoute: typeof AuthenticatedSquadronSquadronIdInventoryRouteImport
+      parentRoute: typeof AuthenticatedSquadronSquadronIdRoute
     }
     '/_authenticated/squadron/manage/$uuid': {
       id: '/_authenticated/squadron/manage/$uuid'
@@ -493,16 +781,53 @@ const AuthenticatedAdminRouteRouteWithChildren =
     AuthenticatedAdminRouteRouteChildren,
   )
 
+interface AuthenticatedAnalyticsRouteChildren {
+  AuthenticatedAnalyticsPersonalRoute: typeof AuthenticatedAnalyticsPersonalRoute
+  AuthenticatedAnalyticsIndexRoute: typeof AuthenticatedAnalyticsIndexRoute
+}
+
+const AuthenticatedAnalyticsRouteChildren: AuthenticatedAnalyticsRouteChildren =
+  {
+    AuthenticatedAnalyticsPersonalRoute: AuthenticatedAnalyticsPersonalRoute,
+    AuthenticatedAnalyticsIndexRoute: AuthenticatedAnalyticsIndexRoute,
+  }
+
+const AuthenticatedAnalyticsRouteWithChildren =
+  AuthenticatedAnalyticsRoute._addFileChildren(
+    AuthenticatedAnalyticsRouteChildren,
+  )
+
 interface AuthenticatedHangerRouteChildren {
+  AuthenticatedHangerPersonalRoute: typeof AuthenticatedHangerPersonalRoute
+  AuthenticatedHangerIndexRoute: typeof AuthenticatedHangerIndexRoute
   AuthenticatedHangerTypeUuidRoute: typeof AuthenticatedHangerTypeUuidRoute
+  AuthenticatedHangerSquadronUuidRoute: typeof AuthenticatedHangerSquadronUuidRoute
 }
 
 const AuthenticatedHangerRouteChildren: AuthenticatedHangerRouteChildren = {
+  AuthenticatedHangerPersonalRoute: AuthenticatedHangerPersonalRoute,
+  AuthenticatedHangerIndexRoute: AuthenticatedHangerIndexRoute,
   AuthenticatedHangerTypeUuidRoute: AuthenticatedHangerTypeUuidRoute,
+  AuthenticatedHangerSquadronUuidRoute: AuthenticatedHangerSquadronUuidRoute,
 }
 
 const AuthenticatedHangerRouteWithChildren =
   AuthenticatedHangerRoute._addFileChildren(AuthenticatedHangerRouteChildren)
+
+interface AuthenticatedLedgerRouteChildren {
+  AuthenticatedLedgerPersonalRoute: typeof AuthenticatedLedgerPersonalRoute
+  AuthenticatedLedgerIndexRoute: typeof AuthenticatedLedgerIndexRoute
+  AuthenticatedLedgerSquadronUuidRoute: typeof AuthenticatedLedgerSquadronUuidRoute
+}
+
+const AuthenticatedLedgerRouteChildren: AuthenticatedLedgerRouteChildren = {
+  AuthenticatedLedgerPersonalRoute: AuthenticatedLedgerPersonalRoute,
+  AuthenticatedLedgerIndexRoute: AuthenticatedLedgerIndexRoute,
+  AuthenticatedLedgerSquadronUuidRoute: AuthenticatedLedgerSquadronUuidRoute,
+}
+
+const AuthenticatedLedgerRouteWithChildren =
+  AuthenticatedLedgerRoute._addFileChildren(AuthenticatedLedgerRouteChildren)
 
 interface AuthenticatedTeamsRouteChildren {
   AuthenticatedTeamsTeamIdRoute: typeof AuthenticatedTeamsTeamIdRoute
@@ -515,42 +840,85 @@ const AuthenticatedTeamsRouteChildren: AuthenticatedTeamsRouteChildren = {
 const AuthenticatedTeamsRouteWithChildren =
   AuthenticatedTeamsRoute._addFileChildren(AuthenticatedTeamsRouteChildren)
 
+interface AuthenticatedGearInventoryRouteChildren {
+  AuthenticatedGearInventoryPersonalRoute: typeof AuthenticatedGearInventoryPersonalRoute
+  AuthenticatedGearInventoryIndexRoute: typeof AuthenticatedGearInventoryIndexRoute
+}
+
+const AuthenticatedGearInventoryRouteChildren: AuthenticatedGearInventoryRouteChildren =
+  {
+    AuthenticatedGearInventoryPersonalRoute:
+      AuthenticatedGearInventoryPersonalRoute,
+    AuthenticatedGearInventoryIndexRoute: AuthenticatedGearInventoryIndexRoute,
+  }
+
+const AuthenticatedGearInventoryRouteWithChildren =
+  AuthenticatedGearInventoryRoute._addFileChildren(
+    AuthenticatedGearInventoryRouteChildren,
+  )
+
+interface AuthenticatedSquadronSquadronIdRouteChildren {
+  AuthenticatedSquadronSquadronIdAnalyticsRoute: typeof AuthenticatedSquadronSquadronIdAnalyticsRoute
+  AuthenticatedSquadronSquadronIdInventoryRoute: typeof AuthenticatedSquadronSquadronIdInventoryRoute
+  AuthenticatedSquadronSquadronIdIndexRoute: typeof AuthenticatedSquadronSquadronIdIndexRoute
+}
+
+const AuthenticatedSquadronSquadronIdRouteChildren: AuthenticatedSquadronSquadronIdRouteChildren =
+  {
+    AuthenticatedSquadronSquadronIdAnalyticsRoute:
+      AuthenticatedSquadronSquadronIdAnalyticsRoute,
+    AuthenticatedSquadronSquadronIdInventoryRoute:
+      AuthenticatedSquadronSquadronIdInventoryRoute,
+    AuthenticatedSquadronSquadronIdIndexRoute:
+      AuthenticatedSquadronSquadronIdIndexRoute,
+  }
+
+const AuthenticatedSquadronSquadronIdRouteWithChildren =
+  AuthenticatedSquadronSquadronIdRoute._addFileChildren(
+    AuthenticatedSquadronSquadronIdRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
+  AuthenticatedAnalyticsRoute: typeof AuthenticatedAnalyticsRouteWithChildren
   AuthenticatedHangerRoute: typeof AuthenticatedHangerRouteWithChildren
+  AuthenticatedLedgerRoute: typeof AuthenticatedLedgerRouteWithChildren
   AuthenticatedLogRoute: typeof AuthenticatedLogRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedTeamsRoute: typeof AuthenticatedTeamsRouteWithChildren
   AuthenticatedAdmin_lookupUuidRoute: typeof AuthenticatedAdmin_lookupUuidRoute
   AuthenticatedDroneUuidRoute: typeof AuthenticatedDroneUuidRoute
+  AuthenticatedGearInventoryRoute: typeof AuthenticatedGearInventoryRouteWithChildren
   AuthenticatedGearLedgerRoute: typeof AuthenticatedGearLedgerRoute
-  AuthenticatedSquadronSquadronIdRoute: typeof AuthenticatedSquadronSquadronIdRoute
+  AuthenticatedSquadronSquadronIdRoute: typeof AuthenticatedSquadronSquadronIdRouteWithChildren
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
   AuthenticatedGearIndexRoute: typeof AuthenticatedGearIndexRoute
   AuthenticatedSquadronIndexRoute: typeof AuthenticatedSquadronIndexRoute
   AuthenticatedGearTypeUuidRoute: typeof AuthenticatedGearTypeUuidRoute
   AuthenticatedSquadronManageUuidRoute: typeof AuthenticatedSquadronManageUuidRoute
   AuthenticatedGearTypeIndexRoute: typeof AuthenticatedGearTypeIndexRoute
-  AuthenticatedGearInventoryIndexRoute: typeof AuthenticatedGearInventoryIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
+  AuthenticatedAnalyticsRoute: AuthenticatedAnalyticsRouteWithChildren,
   AuthenticatedHangerRoute: AuthenticatedHangerRouteWithChildren,
+  AuthenticatedLedgerRoute: AuthenticatedLedgerRouteWithChildren,
   AuthenticatedLogRoute: AuthenticatedLogRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedTeamsRoute: AuthenticatedTeamsRouteWithChildren,
   AuthenticatedAdmin_lookupUuidRoute: AuthenticatedAdmin_lookupUuidRoute,
   AuthenticatedDroneUuidRoute: AuthenticatedDroneUuidRoute,
+  AuthenticatedGearInventoryRoute: AuthenticatedGearInventoryRouteWithChildren,
   AuthenticatedGearLedgerRoute: AuthenticatedGearLedgerRoute,
-  AuthenticatedSquadronSquadronIdRoute: AuthenticatedSquadronSquadronIdRoute,
+  AuthenticatedSquadronSquadronIdRoute:
+    AuthenticatedSquadronSquadronIdRouteWithChildren,
   AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   AuthenticatedGearIndexRoute: AuthenticatedGearIndexRoute,
   AuthenticatedSquadronIndexRoute: AuthenticatedSquadronIndexRoute,
   AuthenticatedGearTypeUuidRoute: AuthenticatedGearTypeUuidRoute,
   AuthenticatedSquadronManageUuidRoute: AuthenticatedSquadronManageUuidRoute,
   AuthenticatedGearTypeIndexRoute: AuthenticatedGearTypeIndexRoute,
-  AuthenticatedGearInventoryIndexRoute: AuthenticatedGearInventoryIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

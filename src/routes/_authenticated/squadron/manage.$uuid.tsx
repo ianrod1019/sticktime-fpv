@@ -1,19 +1,16 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  ArrowLeft,
-  ShieldAlert,
-  Key,
-  Copy,
-  Check,
-  RefreshCw,
-} from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
+import { ArrowLeft, ShieldAlert, Users } from "lucide-react";
 import { PageHeader } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { SquadronLeaveDeleteModal } from "@/components/squadron/SquadronLeaveDeleteModal";
+import {
+  MemberPermissionsPanel,
+} from "@/components/squadron/member-permissions-panel";
+import { RoleTemplatesPanel } from "@/components/squadron/role-templates-panel";
+import { EntryCodeCard } from "@/components/squadron/entry-code-card";
+import type { TeamRole } from "@/components/squadron/permission-shared";
 
 export const Route = createFileRoute("/_authenticated/squadron/manage/$uuid")({
   head: () => ({ meta: [{ title: `Squadron Management — StickTime FPV` }] }),
@@ -24,8 +21,6 @@ function SquadronManagePage() {
   const { uuid: squadronId } = Route.useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [copiedCode, setCopiedCode] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
 
   const { data: user } = useQuery({
     queryKey: ["current-user"],
@@ -49,7 +44,7 @@ function SquadronManagePage() {
     },
   });
 
-  // Strict role check: Must be owner or manager
+  // Strict role check: must be owner or manager (server-verified each load).
   const {
     data: squadData,
     isLoading,
@@ -87,7 +82,6 @@ function SquadronManagePage() {
         );
       }
 
-      // Fetch invite codes
       const codesRes = await supabase
         .from("team_invite_codes")
         .select("code, expires_at, created_at")
@@ -103,32 +97,21 @@ function SquadronManagePage() {
     },
   });
 
-  const handleCopyCode = (code: string) => {
-    navigator.clipboard.writeText(code);
-    setCopiedCode(true);
-    toast.success("Invite code copied to clipboard!");
-    setTimeout(() => setCopiedCode(false), 2000);
-  };
-
-  const handleGenerateNewCode = async () => {
-    setIsGenerating(true);
-    try {
-      const { error } = await supabase.rpc("create_team_invite_code", {
-        _team_id: squadronId,
-      });
-
+  // Squadron-defined roles: reusable grant templates read by the panels.
+  const { data: roles } = useQuery({
+    queryKey: ["squadron-roles", squadronId],
+    enabled: !!user?.id && !!squadData,
+    staleTime: 30_000,
+    queryFn: async (): Promise<TeamRole[]> => {
+      const { data, error } = await supabase
+        .from("team_roles")
+        .select("id, name, can_edit_gear, can_view_analytics, can_view_ledger")
+        .eq("team_id", squadronId)
+        .order("name", { ascending: true });
       if (error) throw error;
-
-      await queryClient.invalidateQueries({
-        queryKey: ["squadron-manage-details", squadronId],
-      });
-    } catch (err: any) {
-      console.error("Failed to generate invite code:", err);
-      toast.error(err?.message || "Failed to generate new invite code.");
-    } finally {
-      setIsGenerating(false);
-    }
-  };
+      return (data ?? []) as TeamRole[];
+    },
+  });
 
   if (isLoading) {
     return (
@@ -184,58 +167,38 @@ function SquadronManagePage() {
       />
 
       <div className="grid gap-6 md:grid-cols-2 mt-6 max-w-4xl">
-        {/* Entry Code Management */}
-        <div className="hud-panel p-6">
-          <h2 className="text-base font-bold mb-3 flex items-center gap-2 justify-between">
-            <span className="flex items-center gap-2">
-              <Key className="h-4 w-4 text-primary" /> Squad Entry Code
-            </span>
-            <Button
-              variant="outline"
-              size="icon"
-              title="Regenerate Invite Code"
-              aria-label="Regenerate Invite Code"
-              onClick={handleGenerateNewCode}
-              disabled={isGenerating}
-              className="h-8 w-8 text-muted-foreground hover:text-foreground"
-            >
-              <RefreshCw
-                className={`h-4 w-4 ${isGenerating ? "animate-spin" : ""}`}
-              />
-            </Button>
+        <EntryCodeCard squadronId={squadronId} inviteCode={inviteCode} />
+
+        {/* Roles + per-member permissions */}
+        <div className="hud-panel p-6 md:col-span-2">
+          <h2 className="text-base font-bold mb-3 flex items-center gap-2">
+            <Users className="h-4 w-4 text-primary" /> Roles &amp; Access
           </h2>
           <p className="text-xs text-muted-foreground mb-4">
-            Share this invite code with fellow FPV pilots to grant them instant
-            access to this Squadron HQ. Generating a new code invalidates
-            previous codes.
+            Create named roles (student, coach, …) as reusable permission
+            templates, assign them per member, or flip individual permissions
+            directly. Select members for batch actions — role changes are
+            owner-only and enforced server-side.
           </p>
-          {inviteCode ? (
-            <div className="space-y-3">
-              <div className="p-3 bg-card rounded-lg border border-primary/30 flex items-center justify-between font-mono text-lg font-bold tracking-widest text-primary text-center">
-                <span className="flex-1">{inviteCode.code}</span>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  title="Copy Invite Code"
-                  onClick={() => handleCopyCode(inviteCode.code)}
-                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                >
-                  {copiedCode ? (
-                    <Check className="h-4 w-4 text-success" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
-              <p className="text-[11px] text-muted-foreground text-center">
-                Expires: {new Date(inviteCode.expires_at).toLocaleDateString()}
-              </p>
-            </div>
-          ) : (
-            <p className="text-xs text-muted-foreground italic">
-              No active invite code generated.
-            </p>
-          )}
+
+          <RoleTemplatesPanel
+            teamId={squadronId}
+            roles={roles ?? []}
+            onRolesChanged={() =>
+              queryClient.invalidateQueries({
+                queryKey: ["squadron-roles", squadronId],
+              })
+            }
+          />
+
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+            Members
+          </p>
+          <MemberPermissionsPanel
+            teamId={squadronId}
+            isOwner={isOwner}
+            roles={roles ?? []}
+          />
         </div>
 
         {/* Squadron Controls */}
@@ -256,9 +219,7 @@ function SquadronManagePage() {
               squadronName={team.name}
               isOwner={isOwner}
               userId={user.id}
-              userCallsignOrName={
-                profile?.callsign || user.email || "Pilot"
-              }
+              userCallsignOrName={profile?.callsign || user.email || "Pilot"}
             />
           )}
         </div>

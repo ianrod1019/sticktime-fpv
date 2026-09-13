@@ -1,5 +1,11 @@
 import { supabase } from "@/integrations/supabase/client";
 import { isAdmin } from "./role-verification";
+import {
+  deltaSyncRead,
+  deltaSyncRemoveLocal,
+  deltaSyncUpsertLocal,
+  type DeltaSyncResult,
+} from "./delta-sync";
 
 /**
  * Safety cap: any select without an explicit limit pulls at most this many
@@ -17,6 +23,8 @@ export interface Pagination {
 }
 
 const PERSONAL_GEAR_SCHEMA = "personal_gear";
+const ORG_GEAR_SCHEMA = "org_gear";
+/** The gear tables exist with identical names in personal_gear AND org_gear. */
 const PERSONAL_GEAR_TABLES = new Set([
   "batteries",
   "drones",
@@ -31,11 +39,28 @@ const PERSONAL_GEAR_TABLES = new Set([
   "maintenance_logs",
 ]);
 
+/**
+ * Resolves the gear schema a request actually targets: an explicit schema is
+ * honored (personal_gear or org_gear — same table names in both), and a
+ * schema-less request defaults to personal_gear for the known gear tables.
+ * Returns null when the table is not a synced gear table.
+ */
+function resolveGearSchema(
+  schema?: string,
+  table?: string,
+): string | null {
+  if (!table) return null;
+  if (schema === PERSONAL_GEAR_SCHEMA || schema === ORG_GEAR_SCHEMA) {
+    return PERSONAL_GEAR_TABLES.has(table) ? schema : null;
+  }
+  if (schema == null && PERSONAL_GEAR_TABLES.has(table)) {
+    return PERSONAL_GEAR_SCHEMA;
+  }
+  return null;
+}
+
 function isPersonalGearTable(schema?: string, table?: string): boolean {
-  return (
-    schema === PERSONAL_GEAR_SCHEMA ||
-    (schema == null && table != null && PERSONAL_GEAR_TABLES.has(table))
-  );
+  return resolveGearSchema(schema, table) === PERSONAL_GEAR_SCHEMA;
 }
 
 export async function db_request<T = any>({
@@ -54,6 +79,9 @@ export async function db_request<T = any>({
   head,
   single,
   count,
+  sync = "full",
+  forceFullSync = false,
+  syncScope,
   requireAdmin = false,
   allowedRoles = [],
 }: {
@@ -73,6 +101,22 @@ export async function db_request<T = any>({
   head?: boolean;
   single?: boolean;
   count?: "exact" | "planned" | "estimated";
+  /**
+   * Incremental sync mode for personal_gear selects (default "full"):
+   *  - "delta": only fetch rows newer than the client's watermark
+   *    (`updated_at > last_synced_at`), merged with the cached rows — usually
+   *    0 rows transferred. Falls back to a paged full pull when the cache is
+   *    empty/older than the TTL, so it never serves stale data as current.
+   *  - "full": plain one-shot select (legacy behavior).
+   */
+  sync?: "delta" | "full";
+  /** When true, a delta read performs a full reconcile first. */
+  forceFullSync?: boolean;
+  /**
+   * Delta-sync cache owner key. Defaults to the signed-in user id; org_gear
+   * reads pass the team id so the whole squadron shares one warm cache.
+   */
+  syncScope?: string;
   requireAdmin?: boolean;
   allowedRoles?: string[];
 }): Promise<{ data: T | null; error: Error | null; count?: number }> {
@@ -198,6 +242,45 @@ export async function db_request<T = any>({
 
     switch (operation ?? "select") {
       case "select": {
+        // ---- Incremental sync path ----------------------------------------
+        if (sync === "delta") {
+          if (
+            pagination !== undefined ||
+            head ||
+            single ||
+            count !== undefined
+          ) {
+            throw new Error(
+              "sync:'delta' does not support pagination/head/single/count.",
+            );
+          }
+          try {
+            const result = await deltaSyncRead<Record<string, unknown>, T>({
+              table: table!,
+              schema: schema ?? PERSONAL_GEAR_SCHEMA,
+              scope: syncScope ?? userId ?? "anon",
+              columns: selectColumns ?? "*",
+              filters: mergedFilters(filters),
+              forceFull: forceFullSync,
+              // Without caller filters the read owns the whole table for its
+              // scope, so a full reconcile can safely REPLACE the cache —
+              // letting it observe rows deleted server-side.
+              reconcileReplaces: !filters || Object.keys(filters).length === 0,
+              reduce: (rows: Record<string, unknown>[]) => rows as unknown as T,
+            });
+            return {
+              data: result.data,
+              error: null,
+            };
+          } catch (syncErr) {
+            return {
+              data: null,
+              error:
+                syncErr instanceof Error ? syncErr : new Error(String(syncErr)),
+            };
+          }
+        }
+
         const selectStr = selectColumns ?? "*";
         // Range pagination needs an exact count alongside the page rows.
         const wantsCount = count !== undefined || pagination !== undefined;
@@ -308,6 +391,7 @@ export async function db_request<T = any>({
           if (deleteError) {
             return { data: null, error: deleteError };
           }
+          evictDeletedFromSyncCache(schema, table, syncScope ?? userId, deleteResult);
           return { data: deleteResult as T, error: null };
         } else {
           const { data: deleteResult, error: deleteError } =
@@ -315,6 +399,7 @@ export async function db_request<T = any>({
           if (deleteError) {
             return { data: null, error: deleteError };
           }
+          evictDeletedFromSyncCache(schema, table, syncScope ?? userId, deleteResult);
           return { data: deleteResult as T, error: null };
         }
       }
@@ -394,6 +479,51 @@ export async function isUserInRoles(
   const role = await fetchUserRole(userId);
   return role ? roles.includes(role) : false;
 }
+
+/**
+ * Drop rows just deleted through db_request from the delta-sync cache so
+ * subsequent delta reads never resurrect them. A delete does not bump
+ * `updated_at`, so the eviction must happen here, at the moment of deletion.
+ * No-op when nothing relevant is cached; the next full reconcile repairs
+ * any remaining gaps.
+ */
+function evictDeletedFromSyncCache(
+  schema: string | undefined,
+  table: string | undefined,
+  scope: string | null,
+  deleted: unknown,
+): void {
+  const syncSchema = resolveGearSchema(schema, table);
+  if (!syncSchema || !scope) {
+    return;
+  }
+  const rows: Array<Record<string, unknown>> = Array.isArray(deleted)
+    ? (deleted as Array<Record<string, unknown>>)
+    : deleted && typeof deleted === "object"
+      ? [deleted as Record<string, unknown>]
+      : [];
+  const ids = rows
+    .map((row) => row?.["id"])
+    .filter((id): id is string => typeof id === "string");
+  if (ids.length === 0) return;
+  deltaSyncRemoveLocal(syncSchema, table!, scope, ids);
+}
+
+/**
+ * Write a freshly created/updated personal_gear row into the delta-sync cache
+ * so subsequent delta reads see it immediately (advances the watermark).
+ * No-op when there is no cache for that table+user yet.
+ */
+export function primeDeltaSyncCache(
+  table: string,
+  scope: string,
+  row: Record<string, unknown>,
+  schema: string = PERSONAL_GEAR_SCHEMA,
+): void {
+  deltaSyncUpsertLocal(schema, table, scope, row);
+}
+
+export type { DeltaSyncResult };
 
 export async function getUserSessionsWithGear(
   userId: string,

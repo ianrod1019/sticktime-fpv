@@ -12,6 +12,9 @@ import { GearCardServiceDialog } from "./gear-card-service-dialog";
 export function GearCard({
   gear,
   isDeleting,
+  canEdit = true,
+  canEditMoney = true,
+  canOpenDetail = true,
   onDeleteGear,
   onUpdateGear,
   onUpdatePackCount,
@@ -25,8 +28,14 @@ export function GearCard({
   const navigate = useNavigate();
 
   // Lazy per-card data: parts + paged logs are fetched (and cached) by the
-  // card itself rather than up-front for the whole hanger.
-  const { parts, logs, logsHaveMore } = useGearCardData(gear.id, gear.gear_type);
+  // card itself rather than up-front for the whole hanger. Skipped entirely
+  // for read-only viewers (org hangers) — those sections don't render and
+  // the fetches would only hit personal_gear they can't use.
+  const { parts, logs, logsHaveMore } = useGearCardData(
+    gear.id,
+    gear.gear_type,
+    canEdit,
+  );
 
   const isQuad = gear.gear_type === "quad";
   const isBattery = gear.gear_type === "battery";
@@ -55,8 +64,10 @@ export function GearCard({
         };
 
   // Click anywhere on the card opens the detail view. Clicks on interactive
-  // controls (buttons, links, inputs) are left alone.
+  // controls (buttons, links, inputs) are left alone. Org-hanger cards pass
+  // canOpenDetail=false — the detail page reads personal_gear, not org_gear.
   const handleCardClick = (e: React.MouseEvent) => {
+    if (!canOpenDetail) return;
     const target = e.target as HTMLElement;
     if (
       target.closest(
@@ -109,6 +120,8 @@ export function GearCard({
         <GearCardHeader
           gear={gear}
           detailHref={detailHref}
+          canEdit={canEdit}
+          canEditMoney={canEditMoney}
           isAsNeeded={isAsNeeded}
           isBattery={isBattery}
           isDeleting={isDeleting}
@@ -117,62 +130,65 @@ export function GearCard({
           onOpenService={() => setServiceDialogOpen(true)}
         />
 
-        <div className="space-y-4">
-          {/* Stats */}
-          <GearCardStats
-            gear={gear}
-            isQuad={isQuad}
-            isBattery={isBattery}
-            isAsNeeded={isAsNeeded}
-            servicePct={servicePct}
-          />
-
-          {/* Battery Packs Section */}
-          {isBattery && (
-            <GearCardBatteries
+        {/* Read-only viewer: everything below the header is write surface. */}
+        {!canEdit ? null : (
+          <div className="space-y-4">
+            {/* Stats */}
+            <GearCardStats
               gear={gear}
-              onUpdatePackCount={onUpdatePackCount}
-              isDeleting={isDeleting}
+              isQuad={isQuad}
+              isBattery={isBattery}
+              isAsNeeded={isAsNeeded}
+              servicePct={servicePct}
             />
-          )}
 
-          {/* Components section (radios, goggles, other — quad hardware
+            {/* Battery Packs Section */}
+            {isBattery && (
+              <GearCardBatteries
+                gear={gear}
+                onUpdatePackCount={onUpdatePackCount}
+                isDeleting={isDeleting}
+              />
+            )}
+
+            {/* Components section (radios, goggles, other — quad hardware
               lives on the drone detail page via the master inventory) */}
-          {onAddPart && onRemovePart && !isBattery && !isQuad && (
-            <GearCardParts
-              gear={gear}
-              parts={parts}
-              isTransmitter={isTransmitter}
-              isGoggles={isGoggles}
-              isDeleting={isDeleting}
-              onAddPart={onAddPart}
-              onRemovePart={onRemovePart}
-            />
-          )}
+            {onAddPart && onRemovePart && !isBattery && !isQuad && (
+              <GearCardParts
+                gear={gear}
+                parts={parts}
+                isTransmitter={isTransmitter}
+                isGoggles={isGoggles}
+                isDeleting={isDeleting}
+                onAddPart={onAddPart}
+                onRemovePart={onRemovePart}
+              />
+            )}
 
-          {/* Maintenance log section (non-battery) */}
-          {onAddLog && onRemoveLog && !isBattery && (
-            <GearCardLogs
-              gear={gear}
-              logs={logs}
-              hasMore={logsHaveMore}
-              isDeleting={isDeleting}
-              onAddLog={onAddLog}
-              onRemoveLog={onRemoveLog}
-            />
-          )}
+            {/* Maintenance log section (non-battery) */}
+            {onAddLog && onRemoveLog && !isBattery && (
+              <GearCardLogs
+                gear={gear}
+                logs={logs}
+                hasMore={logsHaveMore}
+                isDeleting={isDeleting}
+                onAddLog={onAddLog}
+                onRemoveLog={onRemoveLog}
+              />
+            )}
 
-          {/* Service Dialog — batteries have no service tracking */}
-          {!isBattery && (
-            <GearCardServiceDialog
-              gear={gear}
-              isOpen={serviceDialogOpen}
-              onOpenChange={setServiceDialogOpen}
-              onService={onService}
-              isDeleting={isDeleting}
-            />
-          )}
-        </div>
+            {/* Service Dialog — batteries have no service tracking */}
+            {!isBattery && (
+              <GearCardServiceDialog
+                gear={gear}
+                isOpen={serviceDialogOpen}
+                onOpenChange={setServiceDialogOpen}
+                onService={onService}
+                isDeleting={isDeleting}
+              />
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -20,6 +20,10 @@ interface GearCardLogsProps {
   onLoadMore?: () => void;
   isLoadingMore?: boolean;
   isDeleting: boolean;
+  /** May the viewer add/remove log entries (org hangers: members). */
+  canEdit?: boolean;
+  /** May the viewer write log costs (org hangers: owner/manager only). */
+  canEditMoney?: boolean;
   onAddLog: (gearId: string, description: string, cost: string) => void;
   onRemoveLog: (logId: string) => void;
 }
@@ -31,6 +35,8 @@ export function GearCardLogs({
   onLoadMore,
   isLoadingMore = false,
   isDeleting,
+  canEdit = true,
+  canEditMoney = true,
   onAddLog,
   onRemoveLog,
 }: GearCardLogsProps) {
@@ -58,84 +64,90 @@ export function GearCardLogs({
           </span>
         </button>
 
-        <Dialog
-          open={logOpen}
-          onOpenChange={(o) => {
-            setLogOpen(o);
-            if (o) {
-              setLogDescription("");
-              setLogCost("");
-            }
-          }}
-        >
-          <DialogTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              disabled={isDeleting}
-              className="h-6 px-2 text-[11px] text-primary hover:text-primary/80 hover:bg-primary/10"
-            >
-              <Plus className="mr-0.5 h-3 w-3" aria-hidden /> Log
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="border-primary/30 bg-background/95 backdrop-blur-xl">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-foreground font-display">
-                <span className="w-2 h-2 rounded-full bg-primary"></span>
-                Add maintenance entry
-              </DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 py-2">
-              <div className="space-y-2">
-                <Label htmlFor="ldesc">Description</Label>
-                <Input
-                  id="ldesc"
-                  value={logDescription}
-                  onChange={(e) => setLogDescription(e.target.value)}
-                  placeholder="e.g. Replaced motor bearings, cleaned frame"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lcost">Cost (optional)</Label>
-                <div className="relative">
-                  <DollarSign
-                    className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
-                    aria-hidden
-                  />
+        {canEdit && (
+          <Dialog
+            open={logOpen}
+            onOpenChange={(o) => {
+              setLogOpen(o);
+              if (o) {
+                setLogDescription("");
+                setLogCost("");
+              }
+            }}
+          >
+            <DialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={isDeleting}
+                className="h-6 px-2 text-[11px] text-primary hover:text-primary/80 hover:bg-primary/10"
+              >
+                <Plus className="mr-0.5 h-3 w-3" aria-hidden /> Log
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="border-primary/30 bg-background/95 backdrop-blur-xl">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2 text-foreground font-display">
+                  <span className="w-2 h-2 rounded-full bg-primary"></span>
+                  Add maintenance entry
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-2">
+                <div className="space-y-2">
+                  <Label htmlFor="ldesc">Description</Label>
                   <Input
-                    id="lcost"
-                    value={logCost}
-                    onChange={(e) => setLogCost(e.target.value)}
-                    placeholder="0.00"
-                    className="pl-8"
-                    type="number"
-                    step="0.01"
-                    min="0"
+                    id="ldesc"
+                    value={logDescription}
+                    onChange={(e) => setLogDescription(e.target.value)}
+                    placeholder="e.g. Replaced motor bearings, cleaned frame"
                   />
                 </div>
+                {canEditMoney && (
+                  <div className="space-y-2">
+                    <Label htmlFor="lcost">Cost (optional)</Label>
+                    <div className="relative">
+                      <DollarSign
+                        className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
+                        aria-hidden
+                      />
+                      <Input
+                        id="lcost"
+                        value={logCost}
+                        onChange={(e) => setLogCost(e.target.value)}
+                        placeholder="0.00"
+                        className="pl-8"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
-            <DialogFooter>
-              <Button
-                onClick={() => {
-                  onAddLog(gear.id, logDescription, logCost);
-                  setLogOpen(false);
-                  setLogDescription("");
-                  setLogCost("");
-                }}
-                disabled={!logDescription}
-                className="bg-primary hover:bg-primary/80 text-primary-foreground w-full sm:w-auto"
-              >
-                Save log
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+              <DialogFooter>
+                <Button
+                  onClick={() => {
+                    onAddLog(gear.id, logDescription, logCost);
+                    setLogOpen(false);
+                    setLogDescription("");
+                    setLogCost("");
+                  }}
+                  disabled={!logDescription}
+                  className="bg-primary hover:bg-primary/80 text-primary-foreground w-full sm:w-auto"
+                >
+                  Save log
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
 
       <div
         className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
-          isLogsCollapsed ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100"
+          isLogsCollapsed
+            ? "grid-rows-[0fr] opacity-0"
+            : "grid-rows-[1fr] opacity-100"
         }`}
       >
         <div className="overflow-hidden">
@@ -177,16 +189,18 @@ export function GearCardLogs({
                         </div>
                       </div>
 
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        disabled={isDeleting}
-                        onClick={() => onRemoveLog(log.id)}
-                        aria-label={`Remove log entry: ${log.description}`}
-                        className="h-6 w-6 transition-colors text-muted-foreground hover:text-destructive hover:bg-destructive/20 shrink-0"
-                      >
-                        <Trash2 className="h-3 w-3" aria-hidden />
-                      </Button>
+                      {canEdit && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          disabled={isDeleting}
+                          onClick={() => onRemoveLog(log.id)}
+                          aria-label={`Remove log entry: ${log.description}`}
+                          className="h-6 w-6 transition-colors text-muted-foreground hover:text-destructive hover:bg-destructive/20 shrink-0"
+                        >
+                          <Trash2 className="h-3 w-3" aria-hidden />
+                        </Button>
+                      )}
                     </div>
                   );
                 })}

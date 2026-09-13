@@ -7,6 +7,7 @@ import {
   Boxes,
   CircleDollarSign,
   Users,
+  ActivitySquare,
   ShieldCheck,
   Settings,
   LogOut,
@@ -23,11 +24,36 @@ import { DroneIcon } from "@/components/icons";
 
 const BASE_NAV = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { to: "/log", icon: Timer, label: "Flight Logs" },  { to: "/hanger", icon: Wrench, label: "Gear Hanger" },
+  { to: "/log", icon: Timer, label: "Flight Logs" },
+  { to: "/hanger", icon: Wrench, label: "Gear Hanger" },
   { to: "/gear/inventory", icon: Boxes, label: "Bench Inventory" },
-  { to: "/gear/ledger", icon: CircleDollarSign, label: "Cost Ledger" },
+  { to: "/ledger", icon: CircleDollarSign, label: "Cost Ledger" },
+  { to: "/analytics", icon: ActivitySquare, label: "Failure Analytics" },
   { to: "/squadron", icon: Users, label: "Squadrons" },
 ] as const;
+
+/**
+ * A nav item is active on its own path or any child page — including
+ * squadron-scoped children (e.g. /squadron/:id/inventory highlights both
+ * Bench Inventory and Squadrons).
+ */
+function navMatch(to: string, pathname: string): boolean {
+  if (pathname === to) return true;
+  if (pathname.startsWith(`${to}/`)) return true;
+  if (to === "/squadron") {
+    return (
+      pathname.startsWith("/squadron/") &&
+      (pathname.endsWith("/inventory") || pathname.endsWith("/analytics"))
+    );
+  }
+  if (to === "/gear/inventory" && pathname.endsWith("/inventory")) {
+    return pathname.startsWith("/squadron/");
+  }
+  if (to === "/analytics" && pathname.endsWith("/analytics")) {
+    return pathname.startsWith("/squadron/");
+  }
+  return false;
+}
 
 export function SidebarNavigation({
   isClientReady,
@@ -60,16 +86,16 @@ export function SidebarNavigation({
                 <Link
                   to={to}
                   aria-label={label}
-                  aria-current={pathname === to ? "page" : undefined}
+                  aria-current={navMatch(to, pathname) ? "page" : undefined}
                   className={cn(
                     "relative flex items-center justify-center rounded-md px-3 py-2 transition-colors duration-200",
-                    pathname === to
+                    navMatch(to, pathname)
                       ? "bg-sidebar-accent text-primary font-semibold shadow-[inset_0_0_0_1px_oklch(0.72_0.19_35/0.18),0_0_12px_-4px_var(--primary)]"
                       : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/60",
                   )}
                 >
                   <Icon className="h-4 w-4 shrink-0" aria-hidden />
-                  {pathname === to && (
+                  {navMatch(to, pathname) && (
                     <span
                       className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-[2px] rounded-full bg-primary"
                       aria-hidden

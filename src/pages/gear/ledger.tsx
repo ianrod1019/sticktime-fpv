@@ -19,18 +19,13 @@ import {
   Wrench,
 } from "lucide-react";
 import { PageHeader } from "@/components/app-shell";
-import { Route } from "@/routes/_authenticated/gear/ledger";
+import { Route } from "@/routes/_authenticated/ledger.personal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -65,11 +60,13 @@ import { usePilot } from "@/hooks/use-pilot";
  * zero usage isn't a problem — it's PLANNED: bought, on the shelf, waiting
  * for its first session. The meter starts the moment it's used.
  *
- * NOTE: gear sets / team roll-ups are an enterprise-tier feature and are
- * intentionally out of scope here — this ledger is strictly personal.
+ * Served at /ledger/personal (hub at /ledger, squadrons at
+ * /ledger/squadron/$uuid) — squadron fleets use the org_gear ledger
+ * instead of this personal one.
  */
 
-type GearType = "quad" | "battery" | "transmitter" | "goggles" | "other" | "component";
+type GearType =
+  "quad" | "battery" | "transmitter" | "goggles" | "other" | "component";
 
 interface LedgerRow {
   gear_id: string;
@@ -85,17 +82,15 @@ interface LedgerRow {
   packs_flown: number;
 }
 
-const GEAR_TYPE_META: Record<
-  GearType,
-  { label: string; icon: typeof Plane }
-> = {
-  quad: { label: "Quad", icon: Plane },
-  battery: { label: "Battery set", icon: Battery },
-  transmitter: { label: "Transmitter", icon: Gamepad2 },
-  goggles: { label: "Goggles", icon: Package },
-  other: { label: "Other", icon: Wrench },
-  component: { label: "Component", icon: CircuitBoard },
-};
+const GEAR_TYPE_META: Record<GearType, { label: string; icon: typeof Plane }> =
+  {
+    quad: { label: "Quad", icon: Plane },
+    battery: { label: "Battery set", icon: Battery },
+    transmitter: { label: "Transmitter", icon: Gamepad2 },
+    goggles: { label: "Goggles", icon: Package },
+    other: { label: "Other", icon: Wrench },
+    component: { label: "Component", icon: CircuitBoard },
+  };
 
 /** Category filter value for a row (components get their own sub-category). */
 const categoryKey = (r: LedgerRow): string =>
@@ -106,7 +101,7 @@ const categoryKey = (r: LedgerRow): string =>
 const categoryLabel = (r: LedgerRow): string =>
   r.gear_type === "component"
     ? `Component · ${r.part_category ?? "misc"}`
-    : GEAR_TYPE_META[r.gear_type]?.label ?? "Other";
+    : (GEAR_TYPE_META[r.gear_type]?.label ?? "Other");
 
 /** Burn-rate thresholds ($ per flight hour) for the warning badges. */
 const BURN_WARN = 50;
@@ -253,7 +248,7 @@ type LedgerTab = "fleet" | "breakdown";
 
 export function CostLedgerPage() {
   const { profile } = usePilot();
-  const navigate = useNavigate({ from: "/gear/ledger" });
+  const navigate = useNavigate({ from: "/ledger/personal" });
   // Tab lives in the URL (?tab=breakdown) so views are shareable and the
   // selection survives refetch re-renders.
   const { tab: tabParam } = Route.useSearch();
@@ -341,12 +336,12 @@ export function CostLedgerPage() {
       return hours > 0 ? num(r.total_cost) / hours : 0;
     };
     const used = (r: LedgerRow): boolean =>
-      num(r.flight_minutes) > 0 || (r.gear_type === "battery" && (r.packs_flown ?? 0) > 0);
+      num(r.flight_minutes) > 0 ||
+      (r.gear_type === "battery" && (r.packs_flown ?? 0) > 0);
 
     return [...filteredRows].sort((a, b) => {
       if (sortMode === "name") return a.gear_name.localeCompare(b.gear_name);
-      if (sortMode === "cost")
-        return num(b.total_cost) - num(a.total_cost);
+      if (sortMode === "cost") return num(b.total_cost) - num(a.total_cost);
       if (sortMode === "hours") {
         const aMin = num(a.flight_minutes);
         const bMin = num(b.flight_minutes);
@@ -371,7 +366,7 @@ export function CostLedgerPage() {
         subtitle="What every hour — and every pack — actually costs, across the entire hangar."
         action={
           <Button asChild variant="secondary">
-            <Link to="/hanger" search={{ add: "1" }}>
+            <Link to="/hanger/personal" search={{ add: "1" }}>
               Add gear in the Hanger
             </Link>
           </Button>
@@ -394,11 +389,7 @@ export function CostLedgerPage() {
           onRetry={() => ledger.refetch()}
         />
       ) : (
-        <Tabs
-          value={activeTab}
-          onValueChange={setTab}
-          className="space-y-4"
-        >
+        <Tabs value={activeTab} onValueChange={setTab} className="space-y-4">
           <TabsList>
             <TabsTrigger value="fleet">Global Fleet Ledger</TabsTrigger>
             <TabsTrigger value="breakdown">
@@ -429,7 +420,9 @@ export function CostLedgerPage() {
               />
               <MetricTile
                 label="Fleet cost per hour"
-                value={fleet.hours > 0 ? `${usd.format(fleet.perHour)}/hr` : "—"}
+                value={
+                  fleet.hours > 0 ? `${usd.format(fleet.perHour)}/hr` : "—"
+                }
                 hint={
                   fleet.hours > 0
                     ? "Total investment ÷ total hours"
@@ -445,17 +438,15 @@ export function CostLedgerPage() {
                     ? `Lifetime pack-cycles across ${rows.filter((r) => r.gear_type === "battery" && (r.packs_flown ?? 0) > 0).length || "all"} set(s)`
                     : "Pick a battery set when logging real sessions"
                 }
-                icon={
-                  <BatteryCharging className="h-3.5 w-3.5" aria-hidden />
-                }
+                icon={<BatteryCharging className="h-3.5 w-3.5" aria-hidden />}
               />
             </div>
 
             <div className="flex flex-wrap gap-3 text-[11px] text-muted-foreground">
               <span className="rounded-md border border-border/60 bg-card/40 px-2.5 py-1.5">
                 {fleet.flightSessions} real flight session
-                {fleet.flightSessions === 1 ? "" : "s"} · sim and real time
-                both count
+                {fleet.flightSessions === 1 ? "" : "s"} · sim and real time both
+                count
               </span>
               <span className="rounded-md border border-border/60 bg-card/40 px-2.5 py-1.5">
                 {fleet.componentCount} component
@@ -487,7 +478,7 @@ export function CostLedgerPage() {
                     </p>
                   </div>
                   <Button asChild size="sm">
-                    <Link to="/hanger" search={{ add: "1" }}>
+                    <Link to="/hanger/personal" search={{ add: "1" }}>
                       Open the Hanger
                     </Link>
                   </Button>
@@ -556,7 +547,10 @@ export function CostLedgerPage() {
           <TabsContent value="breakdown" className="space-y-3">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
               <div className="space-y-1.5 flex-1">
-                <Label htmlFor="ledger-search" className="text-xs text-muted-foreground">
+                <Label
+                  htmlFor="ledger-search"
+                  className="text-xs text-muted-foreground"
+                >
                   Search
                 </Label>
                 <div className="relative">
@@ -574,7 +568,9 @@ export function CostLedgerPage() {
                 </div>
               </div>
               <div className="space-y-1.5 sm:w-52">
-                <Label className="text-xs text-muted-foreground">Category</Label>
+                <Label className="text-xs text-muted-foreground">
+                  Category
+                </Label>
                 <Select value={category} onValueChange={setCategory}>
                   <SelectTrigger aria-label="Filter by category">
                     <ListFilter className="h-3.5 w-3.5 text-muted-foreground" />
@@ -616,7 +612,7 @@ export function CostLedgerPage() {
                 <CardContent className="p-8 text-center text-sm text-muted-foreground">
                   Nothing to break down yet — add gear in the{" "}
                   <Link
-                    to="/hanger"
+                    to="/hanger/personal"
                     search={{ add: "1" }}
                     className="text-primary underline underline-offset-2"
                   >
@@ -667,7 +663,7 @@ export function CostLedgerPage() {
                       const hours = num(r.flight_minutes) / 60;
                       const perHour = hours > 0 ? num(r.total_cost) / hours : 0;
                       const packs =
-                        r.gear_type === "battery" ? r.packs_flown ?? 0 : 0;
+                        r.gear_type === "battery" ? (r.packs_flown ?? 0) : 0;
                       const perPack = packs > 0 ? num(r.total_cost) / packs : 0;
                       const meta =
                         GEAR_TYPE_META[r.gear_type] ?? GEAR_TYPE_META.other;
@@ -687,8 +683,7 @@ export function CostLedgerPage() {
                                 <div className="font-mono text-[10px] text-muted-foreground">
                                   {r.gear_type === "battery" ? (
                                     <>
-                                      {packs} pack{packs === 1 ? "" : "s"}{" "}
-                                      flown
+                                      {packs} pack{packs === 1 ? "" : "s"} flown
                                       {hours > 0
                                         ? ` · ${r.flight_count} session${r.flight_count === 1 ? "" : "s"}`
                                         : ""}

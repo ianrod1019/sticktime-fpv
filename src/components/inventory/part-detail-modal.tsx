@@ -27,6 +27,18 @@ interface PartDetailModalProps {
   onOpenChange: (open: boolean) => void;
   onEdit: (part: DronePart) => void;
   onDelete: (part: DronePart) => Promise<void> | void;
+  /**
+   * Org benches: hide purchase info + deletion (squadron money fields and
+   * destructive actions are owner/manager-locked). Default: personal bench.
+   */
+  suppressPurchaseInfo?: boolean;
+  /** Org benches: allow editing/deleting at all (members always can). */
+  canEdit?: boolean;
+  /**
+   * Org benches: swap the personal-gate install panel for an org-scoped one
+   * (installs land on squadron airframes, not the pilot's own hangar).
+   */
+  installPanel?: React.ReactNode;
 }
 
 function SpecList({ part }: { part: DronePart }) {
@@ -67,6 +79,9 @@ export function PartDetailModal({
   onOpenChange,
   onEdit,
   onDelete,
+  suppressPurchaseInfo = false,
+  canEdit = true,
+  installPanel,
 }: PartDetailModalProps) {
   // Hook must run unconditionally; the hook no-ops with an empty partId.
   const installs = usePartInstalls(part?.id ?? "");
@@ -115,24 +130,27 @@ export function PartDetailModal({
             </span>
           </div>
 
-          {(part.purchase_cost != null || part.vendor || part.purchase_date) && (
-            <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-              {part.purchase_cost != null && (
-                <Badge
-                  variant="outline"
-                  className="border-emerald-500/40 bg-emerald-500/10 text-emerald-500 font-mono"
-                >
-                  ${Number(part.purchase_cost).toFixed(2)}
-                </Badge>
-              )}
-              {part.vendor && <span>from {part.vendor}</span>}
-              {part.purchase_date && (
-                <span>
-                  bought {new Date(part.purchase_date).toLocaleDateString()}
-                </span>
-              )}
-            </div>
-          )}
+          {!suppressPurchaseInfo &&
+            (part.purchase_cost != null ||
+              part.vendor ||
+              part.purchase_date) && (
+              <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                {part.purchase_cost != null && (
+                  <Badge
+                    variant="outline"
+                    className="border-emerald-500/40 bg-emerald-500/10 text-emerald-500 font-mono"
+                  >
+                    ${Number(part.purchase_cost).toFixed(2)}
+                  </Badge>
+                )}
+                {part.vendor && <span>from {part.vendor}</span>}
+                {part.purchase_date && (
+                  <span>
+                    bought {new Date(part.purchase_date).toLocaleDateString()}
+                  </span>
+                )}
+              </div>
+            )}
 
           <section aria-label="Specifications">
             <SpecList part={part} />
@@ -140,32 +158,34 @@ export function PartDetailModal({
 
           <Separator className="bg-primary/10" />
 
-          <PartInstallPanel part={part} installs={installs} />
+          {installPanel ?? <PartInstallPanel part={part} installs={installs} />}
 
           <Separator className="bg-primary/10" />
 
-          <div className="flex items-center justify-between gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onEdit(part)}
-              className="border-primary/40 text-primary"
-            >
-              Edit part
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                void onDelete(part);
-                onOpenChange(false);
-              }}
-              className="text-muted-foreground hover:text-destructive"
-            >
-              <Trash2 className="mr-1.5 h-3.5 w-3.5" aria-hidden />
-              Remove from inventory
-            </Button>
-          </div>
+          {canEdit && (
+            <div className="flex items-center justify-between gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onEdit(part)}
+                className="border-primary/40 text-primary"
+              >
+                Edit part
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  void onDelete(part);
+                  onOpenChange(false);
+                }}
+                className="text-muted-foreground hover:text-destructive"
+              >
+                <Trash2 className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+                Remove from inventory
+              </Button>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>

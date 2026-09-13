@@ -37,9 +37,7 @@ export function summarizeBuild(parts: InstalledPart[]): BuildSummary {
 
 // drone_part_installs carries user_id; inserts/updates run through db_request
 // for automatic ownership injection. Read-only embeds use PostgREST directly.
-const INSTALLS = supabase
-  .schema("personal_gear")
-  .from("drone_part_installs");
+const INSTALLS = supabase.schema("personal_gear").from("drone_part_installs");
 
 async function fetchItem(uuid: string): Promise<DbGearItem | null> {
   const { data, error } = await db_request({

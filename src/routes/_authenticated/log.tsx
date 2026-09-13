@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useLogData } from "./log-hooks.ts";
+import { useLogData } from "./-log-hooks.ts";
 import { usePilot } from "@/hooks/use-pilot";
 import { PageHeader } from "@/components/app-shell";
 import { LogSessionList } from "@/components/log/LogSessionList";

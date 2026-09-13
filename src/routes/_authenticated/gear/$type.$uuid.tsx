@@ -45,7 +45,7 @@ function GearDetailPage() {
             (error as Error | null)?.message ??
             "Gear not found — it may have been deleted, or you don't have access to it."
           }
-          onRetry={() => navigate({ to: "/hanger" })}
+          onRetry={() => navigate({ to: "/hanger/personal" })}
         />
       </div>
     );
@@ -60,7 +60,7 @@ function GearDetailPage() {
     onEdit: () => setEditOpen(true),
     onDelete: () =>
       deleteGear.mutate(undefined, {
-        onSuccess: () => navigate({ to: "/hanger" }),
+        onSuccess: () => navigate({ to: "/hanger/personal" }),
       }),
     // Batteries have no service tracking — omit the handler so the header
     // hides the Service button entirely.

@@ -1,4 +1,4 @@
-import { Pencil, Trash2, Wrench } from "lucide-react";
+import { Pencil, Trash2, Wrench, Lock } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +25,10 @@ interface GearCardHeaderProps {
   isAsNeeded: boolean;
   isBattery: boolean;
   isDeleting: boolean;
+  /** May the viewer mutate this gear (personal: owner; org: member). */
+  canEdit?: boolean;
+  /** May the viewer write money fields (org: owner/manager only). */
+  canEditMoney?: boolean;
   onDeleteGear: (id: string, name: string) => void;
   onUpdateGear: (
     gearId: string,
@@ -45,6 +49,8 @@ export function GearCardHeader({
   isAsNeeded,
   isBattery,
   isDeleting,
+  canEdit = true,
+  canEditMoney = true,
   onDeleteGear,
   onUpdateGear,
   onOpenService,
@@ -87,6 +93,15 @@ export function GearCardHeader({
       </div>
 
       <div className="flex items-center gap-1 shrink-0">
+        {/* Read-only viewers get a quiet hint instead of write controls. */}
+        {!canEdit && (
+          <Badge
+            variant="outline"
+            className="text-[10px] px-2 py-0 border-border/60 text-muted-foreground"
+          >
+            <Lock className="mr-1 h-3 w-3" aria-hidden /> View only
+          </Badge>
+        )}
         {!isBattery && isAsNeeded && (
           <Badge
             variant="outline"
@@ -98,7 +113,7 @@ export function GearCardHeader({
 
         {/* Log service (opens the service dialog) — batteries have no
             service clock, so the control is hidden for them */}
-        {!isBattery && (
+        {!isBattery && canEdit && (
           <Button
             variant="ghost"
             size="icon"
@@ -116,45 +131,52 @@ export function GearCardHeader({
         )}
 
         {/* Edit dialog */}
-        <GearCardEditDialog
-          gear={gear}
-          onUpdateGear={onUpdateGear}
-          isDeleting={isDeleting}
-        />
+        {canEdit && (
+          <GearCardEditDialog
+            gear={gear}
+            onUpdateGear={onUpdateGear}
+            isDeleting={isDeleting}
+            canEditMoney={canEditMoney}
+          />
+        )}
 
-        {/* Delete with confirmation dialog */}
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7 transition-all duration-200 ease-out text-muted-foreground hover:text-destructive hover:bg-destructive/20 active:scale-[0.95] border border-transparent"
-              aria-label={`Delete ${gear.name}`}
-              disabled={isDeleting}
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete {gear.name}?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This permanently removes the gear, its logged maintenance
-                history, and unlinks any flight sessions that reference it. This
-                action cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                onClick={() => onDeleteGear(gear.id, gear.name)}
+        {/* Delete with confirmation dialog. Org gear: deleting a row deletes
+            its financial record too, so the money-lock trigger only lets
+            owner/manager do it — hence canEditMoney gates the affordance. */}
+        {canEdit && canEditMoney && (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 transition-all duration-200 ease-out text-muted-foreground hover:text-destructive hover:bg-destructive/20 active:scale-[0.95] border border-transparent"
+                aria-label={`Delete ${gear.name}`}
+                disabled={isDeleting}
               >
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete {gear.name}?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This permanently removes the gear, its logged maintenance
+                  history, and unlinks any flight sessions that reference it.
+                  This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  onClick={() => onDeleteGear(gear.id, gear.name)}
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
       </div>
     </div>
   );

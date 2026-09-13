@@ -14,9 +14,13 @@ import type { GearPart, MaintenanceLog } from "./types";
 
 export const CARD_LOG_PAGE_SIZE = 25;
 
-export function useGearCardData(gearId: string, gearType: string) {
+export function useGearCardData(
+  gearId: string,
+  gearType: string,
+  enabled: boolean = true,
+) {
   const { profile } = usePilot();
-  const enabled = !!profile?.id && !!gearId;
+  const enabledAll = enabled && !!profile?.id && !!gearId;
   const partsTable = GEAR_PARTS_TABLES[gearType] ?? null;
 
   const partsQuery = useQuery({
@@ -35,19 +39,23 @@ export function useGearCardData(gearId: string, gearType: string) {
       if (error) throw error;
       return (data ?? []) as GearPart[];
     },
-    enabled: enabled && !!partsTable,
+    enabled: enabledAll && !!partsTable,
     staleTime: 30_000,
   });
 
   const logsQuery = useQuery({
     queryKey: ["gear-card-logs", profile?.id ?? null, gearId],
-    queryFn: async (): Promise<{ logs: MaintenanceLog[]; hasMore: boolean }> => {
+    queryFn: async (): Promise<{
+      logs: MaintenanceLog[];
+      hasMore: boolean;
+    }> => {
       const { data, error, count } = await db_request({
         mode: "query",
         schema: "personal_gear",
         table: "maintenance_logs",
         operation: "select",
-        selectColumns: "id,gear_id,user_id,description,cost,performed_on,reset_service_clock",
+        selectColumns:
+          "id,gear_id,user_id,description,cost,performed_on,reset_service_clock",
         filters: { gear_id: gearId },
         orderBy: { column: "performed_on", ascending: false },
         pagination: { index: 0, size: CARD_LOG_PAGE_SIZE },
@@ -56,7 +64,7 @@ export function useGearCardData(gearId: string, gearType: string) {
       const logs = (data ?? []) as MaintenanceLog[];
       return { logs, hasMore: (count ?? logs.length) > CARD_LOG_PAGE_SIZE };
     },
-    enabled: enabled && gearType !== "battery",
+    enabled: enabledAll && gearType !== "battery",
     staleTime: 30_000,
   });
 
