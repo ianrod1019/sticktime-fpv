@@ -1,0 +1,99 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "StickTime FPV",
+  "description": "The logbook, gear hanger and analytics dashboard for FPV pilots who take stick time seriously.",
+  "colors": {
+    "primary": "#F97316",
+    "light": "#FB923C",
+    "dark": "#EA580C"
+  },
+  "favicon": "/images/favicon.svg",
+  "icons": {
+    "library": "lucide"
+  },
+  "appearance": {
+    "default": "system"
+  },
+  "background": {
+    "decoration": "gradient"
+  },
+  "navbar": {
+    "links": [
+      { "link": "https://sticktime-fpv.lovable.app", "text": "Open the app" }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Sign in",
+      "href": "https://sticktime-fpv.lovable.app"
+    }
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/sticktimefpv",
+      "github": "https://github.com/sticktime-fpv"
+    }
+  },
+  "feedback": {
+    "thumbsRating": true
+  },
+  "seo": {
+    "metatags": {
+      "title": "StickTime FPV Docs",
+      "description": "User documentation for StickTime FPV — flight logging, gear hanger, cost ledger, squadrons and analytics."
+    }
+  },
+  "navigation": {
+    "groups": [
+      {
+        "group": "Introduction",
+        "pages": ["introduction"]
+      },
+      {
+        "group": "Getting started",
+        "pages": ["quickstart", "your-profile"]
+      },
+      {
+        "group": "Flight logging",
+        "pages": ["logging-sessions", "dashboard"]
+      },
+      {
+        "group": "Analytics",
+        "pages": ["analytics"]
+      },
+      {
+        "group": "Hanger (your gear)",
+        "pages": [
+          "hanger-overview",
+          "drones",
+          "batteries",
+          "transmitters-goggles-other",
+          "parts-inventory",
+          "maintenance"
+        ]
+      },
+      {
+        "group": "Cost ledger",
+        "pages": ["personal-ledger", "squadron-ledger"]
+      },
+      {
+        "group": "Squadrons",
+        "pages": [
+          "squadron-overview",
+          "roles-permissions",
+          "shared-gear",
+          "failure-analytics",
+          "managing-a-squadron"
+        ]
+      },
+      {
+        "group": "Account & billing",
+        "pages": ["settings", "exports", "billing-tiers", "account-deletion"]
+      },
+      {
+        "group": "Help",
+        "pages": ["faq", "troubleshooting", "privacy-security"]
+      }
+    ]
+  }
+}

@@ -1,0 +1,57 @@
+---
+title: "Troubleshooting"
+description: "Empty charts, locked pages, missing gear and other common fixes."
+icon: "bug"
+---
+
+## Empty charts on the dashboard
+
+**Charts (rig usage, pack totals, sim/real donut) are empty even though I logged sessions.**
+
+Charts run on **bound gear**. Sessions without a bound drone can't appear in rig usage; real sessions without a battery set don't move pack totals.
+
+*Fix:* edit your recent sessions and bind the gear. See [Logging sessions](/logging-sessions).
+
+## A squadron page says I don't have access
+
+**The squadron ledger or analytics shows a lock.**
+
+Ledger and analytics are **granted**, not automatic, for members. Owners and managers always have access.
+
+*Fix:* ask your squadron owner to grant you ledger access (per-member switch or role template). See [Roles & permissions](/roles-permissions).
+
+## I can't create a squadron
+
+**The Establish Squadron button is gated.**
+
+Squadron creation is a **Pro** feature. Paid tiers are currently limited to developers and testers while billing isn't live — see [Billing & tiers](/billing-tiers).
+
+## My gear list is empty in the log dialog
+
+**The log session dialog has no drones/radios/goggles to pick.**
+
+The dialog lists gear from **your personal hanger** (plus usable squadron gear). If the hanger is empty, the pickers are too.
+
+*Fix:* add gear in the [Hanger](/hanger-overview) first.
+
+## Changes on my phone don't show on my desktop
+
+**Another device's edits aren't appearing.**
+
+Screens live-update through realtime sync. If a page sat open through a network blip, refresh once — edits are safe in the database; the page just missed the event.
+
+## My battery set's pack count is wrong
+
+**Packs flown went to the wrong set, or the count is off.**
+
+Pack counts come from the **battery set chosen when logging** a real session.
+
+*Fix:* edit the session and correct the set or the packs-flown number. See [Batteries](/batteries).
+
+## I forgot my password
+
+Use **Forgot password** on the sign-in modal. Password-reset emails go to **real inboxes only** — if your account email is a fake or dead address, password recovery isn't possible; contact the StickTime team.
+
+## Still stuck?
+
+Check the [FAQ](/faq) — or file an issue with your callsign, the page you were on and what you expected to happen.

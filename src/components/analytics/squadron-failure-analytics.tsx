@@ -26,6 +26,7 @@ import {
   YAxis,
 } from "recharts";
 import { PageHeader } from "@/components/app-shell";
+import { openUpgradeModal } from "@/components/billing/upgrade-modal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -299,11 +300,25 @@ function ProLockCard() {
             Full event-group table with repair-cost estimates
           </li>
         </ul>
-        <Button asChild size="lg" className="mt-6 w-full sm:w-auto">
-          <Link to="/settings">
-            <Sparkles className="mr-1.5 h-4 w-4" aria-hidden />
-            Upgrade to Enterprise
-          </Link>
+        <Button
+          size="lg"
+          className="mt-6 w-full sm:w-auto"
+          onClick={() =>
+            openUpgradeModal({
+              tier: "enterprise",
+              featureName: "Squadron Failure Analytics",
+              description:
+                "Failure rates, crash attribution and repair-cost roll-ups across the shared org fleet — an Enterprise-tier capability, on top of Pro.",
+              perks: [
+                "Failure breakdown across every airframe the squadron owns",
+                "Top failure drivers with shared-spares warnings",
+                "Full event-group table with repair-cost estimates",
+              ],
+            })
+          }
+        >
+          <Sparkles className="mr-1.5 h-4 w-4" aria-hidden />
+          Upgrade to Enterprise
         </Button>
       </CardContent>
     </Card>

@@ -31,6 +31,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { openUpgradeModal } from "@/components/billing/upgrade-modal";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/app-shell";
 import { Badge } from "@/components/ui/badge";
@@ -588,11 +589,26 @@ function FreeTierGate() {
                 One-tap failure reporting with root-cause notes
               </li>
             </ul>
-            <Button asChild size="lg" className="mt-6 w-full sm:w-auto">
-              <Link to="/settings">
-                <Sparkles className="mr-1.5 h-4 w-4" aria-hidden />
-                Upgrade to Pro
-              </Link>
+            <Button
+              size="lg"
+              className="mt-6 w-full sm:w-auto"
+              onClick={() =>
+                openUpgradeModal({
+                  tier: "pro",
+                  featureName: "Fleet Failure Analytics",
+                  description:
+                    "Component failure rates, crash attribution and repair-cost analytics across your fleet — reserved for Pro and Enterprise pilots.",
+                  perks: [
+                    "Failure breakdown by component category",
+                    "Top failure drivers with high-failure warnings",
+                    "Fleet-wide crash correlation metric",
+                    "One-tap failure reporting with root-cause notes",
+                  ],
+                })
+              }
+            >
+              <Sparkles className="mr-1.5 h-4 w-4" aria-hidden />
+              Upgrade to Pro
             </Button>
             <p className="mt-3 text-[11px] text-muted-foreground/70">
               Current plan: Free — analytics unlock instantly after upgrade.

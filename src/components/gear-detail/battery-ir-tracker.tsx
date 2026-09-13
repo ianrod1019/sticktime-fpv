@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { openUpgradeModal } from "@/components/billing/upgrade-modal";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -302,8 +303,20 @@ export function BatteryIrTracker({ item }: { item: GearItem }) {
             Log per-cell IR values for each pack in the set and watch
             degradation over time. Available on the Pro tier.
           </p>
-          <Button size="sm" variant="outline" className="mt-3" asChild>
-            <a href="/">See what Pro unlocks</a>
+          <Button
+            size="sm"
+            variant="outline"
+            className="mt-3"
+            onClick={() =>
+              openUpgradeModal({
+                tier: "pro",
+                featureName: "LiPo Internal Resistance Tracking",
+                description:
+                  "Log per-cell IR values for each pack in the set and watch degradation over time — a Pro feature.",
+              })
+            }
+          >
+            See what Pro unlocks
           </Button>
         </CardContent>
       </Card>

@@ -1,0 +1,46 @@
+---
+title: "Personal ledger"
+description: "Your true flying costs — cost per flight hour across quads, radios, goggles, packs and parts."
+icon: "receipt"
+---
+
+The **Cost Ledger** answers the question every pilot avoids: *what does this hobby actually cost me per hour?*
+
+<Screenshot src="/images/ledger-index.png" alt="The ledger section index" caption="The ledger section — personal costs or squadron fleet costs." />
+
+<Screenshot src="/images/ledger-personal.png" alt="The personal cost ledger page" caption="Personal ledger — fleet cost, per-gear costs and flight hours side by side." />
+
+## How it's calculated
+
+For every item in your hanger:
+
+```
+cost per flight hour = (purchase price + installed parts + repairs)
+                       ÷ flight hours bound to that item
+```
+
+- **Purchase costs** come from the price you record on gear and parts.
+- **Hours** come from [sessions](/logging-sessions) bound to that gear.
+- Unflown gear shows **cost so far, zero hours** — the hangar-queen warning.
+
+## Views
+
+The ledger has two shareable views, switchable with the tab control (or `?tab=breakdown`):
+
+| View | Shows |
+| --- | --- |
+| **Fleet overview** | Total spend, total hours, blended cost per hour across everything. |
+| **Per-gear breakdown** | Cost per hour for each item — sorted so the expensive toys are obvious. |
+
+## Pack totals
+
+Battery costs spread across packs flown, so you see the per-pack cost of real-world airtime — a number that surprises most pilots the first time.
+
+<Tip>
+The ledger only knows what you tell it. Add purchase prices when you add
+gear — retrofit them later from each item's detail page.
+</Tip>
+
+## From the ledger to the hanger
+
+Click through any row to the gear's detail page to fix a price, add a part or review its session history. Adding a purchase from the ledger deep-links straight into the hanger's add-gear dialog.

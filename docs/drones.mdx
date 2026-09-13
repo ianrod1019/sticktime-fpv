@@ -1,0 +1,42 @@
+---
+title: "Drones"
+description: "Airframes with builds, part installs, crash counters and flight time."
+icon: "plane"
+---
+
+Every quad you own lives in **Hanger → Drones & Quads**.
+
+## Adding a drone
+
+Open the section, click **Add gear**, and give it a name. Useful extras:
+
+- **Brand / model**
+- **Cell count** (e.g. 6S) and **connector** (XT60, etc.)
+- **Notes** — dry weight, motor size, anything
+
+## The drone detail page
+
+Click a drone to open its detail page. From here you can:
+
+- **See total flight time** — every session bound to this airframe, summed automatically.
+- **Track the crash counter** — increment after a crash; the number feeds [failure analytics](/failure-analytics) in squadrons.
+- **Manage the build** — the list of parts currently installed on the airframe.
+
+## Builds and part installs
+
+<Screenshot src="/images/parts-inventory.png" alt="The parts inventory page showing drone parts and installs" caption="Parts and installs — what you have on the bench and what's in each build." />
+
+A **build** is the set of parts installed on a drone. When a part breaks and you replace it, **install the new part** on the drone — the old one comes back to your spares automatically with its install history intact.
+
+1. Add the part to your [parts inventory](/parts-inventory) (or buy it straight into it).
+2. Open the drone's detail page and install the part.
+3. The install records the date — and the part's cost joins the drone's ledger math.
+
+<Tip>
+Swapped a motor? Install the replacement instead of editing the old part.
+Your build history and cost ledger stay truthful.
+</Tip>
+
+## What powers the ledger
+
+Every part you install on a drone, and its purchase cost, flows into **cost per flight hour** for that airframe in the [personal ledger](/personal-ledger). A hangar queen costs nothing per hour — a quad you race weekly spreads its repair costs across real airtime.

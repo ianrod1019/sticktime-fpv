@@ -23,16 +23,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-interface AdminLookupSearch {
-  token?: string;
-}
-
 export const Route = createFileRoute("/_authenticated/admin_lookup/$uuid")({
-  validateSearch: (search: Record<string, unknown>): AdminLookupSearch => {
-    // token is optional: only include it when actually present so the
-    // exactOptionalPropertyTypes contract holds.
-    return typeof search["token"] === "string" ? { token: search["token"] } : {};
-  },
   beforeLoad: async () => {
     const { data: userData } = await supabase.auth.getUser();
     if (!userData.user) {
@@ -67,7 +58,6 @@ export interface AdminAuditLogEntry {
 
 function AdminUserLookupComponent() {
   const { uuid } = Route.useParams();
-  const search = Route.useSearch();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -198,8 +188,7 @@ function AdminUserLookupComponent() {
           variant="outline"
           className="border-success/40 text-success bg-success/10 font-mono text-xs"
         >
-          Token Verified:{" "}
-          {search["token"] ? search["token"].slice(0, 8) + "..." : "Active"}
+          <ShieldCheck className="h-3 w-3" /> Session verified: admin
         </Badge>
       </div>
 

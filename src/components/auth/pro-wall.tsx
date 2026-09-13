@@ -3,6 +3,7 @@ import { Lock, Crown, AlertTriangle, Shield, TrendingDown } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { openUpgradeModal } from "@/components/billing/upgrade-modal";
 import { supabase } from "@/integrations/supabase/client";
 import { db_request } from "@/lib/db_request";
 import type { Database } from "@/integrations/supabase/types";
@@ -56,8 +57,13 @@ export function ProWall({
       });
 
       if (profile) {
-        setUserRole(profile.role as AppRole);
-        setUserTier(profile.tier);
+        // db_request resolves to an envelope ({ data, error }).
+        const payload = (profile as { data?: unknown }).data ?? profile;
+        const row = Array.isArray(payload) ? payload[0] : payload;
+        if (row) {
+          setUserRole((row as { role: AppRole }).role);
+          setUserTier((row as { tier: string }).tier);
+        }
       }
 
       // Check pro access using RPC function
@@ -140,6 +146,25 @@ export function ProWall({
               </div>
             </div>
           </div>
+
+          {!isAdmin && (
+            <Button
+              size="sm"
+              className="mt-2"
+              onClick={() =>
+                openUpgradeModal({
+                  tier: "pro",
+                  featureName,
+                  description:
+                    description ||
+                    "This feature requires a Pro subscription. Upgrade to unlock advanced analytics and additional features.",
+                })
+              }
+            >
+              <Crown className="mr-1.5 h-4 w-4" aria-hidden />
+              Upgrade to Pro
+            </Button>
+          )}
 
           {isAdmin && (
             <div className="mt-4 p-3 bg-success/10 border border-success/30 rounded-lg">

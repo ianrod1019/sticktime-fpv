@@ -1,0 +1,140 @@
+
+> dev
+> vite dev --port 3000 --strictPort
+
+[33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
+
+  [32m[1mVITE[22m v8.1.5[39m  [2mready in [0m[1m3204[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m3000[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.0.167:[1m3000[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://172.22.160.1:[1m3000[22m/[39m
+[2m3:45:18 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m connected.
+(node:34824) [THREE_CJS_DEPRECATED] DeprecationWarning: `require("three")` is deprecated and will be removed.
+Replace `const THREE = require("three")` with `import * as THREE from "three"`.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2m3:46:26 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/three/drone-hero-scene.tsx[22m
+[2m3:46:26 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/three/drone-hero-scene.tsx[22m
+[2m3:46:26 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m3:46:56 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/three/drone-hero-scene.tsx[22m
+[2m3:46:56 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/three/drone-hero-scene.tsx[22m
+[2m3:46:56 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m3:56:32 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/three/ambient-backdrop.tsx[22m
+[2m4:09:17 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/squadron/manage.$uuid.tsx[22m
+[2m4:09:17 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/squadron/manage.$uuid.tsx[22m
+[2m4:09:17 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m4:09:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/billing/upgrade-modal.tsx[22m
+[2m4:09:39 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/billing/upgrade-modal.tsx[22m
+[2m4:09:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/billing/upgrade-modal.tsx[22m Could not Fast Refresh ("openUpgradeModal" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m4:09:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/__root.tsx[22m
+[2m4:10:00 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/pages/landing/-hero.tsx[22m
+[2m4:10:00 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/pages/landing/-hero.tsx[22m
+[2m4:10:02 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/docs/$slug.tsx[22m
+[2m4:10:02 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mdocs/billing-tiers.mdx[22m
+[2m4:10:02 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Unexpected character `!` (U+0021) before name, expected a character that can start a name, such as a letter, `$`, or `_` (note: to create a comment in MDX, use `{/* text */}`)
+  Plugin: [35m@mdx-js/rollup[39m
+  File: [36mD:/Projects/sticktime-fpv/docs/billing-tiers.mdx[39m:7:2
+[33m  5  |  ---
+  6  |  
+  7  |  <!-- billing:status -->
+     |    ^
+  8  |  <Warning>
+  9  |  **Billing is not live yet.** Paid tiers arrive with the Stripe billing[39m
+[2m4:10:02 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: Unexpected character `!` (U+0021) before name, expected a character that can start a name, such as a letter, `$`, or `_` (note: to create a comment in MDX, use `{/* text */}`)[39m
+  Plugin: [35m@mdx-js/rollup[39m
+  File: [36mD:/Projects/sticktime-fpv/docs/billing-tiers.mdx[39m:7:2
+[33m  5  |  ---
+  6  |  
+  7  |  <!-- billing:status -->
+     |    ^
+  8  |  <Warning>
+  9  |  **Billing is not live yet.** Paid tiers arrive with the Stripe billing[39m
+[2m4:10:15 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/docs/$slug.tsx[22m
+[2m4:10:15 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mdocs/billing-tiers.mdx[22m
+[2m4:10:15 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: Unexpected character `!` (U+0021) before name, expected a character that can start a name, such as a letter, `$`, or `_` (note: to create a comment in MDX, use `{/* text */}`)[39m
+  Plugin: [35m@mdx-js/rollup[39m
+  File: [36mD:/Projects/sticktime-fpv/docs/billing-tiers.mdx[39m:7:2
+[33m  5  |  ---
+  6  |  
+  7  |  <!-- billing:status -->
+     |    ^
+  8  |  <Note>
+  9  |  **Billing is not live yet.** Paid tiers arrive with the Stripe billing[39m
+[2m4:10:15 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Unexpected character `!` (U+0021) before name, expected a character that can start a name, such as a letter, `$`, or `_` (note: to create a comment in MDX, use `{/* text */}`)
+  Plugin: [35m@mdx-js/rollup[39m
+  File: [36mD:/Projects/sticktime-fpv/docs/billing-tiers.mdx[39m:7:2
+[33m  5  |  ---
+  6  |  
+  7  |  <!-- billing:status -->
+     |    ^
+  8  |  <Note>
+  9  |  **Billing is not live yet.** Paid tiers arrive with the Stripe billing[39m
+[2m4:10:20 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/three/drone-hero-scene.tsx[22m
+[2m4:10:20 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/three/drone-hero-scene.tsx[22m
+HTTPError: Unexpected character `!` (U+0021) before name, expected a character that can start a name, such as a letter, `$`, or `_` (note: to create a comment in MDX, use `{/* text */}`)
+    at prepareResponse (file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:222:37)
+    at toResponse (file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:191:19)
+    at file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:190:124
+    at async Object.fetch (D:\Projects\sticktime-fpv\node_modules\@tanstack\react-start\src\default-entry\server.ts:16:14)
+    at async Object.fetch (D:\Projects\sticktime-fpv\src\server.ts:62:24)
+    at async file:///D:/Projects/sticktime-fpv/node_modules/@tanstack/start-plugin-core/dist/esm/vite/dev-server-plugin/plugin.js:79:36 (status 500)
+caused by: 
+HTTPError: Unexpected character `!` (U+0021) before name, expected a character that can start a name, such as a letter, `$`, or `_` (note: to create a comment in MDX, use `{/* text */}`)
+    at prepareResponse (file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:222:37)
+    at toResponse (file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:191:19)
+    at file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:190:124
+    at async Object.fetch (D:\Projects\sticktime-fpv\node_modules\@tanstack\react-start\src\default-entry\server.ts:16:14)
+    at async Object.fetch (D:\Projects\sticktime-fpv\src\server.ts:62:24)
+    at async file:///D:/Projects/sticktime-fpv/node_modules/@tanstack/start-plugin-core/dist/esm/vite/dev-server-plugin/plugin.js:79:36 (status 500)
+caused by: 
+HTTPError: Unexpected character `!` (U+0021) before name, expected a character that can start a name, such as a letter, `$`, or `_` (note: to create a comment in MDX, use `{/* text */}`)
+    at prepareResponse (file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:222:37)
+    at toResponse (file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:191:19)
+    at file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:190:124
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Object.fetch (D:\Projects\sticktime-fpv\node_modules\@tanstack\react-start\src\default-entry\server.ts:16:14)
+    at async Object.fetch (D:\Projects\sticktime-fpv\src\server.ts:62:24)
+    at async file:///D:/Projects/sticktime-fpv/node_modules/@tanstack/start-plugin-core/dist/esm/vite/dev-server-plugin/plugin.js:79:36 (status 500)
+caused by: 
+HTTPError: Unexpected character `!` (U+0021) before name, expected a character that can start a name, such as a letter, `$`, or `_` (note: to create a comment in MDX, use `{/* text */}`)
+    at prepareResponse (file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:222:37)
+    at toResponse (file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:191:19)
+    at file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:190:124
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Object.fetch (D:\Projects\sticktime-fpv\node_modules\@tanstack\react-start\src\default-entry\server.ts:16:14)
+    at async Object.fetch (D:\Projects\sticktime-fpv\src\server.ts:62:24)
+    at async file:///D:/Projects/sticktime-fpv/node_modules/@tanstack/start-plugin-core/dist/esm/vite/dev-server-plugin/plugin.js:79:36 (status 500)
+caused by: 
+[2m4:11:42 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
+[2m4:12:03 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
+[2m4:13:07 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/docs/$slug.tsx[22m
+[2m4:13:07 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mdocs/billing-tiers.mdx[22m
+[2m4:13:14 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/docs/$slug.tsx[22m
+[2m4:13:14 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mdocs/billing-tiers.mdx[22m
+[2m4:14:50 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/three/drone-hero-scene.tsx[22m
+[2m4:14:50 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/three/drone-hero-scene.tsx[22m
+[2m4:14:50 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m4:15:13 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/billing/upgrade-modal.tsx[22m
+[2m4:15:13 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/billing/upgrade-modal.tsx[22m
+[2m4:15:13 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
+[2m4:15:13 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/billing/upgrade-modal.tsx[22m Could not Fast Refresh ("openUpgradeModal" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m4:15:13 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/__root.tsx[22m
+[2m4:15:48 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
+[2m4:16:00 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
+[2m4:16:42 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
+[2m4:16:53 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
+[2m4:18:15 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
+[2m4:18:55 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
+[2m4:19:03 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/auth-modal.tsx[22m
+[2m4:19:03 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/auth-modal.tsx[22m
+[2m4:19:03 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m4:19:11 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/auth-modal.tsx[22m
+[2m4:19:11 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/auth-modal.tsx[22m
+[2m4:19:24 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
+[2m4:19:30 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
+[2m4:19:30 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/billing/upgrade-modal.tsx[22m
+[2m4:19:30 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/billing-status.ts[22m
+[2m4:19:30 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/squadron/manage.$uuid.tsx[22m
+[2m4:19:30 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/squadron/manage.$uuid.tsx[22m
+[2m4:19:31 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/billing/upgrade-modal.tsx[22m Could not Fast Refresh ("openUpgradeModal" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m4:19:31 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/__root.tsx[22m

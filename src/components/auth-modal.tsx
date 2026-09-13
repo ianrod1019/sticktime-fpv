@@ -13,7 +13,7 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
-  const [mode, setMode] = useState<"login" | "signup">(initialMode);
+  const [mode, setMode] = useState<"login" | "signup" | "forgot">(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -39,6 +39,42 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
       console.error("Google Auth Error:", error);
       setErrorDetails(error.message || "Google authentication failed");
       toast.error(error.message || "Google authentication failed");
+      setLoading(false);
+    }
+  };
+
+  // Password recovery. The response is deliberately identical whether or not
+  // the account exists — user enumeration via the reset flow is a classic
+  // account-discovery vector. Supabase rate-limits these emails per IP and
+  // per address (config.toml [auth.email] max_frequency).
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      toast.error("Enter your email first");
+      return;
+    }
+    setLoading(true);
+    setErrorDetails(null);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/update-password`,
+      });
+      if (error) throw error;
+      toast.success(
+        "If an account exists for that email, a recovery link is on its way.",
+        { duration: 8000 },
+      );
+      setMode("login");
+    } catch {
+      // Same generic message on error paths — don't leak state specifics.
+      // (Supabase errors here are network/config noise; the success-styled
+      // response is the enumeration shield, so the error is dropped.)
+      toast.success(
+        "If an account exists for that email, a recovery link is on its way.",
+        { duration: 8000 },
+      );
+      setMode("login");
+    } finally {
       setLoading(false);
     }
   };
@@ -162,12 +198,18 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
             <Plane className="h-6 w-6 text-primary" />
           </div>
           <h2 className="text-2xl font-bold tracking-tight">
-            {mode === "login" ? "Welcome Back" : "Create an Account"}
+            {mode === "forgot"
+              ? "Reset your password"
+              : mode === "login"
+                ? "Welcome Back"
+                : "Create an Account"}
           </h2>
           <p className="text-sm text-muted-foreground">
-            {mode === "login"
-              ? "Enter your credentials to access your account"
-              : "Sign up instantly without email confirmation"}
+            {mode === "forgot"
+              ? "We'll email you a recovery link — it expires in 30 minutes."
+              : mode === "login"
+                ? "Enter your credentials to access your account"
+                : "Sign up instantly without email confirmation"}
           </p>
         </div>
 
@@ -235,7 +277,10 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
           </div>
         </div>
 
-        <form onSubmit={handleEmailAuth} className="space-y-4">
+        <form
+          onSubmit={mode === "forgot" ? handleForgotPassword : handleEmailAuth}
+          className="space-y-4"
+        >
           <div className="space-y-2">
             <label
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -253,50 +298,68 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
               disabled={loading}
             />
           </div>
-          <div className="space-y-2">
-            <label
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              htmlFor="password"
-            >
-              Password
-            </label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              disabled={loading}
-            />
-          </div>
+          {mode !== "forgot" && (
+            <div className="space-y-2">
+              <label
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                htmlFor="password"
+              >
+                Password
+              </label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={loading}
+              />
+            </div>
+          )}
           <Button type="submit" className="w-full" disabled={loading}>
             {loading
               ? "Processing..."
-              : mode === "login"
-                ? "Sign In"
-                : "Sign Up"}
+              : mode === "forgot"
+                ? "Send recovery link"
+                : mode === "login"
+                  ? "Sign In"
+                  : "Sign Up"}
           </Button>
-        </form>
-
-        <div className="mt-6 text-center text-sm">
-          <p className="text-muted-foreground">
-            {mode === "login"
-              ? "Don't have an account?"
-              : "Already have an account?"}{" "}
+          {mode === "login" && (
             <button
               type="button"
-              className="font-medium text-primary hover:underline"
+              className="w-full text-center text-xs text-muted-foreground hover:text-primary transition-colors"
               onClick={() => {
-                setMode(mode === "login" ? "signup" : "login");
+                setMode("forgot");
                 setErrorDetails(null);
-                setIsTriggerError(false);
               }}
             >
-              {mode === "login" ? "Sign up" : "Log in"}
+              Forgot password?
             </button>
-          </p>
-        </div>
+          )}
+        </form>
+
+        {mode !== "forgot" && (
+          <div className="mt-6 text-center text-sm">
+            <p className="text-muted-foreground">
+              {mode === "login"
+                ? "Don't have an account?"
+                : "Already have an account?"}{" "}
+              <button
+                type="button"
+                className="font-medium text-primary hover:underline"
+                onClick={() => {
+                  setMode(mode === "login" ? "signup" : "login");
+                  setErrorDetails(null);
+                  setIsTriggerError(false);
+                }}
+              >
+                {mode === "login" ? "Sign up" : "Log in"}
+              </button>
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

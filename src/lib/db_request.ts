@@ -15,6 +15,14 @@ import {
  */
 const MAX_ROWS_PER_QUERY = 500;
 
+/**
+ * Write-payload guards: rejects inserts/updates that would push an absurd
+ * batch to the Data API (accidental runaway loop or hostile local code).
+ * These fail fast client-side — no request leaves the browser.
+ */
+const MAX_ROWS_PER_WRITE = 50;
+const MAX_WRITE_PAYLOAD_CHARS = 256 * 1024; // 256 KB of serialized JSON
+
 export interface Pagination {
   /** Zero-based page index. */
   index: number;
@@ -45,10 +53,7 @@ const PERSONAL_GEAR_TABLES = new Set([
  * schema-less request defaults to personal_gear for the known gear tables.
  * Returns null when the table is not a synced gear table.
  */
-function resolveGearSchema(
-  schema?: string,
-  table?: string,
-): string | null {
+function resolveGearSchema(schema?: string, table?: string): string | null {
   if (!table) return null;
   if (schema === PERSONAL_GEAR_SCHEMA || schema === ORG_GEAR_SCHEMA) {
     return PERSONAL_GEAR_TABLES.has(table) ? schema : null;
@@ -324,6 +329,7 @@ export async function db_request<T = any>({
           throw new Error(`${operation} operation requires data parameter.`);
         }
         const insertData = Array.isArray(data) ? data : [data];
+        assertWritePayload(insertData);
         const payload = injectOwner(insertData);
         const builder =
           operation === "upsert"
@@ -351,6 +357,7 @@ export async function db_request<T = any>({
         if (!data) {
           throw new Error("Update operation requires data parameter.");
         }
+        assertWritePayload(Array.isArray(data) ? data : [data]);
         if (!filters || Object.keys(filters).length === 0) {
           throw new Error(
             "Update operation requires filters to identify rows.",
@@ -391,7 +398,12 @@ export async function db_request<T = any>({
           if (deleteError) {
             return { data: null, error: deleteError };
           }
-          evictDeletedFromSyncCache(schema, table, syncScope ?? userId, deleteResult);
+          evictDeletedFromSyncCache(
+            schema,
+            table,
+            syncScope ?? userId,
+            deleteResult,
+          );
           return { data: deleteResult as T, error: null };
         } else {
           const { data: deleteResult, error: deleteError } =
@@ -399,7 +411,12 @@ export async function db_request<T = any>({
           if (deleteError) {
             return { data: null, error: deleteError };
           }
-          evictDeletedFromSyncCache(schema, table, syncScope ?? userId, deleteResult);
+          evictDeletedFromSyncCache(
+            schema,
+            table,
+            syncScope ?? userId,
+            deleteResult,
+          );
           return { data: deleteResult as T, error: null };
         }
       }
@@ -478,6 +495,24 @@ export async function isUserInRoles(
 ): Promise<boolean> {
   const role = await fetchUserRole(userId);
   return role ? roles.includes(role) : false;
+}
+
+/**
+ * Throw when a write payload is bigger than anything the app legitimately
+ * sends (single rows, or small batches at most). Local, synchronous, free.
+ */
+function assertWritePayload(rows: unknown[]): void {
+  if (rows.length > MAX_ROWS_PER_WRITE) {
+    throw new Error(
+      `Write rejected: ${rows.length} rows exceeds the ${MAX_ROWS_PER_WRITE}-row payload cap.`,
+    );
+  }
+  const serialized = JSON.stringify(rows);
+  if (serialized.length > MAX_WRITE_PAYLOAD_CHARS) {
+    throw new Error(
+      `Write rejected: payload exceeds ${MAX_WRITE_PAYLOAD_CHARS / 1024} KB.`,
+    );
+  }
 }
 
 /**

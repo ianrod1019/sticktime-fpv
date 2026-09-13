@@ -1,0 +1,40 @@
+---
+title: "Maintenance"
+description: "Service logs and wear-based health alerts for every piece of gear."
+icon: "wrench"
+---
+
+Gear dies from neglect, not crashes. The hanger tracks **maintenance health** so you service things before they fail in the air.
+
+## Maintenance logs
+
+Every gear detail page has a **maintenance log**:
+
+- **Add an entry** with a date, a short title (e.g. *"Replaced props"*, *"Gimbal lube"*) and notes.
+- Entries keep the full service history of the item — useful when selling gear, too.
+
+## Health alerts
+
+The hanger computes wear from **actual usage**:
+
+| Signal | Example |
+| --- | --- |
+| Flight hours on an airframe | Props/motors due for inspection after hard weeks. |
+| Packs cycled on a battery set | Rebalance or retire tired sets. |
+| Crash counters | A spike in crashes says inspect before you fly. |
+| Time since last service | Long gaps resurface as reminders. |
+
+Items that need attention surface at the top of the hanger with a health badge, so a glance tells you what to service next.
+
+<Tip>
+Bind gear to every [session](/logging-sessions) you fly — health math runs on
+usage, and unbound sessions don't count.
+</Tip>
+
+## Crash counters
+
+Each drone carries a crash counter on its [detail page](/drones). Log every crash — it feeds:
+
+- **Health alerts** for that airframe
+- **[Failure analytics](/failure-analytics)** in your squadron
+- **Cost per hour** honestly, including the parts you burn through

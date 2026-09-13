@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { purgePersistedCache } from "@/lib/query-client";
 import { useRealtimeInvalidation } from "@/lib/realtime-invalidation";
 import { SidebarNavigation } from "@/components/sidebar";
+import { AmbientBackdrop } from "@/components/three/ambient-backdrop";
 
 export function PageHeader({
   title,
@@ -83,7 +84,10 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen md:flex relative">
-      <div className="fixed left-0 inset-y-0 w-20 bg-sidebar border-r border-sidebar-border p-4 z-20">
+      {/* Ambient WebGL depth behind everything; demand-rendered, -z-10 */}
+      <AmbientBackdrop />
+
+      <div className="fixed left-0 inset-y-0 w-20 bg-sidebar/85 backdrop-blur-md border-r border-sidebar-border p-4 z-20">
         <SidebarNavigation
           isClientReady={true}
           effectiveAdmin={effectiveAdmin}

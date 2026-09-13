@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { db_request } from "@/lib/db_request";
+import { openUpgradeModal } from "@/components/billing/upgrade-modal";
 import { useProAccess } from "./use-pro-access";
 import { useDroneOptions, type DroneOption } from "./use-drone-options";
 import {
@@ -72,9 +73,13 @@ export function usePartInstalls(partId: string): UsePartInstallsResult {
 
   const guard = () => {
     if (!hasProAccess) {
-      toast.error(
-        "Airframe installs are a Pro feature. Upgrade to unlock.",
-      );
+      toast.error("Airframe installs are a Pro feature. Upgrade to unlock.");
+      openUpgradeModal({
+        tier: "pro",
+        featureName: "Airframe installs",
+        description:
+          "Install bench parts onto your quads to track what's built where — a Pro feature.",
+      });
       return false;
     }
     return true;

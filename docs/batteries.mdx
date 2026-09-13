@@ -1,0 +1,38 @@
+---
+title: "Batteries"
+description: "Battery sets, individual packs, IR readings, charging voltages and pack health."
+icon: "battery-charging"
+---
+
+Batteries are tracked as **sets** — a LiPo or Li-Ion pack family like "CNHL 6S 1300 (x4)" — with the individual packs inside managed separately.
+
+## Battery sets
+
+Create a set in **Hanger → Battery Sets** with:
+
+- **Name and brand**
+- **Cell count** (3S–8S) and **connector** (XT60, XT90...)
+- **Number of packs** in the set
+
+<Screenshot src="/images/hanger-personal.png" alt="The hanger page showing the battery sets section" />
+
+When you [log a real session](/logging-sessions) you pick a battery set and a pack count — StickTime adds those packs to the set's lifetime total automatically.
+
+## Individual packs
+
+Open a battery set to manage individual packs. Each pack carries:
+
+- **IR readings** — internal resistance per cell, measured over time. Rising IR is the classic early-warning sign of a tired pack.
+- **Charging voltages** — record storage/full voltages after charging to spot cells drifting out of balance.
+- **Pack status** — mark packs as healthy, tired or retired so you stop flying a pack before it puffs.
+
+<Tip>
+Log IR after every few cycles, at the same resting state (e.g. storage
+charge, cooled down). Consistency makes the trend line readable.
+</Tip>
+
+## Why it matters
+
+- **Pack totals** — the ledger splits cost per pack-flown so you know what each minute of real airtime really costs.
+- **Safety** — retired packs stop appearing as usable gear when logging.
+- **Squadron fleets** — shared battery sets in a squadron track usage across all members. See [Shared gear](/shared-gear).

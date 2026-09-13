@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { KeyRound } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
@@ -31,6 +33,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { usePilot } from "@/hooks/use-pilot";
 import { downloadFile, toCsv } from "@/lib/fpv";
+import { sanitizeTextCapped } from "@/lib/sanitize";
 import { db_request } from "@/lib/db_request";
 import { scrubUuidsFromRows } from "@/lib/export-scrub";
 export const Route = createFileRoute("/_authenticated/settings")({
@@ -45,11 +48,167 @@ interface DeletionStatus {
   grace_days?: number;
 }
 
+/**
+ * Change-password card. `secure_password_change` is on in Supabase, so
+ * updateUser rejects the call unless the session is recent — that IS the
+ * re-authentication. On success every OTHER session is revoked (a thief
+ * holding an old access token loses it) and the event is logged for the
+ * admin security view.
+ */
+function PasswordChangeSection({
+  email,
+}: {
+  email: string | null | undefined;
+}) {
+  const [show, setShow] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  async function changePassword(e: React.FormEvent) {
+    e.preventDefault();
+    if (newPassword.length < 8) {
+      toast.error("Password must be at least 8 characters.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords don't match.");
+      return;
+    }
+    setSaving(true);
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+      if (error) {
+        if (/reauthentication|sign.?in.?again/i.test(error.message)) {
+          toast.error(
+            "For security, please log out and back in, then change your password.",
+            { duration: 8000 },
+          );
+          await db_request({
+            mode: "rpc",
+            rpcFunction: "log_security_event",
+            operation: "select",
+            rpcParams: {
+              p_action: "password_change_failed",
+              p_detail: "reauthentication_required",
+            },
+          });
+        }
+        throw error;
+      }
+
+      await supabase.auth.signOut({ scope: "others" });
+      await db_request({
+        mode: "rpc",
+        rpcFunction: "log_security_event",
+        operation: "select",
+        rpcParams: { p_action: "password_changed", p_detail: "settings" },
+      });
+
+      setNewPassword("");
+      setConfirmPassword("");
+      setShow(false);
+      toast.success("Password changed. All other sessions were signed out.", {
+        duration: 8000,
+      });
+    } catch (err) {
+      if (
+        !/reauthentication|sign.?in.?again/i.test(
+          err instanceof Error ? err.message : "",
+        )
+      ) {
+        toast.error(
+          err instanceof Error ? err.message : "Could not change password",
+        );
+      }
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <section className="hud-panel p-6 relative overflow-hidden group hover:border-primary/40 transition-colors shadow-lg">
+      <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full pointer-events-none" />
+      <div className="flex items-center gap-2">
+        <KeyRound className="h-4 w-4 text-primary" />
+        <span className="label-mono text-primary">Password</span>
+      </div>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Signed in as {email ?? "your account"}. Changing your password signs out
+        every other device.
+      </p>
+      {show ? (
+        <form className="mt-5 space-y-4" onSubmit={changePassword}>
+          <div className="space-y-2">
+            <Label htmlFor="new-password">New password</Label>
+            <Input
+              id="new-password"
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+              minLength={8}
+              disabled={saving}
+              autoComplete="new-password"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="confirm-password">Confirm new password</Label>
+            <Input
+              id="confirm-password"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              disabled={saving}
+              autoComplete="new-password"
+            />
+          </div>
+          <div className="flex gap-3">
+            <Button type="submit" disabled={saving}>
+              {saving ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Check className="mr-2 h-4 w-4" />
+              )}
+              Change password
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              disabled={saving}
+              onClick={() => {
+                setShow(false);
+                setNewPassword("");
+                setConfirmPassword("");
+              }}
+            >
+              Cancel
+            </Button>
+          </div>
+        </form>
+      ) : (
+        <Button
+          variant="outline"
+          className="mt-5 border-primary/30 text-primary hover:bg-primary/10 hover:text-primary/90"
+          onClick={() => setShow(true)}
+        >
+          <KeyRound className="mr-2 h-4 w-4" />
+          Change password
+        </Button>
+      )}
+    </section>
+  );
+}
+
 function Settings() {
   const { profile, email, updateProfile } = usePilot();
   const queryClient = useQueryClient();
 
   // Pilot profile states
+  const [callsign, setCallsign] = useState("");
   const [goal, setGoal] = useState("5");
   const [privateProfile, setPrivateProfile] = useState(false);
   const [exportingJson, setExportingJson] = useState(false);
@@ -139,6 +298,9 @@ function Settings() {
 
   useEffect(() => {
     if (profile) {
+      if (profile.callsign) {
+        setCallsign(profile.callsign);
+      }
       if (
         profile.weekly_goal_hours !== undefined &&
         profile.weekly_goal_hours !== null
@@ -152,8 +314,14 @@ function Settings() {
   }, [profile]);
 
   async function saveProfile() {
+    const trimmedCallsign = sanitizeTextCapped(callsign, 24);
+    if (!trimmedCallsign) {
+      toast.error("Callsign can't be empty.");
+      return;
+    }
     try {
       await updateProfile.mutateAsync({
+        callsign: trimmedCallsign,
         weekly_goal_hours: Math.max(0.5, Number(goal) || 5),
         is_private: privateProfile,
       });
@@ -328,7 +496,28 @@ function Settings() {
                 <p className="text-sm text-muted-foreground">{email}</p>
               </div>
             </div>
-            <div className="mt-6 space-y-6">
+            <form
+              className="mt-6 space-y-6"
+              onSubmit={(e) => {
+                e.preventDefault();
+                saveProfile();
+              }}
+            >
+              <div className="space-y-2">
+                <Label htmlFor="callsign">Callsign</Label>
+                <Input
+                  id="callsign"
+                  type="text"
+                  maxLength={24}
+                  value={callsign}
+                  onChange={(e) => setCallsign(e.target.value)}
+                  placeholder="e.g. FreestyleFox"
+                  autoComplete="nickname"
+                />
+                <p className="text-sm text-muted-foreground">
+                  Your pilot name — shown on squadron rosters.
+                </p>
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="goal">Weekly flight goal (hours)</Label>
                 <Input
@@ -344,8 +533,7 @@ function Settings() {
                 <div>
                   <p className="font-medium">Private pilot profile</p>
                   <p className="text-sm text-muted-foreground">
-                    Hide your public callsign and profile details from
-                    leaderboards.
+                    Hide your callsign and profile details from other pilots.
                   </p>
                 </div>
                 <Switch
@@ -356,7 +544,7 @@ function Settings() {
               </div>
               <div className="pt-2">
                 <Button
-                  onClick={saveProfile}
+                  type="submit"
                   disabled={updateProfile?.isPending}
                   className="bg-primary hover:bg-primary/90 text-primary-foreground"
                 >
@@ -364,11 +552,15 @@ function Settings() {
                   Save profile
                 </Button>
               </div>
-            </div>
+            </form>
           </section>
         </div>
 
         <div className="space-y-8">
+          {/* Password change: re-auth via updateUser, other sessions revoked,
+              event logged to security_logs via log_security_event RPC. */}
+          <PasswordChangeSection email={email} />
+
           {/* Settings */}
           <section className="hud-panel p-6 relative overflow-hidden group hover:border-primary/40 transition-colors shadow-lg">
             <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full pointer-events-none" />
@@ -443,9 +635,7 @@ function Settings() {
             <section className="hud-panel p-6 border-destructive/30 relative overflow-hidden">
               <div className="flex items-center gap-2">
                 <ShieldAlert className="h-4 w-4 text-destructive" />
-                <span className="label-mono text-destructive">
-                  Danger zone
-                </span>
+                <span className="label-mono text-destructive">Danger zone</span>
               </div>
               <p className="mt-2 text-sm text-muted-foreground">
                 Delete your account and everything in it — sessions, gear,
@@ -480,14 +670,11 @@ function Settings() {
                           <div className="space-y-3">
                             <p>
                               This starts the deletion process for{" "}
-                              <strong>{email}</strong>. Three more
-                              confirmations follow this one.
+                              <strong>{email}</strong>. Three more confirmations
+                              follow this one.
                             </p>
                             <div>
-                              <Label
-                                htmlFor="delete-step1"
-                                className="text-xs"
-                              >
+                              <Label htmlFor="delete-step1" className="text-xs">
                                 Type{" "}
                                 <span className="font-mono text-foreground">
                                   {step1Phrase}
@@ -496,9 +683,7 @@ function Settings() {
                               <Input
                                 id="delete-step1"
                                 value={step1Input}
-                                onChange={(e) =>
-                                  setStep1Input(e.target.value)
-                                }
+                                onChange={(e) => setStep1Input(e.target.value)}
                                 placeholder={step1Phrase}
                                 autoComplete="off"
                                 className="mt-1.5 font-mono"
@@ -536,8 +721,7 @@ function Settings() {
                                 <strong>30 days from now</strong>
                               </li>
                               <li>
-                                You keep using the platform normally until
-                                then
+                                You keep using the platform normally until then
                               </li>
                               <li>
                                 You can cancel from Settings any time during
@@ -561,10 +745,7 @@ function Settings() {
                               </button>
                             </p>
                             <div>
-                              <Label
-                                htmlFor="delete-step2"
-                                className="text-xs"
-                              >
+                              <Label htmlFor="delete-step2" className="text-xs">
                                 Type{" "}
                                 <span className="font-mono text-foreground">
                                   {step2Phrase}
@@ -573,9 +754,7 @@ function Settings() {
                               <Input
                                 id="delete-step2"
                                 value={step2Input}
-                                onChange={(e) =>
-                                  setStep2Input(e.target.value)
-                                }
+                                onChange={(e) => setStep2Input(e.target.value)}
                                 placeholder={step2Phrase}
                                 autoComplete="off"
                                 className="mt-1.5 font-mono"
@@ -614,9 +793,7 @@ function Settings() {
                               <input
                                 type="checkbox"
                                 checked={step3Ack1}
-                                onChange={(e) =>
-                                  setStep3Ack1(e.target.checked)
-                                }
+                                onChange={(e) => setStep3Ack1(e.target.checked)}
                                 className="mt-0.5"
                               />
                               <span>
@@ -629,15 +806,13 @@ function Settings() {
                               <input
                                 type="checkbox"
                                 checked={step3Ack2}
-                                onChange={(e) =>
-                                  setStep3Ack2(e.target.checked)
-                                }
+                                onChange={(e) => setStep3Ack2(e.target.checked)}
                                 className="mt-0.5"
                               />
                               <span>
                                 I understand the purge runs on{" "}
-                                {formatDeletionDate()} and can only be
-                                prevented by me, before that date.
+                                {formatDeletionDate()} and can only be prevented
+                                by me, before that date.
                               </span>
                             </label>
                           </div>
@@ -648,7 +823,9 @@ function Settings() {
                         <Button
                           variant="destructive"
                           disabled={
-                            !step3Ack1 || !step3Ack2 || requestDeletion.isPending
+                            !step3Ack1 ||
+                            !step3Ack2 ||
+                            requestDeletion.isPending
                           }
                           onClick={() => requestDeletion.mutate()}
                         >
@@ -659,8 +836,8 @@ function Settings() {
                             </>
                           ) : (
                             <>
-                              <UserX className="mr-2 h-4 w-4" />
-                              I understand — schedule deletion
+                              <UserX className="mr-2 h-4 w-4" />I understand —
+                              schedule deletion
                             </>
                           )}
                         </Button>

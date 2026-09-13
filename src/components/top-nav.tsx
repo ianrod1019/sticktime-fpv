@@ -14,6 +14,7 @@ import { useAuth } from "@/context/auth-context";
 
 const NAV_LINKS = [
   { to: "/dashboard", label: "Features" },
+  { to: "/docs", label: "Docs" },
   { to: "/privacy", label: "Privacy" },
   { to: "/terms", label: "Terms" },
 ] as const;

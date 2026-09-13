@@ -12,6 +12,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { purgePersistedCache } from "@/lib/query-client";
 import { AuthProvider } from "@/context/auth-context";
+import { UpgradeModalHost } from "@/components/billing/upgrade-modal";
 
 import appCss from "../styles.css?url";
 
@@ -160,6 +161,7 @@ function RootComponent() {
       <AuthProvider>
         <Outlet />
         <Toaster position="top-right" />
+        <UpgradeModalHost />
       </AuthProvider>
     </QueryClientProvider>
   );

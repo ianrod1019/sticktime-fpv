@@ -1,20 +1,17 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-// CORS is locked to the app origin (env-configured) instead of "*".
-const allowedOrigin = Deno.env.get("APP_ORIGIN") ?? "";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": allowedOrigin,
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-apikey, content-type",
-};
+import {
+  checkBodySize,
+  checkRateLimit,
+  preflightResponse,
+} from "../_shared/http.ts";
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
-  }
+  const preflight = preflightResponse(req);
+  if (preflight) return preflight;
 
   try {
+    const sizeRejection = await checkBodySize(req);
+    if (sizeRejection) return sizeRejection;
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     // Forward the caller's JWT so RLS sees the real user for every query.
@@ -46,6 +43,9 @@ Deno.serve(async (req) => {
         headers: corsHeaders,
       });
     }
+
+    const rateLimited = await checkRateLimit(supabase, "get-pilot-settings", user.id, 60, 60);
+    if (rateLimited) return rateLimited;
 
     const { data, error } = await supabase
       .from("pilot_settings")

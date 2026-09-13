@@ -9,6 +9,9 @@ export const getRouter = () => {
     routeTree,
     context: { queryClient },
     scrollRestoration: true,
+    // Smooth cross-fade/slide between routes via the View Transitions API.
+    // Keyframes live in src/styles/motion.css; reduced-motion disables them.
+    defaultViewTransition: true,
     // Preload route data (loaders + queries) when a <Link> is hovered —
     // navigation then renders from cache with zero waiting.
     defaultPreload: "intent",

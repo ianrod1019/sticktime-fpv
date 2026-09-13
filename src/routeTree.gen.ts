@@ -11,8 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as DocsRouteImport } from './routes/docs'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as UpdatePasswordRouteImport } from './routes/update-password'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
 import { Route as AuthenticatedHangerRouteImport } from './routes/_authenticated/hanger'
@@ -20,6 +22,8 @@ import { Route as AuthenticatedLedgerRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedLogRouteImport } from './routes/_authenticated/log'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedTeamsRouteImport } from './routes/_authenticated/teams'
+import { Route as DocsIndexRouteImport } from './routes/docs/index'
+import { Route as DocsSlugRouteImport } from './routes/docs/$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdmin_lookupUuidRouteImport } from './routes/_authenticated/admin_lookup.$uuid'
 import { Route as AuthenticatedAnalyticsIndexRouteImport } from './routes/_authenticated/analytics.index'
@@ -57,6 +61,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DocsRoute = DocsRouteImport.update({
+  id: '/docs',
+  path: '/docs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -65,6 +74,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UpdatePasswordRoute = UpdatePasswordRouteImport.update({
+  id: '/update-password',
+  path: '/update-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
@@ -101,6 +115,16 @@ const AuthenticatedTeamsRoute = AuthenticatedTeamsRouteImport.update({
   id: '/teams',
   path: '/teams',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const DocsIndexRoute = DocsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DocsRoute,
+} as any)
+const DocsSlugRoute = DocsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => DocsRoute,
 } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
@@ -263,8 +287,10 @@ const AuthenticatedSquadronManageUuidRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/docs': typeof DocsRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
+  '/update-password': typeof UpdatePasswordRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/analytics': typeof AuthenticatedAnalyticsRouteWithChildren
   '/hanger': typeof AuthenticatedHangerRouteWithChildren
@@ -272,6 +298,8 @@ export interface FileRoutesByFullPath {
   '/log': typeof AuthenticatedLogRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/teams': typeof AuthenticatedTeamsRouteWithChildren
+  '/docs/$slug': typeof DocsSlugRoute
+  '/docs/': typeof DocsIndexRoute
   '/admin_lookup/$uuid': typeof AuthenticatedAdmin_lookupUuidRoute
   '/analytics/personal': typeof AuthenticatedAnalyticsPersonalRoute
   '/drone/$uuid': typeof AuthenticatedDroneUuidRoute
@@ -304,9 +332,12 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
+  '/update-password': typeof UpdatePasswordRoute
   '/log': typeof AuthenticatedLogRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/teams': typeof AuthenticatedTeamsRouteWithChildren
+  '/docs/$slug': typeof DocsSlugRoute
+  '/docs': typeof DocsIndexRoute
   '/admin_lookup/$uuid': typeof AuthenticatedAdmin_lookupUuidRoute
   '/analytics/personal': typeof AuthenticatedAnalyticsPersonalRoute
   '/drone/$uuid': typeof AuthenticatedDroneUuidRoute
@@ -337,8 +368,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/docs': typeof DocsRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
+  '/update-password': typeof UpdatePasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/analytics': typeof AuthenticatedAnalyticsRouteWithChildren
   '/_authenticated/hanger': typeof AuthenticatedHangerRouteWithChildren
@@ -346,6 +379,8 @@ export interface FileRoutesById {
   '/_authenticated/log': typeof AuthenticatedLogRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/teams': typeof AuthenticatedTeamsRouteWithChildren
+  '/docs/$slug': typeof DocsSlugRoute
+  '/docs/': typeof DocsIndexRoute
   '/_authenticated/admin_lookup/$uuid': typeof AuthenticatedAdmin_lookupUuidRoute
   '/_authenticated/analytics/personal': typeof AuthenticatedAnalyticsPersonalRoute
   '/_authenticated/drone/$uuid': typeof AuthenticatedDroneUuidRoute
@@ -378,8 +413,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/docs'
     | '/privacy'
     | '/terms'
+    | '/update-password'
     | '/admin'
     | '/analytics'
     | '/hanger'
@@ -387,6 +424,8 @@ export interface FileRouteTypes {
     | '/log'
     | '/settings'
     | '/teams'
+    | '/docs/$slug'
+    | '/docs/'
     | '/admin_lookup/$uuid'
     | '/analytics/personal'
     | '/drone/$uuid'
@@ -419,9 +458,12 @@ export interface FileRouteTypes {
     | '/'
     | '/privacy'
     | '/terms'
+    | '/update-password'
     | '/log'
     | '/settings'
     | '/teams'
+    | '/docs/$slug'
+    | '/docs'
     | '/admin_lookup/$uuid'
     | '/analytics/personal'
     | '/drone/$uuid'
@@ -451,8 +493,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/docs'
     | '/privacy'
     | '/terms'
+    | '/update-password'
     | '/_authenticated/admin'
     | '/_authenticated/analytics'
     | '/_authenticated/hanger'
@@ -460,6 +504,8 @@ export interface FileRouteTypes {
     | '/_authenticated/log'
     | '/_authenticated/settings'
     | '/_authenticated/teams'
+    | '/docs/$slug'
+    | '/docs/'
     | '/_authenticated/admin_lookup/$uuid'
     | '/_authenticated/analytics/personal'
     | '/_authenticated/drone/$uuid'
@@ -492,8 +538,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  DocsRoute: typeof DocsRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
+  UpdatePasswordRoute: typeof UpdatePasswordRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -512,6 +560,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/docs': {
+      id: '/docs'
+      path: '/docs'
+      fullPath: '/docs'
+      preLoaderRoute: typeof DocsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -524,6 +579,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/update-password': {
+      id: '/update-password'
+      path: '/update-password'
+      fullPath: '/update-password'
+      preLoaderRoute: typeof UpdatePasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -574,6 +636,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/teams'
       preLoaderRoute: typeof AuthenticatedTeamsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/docs/': {
+      id: '/docs/'
+      path: '/'
+      fullPath: '/docs/'
+      preLoaderRoute: typeof DocsIndexRouteImport
+      parentRoute: typeof DocsRoute
+    }
+    '/docs/$slug': {
+      id: '/docs/$slug'
+      path: '/$slug'
+      fullPath: '/docs/$slug'
+      preLoaderRoute: typeof DocsSlugRouteImport
+      parentRoute: typeof DocsRoute
     }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
@@ -924,11 +1000,25 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface DocsRouteChildren {
+  DocsSlugRoute: typeof DocsSlugRoute
+  DocsIndexRoute: typeof DocsIndexRoute
+}
+
+const DocsRouteChildren: DocsRouteChildren = {
+  DocsSlugRoute: DocsSlugRoute,
+  DocsIndexRoute: DocsIndexRoute,
+}
+
+const DocsRouteWithChildren = DocsRoute._addFileChildren(DocsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  DocsRoute: DocsRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,
+  UpdatePasswordRoute: UpdatePasswordRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

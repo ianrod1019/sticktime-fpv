@@ -5,9 +5,7 @@ import { PageHeader } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { SquadronLeaveDeleteModal } from "@/components/squadron/SquadronLeaveDeleteModal";
-import {
-  MemberPermissionsPanel,
-} from "@/components/squadron/member-permissions-panel";
+import { MemberPermissionsPanel } from "@/components/squadron/member-permissions-panel";
 import { RoleTemplatesPanel } from "@/components/squadron/role-templates-panel";
 import { EntryCodeCard } from "@/components/squadron/entry-code-card";
 import type { TeamRole } from "@/components/squadron/permission-shared";
@@ -163,7 +161,7 @@ function SquadronManagePage() {
 
       <PageHeader
         title={`Manage: ${team.name}`}
-        subtitle="Squadron entry code controls and operational administrative settings."
+        subtitle="Squadron entry code controls and day-to-day fleet settings."
       />
 
       <div className="grid gap-6 md:grid-cols-2 mt-6 max-w-4xl">

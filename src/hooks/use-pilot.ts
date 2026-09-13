@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useRoleVerification } from "@/lib/role-verification";
+import { useAuth } from "@/context/auth-context";
 import { db_request, DbRequestResult } from "@/lib/db_request";
 
 export interface PilotProfile {
@@ -50,8 +50,9 @@ export function usePilot() {
   const jwtTier = (session?.user?.app_metadata?.["tier"] as string) ?? null;
   const hasJwtClaims = !!jwtRole;
 
-  // Use centralized role verification strictly for own user id
-  const { data: roleData } = useRoleVerification(hasJwtClaims ? undefined : userId);
+  // Auth context is the single client-side owner of role/tier/admin state;
+  // this hook only falls back to it when JWT claims are absent.
+  const { userRole: ctxRole, userTier: ctxTier } = useAuth();
 
   // Fetch combined profile data strictly for own user id
   const { data: profile, isLoading } = useQuery({
@@ -60,10 +61,13 @@ export function usePilot() {
     queryFn: async () => {
       if (!userId) return null;
 
-      let [
+      const [
         { data: settingsData, error: settingsError },
         { data: profilesData, error: profilesError },
-      ]: [DbRequestResult<any>, DbRequestResult<any>] = await Promise.all([
+      ]: [
+        DbRequestResult<Record<string, unknown>>,
+        DbRequestResult<Record<string, unknown>>,
+      ] = await Promise.all([
         db_request({
           mode: "query",
           table: "pilot_settings",
@@ -90,8 +94,12 @@ export function usePilot() {
         console.error("Error fetching profiles:", profilesError);
       }
 
-      if (!settingsData) {
-        const defaultCallsign = email ? email.split("@")[0] : "Pilot";
+      let effectiveSettings: PilotSettings | null =
+        (settingsData as unknown as PilotSettings | null) ?? null;
+      if (!effectiveSettings) {
+        const defaultCallsign = email
+          ? (email.split("@")[0] ?? "Pilot")
+          : "Pilot";
         const newSettings = {
           user_id: userId,
           weekly_goal_hours: 5,
@@ -106,43 +114,62 @@ export function usePilot() {
           data: newSettings,
         });
 
-        if (!insertError && inserted) {
-          settingsData = inserted;
-        } else {
-          settingsData = {
-            ...newSettings,
-            updated_at: new Date().toISOString(),
-          };
-        }
+        effectiveSettings =
+          !insertError && inserted
+            ? (inserted as unknown as PilotSettings)
+            : {
+                ...newSettings,
+                updated_at: new Date().toISOString(),
+              };
       }
+
+      const profilesRow =
+        (profilesData as unknown as {
+          id?: string;
+          role?: string | null;
+          tier?: string | null;
+          created_at?: string;
+        } | null) ?? null;
 
       const merged: PilotProfile = {
         id: userId,
         user_id: userId,
-        weekly_goal_hours: settingsData?.weekly_goal_hours ?? 5,
-        is_private: settingsData?.is_private ?? false,
+        weekly_goal_hours: effectiveSettings?.weekly_goal_hours ?? 5,
+        is_private: effectiveSettings?.is_private ?? false,
         callsign:
-          settingsData?.callsign ?? (email ? email.split("@")[0] : "Pilot"),
+          effectiveSettings?.callsign ??
+          (email ? (email.split("@")[0] ?? "Pilot") : "Pilot"),
         display_name:
-          settingsData?.callsign ?? (email ? email.split("@")[0] : "Pilot"),
-        bio: settingsData?.bio ?? "",
-        tier: profilesData?.tier ?? "free",
-        role: profilesData?.role ?? "user",
+          effectiveSettings?.callsign ??
+          (email ? (email.split("@")[0] ?? "Pilot") : "Pilot"),
+        bio: effectiveSettings?.bio ?? "",
+        tier: profilesRow?.tier ?? "free",
+        role: profilesRow?.role ?? "user",
         accent_color: "#6366f1",
         avatar_url: null,
-        created_at: profilesData?.created_at ?? new Date().toISOString(),
-        updated_at: settingsData?.updated_at ?? new Date().toISOString(),
+        created_at: profilesRow?.created_at ?? new Date().toISOString(),
+        updated_at: effectiveSettings?.updated_at ?? new Date().toISOString(),
       };
 
       return merged;
     },
   });
 
-  // Effective role/tier: JWT claims win; DB-backed values are the fallback.
-  const effectiveRole = (jwtRole ?? profile?.role ?? roleData?.role ?? "user").toLowerCase();
-  const effectiveTier = (jwtTier ?? profile?.tier ?? roleData?.tier ?? "free").toLowerCase();
-  const effectiveIsAdmin =
-    effectiveRole === "admin" || effectiveRole === "dev";
+  // Effective role/tier: JWT claims win; then the profile row (fetched above
+  // when claims are absent); then the auth-context's resolved values.
+  const effectiveRole = (
+    jwtRole ??
+    profile?.role ??
+    ctxRole ??
+    "user"
+  ).toLowerCase();
+  const effectiveTier = (
+    jwtTier ??
+    profile?.tier ??
+    ctxTier ??
+    "free"
+  ).toLowerCase();
+  const effectiveIsAdmin = effectiveRole === "admin" || effectiveRole === "dev";
 
   const updateProfile = useMutation({
     mutationFn: async (updates: Partial<PilotProfile>) => {
@@ -155,8 +182,7 @@ export function usePilot() {
         allowedUpdates.is_private = updates.is_private;
       if (updates.callsign !== undefined)
         allowedUpdates.callsign = updates.callsign;
-      if (updates.bio !== undefined)
-        allowedUpdates.bio = updates.bio;
+      if (updates.bio !== undefined) allowedUpdates.bio = updates.bio;
 
       if (Object.keys(allowedUpdates).length === 0) {
         return profile;

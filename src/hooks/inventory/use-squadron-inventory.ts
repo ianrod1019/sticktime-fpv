@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { db_request } from "@/lib/db_request";
+import { sanitizePartInput } from "@/lib/sanitize";
 import { useGearScopeContext } from "@/lib/gear-scope";
 import {
   PARTS_TABLE,
@@ -110,7 +111,7 @@ export function useSquadronInventory(
         table: PARTS_TABLE,
         operation: "insert",
         data: {
-          ...input,
+          ...sanitizePartInput(input),
           specs: input.specs ?? {},
           team_id: teamId,
         },
@@ -142,7 +143,7 @@ export function useSquadronInventory(
         schema: "org_gear",
         table: PARTS_TABLE,
         operation: "update",
-        data: input,
+        data: sanitizePartInput(input),
         filters: { id, team_id: teamId },
         single: true,
         syncScope: teamId,

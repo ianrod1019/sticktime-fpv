@@ -92,6 +92,31 @@ const TABLE_QUERY_KEYS: Record<string, string[]> = {
 /** Keys that must never trigger a refetch storm from realtime. */
 const SENSITIVE_PREFIXES = new Set(["admin-", "role-and-tier", "pro-access"]);
 
+/**
+ * Debounce window for realtime-triggered refetches. A busy table (bulk
+ * import, another tab hammering writes, a churning checkout) fires one
+ * postgres_changes event per row — without coalescing, every mounted screen
+ * refetches once per row. All invalidations inside the window collapse into
+ * one refetch per query prefix. This is the app-wide "no refetch storm, no
+ * runaway egress" guard.
+ */
+const INVALIDATION_DEBOUNCE_MS = 2_000;
+
+const pendingInvalidations = new Map<string, ReturnType<typeof setTimeout>>();
+
+function scheduleInvalidation(
+  queryClient: ReturnType<typeof useQueryClient>,
+  prefix: string,
+) {
+  const existing = pendingInvalidations.get(prefix);
+  if (existing !== undefined) return; // already scheduled within the window
+  const timer = setTimeout(() => {
+    pendingInvalidations.delete(prefix);
+    queryClient.invalidateQueries({ queryKey: [prefix] });
+  }, INVALIDATION_DEBOUNCE_MS);
+  pendingInvalidations.set(prefix, timer);
+}
+
 function invalidateForTable(
   queryClient: ReturnType<typeof useQueryClient>,
   tableRef: string,
@@ -100,7 +125,7 @@ function invalidateForTable(
   if (!prefixes) return;
   for (const prefix of prefixes) {
     if (SENSITIVE_PREFIXES.has(prefix)) continue;
-    queryClient.invalidateQueries({ queryKey: [prefix] });
+    scheduleInvalidation(queryClient, prefix);
   }
 }
 
@@ -120,9 +145,9 @@ export function useRealtimeInvalidation(userId: string | null | undefined) {
 
     for (const tableRef of tables) {
       const [schema, table] = tableRef.split(":");
-      // Typed as any: supabase-js's channel.on overloads narrow on literal
-      // schema/table strings, which a dynamic pair can't satisfy.
-      (channel as any).on(
+      // Typed as unknown: supabase-js's channel.on overloads narrow on
+      // literal schema/table strings, which a dynamic pair can't satisfy.
+      (channel as unknown as { on: (...args: unknown[]) => void }).on(
         "postgres_changes",
         {
           event: "*",
@@ -137,6 +162,9 @@ export function useRealtimeInvalidation(userId: string | null | undefined) {
 
     return () => {
       supabase.removeChannel(channel);
+      // Timers from this mount must not fire after unmount.
+      for (const timer of pendingInvalidations.values()) clearTimeout(timer);
+      pendingInvalidations.clear();
     };
   }, [userId, queryClient]);
 }

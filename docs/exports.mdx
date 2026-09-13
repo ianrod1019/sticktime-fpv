@@ -1,0 +1,42 @@
+---
+title: "Exports"
+description: "Download your logbook as CSV, or everything as JSON — your data is yours."
+icon: "download"
+---
+
+Your data belongs to you. Export it any time from **Settings → Export** — no vendor lock-in.
+
+## CSV exports
+
+**CSV** is for spreadsheets: your whole logbook, one session per row, ready for Excel, Numbers or Google Sheets.
+
+<Tip>
+CSV exports are scrubbed: internal IDs are replaced with readable sequential
+numbers, so cross-row references (which session used which drone) survive
+while platform identifiers never leave your browser.
+</Tip>
+
+## JSON export
+
+The **JSON** export is the complete copy — profile, sessions, gear, parts, batteries, the lot — generated server-side. Use it for backups or to take your history elsewhere.
+
+## What's in the export
+
+| Data | CSV | JSON |
+| --- | --- | --- |
+| Flight sessions (sim + real) | ✓ | ✓ |
+| Gear (drones, radios, goggles, batteries, other) | — | ✓ |
+| Parts and installs | — | ✓ |
+| Maintenance logs | — | ✓ |
+| Profile and settings | — | ✓ |
+
+## Privacy by default
+
+- Exports contain **only your own data** — never another pilot's.
+- UUIDs are scrubbed from CSVs before the file is even assembled in your browser; the JSON export applies the same scrubbing server-side.
+
+<Info>
+Need everything out permanently? That's what [account
+deletion](/account-deletion) with its 30-day grace period is for — export
+first, delete second.
+</Info>

@@ -1,0 +1,40 @@
+---
+title: "Privacy & security"
+description: "Who can see your data, how access control works, and your rights over your own information."
+icon: "lock"
+---
+
+## Only you can read your logbook
+
+Every row of your data — sessions, gear, parts, batteries, settings — is protected by **row-level security** at the database level. This is not a UI trick:
+
+- Queries run **as you**, with your signed-in identity attached to every request.
+- The database only returns rows that belong to you. Another pilot's session list, gear or ledger is not just hidden — it's **unreadable by the server on your behalf**.
+- The same rules apply to edits: you can only change what's yours.
+
+## What squadrons can see
+
+Joining a squadron shares **what you contribute** — shared gear and the sessions flown against it — with the squadron's owners and members, per the [permission matrix](/roles-permissions). Your **personal hanger and private sessions** stay private.
+
+## Live sync doesn't leak
+
+Realtime updates are delivered through the same row-level security: the database only broadcasts rows your account is allowed to read. Other pilots' edits to their own data never reach your browser.
+
+## Exports are scrubbed
+
+CSV exports replace all internal UUIDs with sequential numbers in your browser before the file is saved — platform identifiers never leave your session. See [Exports](/exports).
+
+## The StickTime team and your data
+
+The StickTime team can change account-level settings — your plan tier or account status — when you ask for help. Every such action is recorded in an internal audit trail.
+
+## Your rights: export and deletion
+
+- **Export** everything you've stored, any time — see [Exports](/exports).
+- **Delete** your account with a 30-day grace period you can cancel — see [Account deletion](/account-deletion). After the grace period, your personal data is purged.
+
+## Sessions & sign-in
+
+- Sign-in is handled by Supabase Auth — passwords are never stored in the app database, only salted hashes in the auth service.
+- "Continue with Google" uses OAuth; StickTime never sees your Google password.
+- Signing out invalidates your session token on the device.

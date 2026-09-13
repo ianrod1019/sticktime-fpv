@@ -1,7 +1,7 @@
-import { Link } from "@tanstack/react-router";
 import { Crown, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { openUpgradeModal } from "@/components/billing/upgrade-modal";
 import { PRO_FEATURE_BLURB, PRO_FEATURE_NAME } from "@/lib/inventory";
 
 interface InventoryProBannerProps {
@@ -26,12 +26,18 @@ export function InventoryProBanner({
           <span className="text-primary font-medium">Pro</span> features.
         </span>
         <Button
-          asChild
           size="sm"
           variant="ghost"
           className="ml-auto h-7 px-2 text-primary"
+          onClick={() =>
+            openUpgradeModal({
+              tier: "pro",
+              featureName: "Bench Inventory",
+              description: PRO_FEATURE_BLURB,
+            })
+          }
         >
-          <Link to="/settings">Upgrade</Link>
+          Upgrade
         </Button>
       </div>
     );
@@ -59,11 +65,18 @@ export function InventoryProBanner({
             {PRO_FEATURE_BLURB}
           </p>
         </div>
-        <Button asChild className="shrink-0">
-          <Link to="/settings">
-            <Crown className="mr-1.5 h-4 w-4" aria-hidden />
-            Upgrade to Pro
-          </Link>
+        <Button
+          className="shrink-0"
+          onClick={() =>
+            openUpgradeModal({
+              tier: "pro",
+              featureName: PRO_FEATURE_NAME,
+              description: PRO_FEATURE_BLURB,
+            })
+          }
+        >
+          <Crown className="mr-1.5 h-4 w-4" aria-hidden />
+          Upgrade to Pro
         </Button>
       </div>
     </div>

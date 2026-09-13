@@ -1,0 +1,39 @@
+---
+title: "Managing a squadron"
+description: "The owner's console — members, roles, grants, entry codes and the nuclear options."
+icon: "settings-2"
+---
+
+Squadron owners manage everything from the **manage console** — open your squadron and click **Manage**.
+
+<Screenshot src="/images/squadron-manage.png" alt="The squadron manage console" caption="The manage console — members, roles and permissions in one place." />
+
+## Managing members
+
+- **Change roles** — promote a trusted pilot to **manager**, or step a manager back down.
+- **Per-member switches** — toggle gear-editing and ledger/analytics access per member.
+- **Assign role templates** — bundle switches into presets and assign them in one click. See [Roles & permissions](/roles-permissions).
+
+## Entry codes
+
+Generate a fresh **entry code** with an expiry of your choosing (a set number of days). Codes:
+
+- Expire automatically — no cleanup to remember.
+- Can be regenerated at any time; old codes stop working when they lapse.
+
+## The money lock
+
+Only owners and managers can edit **purchase costs** on squadron gear. This is enforced by a database trigger — even a modified client can't write money fields as a plain member. It keeps the [squadron ledger](/squadron-ledger) trustworthy.
+
+## Leaving, transferring and deleting
+
+These are destructive, so they demand explicit confirmations:
+
+- **Leaving** — an owner must transfer ownership (or delete the squadron) before leaving; managers and members can just leave.
+- **Deleting the squadron** — owner-only, double-confirmed. Shared gear and membership data go with it; your personal hanger and logs are untouched.
+
+<Warning>
+Deleting a squadron is permanent for the shared space. Members keep their own
+sessions and personal gear — but squadron hanger entries and ledger history
+do not survive.
+</Warning>

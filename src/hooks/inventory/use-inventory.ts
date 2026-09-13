@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { db_request } from "@/lib/db_request";
+import { sanitizePartInput } from "@/lib/sanitize";
 import { usePilot } from "@/hooks/use-pilot";
 import {
   PARTS_TABLE,
@@ -94,7 +95,7 @@ export function useInventory(): UseInventoryResult {
         schema: "personal_gear",
         table: PARTS_TABLE,
         operation: "insert",
-        data: { ...input, specs: input.specs ?? {} },
+        data: { ...sanitizePartInput(input), specs: input.specs ?? {} },
         single: true,
       });
       if (error) throw error;
@@ -120,7 +121,7 @@ export function useInventory(): UseInventoryResult {
         schema: "personal_gear",
         table: PARTS_TABLE,
         operation: "update",
-        data: input,
+        data: sanitizePartInput(input),
         filters: { id },
         single: true,
       });

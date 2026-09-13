@@ -1,23 +1,20 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-// CORS is locked to the app origin (env-configured) instead of "*".
-const allowedOrigin = Deno.env.get("APP_ORIGIN") ?? "";
-
-const corsHeaders: Record<string, string> = {
-  "Access-Control-Allow-Origin": allowedOrigin,
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-apikey, content-type",
-};
+import {
+  checkBodySize,
+  checkRateLimit,
+  preflightResponse,
+} from "../_shared/http.ts";
 
 const DEFAULT_LIMIT = 100;
 const MAX_LIMIT = 500;
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
-  }
+  const preflight = preflightResponse(req);
+  if (preflight) return preflight;
 
   try {
+    const sizeRejection = await checkBodySize(req);
+    if (sizeRejection) return sizeRejection;
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
 
@@ -40,6 +37,9 @@ Deno.serve(async (req) => {
         headers: corsHeaders,
       });
     }
+
+    const rateLimited = await checkRateLimit(supabase, "get-security-logs", user.id, 60, 60);
+    if (rateLimited) return rateLimited;
 
     // Admin-only: security logs must never be readable by regular users,
     // even though RLS already restricts SELECTs to admins (defense in depth).

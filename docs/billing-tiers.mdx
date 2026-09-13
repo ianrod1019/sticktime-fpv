@@ -1,0 +1,52 @@
+---
+title: "Billing & tiers"
+description: "Free, Pro and Enterprise — what each tier unlocks, and the current dev/tester-only status of paid tiers."
+icon: "credit-card"
+---
+
+{/* billing:status */}
+<Note>
+**Billing is not live yet.** Paid tiers arrive with the Stripe billing
+launch. Until then, Pro and Enterprise access is **limited to developers
+and testers**, granted by the StickTime team. Upgrade buttons appear in the
+app, but public checkout is disabled.
+</Note>
+
+## The tiers
+
+| | Free | Pro | Enterprise |
+| --- | --- | --- | --- |
+| Flight logging (sim + real) | ✓ | ✓ | ✓ |
+| Dashboard, heatmap & streaks | ✓ | ✓ | ✓ |
+| Personal gear hanger | ✓ | ✓ | ✓ |
+| Personal cost ledger | ✓ | ✓ | ✓ |
+| CSV export of your logbook | ✓ | ✓ | ✓ |
+| Full JSON export | ✓ | ✓ | ✓ |
+| Master parts inventory & builds | Limited | ✓ | ✓ |
+| Create squadrons | — | ✓ | ✓ |
+| Squadron shared gear & checkouts | — | ✓ | ✓ |
+| Squadron ledger & failure analytics | — | ✓ | ✓ |
+| Organization-level fleet (multi-squadron) | — | — | ✓ |
+
+## How gating works
+
+Pro-gated surfaces show a lock card with an **Upgrade** button — for example the squadron ledger for members without a grant, or parts inventory limits on free accounts:
+
+<Screenshot src="/images/ledger-access-denied.png" alt="A locked surface with the upgrade prompt" caption="Locked surfaces explain what's missing and how to get it." />
+
+The lock is **server-enforced** — the app hides gated features, but the database refuses unauthorized access too. A tier change takes effect on your next sign-in or token refresh.
+
+## Upgrading (when billing launches)
+
+1. Click **Upgrade** on any locked feature.
+2. The upgrade dialog explains what you unlock.
+3. Checkout runs through **Stripe** — card data never touches StickTime servers.
+
+Until then: testers get access via the StickTime team, and every gated page
+states it plainly.
+
+{/* billing:tester */}
+<Info>
+Are you a tester waiting for access? Contact the StickTime team — your
+account tier updates on your next sign-in.
+</Info>

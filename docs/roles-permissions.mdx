@@ -1,0 +1,54 @@
+---
+title: "Roles & permissions"
+description: "Who can do what in a squadron — owner, manager and member, plus per-member grants and role templates."
+icon: "shield"
+---
+
+Squadron access is **role-based**, and it's enforced on the server — the UI hides what you can't do, but the database has the final say.
+
+## The three roles
+
+<Screenshot src="/images/squadron-hq.png" alt="Squad HQ roster showing role badges" caption="Role badges on the roster: Owner, Manager, Pilot (member)." />
+
+| Role | Who |
+| --- | --- |
+| **Owner** | Created the squadron. Full control, including member management and deleting the squadron. |
+| **Manager** | Trusted co-admin. Runs the fleet day-to-day; can't delete the squadron or manage owners. |
+| **Member** (Pilot) | Flies, logs, contributes gear. Access to ledger and analytics only when granted. |
+
+## The permission matrix
+
+| Capability | Owner | Manager | Member |
+| --- | --- | --- | --- |
+| View roster & HQ | ✓ | ✓ | ✓ |
+| Add / edit squadron gear | ✓ | ✓ | ✓ (by default) |
+| Set purchase costs (money fields) | ✓ | ✓ | — |
+| View the squadron ledger | ✓ | ✓ | with grant |
+| View failure analytics | ✓ | ✓ | with grant |
+| Manage members & roles | ✓ | — | — |
+| Delete the squadron | ✓ | — | — |
+
+<Tip>
+The exact, server-resolved version of this matrix is what the app uses — your
+effective permissions come from the server on every page, so what you see is
+always what you can do.
+</Tip>
+
+## Per-member grants
+
+Owners can flip two switches on individual members in the [manage console](/managing-a-squadron):
+
+- **Gear editing** — allow a member to add/edit squadron gear (on by default).
+- **Ledger access** — let a member see the squadron ledger and failure analytics.
+
+These apply per member, so you can trust one pilot with the ledger without opening it to everyone.
+
+## Role templates
+
+For larger squads, **role templates** bundle those switches into named presets (e.g. "Mechanic" = gear editing + ledger). Assign a template to a member and their access follows it — change the template, and everyone with it updates together.
+
+<Info>
+Custom templates and per-member switches are reflected in the permission
+matrix above as "with grant" — the server resolves your effective permission
+on each request.
+</Info>

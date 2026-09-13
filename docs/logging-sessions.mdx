@@ -1,0 +1,62 @@
+---
+title: "Logging sessions"
+description: "Log simulator runs and real-world flights in 5-minute blocks, bind your gear, and track packs, crashes and conditions."
+icon: "timer"
+---
+
+The **Log** page is your flight logbook. It has two timecards that stay separate:
+
+- **Real** — real-world quads and packs flown
+- **Sim** — simulator runs (VelociDrone, Liftoff, and more)
+
+<Tabs>
+  <Tab title="Real world">
+    <Screenshot src="/images/log-real.png" alt="The flight log page showing the real-world timecard with a list of sessions" caption="The Real timecard — every session lists duration, rig, packs and crashes." />
+  </Tab>
+  <Tab title="Simulator">
+    <Screenshot src="/images/log-sim.png" alt="The flight log page showing the simulator timecard" caption="The Sim timecard — VelociDrone, Liftoff and more, kept separate from real flights." />
+  </Tab>
+</Tabs>
+
+## Log a session
+
+1. Open **Log** and pick the **Real** or **Sim** tab.
+2. Click **Log a session** (or **Log sim session** on the Sim tab).
+3. Fill in the dialog:
+
+<Screenshot src="/images/log-session-dialog.png" alt="The log session dialog with date, duration blocks, gear pickers and notes" />
+
+| Field | Notes |
+| --- | --- |
+| **Date flown** | Defaults to today. |
+| **Duration** | Chosen in 5-minute blocks. |
+| **Drone / Transmitter / Goggles** | Pick from gear in your hanger. Everything is optional but the more you bind, the better your rig stats and ledger get. |
+| **Battery set** (Real only) | Attributes the session's packs to a battery set for pack totals and health. |
+| **Sim platform** (Sim only) | VelociDrone, Liftoff, and more. |
+| **Packs flown** (Real only) | How many packs you went through. |
+| **Crashes** | Anything you walked away from counts. |
+| **Notes** | Free-form. Weather, track, who you flew with — anything. |
+
+4. Click **Save**. The session appears in your log instantly and your dashboard updates.
+
+<Tip>
+Switch tabs with the **Real / Sim** toggle at the top — or deep-link with
+`?tab=sim` / `?tab=real` in the URL.
+</Tip>
+
+## Editing and deleting sessions
+
+Every session in the list can be edited or deleted. Deletion asks for confirmation and immediately frees the hours back out of your stats.
+
+## How sessions feed everything else
+
+- **[Dashboard](/dashboard)** — total airtime, streak, heatmap, monthly volume and rig usage.
+- **[Cost ledger](/personal-ledger)** — sessions bound to gear drive cost-per-flight-hour.
+- **Battery health** — packs flown update pack counts and health on your battery sets ([Batteries](/batteries)).
+- **Squadron HQ** — sessions you fly count toward your squadron's roster stats ([Squadrons](/squadron-overview)).
+
+<Warning>
+Sim sessions never consume battery packs and real sessions never use a sim
+platform — the timecards keep the two worlds clean so your analytics stay
+honest.
+</Warning>

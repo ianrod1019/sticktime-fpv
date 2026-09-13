@@ -1,0 +1,37 @@
+---
+title: "Shared gear"
+description: "The squadron hanger — a shared fleet with checkout tracking so gear never goes missing."
+icon: "package"
+---
+
+Squadrons share a **fleet hanger**: club quads, pack pools, the bulky goggles that live in the trailer. Same gear model as your personal hanger, shared with the crew.
+
+<Screenshot src="/images/hanger-squadron.png" alt="The squadron hanger with shared gear" caption="Squadron hanger — the shared fleet, visible to every member." />
+
+Members see the fleet through their role's lens — the same hanger, with money fields and owner controls shown only to those who have them:
+
+<Screenshot src="/images/hanger-squadron-member.png" alt="The squadron hanger as a member sees it, without owner controls" caption="A member's view of the squadron hanger — the fleet, minus the owner controls." />
+
+## Who can add gear
+
+- **Owners and managers** always can — and they're the only ones who can set **purchase costs** (the money fields).
+- **Members** can add and edit gear by default; owners can switch this off per member or via a role template. See [Roles & permissions](/roles-permissions).
+
+## Checkouts
+
+Gear that leaves the nest can be **checked out** so everyone knows where it is:
+
+- **Check out** an item to yourself before taking it home or to the field.
+- **Check in** when it's back.
+- The checkout history shows who had what, when — no more "did anyone see the HDX?"
+
+## Usage and costs
+
+- Sessions flown against squadron gear count toward the squadron's roster stats and its [ledger](/squadron-ledger).
+- Battery sets in the fleet accumulate pack counts across all members — one source of truth for the shared pack pool.
+
+<Warning>
+Money fields on squadron gear are protected by a server-side lock: only
+owners and managers (or platform staff) can set purchase costs. This is a
+database rule, not just a hidden button.
+</Warning>

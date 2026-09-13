@@ -70,6 +70,10 @@ The application is built in Lovable with a full backend architecture that can la
 
 Generate the complete, functional SaaS MVP codebase using React, Tailwind CSS, Lucide icons, Recharts, and Supabase/Stripe integration schemas. Ensure proper database relational mapping, RLS rules, and clean modular code structured for seamless export to GitHub and future self-hosting.
 
+## Documentation
+
+Full user documentation lives in [`docs/`](./docs) — a [Mintlify](https://mintlify.com) site covering logging, the gear hanger, the cost ledger, squadrons, billing and more. Preview it locally with `npx mintlify dev` from the `docs/` folder.
+
 This project was built with [Lovable](https://lovable.dev).
 
 **Live app**: https://sticktime-fpv.lovable.app

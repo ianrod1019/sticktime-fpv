@@ -1,0 +1,40 @@
+---
+title: "Squadron ledger"
+description: "Shared fleet costs for a squadron — who can see it, and how money fields are protected."
+icon: "landmark"
+---
+
+Squadrons with shared gear get a **squadron ledger**: the same cost-per-flight-hour math as your personal ledger, run across the squadron's shared fleet.
+
+<Screenshot src="/images/ledger-squadron.png" alt="The squadron cost ledger page" caption="Squadron ledger — the shared fleet's costs and hours." />
+
+## Who can see it
+
+Access is enforced on the server — the UI only reflects what you're allowed to do:
+
+| Role | Ledger access |
+| --- | --- |
+| **Owner** | Always. |
+| **Manager** | Always. |
+| **Member** | Only when granted — by a per-member switch or a custom role template. |
+| **Pilot (not a member)** | Never. |
+
+If you don't have access you'll see a lock screen explaining why:
+
+<Screenshot src="/images/ledger-access-denied.png" alt="The ledger access denied screen for members without the grant" caption="No grant, no ledger — the server enforces it." />
+
+## Where the numbers come from
+
+- **Squadron gear** added in the [squadron hanger](/shared-gear) — with purchase costs set by owners/managers.
+- **Sessions flown against squadron gear** by any member.
+- The same cost-per-flight-hour formula as your [personal ledger](/personal-ledger).
+
+## Money fields are locked down
+
+Only **owners and managers** (and platform staff) can set or edit purchase costs on squadron gear. Regular members can add and edit gear for the fleet but can't touch the money fields — and the database enforces that with a money-lock trigger, not just the UI.
+
+<Info>
+See [Roles & permissions](/roles-permissions) for the full access matrix, and
+[Managing a squadron](/managing-a-squadron) for how owners grant ledger access
+to individual members.
+</Info>

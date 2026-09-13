@@ -7,7 +7,6 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { PageHeader } from "@/components/app-shell";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { db_request } from "@/lib/db_request";
 import { supabase } from "@/integrations/supabase/client";
@@ -164,13 +163,6 @@ function LedgerHub() {
 
       </div>
 
-      <div className="mb-16 flex justify-end">
-        <Button asChild variant="outline" size="sm" className="gap-2">
-          <Link to="/hanger/personal" search={{ add: "1" }}>
-            Add gear in the Hanger
-          </Link>
-        </Button>
-      </div>
     </>
   );
 }
