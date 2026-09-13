@@ -3,138 +3,86 @@
 > vite dev --port 3000 --strictPort
 
 [33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
+[2m4:41:30 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m Re-optimizing dependencies because lockfile has changed
 
-  [32m[1mVITE[22m v8.1.5[39m  [2mready in [0m[1m3204[22m[2m[0m ms[22m
+  [32m[1mVITE[22m v8.1.5[39m  [2mready in [0m[1m1845[22m[2m[0m ms[22m
 
   [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m3000[22m/[39m
   [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.0.167:[1m3000[22m/[39m
   [32m➜[39m  [1mNetwork[22m: [36mhttp://172.22.160.1:[1m3000[22m/[39m
-[2m3:45:18 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m connected.
-(node:34824) [THREE_CJS_DEPRECATED] DeprecationWarning: `require("three")` is deprecated and will be removed.
+[2m4:41:32 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+[2m4:41:44 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m connected.
+(node:39892) [THREE_CJS_DEPRECATED] DeprecationWarning: `require("three")` is deprecated and will be removed.
 Replace `const THREE = require("three")` with `import * as THREE from "three"`.
 (Use `node --trace-deprecation ...` to show where the warning was created)
-[2m3:46:26 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/three/drone-hero-scene.tsx[22m
-[2m3:46:26 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/three/drone-hero-scene.tsx[22m
-[2m3:46:26 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
-[2m3:46:56 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/three/drone-hero-scene.tsx[22m
-[2m3:46:56 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/three/drone-hero-scene.tsx[22m
-[2m3:46:56 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
-[2m3:56:32 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/three/ambient-backdrop.tsx[22m
-[2m4:09:17 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/squadron/manage.$uuid.tsx[22m
-[2m4:09:17 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/squadron/manage.$uuid.tsx[22m
-[2m4:09:17 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
-[2m4:09:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/billing/upgrade-modal.tsx[22m
-[2m4:09:39 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/billing/upgrade-modal.tsx[22m
-[2m4:09:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/billing/upgrade-modal.tsx[22m Could not Fast Refresh ("openUpgradeModal" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
-[2m4:09:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/__root.tsx[22m
-[2m4:10:00 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/pages/landing/-hero.tsx[22m
-[2m4:10:00 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/pages/landing/-hero.tsx[22m
-[2m4:10:02 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/docs/$slug.tsx[22m
-[2m4:10:02 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mdocs/billing-tiers.mdx[22m
-[2m4:10:02 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Unexpected character `!` (U+0021) before name, expected a character that can start a name, such as a letter, `$`, or `_` (note: to create a comment in MDX, use `{/* text */}`)
-  Plugin: [35m@mdx-js/rollup[39m
-  File: [36mD:/Projects/sticktime-fpv/docs/billing-tiers.mdx[39m:7:2
-[33m  5  |  ---
-  6  |  
-  7  |  <!-- billing:status -->
-     |    ^
-  8  |  <Warning>
-  9  |  **Billing is not live yet.** Paid tiers arrive with the Stripe billing[39m
-[2m4:10:02 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: Unexpected character `!` (U+0021) before name, expected a character that can start a name, such as a letter, `$`, or `_` (note: to create a comment in MDX, use `{/* text */}`)[39m
-  Plugin: [35m@mdx-js/rollup[39m
-  File: [36mD:/Projects/sticktime-fpv/docs/billing-tiers.mdx[39m:7:2
-[33m  5  |  ---
-  6  |  
-  7  |  <!-- billing:status -->
-     |    ^
-  8  |  <Warning>
-  9  |  **Billing is not live yet.** Paid tiers arrive with the Stripe billing[39m
-[2m4:10:15 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/docs/$slug.tsx[22m
-[2m4:10:15 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mdocs/billing-tiers.mdx[22m
-[2m4:10:15 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: Unexpected character `!` (U+0021) before name, expected a character that can start a name, such as a letter, `$`, or `_` (note: to create a comment in MDX, use `{/* text */}`)[39m
-  Plugin: [35m@mdx-js/rollup[39m
-  File: [36mD:/Projects/sticktime-fpv/docs/billing-tiers.mdx[39m:7:2
-[33m  5  |  ---
-  6  |  
-  7  |  <!-- billing:status -->
-     |    ^
-  8  |  <Note>
-  9  |  **Billing is not live yet.** Paid tiers arrive with the Stripe billing[39m
-[2m4:10:15 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Unexpected character `!` (U+0021) before name, expected a character that can start a name, such as a letter, `$`, or `_` (note: to create a comment in MDX, use `{/* text */}`)
-  Plugin: [35m@mdx-js/rollup[39m
-  File: [36mD:/Projects/sticktime-fpv/docs/billing-tiers.mdx[39m:7:2
-[33m  5  |  ---
-  6  |  
-  7  |  <!-- billing:status -->
-     |    ^
-  8  |  <Note>
-  9  |  **Billing is not live yet.** Paid tiers arrive with the Stripe billing[39m
-[2m4:10:20 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/three/drone-hero-scene.tsx[22m
-[2m4:10:20 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/three/drone-hero-scene.tsx[22m
-HTTPError: Unexpected character `!` (U+0021) before name, expected a character that can start a name, such as a letter, `$`, or `_` (note: to create a comment in MDX, use `{/* text */}`)
-    at prepareResponse (file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:222:37)
-    at toResponse (file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:191:19)
-    at file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:190:124
-    at async Object.fetch (D:\Projects\sticktime-fpv\node_modules\@tanstack\react-start\src\default-entry\server.ts:16:14)
-    at async Object.fetch (D:\Projects\sticktime-fpv\src\server.ts:62:24)
-    at async file:///D:/Projects/sticktime-fpv/node_modules/@tanstack/start-plugin-core/dist/esm/vite/dev-server-plugin/plugin.js:79:36 (status 500)
-caused by: 
-HTTPError: Unexpected character `!` (U+0021) before name, expected a character that can start a name, such as a letter, `$`, or `_` (note: to create a comment in MDX, use `{/* text */}`)
-    at prepareResponse (file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:222:37)
-    at toResponse (file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:191:19)
-    at file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:190:124
-    at async Object.fetch (D:\Projects\sticktime-fpv\node_modules\@tanstack\react-start\src\default-entry\server.ts:16:14)
-    at async Object.fetch (D:\Projects\sticktime-fpv\src\server.ts:62:24)
-    at async file:///D:/Projects/sticktime-fpv/node_modules/@tanstack/start-plugin-core/dist/esm/vite/dev-server-plugin/plugin.js:79:36 (status 500)
-caused by: 
-HTTPError: Unexpected character `!` (U+0021) before name, expected a character that can start a name, such as a letter, `$`, or `_` (note: to create a comment in MDX, use `{/* text */}`)
-    at prepareResponse (file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:222:37)
-    at toResponse (file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:191:19)
-    at file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:190:124
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-    at async Object.fetch (D:\Projects\sticktime-fpv\node_modules\@tanstack\react-start\src\default-entry\server.ts:16:14)
-    at async Object.fetch (D:\Projects\sticktime-fpv\src\server.ts:62:24)
-    at async file:///D:/Projects/sticktime-fpv/node_modules/@tanstack/start-plugin-core/dist/esm/vite/dev-server-plugin/plugin.js:79:36 (status 500)
-caused by: 
-HTTPError: Unexpected character `!` (U+0021) before name, expected a character that can start a name, such as a letter, `$`, or `_` (note: to create a comment in MDX, use `{/* text */}`)
-    at prepareResponse (file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:222:37)
-    at toResponse (file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:191:19)
-    at file:///D:/Projects/sticktime-fpv/node_modules/h3-v2/dist/h3-Bz4OPZv_.mjs:190:124
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-    at async Object.fetch (D:\Projects\sticktime-fpv\node_modules\@tanstack\react-start\src\default-entry\server.ts:16:14)
-    at async Object.fetch (D:\Projects\sticktime-fpv\src\server.ts:62:24)
-    at async file:///D:/Projects/sticktime-fpv/node_modules/@tanstack/start-plugin-core/dist/esm/vite/dev-server-plugin/plugin.js:79:36 (status 500)
-caused by: 
-[2m4:11:42 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
-[2m4:12:03 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
-[2m4:13:07 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/docs/$slug.tsx[22m
-[2m4:13:07 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mdocs/billing-tiers.mdx[22m
-[2m4:13:14 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/docs/$slug.tsx[22m
-[2m4:13:14 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mdocs/billing-tiers.mdx[22m
-[2m4:14:50 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/three/drone-hero-scene.tsx[22m
-[2m4:14:50 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/three/drone-hero-scene.tsx[22m
-[2m4:14:50 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
-[2m4:15:13 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/billing/upgrade-modal.tsx[22m
-[2m4:15:13 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/billing/upgrade-modal.tsx[22m
-[2m4:15:13 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
-[2m4:15:13 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/billing/upgrade-modal.tsx[22m Could not Fast Refresh ("openUpgradeModal" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
-[2m4:15:13 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/__root.tsx[22m
-[2m4:15:48 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
-[2m4:16:00 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
-[2m4:16:42 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
-[2m4:16:53 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
-[2m4:18:15 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
-[2m4:18:55 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
-[2m4:19:03 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/auth-modal.tsx[22m
-[2m4:19:03 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/auth-modal.tsx[22m
-[2m4:19:03 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
-[2m4:19:11 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/auth-modal.tsx[22m
-[2m4:19:11 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/auth-modal.tsx[22m
-[2m4:19:24 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
-[2m4:19:30 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/index.tsx?tsr-split=component, /src/components/app-shell.tsx, /src/routes/_authenticated/settings.tsx?tsr-split=component[22m
-[2m4:19:30 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/billing/upgrade-modal.tsx[22m
-[2m4:19:30 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/billing-status.ts[22m
-[2m4:19:30 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/squadron/manage.$uuid.tsx[22m
-[2m4:19:30 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/squadron/manage.$uuid.tsx[22m
-[2m4:19:31 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/billing/upgrade-modal.tsx[22m Could not Fast Refresh ("openUpgradeModal" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
-[2m4:19:31 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/__root.tsx[22m
+[2m4:42:17 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m4:42:32 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m4:42:57 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m4:43:31 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m4:44:31 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m4:44:31 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/top-nav.tsx[22m
+[2m4:44:31 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/top-nav.tsx[22m
+[2m4:44:31 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m4:48:32 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/docs/$slug.tsx, /src/routes/docs/$slug.tsx?tsr-split=component, /src/routes/docs.tsx?tsr-split=component[22m
+[2m4:48:32 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mdocs/billing-tiers.mdx[22m
+[2m4:48:32 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m4:59:02 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/docs/$slug.tsx, /src/routes/docs/$slug.tsx?tsr-split=component, /src/routes/docs.tsx?tsr-split=component[22m
+[2m4:59:02 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mdocs/billing-tiers.mdx[22m
+[2m4:59:02 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m5:04:42 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m5:05:07 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m5:06:16 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/components/-DashboardContent.tsx[22m
+[2m5:07:12 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/components/-MonthlyVolumeChart.tsx[22m
+[2m5:14:55 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/docs/$slug.tsx, /src/routes/docs/$slug.tsx?tsr-split=component, /src/routes/docs.tsx?tsr-split=component[22m
+[2m5:14:55 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mdocs/billing-tiers.mdx[22m
+[2m5:14:55 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+File D:\Projects\sticktime-fpv\src\routeTree.gen.ts was modified by another process during processing.
+[2m5:28:56 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/routeTree.gen.ts[22m
+[2m5:28:56 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routeTree.gen.ts[22m
+[2m5:28:56 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m5:29:13 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/features.tsx[22m
+[2m5:29:13 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/features.tsx[22m
+[2m5:29:13 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m5:29:17 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/top-nav.tsx[22m
+[2m5:29:17 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/top-nav.tsx[22m
+[2m5:29:31 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/features.tsx[22m
+[2m5:29:31 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/features.tsx[22m
+Error: Error transforming route file D:/Projects/sticktime-fpv/src/routes/features.tsx: SyntaxError: Unexpected token (42:0)
+    at file:///D:/Projects/sticktime-fpv/node_modules/@tanstack/router-generator/dist/esm/generator.js:143:13
+    at async generate (file:///D:/Projects/sticktime-fpv/node_modules/@tanstack/router-plugin/dist/esm/core/router-generator-plugin.js:39:4)
+    at async PluginContext.watchChange (file:///D:/Projects/sticktime-fpv/node_modules/@tanstack/router-plugin/dist/esm/core/router-generator-plugin.js:49:4)
+    at async Promise.all (index 2)
+    at async EnvironmentPluginContainer.hookParallel (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:30060:3)
+    at async EnvironmentPluginContainer.watchChange (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:30227:3)
+    at async Promise.all (index 0)
+    at async onFileChange (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:25993:3)
+[2m5:29:34 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/features.tsx[22m
+[2m5:29:34 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/features.tsx[22m
+[2m5:29:34 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: Unexpected token (42:0)[39m
+  Plugin: [35mtanstack-router:code-splitter:compile-reference-file[39m
+  File: [36mD:/Projects/sticktime-fpv/src/routes/features.tsx[39m:42:0
+[33m  40 |    tier: Tier;
+  41 |    where: string;
+  42 |  }
+     |  ^
+  43 |  
+  44 |  const FEATURES: FeatureRow[] = [[39m
+      at constructor (D:\Projects\sticktime-fpv\node_modules\@babel\parser\lib\index.js:369:19)
+      at TypeScriptParserMixin.raise (D:\Projects\sticktime-fpv\node_modules\@babel\parser\lib\index.js:6620:19)
+      at TypeScriptParserMixin.unexpected (D:\Projects\sticktime-fpv\node_modules\@babel\parser\lib\index.js:6640:16)
+      at TypeScriptParserMixin.parseExprAtom (D:\Projects\sticktime-fpv\node_modules\@babel\parser\lib\index.js:11468:22)
+      at TypeScriptParserMixin.parseExprAtom (D:\Projects\sticktime-fpv\node_modules\@babel\parser\lib\index.js:4780:20)
+      at TypeScriptParserMixin.parseExprSubscripts (D:\Projects\sticktime-fpv\node_modules\@babel\parser\lib\index.js:11102:23)
+      at TypeScriptParserMixin.parseUpdate (D:\Projects\sticktime-fpv\node_modules\@babel\parser\lib\index.js:11087:21)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Projects\sticktime-fpv\node_modules\@babel\parser\lib\index.js:11067:23)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Projects\sticktime-fpv\node_modules\@babel\parser\lib\index.js:9858:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (D:\Projects\sticktime-fpv\node_modules\@babel\parser\lib\index.js:10920:61)
+[2m5:29:46 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/features.tsx[22m
+[2m5:29:46 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/features.tsx[22m
+[2m5:34:20 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/docs/$slug.tsx, /src/routes/docs/$slug.tsx?tsr-split=component, /src/routes/docs.tsx?tsr-split=component[22m
+[2m5:34:20 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mdocs/billing-tiers.mdx[22m
+[2m5:34:20 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m5:50:07 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/components/-MonthlyVolumeChart.tsx[22m
+[2m5:56:07 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/components/-MonthlyVolumeChart.tsx[22m
+[2m5:58:49 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/components/-MonthlyVolumeChart.tsx[22m
+[2m5:58:49 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/components/-DashboardContent.tsx[22m

@@ -13,7 +13,7 @@ import { DroneIcon } from "@/components/icons";
 import { useAuth } from "@/context/auth-context";
 
 const NAV_LINKS = [
-  { to: "/dashboard", label: "Features" },
+  { to: "/features", label: "Features" },
   { to: "/docs", label: "Docs" },
   { to: "/privacy", label: "Privacy" },
   { to: "/terms", label: "Terms" },
@@ -35,7 +35,7 @@ export function TopNav() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 h-16 flex items-center justify-between px-6 bg-background/70 backdrop-blur-xl backdrop-saturate-150 border-b border-border/70">
+    <nav className="nav-scrolled fixed top-0 left-0 right-0 z-50 h-16 flex items-center justify-between px-6 backdrop-blur-xl backdrop-saturate-150 border-b border-border/70">
       <div className="flex items-center gap-8">
         <Link to="/" className="flex items-center gap-2">
           <DroneIcon className="h-8 w-8 text-primary" aria-hidden />

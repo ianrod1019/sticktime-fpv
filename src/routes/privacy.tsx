@@ -118,22 +118,6 @@ function Privacy() {
           </section>
 
           <section className="mb-12">
-            <h2 className="text-2xl font-semibold mb-4">
-              Student &amp; Educational Data Protection
-            </h2>
-            <p className="text-zinc-400">
-              We comply with COPPA and FERPA regulations for any educational or
-              student-related data collected through our platform. Parental
-              consent is required for minors, and we do not sell any personal
-              data to third parties.
-            </p>
-            <p className="text-zinc-400 mt-4">
-              School-owned accounts and team data are protected separately, with
-              access restricted to authorized administrators only.
-            </p>
-          </section>
-
-          <section className="mb-12">
             <h2 className="text-2xl font-semibold mb-4">Data Security</h2>
             <div className="space-y-4">
               <div>

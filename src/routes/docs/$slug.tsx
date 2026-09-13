@@ -34,8 +34,11 @@ function DocsPage() {
   const fm = mod.frontmatter;
   return (
     <DocsPageProvider slug={slug}>
+      {/* Reveal on the short header + pager only: entry-range scroll
+          timelines never complete on viewport-taller elements, so the whole
+          article must not carry the class. */}
       <article className="max-w-3xl">
-        <header className="mb-2">
+        <header className="reveal mb-2">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
             {fm?.title ?? prettifySlug(slug)}
           </h1>
@@ -46,7 +49,7 @@ function DocsPage() {
           )}
         </header>
         <Page />
-        <nav className="mt-14 flex items-stretch justify-between gap-4 border-t border-border/60 pt-6">
+        <nav className="reveal mt-14 flex items-stretch justify-between gap-4 border-t border-border/60 pt-6">
           {prev ? (
             <Link
               to="/docs/$slug"

@@ -22,7 +22,7 @@ export function PageHeader({
   return (
     <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent">
+        <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl text-foreground">
           {title}
         </h1>
         {subtitle && (

@@ -13,8 +13,9 @@ const DroneHeroScene = lazy(() =>
 export function LandingHero() {
   return (
     <section className="relative mx-auto max-w-7xl px-6">
-      {/* 3D layer sits behind the copy, full-bleed inside the section */}
-      <div className="absolute inset-0 -z-10">
+      {/* 3D layer sits behind the copy, full-bleed inside the section.
+          .hero-drift recedes it (dim + scale) as the section scrolls out. */}
+      <div className="hero-drift absolute inset-0 -z-10">
         <Suspense fallback={null}>
           <DroneHeroScene />
         </Suspense>

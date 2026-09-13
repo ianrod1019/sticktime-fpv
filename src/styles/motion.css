@@ -1,7 +1,10 @@
 /*
- * Motion layer — route view transitions and shared keyframes.
+ * Motion layer — route view transitions, shared keyframes, and the
+ * scroll-driven choreography layer (Apple-style scroll reveals).
  * Imported by styles.css. Everything here is decorative: the global
- * prefers-reduced-motion kill-switch in styles.css disables it.
+ * prefers-reduced-motion kill-switch in styles.css disables the time-based
+ * animations; the scroll-driven layer gates itself below (it would ignore
+ * the duration-based kill-switch, so it never relies on it).
  */
 
 /* ---- Route view transitions (TanStack Router defaultViewTransition) ---- */
@@ -90,5 +93,99 @@
   .rise-in,
   .rise-in-stagger > * {
     animation: none !important;
+  }
+}
+
+/* ---- Scroll-driven choreography (reference: apple.com product pages) ----
+ *
+ * Native CSS scroll-driven animations: keyframes scrubbed by scroll position
+ * via animation-timeline: view() / scroll(root) — no JS scroll listeners, no
+ * library. Doubly gated:
+ *
+ *   1. @supports (animation-timeline: view()) — without support (older
+ *      Firefox) the keyframes never attach, so content renders static and
+ *      fully visible (keyframes animate FROM hidden TO the base styles).
+ *   2. @media (prefers-reduced-motion: no-preference) — scroll timelines
+ *      ignore animation-duration, so the global reduced-motion kill-switch
+ *      in styles.css cannot neutralize them. Reduced-motion users get the
+ *      same static, fully-visible layout.
+ */
+@keyframes sda-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  /* `to` is implicit: the element's own (visible) styles. */
+}
+
+@keyframes sda-hero-drift {
+  to {
+    opacity: 0.25;
+    transform: scale(0.94) translateY(20px);
+  }
+}
+
+/* Nav surface strengthens over the first 96px of scroll. Only background
+ * alpha animates (same L/C/H in both keyframes — pure alpha fade; Chrome
+ * mangles border-color interpolation on this element). The hairline border
+ * stays static. */
+@keyframes sda-nav-surface {
+  from {
+    background-color: oklch(0.145 0 0 / 0);
+  }
+  to {
+    background-color: oklch(0.145 0 0 / 0.92);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    /* Scroll-reveal: fade+rise as the element enters the viewport. */
+    .reveal {
+      animation: sda-rise var(--ease-apple) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+    }
+
+    /* Staggered variant: children reveal in sequence via shifted entry
+       ranges (animation-delay is time-based and has no effect on a scroll
+       timeline, so staggering is expressed as range offsets instead). */
+    .reveal-stagger > * {
+      animation: sda-rise var(--ease-apple) both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+    .reveal-stagger > *:nth-child(2) {
+      animation-range: entry 6% entry 61%;
+    }
+    .reveal-stagger > *:nth-child(3) {
+      animation-range: entry 12% entry 67%;
+    }
+    .reveal-stagger > *:nth-child(4) {
+      animation-range: entry 18% entry 73%;
+    }
+    .reveal-stagger > *:nth-child(5) {
+      animation-range: entry 24% entry 79%;
+    }
+    .reveal-stagger > *:nth-child(6) {
+      animation-range: entry 30% entry 85%;
+    }
+
+    /* Hero recede: the 3D layer drifts back and dims as the hero scrolls
+       out — the Apple product-page "object gives way to content" move. */
+    .hero-drift {
+      animation: sda-hero-drift linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 100%;
+      will-change: transform, opacity;
+    }
+
+    /* Nav state change: transparent-at-rest bar gains surface + hairline
+       over the first 96px of scroll (Apple large-title → compact). */
+    .nav-scrolled {
+      animation: sda-nav-surface linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0px 96px;
+    }
   }
 }

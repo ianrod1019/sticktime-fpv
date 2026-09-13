@@ -118,11 +118,27 @@ SELECT 'bb000000-0000-4000-8000-000000000001'::uuid, 'RBAC Test Squadron',
 FROM auth.users u WHERE u.email = 'owner@test.sticktime'
 ON CONFLICT (id) DO NOTHING;
 
--- ---------------------------------------------------------------------------
--- 4. Memberships. NOTE: teams.owner_id is NOT implicit membership in this
+-- ----------------------------------------------------------------------------- 4. Memberships. NOTE: teams.owner_id is NOT implicit membership in this
 --    app — the owner gets an explicit 'owner' team_members row, as the
 --    squadron UI expects. member2 carries the ledger grant.
--- ---------------------------------------------------------------------------
+--    Re-asserted on every run: UPDATE repairs drift (e.g. a grant flipped
+--    through the Squadron Management UI during RBAC testing), then any
+--    still-missing rows are inserted.
+--    ---------------------------------------------------------------------------
+UPDATE public.team_members tm
+SET team_role = r.role, can_view_ledger = r.ledger, role_id = NULL
+FROM (VALUES
+  ('owner@test.sticktime',   'owner',   false),
+  ('manager@test.sticktime', 'manager', false),
+  ('member@test.sticktime',  'member',  false),
+  ('member2@test.sticktime', 'member',  true),
+  ('admin@test.sticktime',   'member',  false)
+) AS r(email, role, ledger)
+JOIN auth.users u ON u.email = r.email
+WHERE tm.team_id = 'bb000000-0000-4000-8000-000000000001'::uuid
+  AND tm.user_id = u.id
+  AND (tm.team_role IS DISTINCT FROM r.role OR tm.can_view_ledger IS DISTINCT FROM r.ledger);
+
 INSERT INTO public.team_members (team_id, user_id, team_role, can_view_ledger)
 SELECT 'bb000000-0000-4000-8000-000000000001'::uuid, u.id, r.role::text, r.ledger
 FROM (VALUES

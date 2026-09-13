@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from "react";
-import { advance, useFrame } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import { CanvasBase } from "@/components/three/canvas-base";
 import { ClientOnly } from "@/components/three/client-only";
 import { ParticleField } from "@/components/three/particle-field";
@@ -7,25 +7,14 @@ import { SCENE_COLORS } from "@/components/three/lights";
 
 const EMBER = SCENE_COLORS.ember;
 
-/** ~15 backdrop renders/sec — imperceptible for dust, cheap on any GPU. */
-const BACKDROP_INTERVAL_MS = 66;
-
 /**
- * Drives the whole backdrop deterministically: frameloop="never" means R3F
- * never renders on its own, so this heartbeat is the ONLY thing that draws.
- * advance() runs every useFrame (camera sway, particles) then renders once.
+ * R3F owns the heartbeat via its rAF loop: frameloop="always" redraws every
+ * frame, so dust drifts smoothly instead of stepping at the old 15fps
+ * interval (which read as blinking). rAF auto-pauses while the tab is
+ * hidden, and CanvasBase additionally flips to "never" when offscreen.
  */
-function BackdropHeartbeat() {
-  useEffect(() => {
-    const id = window.setInterval(() => {
-      if (!document.hidden) advance(performance.now());
-    }, BACKDROP_INTERVAL_MS);
-    return () => window.clearInterval(id);
-  }, []);
-  return null;
-}
 
-/** Eased camera sway — dust parallax feels alive at 15fps. */
+/** Eased camera sway — dust parallax feels alive at full frame rate. */
 function BackdropRig({
   pointer,
 }: {
@@ -45,8 +34,9 @@ function BackdropRig({
 
 /**
  * Fixed, pointer-transparent WebGL backdrop for the logged-in app.
- * Renders at a fixed ~15fps heartbeat (paused while the tab is hidden),
- * never touches React rendering, and sits at -z-10 below all content.
+ * Rendered on R3F's requestAnimationFrame loop (paused while the tab is
+ * hidden or scrolled offscreen), never touches React rendering, and sits at
+ * -z-10 below all content.
  */
 export function AmbientBackdrop() {
   const pointer = useRef({ x: 0, y: 0 });
@@ -82,7 +72,6 @@ export function AmbientBackdrop() {
       >
         <CanvasBase
           className="absolute inset-0"
-          frameloop="never"
           maxDpr={1.25}
           camera={{ position: [0, 0, 3], fov: 50 }}
         >
@@ -98,7 +87,6 @@ export function AmbientBackdrop() {
           </mesh>
           <ParticleField count={130} spread={[13, 8, 7]} speed={0.55} />
           <BackdropRig pointer={pointer} />
-          <BackdropHeartbeat />
         </CanvasBase>
       </div>
     </ClientOnly>

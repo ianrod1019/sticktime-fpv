@@ -129,7 +129,7 @@ function PasswordChangeSection({
   }
 
   return (
-    <section className="hud-panel p-6 relative overflow-hidden group hover:border-primary/40 transition-colors shadow-lg">
+    <section className="hud-panel p-6 relative overflow-hidden group hover:border-primary/40 transition-colors">
       <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full pointer-events-none" />
       <div className="flex items-center gap-2">
         <KeyRound className="h-4 w-4 text-primary" />
@@ -483,7 +483,7 @@ function Settings() {
       <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
         <div className="space-y-8">
           {/* Profile & Goals */}
-          <section className="hud-panel p-6 relative overflow-hidden group hover:border-primary/40 transition-colors shadow-lg">
+          <section className="hud-panel p-6 relative overflow-hidden group hover:border-primary/40 transition-colors">
             <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full pointer-events-none" />
             <div className="flex items-center justify-between">
               <div>
@@ -562,7 +562,7 @@ function Settings() {
           <PasswordChangeSection email={email} />
 
           {/* Settings */}
-          <section className="hud-panel p-6 relative overflow-hidden group hover:border-primary/40 transition-colors shadow-lg">
+          <section className="hud-panel p-6 relative overflow-hidden group hover:border-primary/40 transition-colors">
             <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full pointer-events-none" />
             <div className="flex items-center gap-2">
               <SettingsIcon className="h-4 w-4 text-primary" />

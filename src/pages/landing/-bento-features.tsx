@@ -79,7 +79,7 @@ export function BentoFeatures() {
       <h2 className="mb-12 text-center font-display text-2xl font-bold text-foreground">
         Built for Precision Flying
       </h2>
-      <div className="rise-in-stagger grid gap-4 md:grid-cols-3">
+      <div className="reveal-stagger grid gap-4 md:grid-cols-3">
         {FEATURES.map((feature) => (
           <FeatureCard key={feature.title} {...feature} />
         ))}

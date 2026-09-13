@@ -70,7 +70,7 @@ function UpdatePasswordComponent() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="w-full max-w-md rounded-xl bg-background p-6 shadow-2xl border">
+      <div className="w-full max-w-md rounded-xl bg-background p-6 border">
         <div className="mb-6 text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
             <KeyRound className="h-6 w-6 text-primary" />

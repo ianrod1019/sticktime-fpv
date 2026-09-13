@@ -1,14 +1,11 @@
 import {
-  AreaChart,
-  Area,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   Tooltip as RTooltip,
-  Legend,
   CartesianGrid,
   ResponsiveContainer,
-  BarChart,
-  Bar,
 } from "recharts";
 import { Flame, Timer, Gauge, Battery, Cpu, Plus } from "lucide-react";
 import { useState } from "react";
@@ -18,6 +15,7 @@ import { formatHours, type SessionRow } from "@/lib/fpv";
 import { StatCard } from "./-StatCard";
 import { RatioBar } from "./-RatioBar";
 import { QuickAddSessionLogger } from "./-QuickAddSessionLogger";
+import { MonthlyVolumeChart, ChartTooltip } from "./-MonthlyVolumeChart";
 
 interface DashboardContentProps {
   simMinutes: number;
@@ -174,46 +172,11 @@ export function DashboardContent({
           <div className="w-full">
             <span className="label-mono">Monthly volume (hours)</span>
             <div className="mt-2">
-              <ResponsiveContainer width="100%" height={280}>
-                <AreaChart
-                  data={monthlyData.length > 0 ? monthlyData : fallbackMonths}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                  <XAxis
-                    dataKey="month"
-                    stroke="var(--muted-foreground)"
-                    fontSize={11}
-                  />
-                  <YAxis stroke="var(--muted-foreground)" fontSize={11} />
-                  <RTooltip
-                    contentStyle={{
-                      background: "var(--popover)",
-                      border: "1px solid var(--border)",
-                      borderRadius: 8,
-                    }}
-                    formatter={(value) => formatHours(value as number)}
-                  />
-                  <Legend />
-                  <Area
-                    dataKey="sim"
-                    stackId="a"
-                    fill="var(--sim)"
-                    stroke="var(--sim)"
-                    strokeWidth={2}
-                    type="monotone"
-                    fillOpacity={0.6}
-                  />
-                  <Area
-                    dataKey="real"
-                    stackId="a"
-                    fill="var(--primary)"
-                    stroke="var(--primary)"
-                    strokeWidth={2}
-                    type="monotone"
-                    fillOpacity={0.6}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+              <MonthlyVolumeChart
+                monthlyData={
+                  monthlyData.length > 0 ? monthlyData : fallbackMonths
+                }
+              />
             </div>
           </div>
         </div>
@@ -231,34 +194,50 @@ export function DashboardContent({
           ) : (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={rigUsage} layout="vertical" margin={{ left: 24 }}>
+                <defs>
+                  <linearGradient id="rig-bar-grad" x1="0" y1="0" x2="1" y2="0">
+                    <stop
+                      offset="0%"
+                      stopColor="var(--primary)"
+                      stopOpacity={0.95}
+                    />
+                    <stop
+                      offset="100%"
+                      stopColor="var(--primary)"
+                      stopOpacity={0.55}
+                    />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid
-                  strokeDasharray="3 3"
+                  strokeDasharray="4 8"
                   stroke="var(--border)"
+                  strokeOpacity={0.55}
                   horizontal={false}
                 />
                 <XAxis
                   type="number"
-                  stroke="var(--muted-foreground)"
-                  fontSize={11}
+                  tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+                  tickLine={false}
+                  axisLine={false}
                 />
                 <YAxis
                   type="category"
                   dataKey="name"
                   width={110}
-                  stroke="var(--muted-foreground)"
-                  fontSize={11}
+                  tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+                  tickLine={false}
+                  axisLine={false}
                 />
                 <RTooltip
-                  contentStyle={{
-                    background: "var(--popover)",
-                    border: "1px solid var(--border)",
-                    borderRadius: 8,
-                  }}
+                  content={<ChartTooltip />}
+                  cursor={{ fill: "var(--muted)", fillOpacity: 0.3 }}
                 />
                 <Bar
                   dataKey="hours"
-                  fill="var(--primary)"
-                  radius={[0, 4, 4, 0]}
+                  fill="url(#rig-bar-grad)"
+                  radius={[0, 6, 6, 0]}
+                  barSize={18}
+                  animationDuration={900}
                 />
               </BarChart>
             </ResponsiveContainer>
