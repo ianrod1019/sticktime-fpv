@@ -84,36 +84,63 @@ export function Heatmap({ sessions }: { sessions: SessionRow[] }) {
   return (
     <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
       <div className="min-w-0 overflow-x-auto pb-1">
-        <div className="flex min-w-[700px] gap-2">
+        <div className="flex min-w-[700px] items-stretch gap-1.5">
           {months.map((month) => {
             const isActive = month.key === activeMonth;
             return (
-              <button
+              <motion.button
                 key={month.key}
                 type="button"
                 onMouseEnter={() => setActiveMonth(month.key)}
                 onFocus={() => setActiveMonth(month.key)}
                 onClick={() => setActiveMonth(month.key)}
-                className={`group min-w-[50px] flex-1 rounded-lg border p-2 text-left transition-all duration-200 ${isActive ? "-translate-y-1 border-primary/45 bg-primary/[0.08] shadow-[0_12px_24px_-18px_var(--primary)]" : "border-white/[0.07] bg-white/[0.015] hover:-translate-y-0.5 hover:border-primary/25"}`}
+                animate={{
+                  flexGrow: isActive ? 5 : 1,
+                  flexBasis: isActive ? "150px" : "50px",
+                }}
+                transition={{ duration: 0.22, ease: [0.23, 1, 0.32, 1] }}
+                className={`group relative min-w-[50px] overflow-hidden rounded-lg border p-2 text-left ${isActive ? "z-10 -translate-y-1 border-primary/45 bg-primary/[0.08] shadow-[0_16px_28px_-18px_var(--primary)]" : "border-white/[0.07] bg-white/[0.015] hover:-translate-y-0.5 hover:border-primary/25"}`}
                 aria-label={`Inspect ${month.label}`}
               >
-                <span
-                  className={`block truncate font-mono text-[9px] tracking-[0.08em] ${isActive ? "text-primary" : "text-zinc-600"}`}
+                <div className="flex items-start justify-between gap-2">
+                  <span
+                    className={`block truncate font-mono text-[9px] tracking-[0.08em] ${isActive ? "text-primary" : "text-zinc-600"}`}
+                  >
+                    {month.label.split(" ")[0]}
+                  </span>
+                  <span className="shrink-0 font-mono text-[8px] text-zinc-700">
+                    {Math.round(month.total / 60)}h
+                  </span>
+                </div>
+                <div
+                  className={`mt-2 grid gap-0.5 ${isActive ? "grid-cols-7" : "grid-cols-2"}`}
                 >
-                  {month.label.split(" ")[0]}
-                </span>
-                <span className="mt-1 block font-mono text-[8px] text-zinc-700">
-                  {Math.round(month.total / 60)}h
-                </span>
-                <div className="mt-2 grid grid-cols-2 gap-0.5">
-                  {month.days.slice(0, 28).map((day) => (
+                  {month.days.map((day) => (
                     <span
                       key={day.date}
                       className={`h-1.5 rounded-[1px] ${LEVEL_STYLE[levelFor(day.minutes, maxMinutes)]}`}
                     />
                   ))}
                 </div>
-              </button>
+                <AnimatePresence initial={false}>
+                  {isActive && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 4 }}
+                      className="mt-2 flex items-center justify-between border-t border-primary/15 pt-2 font-mono text-[8px] uppercase tracking-[0.1em] text-zinc-500"
+                    >
+                      <span>
+                        {month.days.filter((day) => day.minutes > 0).length}{" "}
+                        active days
+                      </span>
+                      <span className="text-primary">
+                        {formatHours(month.total)}
+                      </span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.button>
             );
           })}
         </div>
@@ -127,7 +154,7 @@ export function Heatmap({ sessions }: { sessions: SessionRow[] }) {
           ))}
           <span className="label-mono">more</span>
           <span className="ml-auto font-mono text-[9px] text-zinc-600">
-            Hover a month to slide open; leave it selected
+            Hover a month to expand it; move across to compare
           </span>
         </div>
       </div>
