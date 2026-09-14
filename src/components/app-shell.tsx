@@ -79,9 +79,9 @@ export function AppShell({ children }: { children: ReactNode }) {
     );
 
   return (
-    <div className="min-h-screen bg-[#08080a] md:pl-[248px]">
+    <div className="min-h-screen bg-[#08080a] md:pl-[232px]">
       <AmbientBackdrop />
-      <div className="fixed inset-y-0 left-0 z-30 hidden w-[248px] border-r border-white/[0.08] bg-[#0b0b0e]/92 px-4 py-5 backdrop-blur-xl md:block">
+      <div className="fixed inset-y-0 left-0 z-30 hidden w-[232px] border-r border-white/[0.08] bg-[#0b0b0e]/92 px-3 py-4 backdrop-blur-xl md:block">
         <SidebarNavigation
           isClientReady={true}
           effectiveAdmin={effectiveAdmin}

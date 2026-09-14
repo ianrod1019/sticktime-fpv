@@ -297,6 +297,33 @@
 }
 
 @layer components {
+  .ops-card {
+    @apply relative overflow-hidden rounded-xl border border-white/[0.09] bg-[#101013]/90 p-6 transition-all duration-200;
+    box-shadow: 0 18px 48px -38px rgba(0, 0, 0, 0.95);
+  }
+  .ops-card::before {
+    content: "";
+    @apply pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-60;
+  }
+  .ops-card:hover {
+    @apply -translate-y-0.5 border-primary/35 bg-white/[0.045];
+    box-shadow: 0 22px 52px -34px rgba(249, 115, 22, 0.3);
+  }
+  .ops-card-primary {
+    @apply border-primary/25 bg-primary/[0.045];
+  }
+  .ops-card-dashed {
+    @apply border-dashed bg-transparent;
+  }
+  .supabase-table {
+    @apply overflow-hidden rounded-xl border border-white/[0.09] bg-[#101013]/90;
+  }
+  .supabase-table thead {
+    @apply bg-white/[0.025];
+  }
+  .supabase-table th {
+    @apply font-mono text-[9px] uppercase tracking-[0.14em] text-zinc-600;
+  }
   .docs-prose {
     color: rgb(161 161 170);
     font-size: 0.96rem;

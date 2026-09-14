@@ -1,11 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import {
-  ShieldAlert,
-  Users,
-  Wrench,
-  ArrowRight,
-} from "lucide-react";
+import { ShieldAlert, Users, Wrench, ArrowRight } from "lucide-react";
 import { PageHeader } from "@/components/app-shell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { db_request } from "@/lib/db_request";
@@ -37,6 +32,12 @@ interface SquadronLedgerEntry {
   userRole: string;
   hasAccess: boolean;
 }
+interface LedgerMembershipRow {
+  team_id: string;
+  team_name: string;
+  team_role: string;
+  can_view_ledger: boolean;
+}
 function LedgerHub() {
   const { data: user } = useQuery({
     queryKey: ["current-user"],
@@ -63,7 +64,8 @@ function LedgerHub() {
         rpcParams: {},
       });
       if (rpcError) throw rpcError;
-      return (data ?? []).map((m: any) => ({
+      const rows = (data ?? []) as LedgerMembershipRow[];
+      return rows.map((m) => ({
         id: m.team_id,
         name: m.team_name,
         userRole: m.team_role,
@@ -83,10 +85,7 @@ function LedgerHub() {
 
       <div className="grid gap-5 pb-16 sm:grid-cols-2 lg:grid-cols-3">
         {/* ---------------- Personal ledger — always first ---------------- */}
-        <Link
-          to="/ledger/personal"
-          className="group rounded-xl border border-primary/25 bg-card/60 p-6 transition-colors hover:border-primary/50 hover:bg-primary/5"
-        >
+        <Link to="/ledger/personal" className="group ops-card ops-card-primary">
           <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-primary/25 bg-primary/10 text-primary">
             <Wrench className="h-5 w-5" aria-hidden />
           </div>
@@ -133,7 +132,7 @@ function LedgerHub() {
             key={sq.id}
             to="/ledger/squadron/$uuid"
             params={{ uuid: sq.id }}
-            className="group rounded-xl border border-border/60 bg-card/60 p-6 transition-colors hover:border-primary/40 hover:bg-primary/5"
+            className="group ops-card"
           >
             <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-border/60 bg-secondary/50 text-muted-foreground transition-colors group-hover:border-primary/25 group-hover:bg-primary/10 group-hover:text-primary">
               <Users className="h-5 w-5" aria-hidden />
@@ -151,8 +150,8 @@ function LedgerHub() {
               </span>
             </div>
             <p className="mt-1.5 text-xs text-muted-foreground">
-              The squadron's shared fleet — org gear, repairs and investment,
-              as granted by the owner.
+              The squadron's shared fleet — org gear, repairs and investment, as
+              granted by the owner.
             </p>
             <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-primary">
               Open squadron ledger
@@ -160,9 +159,7 @@ function LedgerHub() {
             </span>
           </Link>
         ))}
-
       </div>
-
     </>
   );
 }

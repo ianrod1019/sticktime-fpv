@@ -5,6 +5,7 @@ import {
   DollarSign,
   Trash2,
   Wrench,
+  Activity,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -81,7 +82,15 @@ export function GearDetailHeader({
         Back to Hanger
       </button>
 
-      <div className="hud-panel p-6">
+      <div className="hud-panel overflow-hidden p-6">
+        <div className="mb-5 flex items-center justify-between border-b border-white/[0.08] pb-3">
+          <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-primary">
+            Equipment record // live
+          </span>
+          <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.12em] text-emerald-400">
+            <Activity className="h-3 w-3" /> Operational
+          </span>
+        </div>
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div className="space-y-2 min-w-0">
             <div className="flex flex-wrap items-center gap-2">
@@ -100,7 +109,7 @@ export function GearDetailHeader({
                 </Badge>
               )}
             </div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground truncate">
+            <h1 className="font-display text-2xl font-semibold tracking-[-0.04em] text-zinc-100 sm:text-4xl truncate">
               {item.name}
             </h1>
             {item.brand && (

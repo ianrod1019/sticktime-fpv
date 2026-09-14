@@ -93,7 +93,7 @@ function AnalyticsHub() {
         {/* ---------------- Personal fleet analytics — always first ------- */}
         <Link
           to="/analytics/personal"
-          className="group rounded-xl border border-primary/25 bg-card/60 p-6 transition-colors hover:border-primary/50 hover:bg-primary/5"
+          className="group ops-card ops-card-primary"
         >
           <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-primary/25 bg-primary/10 text-primary">
             <User className="h-5 w-5" aria-hidden />
@@ -142,7 +142,7 @@ function AnalyticsHub() {
               key={sq.id}
               to="/squadron/$squadronId/analytics"
               params={{ squadronId: sq.id }}
-              className="group rounded-xl border border-border/60 bg-card/60 p-6 transition-colors hover:border-primary/40 hover:bg-primary/5"
+              className="group ops-card"
             >
               <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-border/60 bg-secondary/50 text-muted-foreground transition-colors group-hover:border-primary/25 group-hover:bg-primary/10 group-hover:text-primary">
                 <Users className="h-5 w-5" aria-hidden />
@@ -174,10 +174,7 @@ function AnalyticsHub() {
           ))}
 
         {!squadronsLoading && (squadrons?.length ?? 0) === 0 && (
-          <Link
-            to="/squadron"
-            className="group rounded-xl border border-dashed border-border/60 bg-card/20 p-6 transition-colors hover:border-primary/40"
-          >
+          <Link to="/squadron" className="group ops-card ops-card-dashed">
             <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-border/60 bg-secondary/40 text-muted-foreground">
               <Users className="h-5 w-5" aria-hidden />
             </div>

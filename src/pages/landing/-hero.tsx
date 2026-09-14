@@ -77,7 +77,7 @@ export function LandingHero() {
               <DroneHeroScene />
             </Suspense>
           </div>
-          <div className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(90deg,#08080a_0%,rgba(8,8,10,0.96)_29%,rgba(8,8,10,0.55)_52%,rgba(8,8,10,0.08)_76%,rgba(8,8,10,0.72)_100%)]" />
+          <div className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(90deg,#08080a_0%,rgba(8,8,10,0.92)_27%,rgba(8,8,10,0.38)_53%,rgba(8,8,10,0.04)_78%,rgba(8,8,10,0.58)_100%)]" />
           <div className="pointer-events-none absolute inset-y-0 left-0 z-[1] w-px bg-white/[0.12]" />
 
           <div className="relative z-10 grid min-h-[760px] items-center gap-12 px-6 pb-24 pt-28 sm:px-10 lg:min-h-[780px] lg:grid-cols-[minmax(0,0.95fr)_minmax(450px,1.05fr)] lg:px-16 lg:pt-20">
@@ -193,7 +193,7 @@ export function LandingHero() {
                     </span>
                   </div>
                   <span className="font-mono text-[9px] text-zinc-500">
-                    DEMO DATA
+                    PRODUCT SIGNAL
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-px bg-white/[0.07]">

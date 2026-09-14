@@ -34,6 +34,15 @@ interface SquadronHangerEntry {
   userRole: string;
 }
 
+interface MembershipRow {
+  team_id: string;
+  team_role: string;
+}
+interface TeamRow {
+  id: string;
+  name: string;
+}
+
 function HangerHub() {
   const { data: user } = useQuery({
     queryKey: ["current-user"],
@@ -63,7 +72,8 @@ function HangerHub() {
       if (memberError) throw memberError;
       if (!memberships || memberships.length === 0) return [];
 
-      const teamIds = memberships.map((m: any) => m.team_id);
+      const memberRows = memberships as MembershipRow[];
+      const teamIds = memberRows.map((m) => m.team_id);
       const { data: teams, error: teamsError } = await db_request({
         mode: "query",
         table: "teams",
@@ -73,12 +83,12 @@ function HangerHub() {
       });
       if (teamsError) throw teamsError;
 
-      return (teams ?? []).map((team: any) => ({
+      const teamRows = (teams ?? []) as TeamRow[];
+      return teamRows.map((team) => ({
         id: team.id,
         name: team.name,
         userRole:
-          memberships.find((m: any) => m.team_id === team.id)?.team_role ??
-          "member",
+          memberRows.find((m) => m.team_id === team.id)?.team_role ?? "member",
       }));
     },
   });
@@ -92,10 +102,7 @@ function HangerHub() {
 
       <div className="grid gap-5 pb-16 sm:grid-cols-2 lg:grid-cols-3">
         {/* ---------------- Personal hanger — always first ---------------- */}
-        <Link
-          to="/hanger/personal"
-          className="group rounded-xl border border-primary/25 bg-card/60 p-6 transition-colors hover:border-primary/50 hover:bg-primary/5"
-        >
+        <Link to="/hanger/personal" className="group ops-card ops-card-primary">
           <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-primary/25 bg-primary/10 text-primary">
             <Wrench className="h-5 w-5" aria-hidden />
           </div>
@@ -143,7 +150,7 @@ function HangerHub() {
               key={sq.id}
               to="/hanger/squadron/$uuid"
               params={{ uuid: sq.id }}
-              className="group rounded-xl border border-border/60 bg-card/60 p-6 transition-colors hover:border-primary/40 hover:bg-primary/5"
+              className="group ops-card"
             >
               <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-border/60 bg-secondary/50 text-muted-foreground transition-colors group-hover:border-primary/25 group-hover:bg-primary/10 group-hover:text-primary">
                 <Users className="h-5 w-5" aria-hidden />
@@ -172,10 +179,7 @@ function HangerHub() {
           ))}
 
         {!squadronsLoading && (squadrons?.length ?? 0) === 0 && (
-          <Link
-            to="/squadron"
-            className="group rounded-xl border border-dashed border-border/60 bg-card/20 p-6 transition-colors hover:border-primary/40"
-          >
+          <Link to="/squadron" className="group ops-card ops-card-dashed">
             <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-border/60 bg-secondary/40 text-muted-foreground">
               <Users className="h-5 w-5" aria-hidden />
             </div>

@@ -29,8 +29,8 @@ export interface LightRigProps {
  */
 export function LightRig({
   rimIntensity = 2.4,
-  fillIntensity = 0.5,
-  keyIntensity = 0.9,
+  fillIntensity = 0.75,
+  keyIntensity = 1.15,
 }: LightRigProps) {
   const rimColor = useMemo(() => SCENE_COLORS.ember, []);
   const fillColor = useMemo(() => SCENE_COLORS.sim, []);
@@ -38,7 +38,7 @@ export function LightRig({
   return (
     <>
       {/* Soft base so nothing renders pure black against the void */}
-      <ambientLight intensity={0.4} />
+      <ambientLight intensity={0.48} />
       {/* Neutral key: high, slightly front — intentionally underexposed */}
       <directionalLight position={[4, 6, 5]} intensity={keyIntensity} />
       {/* Ember rim from behind-left for the high-vis edge */}

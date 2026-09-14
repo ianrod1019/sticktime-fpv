@@ -12,9 +12,10 @@ import {
   Settings,
   LogOut,
   BookOpen,
-  Radio,
   Command,
   ChevronRight,
+  ChevronsUpDown,
+  Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/auth-context";
@@ -130,7 +131,10 @@ export function SidebarNavigation({
 
   return (
     <aside className="flex h-full flex-col">
-      <Link to="/" className="mb-7 flex items-center gap-3 px-2">
+      <Link
+        to="/"
+        className="mb-3 flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-white/[0.04]"
+      >
         <span className="grid h-9 w-9 place-items-center rounded-lg border border-primary/25 bg-primary/10 text-primary">
           <DroneIcon className="h-5 w-5" />
         </span>
@@ -143,12 +147,31 @@ export function SidebarNavigation({
           </span>
         </span>
       </Link>
-      <div className="mb-5 flex items-center gap-2 rounded-lg border border-emerald-400/15 bg-emerald-400/[0.04] px-3 py-2">
-        <Radio className="h-3.5 w-3.5 text-emerald-400" />
-        <span className="font-mono text-[9px] tracking-[0.14em] text-emerald-400">
-          OPS ONLINE
+      <button
+        type="button"
+        className="mb-3 flex w-full items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.025] px-3 py-2 text-left hover:bg-white/[0.05]"
+      >
+        <span className="grid h-6 w-6 place-items-center rounded-md bg-primary/15 text-primary">
+          <Command className="h-3.5 w-3.5" />
         </span>
-        <span className="ml-auto h-1.5 w-1.5 rounded-full bg-emerald-400" />
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-xs font-medium text-zinc-200">
+            StickTime Workspace
+          </span>
+          <span className="block font-mono text-[8px] uppercase tracking-[0.12em] text-zinc-600">
+            Personal + squadron
+          </span>
+        </span>
+        <ChevronsUpDown className="h-3.5 w-3.5 text-zinc-600" />
+      </button>
+      <div className="mb-4 flex items-center gap-2 rounded-md border border-white/[0.07] bg-black/20 px-2.5 py-1.5">
+        <Search className="h-3 w-3 text-zinc-600" />
+        <span className="font-mono text-[9px] text-zinc-600">
+          Search workspace
+        </span>
+        <kbd className="ml-auto rounded border border-white/10 px-1 font-mono text-[8px] text-zinc-600">
+          ⌘K
+        </kbd>
       </div>
       <nav className="flex-1 space-y-1" aria-label="Main navigation">
         <p className="mb-2 px-3 font-mono text-[9px] tracking-[0.18em] text-zinc-700">

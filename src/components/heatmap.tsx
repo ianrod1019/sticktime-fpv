@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { formatHours, toDateKey, type SessionRow } from "@/lib/fpv";
 
 const LEVEL_STYLE = [
@@ -93,7 +94,7 @@ export function Heatmap({ sessions }: { sessions: SessionRow[] }) {
                 onMouseEnter={() => setActiveMonth(month.key)}
                 onFocus={() => setActiveMonth(month.key)}
                 onClick={() => setActiveMonth(month.key)}
-                className={`group min-w-[50px] flex-1 rounded-lg border p-2 text-left transition-all ${isActive ? "border-primary/35 bg-primary/[0.06]" : "border-white/[0.07] bg-white/[0.015] hover:border-primary/25"}`}
+                className={`group min-w-[50px] flex-1 rounded-lg border p-2 text-left transition-all duration-200 ${isActive ? "-translate-y-1 border-primary/45 bg-primary/[0.08] shadow-[0_12px_24px_-18px_var(--primary)]" : "border-white/[0.07] bg-white/[0.015] hover:-translate-y-0.5 hover:border-primary/25"}`}
                 aria-label={`Inspect ${month.label}`}
               >
                 <span
@@ -126,90 +127,99 @@ export function Heatmap({ sessions }: { sessions: SessionRow[] }) {
           ))}
           <span className="label-mono">more</span>
           <span className="ml-auto font-mono text-[9px] text-zinc-600">
-            Hover a month to inspect
+            Hover a month to slide open; leave it selected
           </span>
         </div>
       </div>
-      {selected && (
-        <div className="rounded-xl border border-white/[0.09] bg-[#0f0f12] p-4">
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="label-mono text-primary">
-                {selected.label} // DAILY DETAIL
-              </div>
-              <div className="mt-1 font-display text-xl font-semibold tracking-[-0.03em] text-zinc-100">
-                {formatHours(selected.total)}
-              </div>
-            </div>
-            <div className="font-mono text-[9px] text-zinc-600">
-              {selected.days.filter((day) => day.minutes > 0).length} ACTIVE
-              DAYS
-            </div>
-          </div>
-          <div className="mt-5 grid grid-cols-7 gap-1 text-center font-mono text-[8px] text-zinc-600">
-            {WEEKDAYS.map((day, index) => (
-              <span key={`${day}-${index}`}>{day}</span>
-            ))}
-          </div>
-          <div className="mt-2 grid grid-cols-7 gap-1">
-            {selectedCells.map((day, index) =>
-              day ? (
-                <button
-                  key={day.date}
-                  type="button"
-                  onMouseEnter={() => setHoveredDay(day)}
-                  onFocus={() => setHoveredDay(day)}
-                  onMouseLeave={() => setHoveredDay(null)}
-                  className={`relative aspect-square rounded-[3px] text-[8px] transition-all hover:ring-1 hover:ring-primary ${LEVEL_STYLE[levelFor(day.minutes, selectedMax)]}`}
-                  aria-label={`${day.date}: ${day.minutes} minutes`}
-                >
-                  <span className="absolute inset-0 grid place-items-center font-mono text-zinc-400">
-                    {Number(day.date.slice(-2))}
-                  </span>
-                </button>
-              ) : (
-                <span key={`empty-${index}`} />
-              ),
-            )}
-          </div>
-          <div className="mt-4 min-h-16 border-t border-white/[0.08] pt-3">
-            {hoveredDay ? (
+      <AnimatePresence mode="wait" initial={false}>
+        {selected && (
+          <motion.div
+            key={selected.key}
+            initial={{ opacity: 0, x: 18 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -12 }}
+            transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+            className="rounded-xl border border-white/[0.09] bg-[#0f0f12] p-4 shadow-[0_18px_42px_-30px_rgba(249,115,22,0.8)]"
+          >
+            <div className="flex items-start justify-between">
               <div>
-                <div className="flex justify-between font-mono text-[9px] tracking-[0.12em] text-zinc-500">
-                  <span>{hoveredDay.date}</span>
-                  <span className="text-primary">
-                    {formatHours(hoveredDay.minutes)}
-                  </span>
+                <div className="label-mono text-primary">
+                  {selected.label} // DAILY DETAIL
                 </div>
-                <div className="mt-2 space-y-1">
-                  {hoveredDay.sessions.length === 0 ? (
-                    <span className="font-mono text-[9px] text-zinc-700">
-                      NO FLIGHT LOGGED
-                    </span>
-                  ) : (
-                    hoveredDay.sessions.map((session) => (
-                      <div
-                        key={session.id}
-                        className="flex justify-between font-mono text-[9px] text-zinc-400"
-                      >
-                        <span>
-                          {session.session_type.toUpperCase()} //{" "}
-                          {session.packs_flown || 0} PACKS
-                        </span>
-                        <span>{formatHours(session.duration_minutes)}</span>
-                      </div>
-                    ))
-                  )}
+                <div className="mt-1 font-display text-xl font-semibold tracking-[-0.03em] text-zinc-100">
+                  {formatHours(selected.total)}
                 </div>
               </div>
-            ) : (
-              <span className="font-mono text-[9px] tracking-[0.1em] text-zinc-700">
-                HOVER A DAY FOR SESSION DETAIL
-              </span>
-            )}
-          </div>
-        </div>
-      )}
+              <div className="font-mono text-[9px] text-zinc-600">
+                {selected.days.filter((day) => day.minutes > 0).length} ACTIVE
+                DAYS
+              </div>
+            </div>
+            <div className="mt-5 grid grid-cols-7 gap-1 text-center font-mono text-[8px] text-zinc-600">
+              {WEEKDAYS.map((day, index) => (
+                <span key={`${day}-${index}`}>{day}</span>
+              ))}
+            </div>
+            <div className="mt-2 grid grid-cols-7 gap-1">
+              {selectedCells.map((day, index) =>
+                day ? (
+                  <button
+                    key={day.date}
+                    type="button"
+                    onMouseEnter={() => setHoveredDay(day)}
+                    onFocus={() => setHoveredDay(day)}
+                    onMouseLeave={() => setHoveredDay(null)}
+                    className={`relative aspect-square rounded-[3px] text-[8px] transition-all hover:ring-1 hover:ring-primary ${LEVEL_STYLE[levelFor(day.minutes, selectedMax)]}`}
+                    aria-label={`${day.date}: ${day.minutes} minutes`}
+                  >
+                    <span className="absolute inset-0 grid place-items-center font-mono text-zinc-400">
+                      {Number(day.date.slice(-2))}
+                    </span>
+                  </button>
+                ) : (
+                  <span key={`empty-${index}`} />
+                ),
+              )}
+            </div>
+            <div className="mt-4 min-h-16 border-t border-white/[0.08] pt-3">
+              {hoveredDay ? (
+                <div>
+                  <div className="flex justify-between font-mono text-[9px] tracking-[0.12em] text-zinc-500">
+                    <span>{hoveredDay.date}</span>
+                    <span className="text-primary">
+                      {formatHours(hoveredDay.minutes)}
+                    </span>
+                  </div>
+                  <div className="mt-2 space-y-1">
+                    {hoveredDay.sessions.length === 0 ? (
+                      <span className="font-mono text-[9px] text-zinc-700">
+                        NO FLIGHT LOGGED
+                      </span>
+                    ) : (
+                      hoveredDay.sessions.map((session) => (
+                        <div
+                          key={session.id}
+                          className="flex justify-between font-mono text-[9px] text-zinc-400"
+                        >
+                          <span>
+                            {session.session_type.toUpperCase()} //{" "}
+                            {session.packs_flown || 0} PACKS
+                          </span>
+                          <span>{formatHours(session.duration_minutes)}</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <span className="font-mono text-[9px] tracking-[0.1em] text-zinc-700">
+                  HOVER A DAY FOR SESSION DETAIL
+                </span>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
