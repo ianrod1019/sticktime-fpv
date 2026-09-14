@@ -18,11 +18,16 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as UpdatePasswordRouteImport } from './routes/update-password'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
+import { Route as AuthenticatedClientsRouteImport } from './routes/_authenticated/clients'
+import { Route as AuthenticatedDistrictRouteImport } from './routes/_authenticated/district'
+import { Route as AuthenticatedEduRouteRouteImport } from './routes/_authenticated/edu/route'
 import { Route as AuthenticatedHangerRouteImport } from './routes/_authenticated/hanger'
 import { Route as AuthenticatedLedgerRouteImport } from './routes/_authenticated/ledger'
 import { Route as AuthenticatedLogRouteImport } from './routes/_authenticated/log'
+import { Route as AuthenticatedSchedulingRouteImport } from './routes/_authenticated/scheduling'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedTeamsRouteImport } from './routes/_authenticated/teams'
+import { Route as ClientTokenRouteImport } from './routes/client.$token'
 import { Route as DocsIndexRouteImport } from './routes/docs/index'
 import { Route as DocsSlugRouteImport } from './routes/docs/$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
@@ -31,6 +36,7 @@ import { Route as AuthenticatedAnalyticsIndexRouteImport } from './routes/_authe
 import { Route as AuthenticatedAnalyticsPersonalRouteImport } from './routes/_authenticated/analytics.personal'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
 import { Route as AuthenticatedDroneUuidRouteImport } from './routes/_authenticated/drone/$uuid'
+import { Route as AuthenticatedEduIndexRouteImport } from './routes/_authenticated/edu/index'
 import { Route as AuthenticatedGearIndexRouteImport } from './routes/_authenticated/gear/index'
 import { Route as AuthenticatedGearInventoryRouteImport } from './routes/_authenticated/gear/inventory'
 import { Route as AuthenticatedGearLedgerRouteImport } from './routes/_authenticated/gear/ledger'
@@ -41,6 +47,9 @@ import { Route as AuthenticatedLedgerPersonalRouteImport } from './routes/_authe
 import { Route as AuthenticatedSquadronIndexRouteImport } from './routes/_authenticated/squadron/index'
 import { Route as AuthenticatedSquadronSquadronIdRouteImport } from './routes/_authenticated/squadron/$squadronId'
 import { Route as AuthenticatedTeamsTeamIdRouteImport } from './routes/_authenticated/teams/$teamId'
+import { Route as AuthenticatedEduDistrictDistrictIdRouteImport } from './routes/_authenticated/edu/district.$districtId'
+import { Route as AuthenticatedEduSchoolSchoolIdRouteImport } from './routes/_authenticated/edu/school.$schoolId'
+import { Route as AuthenticatedEduStudentUserIdRouteImport } from './routes/_authenticated/edu/student.$userId'
 import { Route as AuthenticatedGearTypeIndexRouteImport } from './routes/_authenticated/gear/$type.index'
 import { Route as AuthenticatedGearTypeUuidRouteImport } from './routes/_authenticated/gear/$type.$uuid'
 import { Route as AuthenticatedGearInventoryIndexRouteImport } from './routes/_authenticated/gear/inventory.index'
@@ -51,6 +60,7 @@ import { Route as AuthenticatedLedgerSquadronUuidRouteImport } from './routes/_a
 import { Route as AuthenticatedSquadronSquadronIdIndexRouteImport } from './routes/_authenticated/squadron/$squadronId.index'
 import { Route as AuthenticatedSquadronSquadronIdAnalyticsRouteImport } from './routes/_authenticated/squadron/$squadronId.analytics'
 import { Route as AuthenticatedSquadronSquadronIdInventoryRouteImport } from './routes/_authenticated/squadron/$squadronId.inventory'
+import { Route as AuthenticatedSquadronSquadronIdSchedulerRouteImport } from './routes/_authenticated/squadron/$squadronId.scheduler'
 import { Route as AuthenticatedSquadronManageUuidRouteImport } from './routes/_authenticated/squadron/manage.$uuid'
 
 const IndexRoute = IndexRouteImport.update({
@@ -97,6 +107,21 @@ const AuthenticatedAnalyticsRoute = AuthenticatedAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedClientsRoute = AuthenticatedClientsRouteImport.update({
+  id: '/clients',
+  path: '/clients',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDistrictRoute = AuthenticatedDistrictRouteImport.update({
+  id: '/district',
+  path: '/district',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedEduRouteRoute = AuthenticatedEduRouteRouteImport.update({
+  id: '/edu',
+  path: '/edu',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedHangerRoute = AuthenticatedHangerRouteImport.update({
   id: '/hanger',
   path: '/hanger',
@@ -112,6 +137,11 @@ const AuthenticatedLogRoute = AuthenticatedLogRouteImport.update({
   path: '/log',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSchedulingRoute = AuthenticatedSchedulingRouteImport.update({
+  id: '/scheduling',
+  path: '/scheduling',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -121,6 +151,11 @@ const AuthenticatedTeamsRoute = AuthenticatedTeamsRouteImport.update({
   id: '/teams',
   path: '/teams',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ClientTokenRoute = ClientTokenRouteImport.update({
+  id: '/client/$token',
+  path: '/client/$token',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DocsIndexRoute = DocsIndexRouteImport.update({
   id: '/',
@@ -165,6 +200,11 @@ const AuthenticatedDroneUuidRoute = AuthenticatedDroneUuidRouteImport.update({
   id: '/drone/$uuid',
   path: '/drone/$uuid',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedEduIndexRoute = AuthenticatedEduIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedEduRouteRoute,
 } as any)
 const AuthenticatedGearIndexRoute = AuthenticatedGearIndexRouteImport.update({
   id: '/gear/',
@@ -223,6 +263,24 @@ const AuthenticatedTeamsTeamIdRoute =
     id: '/$teamId',
     path: '/$teamId',
     getParentRoute: () => AuthenticatedTeamsRoute,
+  } as any)
+const AuthenticatedEduDistrictDistrictIdRoute =
+  AuthenticatedEduDistrictDistrictIdRouteImport.update({
+    id: '/district/$districtId',
+    path: '/district/$districtId',
+    getParentRoute: () => AuthenticatedEduRouteRoute,
+  } as any)
+const AuthenticatedEduSchoolSchoolIdRoute =
+  AuthenticatedEduSchoolSchoolIdRouteImport.update({
+    id: '/school/$schoolId',
+    path: '/school/$schoolId',
+    getParentRoute: () => AuthenticatedEduRouteRoute,
+  } as any)
+const AuthenticatedEduStudentUserIdRoute =
+  AuthenticatedEduStudentUserIdRouteImport.update({
+    id: '/student/$userId',
+    path: '/student/$userId',
+    getParentRoute: () => AuthenticatedEduRouteRoute,
   } as any)
 const AuthenticatedGearTypeIndexRoute =
   AuthenticatedGearTypeIndexRouteImport.update({
@@ -284,6 +342,12 @@ const AuthenticatedSquadronSquadronIdInventoryRoute =
     path: '/inventory',
     getParentRoute: () => AuthenticatedSquadronSquadronIdRoute,
   } as any)
+const AuthenticatedSquadronSquadronIdSchedulerRoute =
+  AuthenticatedSquadronSquadronIdSchedulerRouteImport.update({
+    id: '/scheduler',
+    path: '/scheduler',
+    getParentRoute: () => AuthenticatedSquadronSquadronIdRoute,
+  } as any)
 const AuthenticatedSquadronManageUuidRoute =
   AuthenticatedSquadronManageUuidRouteImport.update({
     id: '/squadron/manage/$uuid',
@@ -299,12 +363,17 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/update-password': typeof UpdatePasswordRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/edu': typeof AuthenticatedEduRouteRouteWithChildren
   '/analytics': typeof AuthenticatedAnalyticsRouteWithChildren
+  '/clients': typeof AuthenticatedClientsRoute
+  '/district': typeof AuthenticatedDistrictRoute
   '/hanger': typeof AuthenticatedHangerRouteWithChildren
   '/ledger': typeof AuthenticatedLedgerRouteWithChildren
   '/log': typeof AuthenticatedLogRoute
+  '/scheduling': typeof AuthenticatedSchedulingRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/teams': typeof AuthenticatedTeamsRouteWithChildren
+  '/client/$token': typeof ClientTokenRoute
   '/docs/$slug': typeof DocsSlugRoute
   '/docs/': typeof DocsIndexRoute
   '/admin_lookup/$uuid': typeof AuthenticatedAdmin_lookupUuidRoute
@@ -319,10 +388,14 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/analytics/': typeof AuthenticatedAnalyticsIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/edu/': typeof AuthenticatedEduIndexRoute
   '/gear/': typeof AuthenticatedGearIndexRoute
   '/hanger/': typeof AuthenticatedHangerIndexRoute
   '/ledger/': typeof AuthenticatedLedgerIndexRoute
   '/squadron/': typeof AuthenticatedSquadronIndexRoute
+  '/edu/district/$districtId': typeof AuthenticatedEduDistrictDistrictIdRoute
+  '/edu/school/$schoolId': typeof AuthenticatedEduSchoolSchoolIdRoute
+  '/edu/student/$userId': typeof AuthenticatedEduStudentUserIdRoute
   '/gear/$type/$uuid': typeof AuthenticatedGearTypeUuidRoute
   '/gear/inventory/personal': typeof AuthenticatedGearInventoryPersonalRoute
   '/hanger/$type/$uuid': typeof AuthenticatedHangerTypeUuidRoute
@@ -330,6 +403,7 @@ export interface FileRoutesByFullPath {
   '/ledger/squadron/$uuid': typeof AuthenticatedLedgerSquadronUuidRoute
   '/squadron/$squadronId/analytics': typeof AuthenticatedSquadronSquadronIdAnalyticsRoute
   '/squadron/$squadronId/inventory': typeof AuthenticatedSquadronSquadronIdInventoryRoute
+  '/squadron/$squadronId/scheduler': typeof AuthenticatedSquadronSquadronIdSchedulerRoute
   '/squadron/manage/$uuid': typeof AuthenticatedSquadronManageUuidRoute
   '/gear/$type/': typeof AuthenticatedGearTypeIndexRoute
   '/gear/inventory/': typeof AuthenticatedGearInventoryIndexRoute
@@ -341,9 +415,13 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/update-password': typeof UpdatePasswordRoute
+  '/clients': typeof AuthenticatedClientsRoute
+  '/district': typeof AuthenticatedDistrictRoute
   '/log': typeof AuthenticatedLogRoute
+  '/scheduling': typeof AuthenticatedSchedulingRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/teams': typeof AuthenticatedTeamsRouteWithChildren
+  '/client/$token': typeof ClientTokenRoute
   '/docs/$slug': typeof DocsSlugRoute
   '/docs': typeof DocsIndexRoute
   '/admin_lookup/$uuid': typeof AuthenticatedAdmin_lookupUuidRoute
@@ -356,10 +434,14 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/analytics': typeof AuthenticatedAnalyticsIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
+  '/edu': typeof AuthenticatedEduIndexRoute
   '/gear': typeof AuthenticatedGearIndexRoute
   '/hanger': typeof AuthenticatedHangerIndexRoute
   '/ledger': typeof AuthenticatedLedgerIndexRoute
   '/squadron': typeof AuthenticatedSquadronIndexRoute
+  '/edu/district/$districtId': typeof AuthenticatedEduDistrictDistrictIdRoute
+  '/edu/school/$schoolId': typeof AuthenticatedEduSchoolSchoolIdRoute
+  '/edu/student/$userId': typeof AuthenticatedEduStudentUserIdRoute
   '/gear/$type/$uuid': typeof AuthenticatedGearTypeUuidRoute
   '/gear/inventory/personal': typeof AuthenticatedGearInventoryPersonalRoute
   '/hanger/$type/$uuid': typeof AuthenticatedHangerTypeUuidRoute
@@ -367,6 +449,7 @@ export interface FileRoutesByTo {
   '/ledger/squadron/$uuid': typeof AuthenticatedLedgerSquadronUuidRoute
   '/squadron/$squadronId/analytics': typeof AuthenticatedSquadronSquadronIdAnalyticsRoute
   '/squadron/$squadronId/inventory': typeof AuthenticatedSquadronSquadronIdInventoryRoute
+  '/squadron/$squadronId/scheduler': typeof AuthenticatedSquadronSquadronIdSchedulerRoute
   '/squadron/manage/$uuid': typeof AuthenticatedSquadronManageUuidRoute
   '/gear/$type': typeof AuthenticatedGearTypeIndexRoute
   '/gear/inventory': typeof AuthenticatedGearInventoryIndexRoute
@@ -382,12 +465,17 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/update-password': typeof UpdatePasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/_authenticated/edu': typeof AuthenticatedEduRouteRouteWithChildren
   '/_authenticated/analytics': typeof AuthenticatedAnalyticsRouteWithChildren
+  '/_authenticated/clients': typeof AuthenticatedClientsRoute
+  '/_authenticated/district': typeof AuthenticatedDistrictRoute
   '/_authenticated/hanger': typeof AuthenticatedHangerRouteWithChildren
   '/_authenticated/ledger': typeof AuthenticatedLedgerRouteWithChildren
   '/_authenticated/log': typeof AuthenticatedLogRoute
+  '/_authenticated/scheduling': typeof AuthenticatedSchedulingRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/teams': typeof AuthenticatedTeamsRouteWithChildren
+  '/client/$token': typeof ClientTokenRoute
   '/docs/$slug': typeof DocsSlugRoute
   '/docs/': typeof DocsIndexRoute
   '/_authenticated/admin_lookup/$uuid': typeof AuthenticatedAdmin_lookupUuidRoute
@@ -402,10 +490,14 @@ export interface FileRoutesById {
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/analytics/': typeof AuthenticatedAnalyticsIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/_authenticated/edu/': typeof AuthenticatedEduIndexRoute
   '/_authenticated/gear/': typeof AuthenticatedGearIndexRoute
   '/_authenticated/hanger/': typeof AuthenticatedHangerIndexRoute
   '/_authenticated/ledger/': typeof AuthenticatedLedgerIndexRoute
   '/_authenticated/squadron/': typeof AuthenticatedSquadronIndexRoute
+  '/_authenticated/edu/district/$districtId': typeof AuthenticatedEduDistrictDistrictIdRoute
+  '/_authenticated/edu/school/$schoolId': typeof AuthenticatedEduSchoolSchoolIdRoute
+  '/_authenticated/edu/student/$userId': typeof AuthenticatedEduStudentUserIdRoute
   '/_authenticated/gear/$type/$uuid': typeof AuthenticatedGearTypeUuidRoute
   '/_authenticated/gear/inventory/personal': typeof AuthenticatedGearInventoryPersonalRoute
   '/_authenticated/hanger/$type/$uuid': typeof AuthenticatedHangerTypeUuidRoute
@@ -413,6 +505,7 @@ export interface FileRoutesById {
   '/_authenticated/ledger/squadron/$uuid': typeof AuthenticatedLedgerSquadronUuidRoute
   '/_authenticated/squadron/$squadronId/analytics': typeof AuthenticatedSquadronSquadronIdAnalyticsRoute
   '/_authenticated/squadron/$squadronId/inventory': typeof AuthenticatedSquadronSquadronIdInventoryRoute
+  '/_authenticated/squadron/$squadronId/scheduler': typeof AuthenticatedSquadronSquadronIdSchedulerRoute
   '/_authenticated/squadron/manage/$uuid': typeof AuthenticatedSquadronManageUuidRoute
   '/_authenticated/gear/$type/': typeof AuthenticatedGearTypeIndexRoute
   '/_authenticated/gear/inventory/': typeof AuthenticatedGearInventoryIndexRoute
@@ -428,12 +521,17 @@ export interface FileRouteTypes {
     | '/terms'
     | '/update-password'
     | '/admin'
+    | '/edu'
     | '/analytics'
+    | '/clients'
+    | '/district'
     | '/hanger'
     | '/ledger'
     | '/log'
+    | '/scheduling'
     | '/settings'
     | '/teams'
+    | '/client/$token'
     | '/docs/$slug'
     | '/docs/'
     | '/admin_lookup/$uuid'
@@ -448,10 +546,14 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/analytics/'
     | '/dashboard/'
+    | '/edu/'
     | '/gear/'
     | '/hanger/'
     | '/ledger/'
     | '/squadron/'
+    | '/edu/district/$districtId'
+    | '/edu/school/$schoolId'
+    | '/edu/student/$userId'
     | '/gear/$type/$uuid'
     | '/gear/inventory/personal'
     | '/hanger/$type/$uuid'
@@ -459,6 +561,7 @@ export interface FileRouteTypes {
     | '/ledger/squadron/$uuid'
     | '/squadron/$squadronId/analytics'
     | '/squadron/$squadronId/inventory'
+    | '/squadron/$squadronId/scheduler'
     | '/squadron/manage/$uuid'
     | '/gear/$type/'
     | '/gear/inventory/'
@@ -470,9 +573,13 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/update-password'
+    | '/clients'
+    | '/district'
     | '/log'
+    | '/scheduling'
     | '/settings'
     | '/teams'
+    | '/client/$token'
     | '/docs/$slug'
     | '/docs'
     | '/admin_lookup/$uuid'
@@ -485,10 +592,14 @@ export interface FileRouteTypes {
     | '/admin'
     | '/analytics'
     | '/dashboard'
+    | '/edu'
     | '/gear'
     | '/hanger'
     | '/ledger'
     | '/squadron'
+    | '/edu/district/$districtId'
+    | '/edu/school/$schoolId'
+    | '/edu/student/$userId'
     | '/gear/$type/$uuid'
     | '/gear/inventory/personal'
     | '/hanger/$type/$uuid'
@@ -496,6 +607,7 @@ export interface FileRouteTypes {
     | '/ledger/squadron/$uuid'
     | '/squadron/$squadronId/analytics'
     | '/squadron/$squadronId/inventory'
+    | '/squadron/$squadronId/scheduler'
     | '/squadron/manage/$uuid'
     | '/gear/$type'
     | '/gear/inventory'
@@ -510,12 +622,17 @@ export interface FileRouteTypes {
     | '/terms'
     | '/update-password'
     | '/_authenticated/admin'
+    | '/_authenticated/edu'
     | '/_authenticated/analytics'
+    | '/_authenticated/clients'
+    | '/_authenticated/district'
     | '/_authenticated/hanger'
     | '/_authenticated/ledger'
     | '/_authenticated/log'
+    | '/_authenticated/scheduling'
     | '/_authenticated/settings'
     | '/_authenticated/teams'
+    | '/client/$token'
     | '/docs/$slug'
     | '/docs/'
     | '/_authenticated/admin_lookup/$uuid'
@@ -530,10 +647,14 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/'
     | '/_authenticated/analytics/'
     | '/_authenticated/dashboard/'
+    | '/_authenticated/edu/'
     | '/_authenticated/gear/'
     | '/_authenticated/hanger/'
     | '/_authenticated/ledger/'
     | '/_authenticated/squadron/'
+    | '/_authenticated/edu/district/$districtId'
+    | '/_authenticated/edu/school/$schoolId'
+    | '/_authenticated/edu/student/$userId'
     | '/_authenticated/gear/$type/$uuid'
     | '/_authenticated/gear/inventory/personal'
     | '/_authenticated/hanger/$type/$uuid'
@@ -541,6 +662,7 @@ export interface FileRouteTypes {
     | '/_authenticated/ledger/squadron/$uuid'
     | '/_authenticated/squadron/$squadronId/analytics'
     | '/_authenticated/squadron/$squadronId/inventory'
+    | '/_authenticated/squadron/$squadronId/scheduler'
     | '/_authenticated/squadron/manage/$uuid'
     | '/_authenticated/gear/$type/'
     | '/_authenticated/gear/inventory/'
@@ -555,6 +677,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
   UpdatePasswordRoute: typeof UpdatePasswordRoute
+  ClientTokenRoute: typeof ClientTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -622,6 +745,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAnalyticsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/clients': {
+      id: '/_authenticated/clients'
+      path: '/clients'
+      fullPath: '/clients'
+      preLoaderRoute: typeof AuthenticatedClientsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/district': {
+      id: '/_authenticated/district'
+      path: '/district'
+      fullPath: '/district'
+      preLoaderRoute: typeof AuthenticatedDistrictRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/edu': {
+      id: '/_authenticated/edu'
+      path: '/edu'
+      fullPath: '/edu'
+      preLoaderRoute: typeof AuthenticatedEduRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/hanger': {
       id: '/_authenticated/hanger'
       path: '/hanger'
@@ -643,6 +787,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLogRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/scheduling': {
+      id: '/_authenticated/scheduling'
+      path: '/scheduling'
+      fullPath: '/scheduling'
+      preLoaderRoute: typeof AuthenticatedSchedulingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/settings': {
       id: '/_authenticated/settings'
       path: '/settings'
@@ -656,6 +807,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/teams'
       preLoaderRoute: typeof AuthenticatedTeamsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/client/$token': {
+      id: '/client/$token'
+      path: '/client/$token'
+      fullPath: '/client/$token'
+      preLoaderRoute: typeof ClientTokenRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/docs/': {
       id: '/docs/'
@@ -712,6 +870,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/drone/$uuid'
       preLoaderRoute: typeof AuthenticatedDroneUuidRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/edu/': {
+      id: '/_authenticated/edu/'
+      path: '/'
+      fullPath: '/edu/'
+      preLoaderRoute: typeof AuthenticatedEduIndexRouteImport
+      parentRoute: typeof AuthenticatedEduRouteRoute
     }
     '/_authenticated/gear/': {
       id: '/_authenticated/gear/'
@@ -783,6 +948,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTeamsTeamIdRouteImport
       parentRoute: typeof AuthenticatedTeamsRoute
     }
+    '/_authenticated/edu/district/$districtId': {
+      id: '/_authenticated/edu/district/$districtId'
+      path: '/district/$districtId'
+      fullPath: '/edu/district/$districtId'
+      preLoaderRoute: typeof AuthenticatedEduDistrictDistrictIdRouteImport
+      parentRoute: typeof AuthenticatedEduRouteRoute
+    }
+    '/_authenticated/edu/school/$schoolId': {
+      id: '/_authenticated/edu/school/$schoolId'
+      path: '/school/$schoolId'
+      fullPath: '/edu/school/$schoolId'
+      preLoaderRoute: typeof AuthenticatedEduSchoolSchoolIdRouteImport
+      parentRoute: typeof AuthenticatedEduRouteRoute
+    }
+    '/_authenticated/edu/student/$userId': {
+      id: '/_authenticated/edu/student/$userId'
+      path: '/student/$userId'
+      fullPath: '/edu/student/$userId'
+      preLoaderRoute: typeof AuthenticatedEduStudentUserIdRouteImport
+      parentRoute: typeof AuthenticatedEduRouteRoute
+    }
     '/_authenticated/gear/$type/': {
       id: '/_authenticated/gear/$type/'
       path: '/gear/$type'
@@ -853,6 +1039,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSquadronSquadronIdInventoryRouteImport
       parentRoute: typeof AuthenticatedSquadronSquadronIdRoute
     }
+    '/_authenticated/squadron/$squadronId/scheduler': {
+      id: '/_authenticated/squadron/$squadronId/scheduler'
+      path: '/scheduler'
+      fullPath: '/squadron/$squadronId/scheduler'
+      preLoaderRoute: typeof AuthenticatedSquadronSquadronIdSchedulerRouteImport
+      parentRoute: typeof AuthenticatedSquadronSquadronIdRoute
+    }
     '/_authenticated/squadron/manage/$uuid': {
       id: '/_authenticated/squadron/manage/$uuid'
       path: '/squadron/manage/$uuid'
@@ -875,6 +1068,26 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
 const AuthenticatedAdminRouteRouteWithChildren =
   AuthenticatedAdminRouteRoute._addFileChildren(
     AuthenticatedAdminRouteRouteChildren,
+  )
+
+interface AuthenticatedEduRouteRouteChildren {
+  AuthenticatedEduIndexRoute: typeof AuthenticatedEduIndexRoute
+  AuthenticatedEduDistrictDistrictIdRoute: typeof AuthenticatedEduDistrictDistrictIdRoute
+  AuthenticatedEduSchoolSchoolIdRoute: typeof AuthenticatedEduSchoolSchoolIdRoute
+  AuthenticatedEduStudentUserIdRoute: typeof AuthenticatedEduStudentUserIdRoute
+}
+
+const AuthenticatedEduRouteRouteChildren: AuthenticatedEduRouteRouteChildren = {
+  AuthenticatedEduIndexRoute: AuthenticatedEduIndexRoute,
+  AuthenticatedEduDistrictDistrictIdRoute:
+    AuthenticatedEduDistrictDistrictIdRoute,
+  AuthenticatedEduSchoolSchoolIdRoute: AuthenticatedEduSchoolSchoolIdRoute,
+  AuthenticatedEduStudentUserIdRoute: AuthenticatedEduStudentUserIdRoute,
+}
+
+const AuthenticatedEduRouteRouteWithChildren =
+  AuthenticatedEduRouteRoute._addFileChildren(
+    AuthenticatedEduRouteRouteChildren,
   )
 
 interface AuthenticatedAnalyticsRouteChildren {
@@ -956,6 +1169,7 @@ const AuthenticatedGearInventoryRouteWithChildren =
 interface AuthenticatedSquadronSquadronIdRouteChildren {
   AuthenticatedSquadronSquadronIdAnalyticsRoute: typeof AuthenticatedSquadronSquadronIdAnalyticsRoute
   AuthenticatedSquadronSquadronIdInventoryRoute: typeof AuthenticatedSquadronSquadronIdInventoryRoute
+  AuthenticatedSquadronSquadronIdSchedulerRoute: typeof AuthenticatedSquadronSquadronIdSchedulerRoute
   AuthenticatedSquadronSquadronIdIndexRoute: typeof AuthenticatedSquadronSquadronIdIndexRoute
 }
 
@@ -965,6 +1179,8 @@ const AuthenticatedSquadronSquadronIdRouteChildren: AuthenticatedSquadronSquadro
       AuthenticatedSquadronSquadronIdAnalyticsRoute,
     AuthenticatedSquadronSquadronIdInventoryRoute:
       AuthenticatedSquadronSquadronIdInventoryRoute,
+    AuthenticatedSquadronSquadronIdSchedulerRoute:
+      AuthenticatedSquadronSquadronIdSchedulerRoute,
     AuthenticatedSquadronSquadronIdIndexRoute:
       AuthenticatedSquadronSquadronIdIndexRoute,
   }
@@ -976,10 +1192,14 @@ const AuthenticatedSquadronSquadronIdRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
+  AuthenticatedEduRouteRoute: typeof AuthenticatedEduRouteRouteWithChildren
   AuthenticatedAnalyticsRoute: typeof AuthenticatedAnalyticsRouteWithChildren
+  AuthenticatedClientsRoute: typeof AuthenticatedClientsRoute
+  AuthenticatedDistrictRoute: typeof AuthenticatedDistrictRoute
   AuthenticatedHangerRoute: typeof AuthenticatedHangerRouteWithChildren
   AuthenticatedLedgerRoute: typeof AuthenticatedLedgerRouteWithChildren
   AuthenticatedLogRoute: typeof AuthenticatedLogRoute
+  AuthenticatedSchedulingRoute: typeof AuthenticatedSchedulingRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedTeamsRoute: typeof AuthenticatedTeamsRouteWithChildren
   AuthenticatedAdmin_lookupUuidRoute: typeof AuthenticatedAdmin_lookupUuidRoute
@@ -997,10 +1217,14 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
+  AuthenticatedEduRouteRoute: AuthenticatedEduRouteRouteWithChildren,
   AuthenticatedAnalyticsRoute: AuthenticatedAnalyticsRouteWithChildren,
+  AuthenticatedClientsRoute: AuthenticatedClientsRoute,
+  AuthenticatedDistrictRoute: AuthenticatedDistrictRoute,
   AuthenticatedHangerRoute: AuthenticatedHangerRouteWithChildren,
   AuthenticatedLedgerRoute: AuthenticatedLedgerRouteWithChildren,
   AuthenticatedLogRoute: AuthenticatedLogRoute,
+  AuthenticatedSchedulingRoute: AuthenticatedSchedulingRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedTeamsRoute: AuthenticatedTeamsRouteWithChildren,
   AuthenticatedAdmin_lookupUuidRoute: AuthenticatedAdmin_lookupUuidRoute,
@@ -1040,6 +1264,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,
   UpdatePasswordRoute: UpdatePasswordRoute,
+  ClientTokenRoute: ClientTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

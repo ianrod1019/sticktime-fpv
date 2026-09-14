@@ -1,0 +1,694 @@
+-- ============================================================
+-- Migration: FERPA Phase 2 — edu RPC surface (privilege separation)
+--
+-- The ONLY write path into edu (besides the narrow policy-gated direct
+-- grants from Phase 1) and the read path for cross-member records.
+-- House style: SECURITY DEFINER, pinned search_path, membership checks
+-- inside, EXECUTE revoked from anon/public, every mutation and every
+-- cross-member record access written to admin_audit_logs.
+--
+-- Privilege matrix (enforced here AND by Phase 1 RLS):
+--   student        → own record only
+--   instructor     → students assigned to them, in their school
+--   school_admin   → their school's roster + pending queue
+--   district_admin → their district's schools, rosters, assignments
+--   service_role   → provisioning only (edu_provision_member)
+--
+-- Instructors are VIEW-ONLY for student flight data in this phase.
+-- ============================================================
+
+-- ---------------------------------------------------------------------------
+-- 1. Caller identity helper (no auth.uid() null-splits in every RPC)
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.edu_current_user()
+RETURNS uuid
+LANGUAGE sql
+STABLE
+SET search_path TO 'public'
+AS $function$
+  SELECT auth.uid();
+$function$;
+
+-- ---------------------------------------------------------------------------
+-- 2. Student / staff memberships — the client's nav + gating source
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.edu_get_my_memberships()
+RETURNS TABLE(
+  membership_id uuid,
+  school_id     uuid,
+  district_id   uuid,
+  school_name   text,
+  district_name text,
+  edu_role      edu.edu_role,
+  status        text
+)
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path TO 'public', 'edu'
+AS $function$
+  SELECT m.id, m.school_id, m.district_id,
+         s.name, d.name, m.edu_role, m.status
+    FROM edu.memberships m
+    JOIN edu.schools    s ON s.id = m.school_id
+    JOIN edu.districts  d ON d.id = m.district_id
+   WHERE m.user_id = auth.uid()
+   ORDER BY d.name, s.name, m.edu_role;
+$function$;
+
+-- ---------------------------------------------------------------------------
+-- 3. Enrollment queue — school admins stage roster entries.
+--    Minimal PII: school-issued email, role, optional display name.
+--    (Account creation happens later in edu_provision_member; the email
+--    is matched, then dropped. No invite email is sent by design.)
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.edu_queue_enrollment(
+  _school_id uuid,
+  _school_email text,
+  _edu_role text,
+  _display_name text DEFAULT NULL
+)
+RETURNS uuid
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO 'public', 'edu'
+AS $function$
+DECLARE
+  v_uid uuid := auth.uid();
+  v_district uuid;
+  v_id uuid;
+BEGIN
+  IF v_uid IS NULL THEN
+    RAISE EXCEPTION 'Not authenticated';
+  END IF;
+
+  IF _edu_role NOT IN ('student', 'instructor', 'school_admin') THEN
+    RAISE EXCEPTION 'Invalid edu_role for enrollment queue';
+  END IF;
+
+  SELECT district_id INTO v_district FROM edu.schools WHERE id = _school_id;
+  IF v_district IS NULL THEN
+    RAISE EXCEPTION 'School not found';
+  END IF;
+
+  IF NOT (edu.is_school_admin(_school_id, v_uid)
+          OR edu.is_district_admin(v_district, v_uid)) THEN
+    RAISE EXCEPTION 'Access denied: school admins only';
+  END IF;
+
+  INSERT INTO edu.pending_roster (school_id, district_id, school_email,
+                                  edu_role, display_name, invited_by)
+  VALUES (_school_id, v_district, lower(btrim(_school_email)),
+          _edu_role::edu.edu_role,
+          NULLIF(btrim(COALESCE(_display_name, '')), ''), v_uid)
+  -- Idempotent: double-submitting the same enrollment converges on one
+  -- queue row instead of creating duplicates that break provisioning.
+  ON CONFLICT (school_id, school_email)
+  DO UPDATE SET edu_role = EXCLUDED.edu_role,
+                display_name = COALESCE(EXCLUDED.display_name,
+                                        edu.pending_roster.display_name),
+                invited_by = EXCLUDED.invited_by
+  RETURNING id INTO v_id;
+
+  -- Audit: queue growth, no email content in the payload.
+  INSERT INTO public.admin_audit_logs (actor_id, action, payload)
+  VALUES (v_uid, 'edu_enroll_requested',
+          jsonb_build_object('pending_id', v_id, 'school_id', _school_id,
+                             'edu_role', _edu_role));
+
+  RETURN v_id;
+END;
+$function$;
+
+-- ---------------------------------------------------------------------------
+-- 4. Provision a queued member. SERVICE ROLE ONLY — runs from a TanStack
+--    server function (never the browser): matches the queued email to an
+--    existing or newly-created auth account (NO email is sent by this
+--    path; any setup link is generated by the server function and shown
+--    to the admin in the UI), links the membership, clears the email.
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.edu_provision_member(
+  _school_id uuid,
+  _email text,
+  _user_id uuid
+)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO 'public', 'edu', 'auth'
+AS $function$
+DECLARE
+  v_row edu.pending_roster%ROWTYPE;
+BEGIN
+  IF current_user <> 'service_role' AND current_user <> 'postgres' THEN
+    RAISE EXCEPTION 'edu_provision_member is service-role only';
+  END IF;
+
+  SELECT * INTO v_row
+    FROM edu.pending_roster
+   WHERE school_id = _school_id
+     AND school_email = lower(btrim(_email))
+   FOR UPDATE
+   LIMIT 1;
+
+  IF NOT FOUND THEN
+    RETURN jsonb_build_object('provisioned', false, 'reason', 'not_queued');
+  END IF;
+
+  -- The account must exist and carry the queued school email.
+  IF NOT EXISTS (
+    SELECT 1 FROM auth.users
+     WHERE id = _user_id AND lower(email) = v_row.school_email
+  ) THEN
+    RETURN jsonb_build_object('provisioned', false,
+      'reason', 'user_email_mismatch', 'pending_id', v_row.id);
+  END IF;
+
+  -- One active membership per school per user (Phase 1 constraint).
+  INSERT INTO edu.memberships (user_id, school_id, district_id, edu_role)
+  VALUES (_user_id, v_row.school_id, v_row.district_id, v_row.edu_role)
+  ON CONFLICT (school_id, user_id, status) DO NOTHING;
+
+  -- Minimization: the staged email never outlives the match.
+  DELETE FROM edu.pending_roster WHERE id = v_row.id;
+
+  INSERT INTO public.admin_audit_logs (actor_id, action, payload)
+  VALUES (NULL, 'edu_member_provisioned',
+          jsonb_build_object('school_id', v_row.school_id,
+                             'edu_role', v_row.edu_role));
+
+  RETURN jsonb_build_object('provisioned', true, 'pending_id', v_row.id,
+                            'edu_role', v_row.edu_role);
+END;
+$function$;
+
+REVOKE EXECUTE ON FUNCTION public.edu_provision_member(uuid, text, uuid)
+  FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.edu_provision_member(uuid, text, uuid)
+  TO service_role;
+
+-- Service-role helper for the provisioning edge function: find an existing
+-- auth account by email without listing the whole user table.
+CREATE OR REPLACE FUNCTION public.edu_find_auth_user_by_email(p_email text)
+RETURNS uuid
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path TO 'public', 'auth'
+AS $function$
+  SELECT id FROM auth.users
+   WHERE lower(email) = lower(btrim(p_email))
+   LIMIT 1
+$function$;
+
+REVOKE EXECUTE ON FUNCTION public.edu_find_auth_user_by_email(text)
+  FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.edu_find_auth_user_by_email(text)
+  TO service_role;
+
+-- ---------------------------------------------------------------------------
+-- 5. Membership lifecycle — district admins archive/reinstate.
+--    Archival preserves the record (FERPA retention) while ending access.
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.edu_archive_member(_membership_id uuid)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO 'public', 'edu'
+AS $function$
+DECLARE
+  v_uid uuid := auth.uid();
+  v_district uuid;
+BEGIN
+  SELECT district_id INTO v_district FROM edu.memberships
+   WHERE id = _membership_id;
+  IF v_district IS NULL THEN
+    RAISE EXCEPTION 'Membership not found';
+  END IF;
+  IF NOT edu.is_district_admin(v_district, v_uid) THEN
+    RAISE EXCEPTION 'Access denied: district admins only';
+  END IF;
+
+  UPDATE edu.memberships SET status = 'archived' WHERE id = _membership_id;
+
+  INSERT INTO public.admin_audit_logs (actor_id, action, target_id, payload)
+  VALUES (v_uid, 'edu_member_archived', _membership_id::text,
+          jsonb_build_object('at', now()));
+END;
+$function$;
+
+CREATE OR REPLACE FUNCTION public.edu_reinstate_member(_membership_id uuid)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO 'public', 'edu'
+AS $function$
+DECLARE
+  v_uid uuid := auth.uid();
+  v_district uuid;
+BEGIN
+  SELECT district_id INTO v_district FROM edu.memberships
+   WHERE id = _membership_id;
+  IF v_district IS NULL THEN
+    RAISE EXCEPTION 'Membership not found';
+  END IF;
+  IF NOT edu.is_district_admin(v_district, v_uid) THEN
+    RAISE EXCEPTION 'Access denied: district admins only';
+  END IF;
+
+  UPDATE edu.memberships SET status = 'active' WHERE id = _membership_id;
+
+  INSERT INTO public.admin_audit_logs (actor_id, action, target_id, payload)
+  VALUES (v_uid, 'edu_member_reinstated', _membership_id::text,
+          jsonb_build_object('at', now()));
+END;
+$function$;
+
+-- ---------------------------------------------------------------------------
+-- 6. District admin: create a school
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.edu_create_school(
+  _district_id uuid,
+  _name text,
+  _site_code text DEFAULT NULL
+)
+RETURNS uuid
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO 'public', 'edu'
+AS $function$
+DECLARE
+  v_uid uuid := auth.uid();
+  v_id uuid;
+  v_name text;
+BEGIN
+  IF v_uid IS NULL THEN
+    RAISE EXCEPTION 'Not authenticated';
+  END IF;
+  IF NOT edu.is_district_admin(_district_id, v_uid) THEN
+    RAISE EXCEPTION 'Access denied: district admins only';
+  END IF;
+
+  v_name := btrim(_name);
+  IF v_name IS NULL OR char_length(v_name) = 0 OR char_length(v_name) > 160 THEN
+    RAISE EXCEPTION 'School name must be between 1 and 160 characters';
+  END IF;
+
+  INSERT INTO edu.schools (district_id, name, site_code)
+  VALUES (_district_id, v_name, NULLIF(btrim(COALESCE(_site_code, '')), ''))
+  RETURNING id INTO v_id;
+
+  INSERT INTO public.admin_audit_logs (actor_id, action, target_id, payload)
+  VALUES (v_uid, 'edu_school_created', v_id::text,
+          jsonb_build_object('district_id', _district_id));
+
+  RETURN v_id;
+END;
+$function$;
+
+-- ---------------------------------------------------------------------------
+-- 7. District/school admin: assign an instructor to a student.
+--    Both memberships must be active, in the given school, and the
+--    assigned user must have the right role. Idempotent for re-assignment
+--    of an already-open pair.
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.edu_assign_instructor(
+  _school_id uuid,
+  _instructor_user_id uuid,
+  _student_user_id uuid
+)
+RETURNS uuid
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO 'public', 'edu'
+AS $function$
+DECLARE
+  v_uid uuid := auth.uid();
+  v_district uuid;
+  v_instructor_m uuid;
+  v_student_m uuid;
+  v_existing uuid;
+BEGIN
+  IF v_uid IS NULL THEN
+    RAISE EXCEPTION 'Not authenticated';
+  END IF;
+
+  SELECT district_id INTO v_district FROM edu.schools WHERE id = _school_id;
+  IF v_district IS NULL THEN
+    RAISE EXCEPTION 'School not found';
+  END IF;
+  IF NOT (edu.is_district_admin(v_district, v_uid)
+          OR edu.is_school_admin(_school_id, v_uid)) THEN
+    RAISE EXCEPTION 'Access denied: district or school admins only';
+  END IF;
+
+  SELECT id INTO v_instructor_m FROM edu.memberships
+   WHERE user_id = _instructor_user_id AND school_id = _school_id
+     AND edu_role = 'instructor' AND status = 'active';
+  SELECT id INTO v_student_m FROM edu.memberships
+   WHERE user_id = _student_user_id AND school_id = _school_id
+     AND edu_role = 'student' AND status = 'active';
+
+  IF v_instructor_m IS NULL OR v_student_m IS NULL THEN
+    RAISE EXCEPTION 'Both members must be active in this school (instructor, student)';
+  END IF;
+
+  -- Re-assigning an already-open pair is a no-op.
+  SELECT id INTO v_existing FROM edu.instructor_assignments
+   WHERE instructor_membership_id = v_instructor_m
+     AND student_membership_id = v_student_m
+     AND ended_at IS NULL;
+  IF v_existing IS NOT NULL THEN
+    RETURN v_existing;
+  END IF;
+
+  INSERT INTO edu.instructor_assignments
+    (instructor_membership_id, student_membership_id, school_id, district_id)
+  VALUES (v_instructor_m, v_student_m, _school_id, v_district)
+  RETURNING id INTO v_existing;
+
+  INSERT INTO public.admin_audit_logs (actor_id, action, target_id, payload)
+  VALUES (v_uid, 'edu_instructor_assigned', v_existing::text,
+          jsonb_build_object('school_id', _school_id,
+                             'instructor_user_id', _instructor_user_id,
+                             'student_user_id', _student_user_id));
+
+  RETURN v_existing;
+END;
+$function$;
+
+CREATE OR REPLACE FUNCTION public.edu_end_assignment(_assignment_id uuid)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO 'public', 'edu'
+AS $function$
+DECLARE
+  v_uid uuid := auth.uid();
+  v_district uuid;
+  v_school uuid;
+BEGIN
+  SELECT district_id, school_id INTO v_district, v_school
+    FROM edu.instructor_assignments WHERE id = _assignment_id;
+  IF v_district IS NULL THEN
+    RAISE EXCEPTION 'Assignment not found';
+  END IF;
+  IF NOT (edu.is_district_admin(v_district, v_uid)
+          OR edu.is_school_admin(v_school, v_uid)) THEN
+    RAISE EXCEPTION 'Access denied: district or school admins only';
+  END IF;
+
+  UPDATE edu.instructor_assignments
+     SET ended_at = now()
+   WHERE id = _assignment_id AND ended_at IS NULL;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Assignment already ended';
+  END IF;
+
+  INSERT INTO public.admin_audit_logs (actor_id, action, target_id, payload)
+  VALUES (v_uid, 'edu_assignment_ended', _assignment_id::text,
+          jsonb_build_object('at', now()));
+END;
+$function$;
+
+-- ---------------------------------------------------------------------------
+-- 8. Instructor: the students assigned to them in one school.
+--    Non-enumerating by construction: the driver is the assignment table.
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.edu_list_my_students(_school_id uuid)
+RETURNS TABLE(
+  user_id        uuid,
+  callsign       text,
+  membership_id  uuid,
+  assigned_at    timestamptz
+)
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path TO 'public', 'edu'
+AS $function$
+  SELECT ms.user_id,
+         COALESCE(ps.callsign, 'student'),
+         ms.id,
+         ia.created_at
+    FROM edu.instructor_assignments ia
+    JOIN edu.memberships mi ON mi.id = ia.instructor_membership_id
+    JOIN edu.memberships ms ON ms.id = ia.student_membership_id
+    LEFT JOIN public.pilot_settings ps ON ps.user_id = ms.user_id
+   WHERE mi.user_id = auth.uid()
+     AND mi.edu_role = 'instructor' AND mi.status = 'active'
+     AND mi.school_id = _school_id
+     AND ia.school_id = _school_id
+     AND ia.ended_at IS NULL
+     AND ms.status = 'active'
+   ORDER BY ia.created_at;
+$function$;
+
+-- ---------------------------------------------------------------------------
+-- 8b. School/district admin: the school roster (membership + callsign).
+--     Callsigns come from pilot_settings (not client-readable for other
+--     users), so the join happens here under the same guard as RLS.
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.edu_list_school_roster(_school_id uuid)
+RETURNS TABLE(
+  membership_id uuid,
+  user_id       uuid,
+  edu_role      edu.edu_role,
+  status        text,
+  callsign      text
+)
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path TO 'public', 'edu'
+AS $function$
+  SELECT m.id, m.user_id, m.edu_role, m.status,
+         COALESCE(ps.callsign, 'member')
+    FROM edu.memberships m
+    LEFT JOIN public.pilot_settings ps ON ps.user_id = m.user_id
+   WHERE m.school_id = _school_id
+     AND (
+       edu.is_school_admin(_school_id, auth.uid())
+       OR edu.is_district_admin(m.district_id, auth.uid())
+     )
+   ORDER BY m.edu_role, ps.callsign;
+$function$;
+
+-- ---------------------------------------------------------------------------
+-- 9. Cross-member record read: the assigned instructor, school admin, or
+--    district admin opens a student's educational record.
+--    Personal-plane data is joined read-only; every access is audited.
+--    Returns aggregate flight stats + recent session rows.
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.edu_get_student_record(_student_user_id uuid)
+RETURNS jsonb
+LANGUAGE plpgsql
+-- VOLATILE: the function writes its own access-audit row (STABLE forbids INSERT).
+VOLATILE
+SECURITY DEFINER
+SET search_path TO 'public', 'edu'
+AS $function$
+DECLARE
+  v_uid uuid := auth.uid();
+  v_district uuid;
+  v_school uuid;
+  v_open_assignment uuid;
+  v_result jsonb;
+BEGIN
+  IF v_uid IS NULL THEN
+    RAISE EXCEPTION 'Not authenticated';
+  END IF;
+
+  IF NOT edu.can_view_student(v_uid, _student_user_id) THEN
+    RAISE EXCEPTION 'Access denied: not authorized to view this student';
+  END IF;
+
+  -- Which relationship authorizes this view (for the audit payload)?
+  SELECT m.district_id, m.school_id INTO v_district, v_school
+    FROM edu.memberships m
+   WHERE m.user_id = _student_user_id
+     AND m.edu_role = 'student' AND m.status = 'active'
+   LIMIT 1;
+
+  SELECT ia.id INTO v_open_assignment
+    FROM edu.instructor_assignments ia
+    JOIN edu.memberships mi ON mi.id = ia.instructor_membership_id
+   WHERE mi.user_id = v_uid AND ia.ended_at IS NULL
+     AND ia.student_membership_id IN (
+       SELECT id FROM edu.memberships
+        WHERE user_id = _student_user_id AND edu_role = 'student')
+   LIMIT 1;
+
+  SELECT jsonb_build_object(
+    'student_user_id', _student_user_id,
+    'district_id', v_district,
+    'school_id', v_school,
+    'callsign', (SELECT COALESCE(ps.callsign, 'student')
+                   FROM public.pilot_settings ps
+                  WHERE ps.user_id = _student_user_id),
+    'via', CASE
+             WHEN v_uid = _student_user_id THEN 'self'
+             WHEN v_open_assignment IS NOT NULL THEN 'instructor_assignment'
+             WHEN EXISTS (SELECT 1 FROM edu.memberships m
+                           WHERE m.user_id = v_uid
+                             AND m.edu_role = 'school_admin'
+                             AND m.school_id = v_school) THEN 'school_admin'
+             ELSE 'district_admin'
+           END,
+    'flight_stats', (
+      SELECT jsonb_build_object(
+        'session_count', COUNT(*),
+        'total_minutes', COALESCE(SUM(s.duration_minutes), 0),
+        'sim_minutes',   COALESCE(SUM(s.duration_minutes) FILTER (WHERE s.session_type = 'sim'), 0),
+        'real_minutes',  COALESCE(SUM(s.duration_minutes) FILTER (WHERE s.session_type = 'real'), 0),
+        'first_session', MIN(s.created_at),
+        'last_session',  MAX(s.created_at)
+      )
+      FROM public.sessions s
+      WHERE s.user_id = _student_user_id
+    ),
+    'recent_sessions', (
+      SELECT COALESCE(jsonb_agg(jsonb_build_object(
+        'id', s.id,
+        'session_type', s.session_type,
+        'flown_on', s.flown_on,
+        'duration_minutes', s.duration_minutes,
+        'sim_platform', s.sim_platform,
+        'packs_flown', s.packs_flown,
+        'crashes', s.crashes,
+        'created_at', s.created_at
+      ) ORDER BY s.created_at DESC), '[]'::jsonb)
+      FROM (
+        SELECT * FROM public.sessions
+         WHERE user_id = _student_user_id
+         ORDER BY created_at DESC
+         LIMIT 50
+      ) s
+    ),
+    'open_checkouts', (
+      SELECT COALESCE(jsonb_agg(jsonb_build_object(
+        'gear_id', c.gear_id,
+        'checked_out_at', c.checked_out_at
+      )), '[]'::jsonb)
+      FROM org_gear.squadron_gear_checkouts c
+      WHERE c.checked_out_by = _student_user_id
+        AND c.returned_at IS NULL
+        AND c.team_id IN (
+          SELECT tm.team_id FROM public.team_members tm
+          WHERE tm.user_id = _student_user_id
+        )
+    )
+  ) INTO v_result;
+
+  -- Audit EVERY cross-member record access, including which gate opened it.
+  INSERT INTO public.admin_audit_logs (actor_id, action, target_id, payload)
+  VALUES (v_uid, 'edu_student_record_viewed', _student_user_id::text,
+          jsonb_build_object('via', v_result->>'via', 'at', now()));
+
+  RETURN v_result;
+END;
+$function$;
+
+-- ---------------------------------------------------------------------------
+-- 10. District admin overview — aggregates only, zero per-student rows.
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.edu_district_overview(_district_id uuid)
+RETURNS jsonb
+LANGUAGE plpgsql
+-- VOLATILE: the function writes its own access-audit row (STABLE forbids INSERT).
+VOLATILE
+SECURITY DEFINER
+SET search_path TO 'public', 'edu'
+AS $function$
+DECLARE
+  v_uid uuid := auth.uid();
+  v_result jsonb;
+BEGIN
+  IF NOT edu.is_district_admin(_district_id, v_uid) THEN
+    RAISE EXCEPTION 'Access denied: district admins only';
+  END IF;
+
+  SELECT jsonb_build_object(
+    'district_id', _district_id,
+    'generated_at', now(),
+    'totals', (
+      SELECT jsonb_build_object(
+        'schools', (SELECT COUNT(*) FROM edu.schools WHERE district_id = _district_id),
+        'students', (SELECT COUNT(*) FROM edu.memberships
+                      WHERE district_id = _district_id AND edu_role = 'student' AND status = 'active'),
+        'instructors', (SELECT COUNT(*) FROM edu.memberships
+                         WHERE district_id = _district_id AND edu_role = 'instructor' AND status = 'active'),
+        'school_admins', (SELECT COUNT(*) FROM edu.memberships
+                           WHERE district_id = _district_id AND edu_role = 'school_admin' AND status = 'active'),
+        'open_assignments', (SELECT COUNT(*) FROM edu.instructor_assignments
+                              WHERE district_id = _district_id AND ended_at IS NULL),
+        'pending_enrollments', (SELECT COUNT(*) FROM edu.pending_roster
+                                 WHERE district_id = _district_id)
+      )
+    ),
+    'per_school', (
+      SELECT COALESCE(jsonb_agg(jsonb_build_object(
+        'school_id', s.id,
+        'name', s.name,
+        'students', (SELECT COUNT(*) FROM edu.memberships m
+                      WHERE m.school_id = s.id AND m.edu_role = 'student' AND m.status = 'active'),
+        'instructors', (SELECT COUNT(*) FROM edu.memberships m
+                         WHERE m.school_id = s.id AND m.edu_role = 'instructor' AND m.status = 'active'),
+        'open_assignments', (SELECT COUNT(*) FROM edu.instructor_assignments ia
+                              WHERE ia.school_id = s.id AND ia.ended_at IS NULL)
+      ) ORDER BY s.name), '[]'::jsonb)
+      FROM edu.schools s
+      WHERE s.district_id = _district_id
+    ),
+    'flight_minutes_30d', (
+      SELECT COALESCE(SUM(s.duration_minutes), 0)
+        FROM public.sessions s
+       WHERE s.created_at > now() - interval '30 days'
+         AND s.user_id IN (
+           SELECT user_id FROM edu.memberships
+            WHERE district_id = _district_id AND edu_role = 'student'
+              AND status = 'active')
+    )
+  ) INTO v_result;
+
+  INSERT INTO public.admin_audit_logs (actor_id, action, payload)
+  VALUES (v_uid, 'view_edu_overview',
+          jsonb_build_object('district_id', _district_id, 'at', now()));
+
+  RETURN v_result;
+END;
+$function$;
+
+-- ---------------------------------------------------------------------------
+-- 11. Execute grants (house style: authenticated, never anon/public)
+--     (REVOKE/GRANT take one function signature per statement.)
+-- ---------------------------------------------------------------------------
+REVOKE ALL ON FUNCTION public.edu_get_my_memberships() FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.edu_queue_enrollment(uuid, text, text, text) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.edu_archive_member(uuid) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.edu_reinstate_member(uuid) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.edu_create_school(uuid, text, text) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.edu_assign_instructor(uuid, uuid, uuid) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.edu_end_assignment(uuid) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.edu_list_my_students(uuid) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.edu_list_school_roster(uuid) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.edu_get_student_record(uuid) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.edu_district_overview(uuid) FROM PUBLIC, anon;
+
+GRANT EXECUTE ON FUNCTION public.edu_get_my_memberships() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.edu_queue_enrollment(uuid, text, text, text) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.edu_archive_member(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.edu_reinstate_member(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.edu_create_school(uuid, text, text) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.edu_assign_instructor(uuid, uuid, uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.edu_end_assignment(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.edu_list_my_students(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.edu_list_school_roster(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.edu_get_student_record(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.edu_district_overview(uuid) TO authenticated;
+
+NOTIFY pgrst, 'reload schema';
+
+-- ============================================================
+-- End of migration
+-- ============================================================

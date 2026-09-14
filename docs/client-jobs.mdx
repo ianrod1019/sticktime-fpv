@@ -1,0 +1,59 @@
+---
+title: Client jobs & deliverables
+description: Schedule professional client work, share a secure confirmation link, and deliver files.
+---
+
+# Client jobs & deliverables
+
+The **client jobs** plane (`ent_scheduling` schema) is the CRM side of
+StickTime: professional jobs — mapping, inspection, content shoots —
+scheduled for an external client, confirmed through a secure link, and
+finished by handing over deliverable files.
+
+## The flow
+
+1. **Create the job** (squadron/district admin) — title, window, client
+   name, optional client email. It starts in
+   *Awaiting client* (`pending_confirmation`).
+2. **Share the client link** — copy it from the job's *Client link* tab.
+   The link is the client's credential: no account, no login.
+3. **The client confirms** on `/client/<token>` — the job flips to
+   *Confirmed* server-side (the token RPC is the authority).
+4. **Fly the job.** Admins move the status forward:
+   *In progress* → *Delivered* (delivery requires at least one uploaded
+   deliverable — the database enforces it).
+5. **The client downloads** — per-file or a single zip built on the fly
+   by the `client-job-download` edge function. Downloads work only while
+   the job status is exactly *Delivered*.
+
+## Security model
+
+* The **token is a 128-bit UUID** shown once per job; *Rotate link*
+  kills the old link instantly (for a client who forwarded it too far).
+* Clients never touch the database. Their only capabilities are two
+  anon-executable RPCs (`entsched_client_job`, `entsched_confirm_job`)
+  and the token-validated download function — every one re-checks the
+  token server-side.
+* Deliverables live in the private `client-deliverables` storage bucket.
+  No signed URLs leak to the browser; uploads are gated by the org's
+  admin rights and can only land in their own job's path prefix.
+* Client-facing reads expose aggregate job fields only — never internal
+  ids beyond the job number, never the token itself.
+
+## Email (planned seam)
+
+Every confirm/deliver transition for a job **with a client email**
+enqueues a row in `ent_scheduling.outbox`
+(`job_confirmation` / `deliverables_ready`). Nothing sends today — when
+a provider is wired in, a worker drains the outbox and the UI already
+surfaces the pending state. Until then, send the link yourself from the
+*Client link* tab.
+
+## Where things live
+
+| Piece | Location |
+| --- | --- |
+| Internal board | `/clients` (squadron/district admins) |
+| Public portal | `/client/<token>` |
+| Schema | `ent_scheduling.client_jobs`, `job_deliverables`, `outbox` |
+| Downloads | `client-job-download` edge function (zip or single file) |

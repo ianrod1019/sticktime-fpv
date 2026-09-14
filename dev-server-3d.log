@@ -86,3 +86,196 @@ Error: Error transforming route file D:/Projects/sticktime-fpv/src/routes/featur
 [2m5:56:07 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/components/-MonthlyVolumeChart.tsx[22m
 [2m5:58:49 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/components/-MonthlyVolumeChart.tsx[22m
 [2m5:58:49 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/components/-DashboardContent.tsx[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/app-shell.tsx[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/three/drone-hero-scene.tsx[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/three/drone-hero-scene.tsx[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/pages/landing/-bento-features.tsx[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/pages/landing/-bento-features.tsx[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/three/fpv-drone.tsx[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/three/fpv-drone.tsx[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [32mvite.config.ts changed, restarting server...[39m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/sidebar.tsx[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/top-nav.tsx[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/top-nav.tsx[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/pages/landing/-hero.tsx[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/pages/landing/-hero.tsx[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/__root.tsx[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/styles.css[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/docs/index.tsx[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/docs/index.tsx[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/docs/$slug.tsx, /src/routes/docs/$slug.tsx?tsr-split=component[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/docs/$slug.tsx[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/components/-DashboardContent.tsx[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/docs.tsx, /src/routes/docs.tsx?tsr-split=component[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/docs.tsx[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/features.tsx[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/features.tsx[22m
+[2m8:10:39 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/dashboard/components/-StatCard.tsx[22m
+[33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
+[2m8:10:42 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m Re-optimizing dependencies because lockfile has changed
+[2m8:10:43 PM[22m [36m[1m[vite][22m[39m server restarted.
+[2m8:10:45 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] scanning dependencies...
+[31m(!) Failed to run dependency scan. Skipping dependency pre-bundling. Error: The following dependencies are imported but could not be resolved:
+
+  [36mframer-motion[31m [37m[2m(imported by D:/Projects/sticktime-fpv/src/pages/landing/-hero.tsx)[22m[31m
+
+Are they installed?
+    at file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:31452:33
+    at async file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33703:15[39m
+[2m8:10:50 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+[2m8:10:56 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: Failed to resolve import "framer-motion" from "src/pages/landing/-bento-features.tsx". Does the file exist?[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mD:/Projects/sticktime-fpv/src/pages/landing/-bento-features.tsx[39m:2:0
+[33m  1  |  import { Link } from "@tanstack/react-router";
+  2  |  import { motion, useReducedMotion } from "framer-motion";
+     |                                            ^
+  3  |  import { ArrowUpRight, BatteryCharging, BrainCircuit, ChartNoAxesCombined, CheckCircle2, PlaneTakeoff, ShieldCheck, T...
+  4  |  var _jsxFileName = "D:/Projects/sticktime-fpv/src/pages/landing/-bento-features.tsx";[39m
+      at TransformPluginContext._formatLog (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:30416:39)
+      at TransformPluginContext.error (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:30413:14)
+      at normalizeUrl (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:27438:18)
+      at async file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:27506:30
+      at async Promise.all (index 1)
+      at async TransformPluginContext.transform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:27474:4)
+      at async EnvironmentPluginContainer.transform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:30201:14)
+      at async loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20124:26)
+[2m8:10:56 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "framer-motion" from "src/pages/landing/-bento-features.tsx". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mD:/Projects/sticktime-fpv/src/pages/landing/-bento-features.tsx[39m:2:0
+[33m  1  |  import { Link } from "@tanstack/react-router";
+  2  |  import { motion, useReducedMotion } from "framer-motion";
+     |                                            ^
+  3  |  import { ArrowUpRight, BatteryCharging, BrainCircuit, ChartNoAxesCombined, CheckCircle2, PlaneTakeoff, ShieldCheck, T...
+  4  |  var _jsxFileName = "D:/Projects/sticktime-fpv/src/pages/landing/-bento-features.tsx";[39m
+[2m8:10:56 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "framer-motion" from "src/pages/landing/-bento-features.tsx". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mD:/Projects/sticktime-fpv/src/pages/landing/-bento-features.tsx[39m:2:0
+[33m  1  |  import { Link } from "@tanstack/react-router";
+  2  |  import { motion, useReducedMotion } from "framer-motion";
+     |                                            ^
+  3  |  import { ArrowUpRight, BatteryCharging, BrainCircuit, ChartNoAxesCombined, CheckCircle2, PlaneTakeoff, ShieldCheck, T...
+  4  |  var _jsxFileName = "D:/Projects/sticktime-fpv/src/pages/landing/-bento-features.tsx";[39m
+[2m8:10:56 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: Failed to resolve import "framer-motion" from "src/pages/landing/-hero.tsx". Does the file exist?[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mD:/Projects/sticktime-fpv/src/pages/landing/-hero.tsx[39m:3:0
+[33m  1  |  import { lazy, Suspense } from "react";
+  2  |  import { Link } from "@tanstack/react-router";
+  3  |  import { motion, useReducedMotion } from "framer-motion";
+     |                                            ^
+  4  |  import { ArrowUpRight, CircleCheck, Radio, ShieldCheck, TimerReset } from "lucide-react";
+  5  |  import { Button } from "@/components/ui/button";[39m
+      at TransformPluginContext._formatLog (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:30416:39)
+      at TransformPluginContext.error (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:30413:14)
+      at normalizeUrl (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:27438:18)
+      at async file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:27506:30
+      at async Promise.all (index 2)
+      at async TransformPluginContext.transform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:27474:4)
+      at async EnvironmentPluginContainer.transform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:30201:14)
+      at async loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20124:26)
+[2m8:10:56 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "framer-motion" from "src/pages/landing/-hero.tsx". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mD:/Projects/sticktime-fpv/src/pages/landing/-hero.tsx[39m:3:0
+[33m  1  |  import { lazy, Suspense } from "react";
+  2  |  import { Link } from "@tanstack/react-router";
+  3  |  import { motion, useReducedMotion } from "framer-motion";
+     |                                            ^
+  4  |  import { ArrowUpRight, CircleCheck, Radio, ShieldCheck, TimerReset } from "lucide-react";
+  5  |  import { Button } from "@/components/ui/button";[39m
+[2m8:10:56 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "framer-motion" from "src/pages/landing/-hero.tsx". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mD:/Projects/sticktime-fpv/src/pages/landing/-hero.tsx[39m:3:0
+[33m  1  |  import { lazy, Suspense } from "react";
+  2  |  import { Link } from "@tanstack/react-router";
+  3  |  import { motion, useReducedMotion } from "framer-motion";
+     |                                            ^
+  4  |  import { ArrowUpRight, CircleCheck, Radio, ShieldCheck, TimerReset } from "lucide-react";
+  5  |  import { Button } from "@/components/ui/button";[39m
+[2m8:10:57 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+[2m8:11:00 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mdependencies optimized: [33m@radix-ui/react-dialog, @radix-ui/react-slot, @react-three/drei, @react-three/fiber, @supabase/supabase-js, @tanstack/query-persist-client-core, @tanstack/react-query, class-variance-authority, clsx, lucide-react, sonner, tailwind-merge, three, zod[32m[39m
+[2m8:11:00 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32moptimized dependencies changed. reloading[39m
+[2m8:11:03 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/lucide-react.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[33mThe file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/lucide-react.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.[39m
+[2m8:11:03 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/tailwind-merge.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:03 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@tanstack_react-query.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:03 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@supabase_supabase-js.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:03 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@tanstack_react-query.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:03 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@tanstack_query-persist-client-core.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:03 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@tanstack_react-query.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:03 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@tanstack_react-query.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[33mThe file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@tanstack_react-query.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.[39m
+[2m8:11:03 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/sonner.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:03 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/lucide-react.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:03 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/class-variance-authority.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:03 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@radix-ui_react-slot.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:03 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/class-variance-authority.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:03 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:03 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/lucide-react.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:03 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/lucide-react.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:03 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/lucide-react.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:04 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/lucide-react.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:04 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/lucide-react.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:04 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@tanstack_react-query.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:04 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/lucide-react.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:05 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@tanstack_react-query.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:05 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/lucide-react.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:05 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+[2m8:11:05 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m connected.
+[2m8:11:06 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/three.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:06 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@tanstack_react-query.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:06 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@tanstack_react-query.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:06 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/class-variance-authority.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:06 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/lucide-react.js?v=6bc88cda" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:08 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mdependencies optimized: [33m@mdx-js/react, @radix-ui/react-label, @radix-ui/react-select, @radix-ui/react-tooltip, recharts[32m[39m
+[2m8:11:08 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32moptimized dependencies changed. reloading[39m
+Error in renderToReadableStream: Error: Cannot find module 'framer-motion' imported from 'D:/Projects/sticktime-fpv/src/pages/landing/-hero.tsx'
+    at fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33571:32)
+    at RunnableDevEnvironment.fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:34765:10)
+    at fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:34715:17)
+    at handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:27)
+    at EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:19)
+    at EventEmitter.emit (node:events:514:28)
+    at Object.send (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:11562:37)
+    at Object.invoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/module-runner.js:609:31)
+    at Object.invoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/module-runner.js:658:31)
+    at ModuleRunner.getModuleInformation (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/module-runner.js:1198:28) { componentStack: [Getter] }
+Error in renderToReadableStream: Error: Cannot find module 'framer-motion' imported from 'D:/Projects/sticktime-fpv/src/pages/landing/-hero.tsx'
+    at fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33571:32)
+    at RunnableDevEnvironment.fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:34765:10)
+    at fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:34715:17)
+    at handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:27)
+    at EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:19)
+    at EventEmitter.emit (node:events:514:28)
+    at Object.send (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:11562:37)
+    at Object.invoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/module-runner.js:609:31)
+    at Object.invoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/module-runner.js:658:31)
+    at ModuleRunner.getModuleInformation (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/module-runner.js:1198:28) { componentStack: [Getter] }
+Error in renderToReadableStream: Error: Cannot find module 'framer-motion' imported from 'D:/Projects/sticktime-fpv/src/pages/landing/-hero.tsx'
+    at fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33571:32)
+    at RunnableDevEnvironment.fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:34765:10)
+    at fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:34715:17)
+    at handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:27)
+    at EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:19)
+    at EventEmitter.emit (node:events:514:28)
+    at Object.send (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:11562:37)
+    at Object.invoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/module-runner.js:609:31)
+    at Object.invoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/module-runner.js:658:31)
+    at ModuleRunner.getModuleInformation (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/module-runner.js:1198:28) { componentStack: [Getter] }
+[2m8:11:10 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@tanstack_query-persist-client-core.js?v=3a6f2300" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:10 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@tanstack_react-query.js?v=3a6f2300" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[33mThe file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@tanstack_react-query.js?v=3a6f2300" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.[39m
+[33mThe file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@tanstack_query-persist-client-core.js?v=3a6f2300" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.[39m
+[2m8:11:10 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@supabase_supabase-js.js?v=3a6f2300" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:14 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/zod.js?v=3a6f2300" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:15 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@tanstack_react-query.js?v=3a6f2300" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:15 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/sonner.js?v=3a6f2300" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:15 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@mdx-js_react.js?v=3a6f2300" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:15 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@tanstack_react-query.js?v=3a6f2300" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:15 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/lucide-react.js?v=3a6f2300" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:15 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/lucide-react.js?v=3a6f2300" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:15 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/class-variance-authority.js?v=3a6f2300" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:15 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/class-variance-authority.js?v=3a6f2300" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:15 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@radix-ui_react-slot.js?v=3a6f2300" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:15 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=3a6f2300" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:15 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/lucide-react.js?v=3a6f2300" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+[2m8:11:15 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: The file does not exist at "D:/Projects/sticktime-fpv/node_modules/.vite/deps/@tanstack_react-query.js?v=3a6f2300" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.

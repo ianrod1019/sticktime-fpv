@@ -150,7 +150,7 @@ function DocsPage() {
                   fleet controls, and account guidance.
                 </p>
                 <Link
-                  to="/docs/"
+                  to="/docs"
                   className="mt-5 inline-flex font-mono text-[9px] tracking-[0.14em] text-primary"
                 >
                   BACK TO INDEX <ArrowRight className="ml-1 h-3 w-3" />

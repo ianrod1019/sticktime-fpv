@@ -173,6 +173,10 @@ BEGIN
   IF v_def IS NULL THEN
     RAISE EXCEPTION 'get_org_failure_analytics(uuid) not found';
   END IF;
+  IF position('COALESCE(tm.can_view_analytics, true)' in v_def) > 0 THEN
+    -- Already patched (out-of-band application) — nothing to do.
+    RETURN;
+  END IF;
   IF position('COALESCE(tm.can_view_analytics, false)' in v_def) = 0 THEN
     RAISE EXCEPTION 'analytics gate: expected COALESCE guard not found';
   END IF;

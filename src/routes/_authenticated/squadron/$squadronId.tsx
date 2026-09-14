@@ -8,5 +8,9 @@ import { Outlet, createFileRoute } from "@tanstack/react-router";
  * the hanger subtree pattern (/hanger/*).
  */
 export const Route = createFileRoute("/_authenticated/squadron/$squadronId")({
+  // App-wide convention for authenticated routes: without this, full page
+  // loads of non-index leaves under this layout crash hydrating an empty
+  // SSR shell (reproduced on /squadron/$id/analytics and /scheduler).
+  ssr: false,
   component: Outlet,
 });

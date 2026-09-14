@@ -83,12 +83,21 @@
           "roles-permissions",
           "shared-gear",
           "failure-analytics",
-          "managing-a-squadron"
+          "managing-a-squadron",
+          "enterprise"
         ]
+      },
+      {
+        "group": "Client jobs",
+        "pages": ["client-jobs"]
       },
       {
         "group": "Account & billing",
         "pages": ["settings", "exports", "billing-tiers", "account-deletion"]
+      },
+      {
+        "group": "Classroom (schools & districts)",
+        "pages": ["ferpa"]
       },
       {
         "group": "Help",

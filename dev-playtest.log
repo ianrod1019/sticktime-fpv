@@ -1,0 +1,348 @@
+
+> dev
+> vite dev --port 8091 --strictPort
+
+[33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
+
+  [32m[1mVITE[22m v8.1.5[39m  [2mready in [0m[1m1728[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m8091[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.0.167:[1m8091[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://172.22.160.1:[1m8091[22m/[39m
+[2m11:29:43 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m connected.
+[2m11:29:45 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+(node:45120) [THREE_CJS_DEPRECATED] DeprecationWarning: `require("three")` is deprecated and will be removed.
+Replace `const THREE = require("three")` with `import * as THREE from "three"`.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2m11:33:42 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/sidebar.tsx[22m
+File D:\Projects\sticktime-fpv\src\routeTree.gen.ts was modified by another process during processing.
+[2m11:36:14 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/district.tsx[22m
+[2m11:36:14 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/district.tsx[22m
+[2m11:36:14 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m11:36:14 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/squadron/$squadronId.scheduler.tsx[22m
+[2m11:36:14 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/squadron/$squadronId.scheduler.tsx[22m
+Error: Failed to load url /src/routes/_authenticated/district.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/district.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13) (status 500)
+caused by: Error: Failed to load url /src/routes/_authenticated/district.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/district.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13)
+Error: Failed to load url /src/routes/_authenticated/district.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/district.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13) (status 500)
+caused by: Error: Failed to load url /src/routes/_authenticated/district.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/district.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13)
+Error: Failed to load url /src/routes/_authenticated/district.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/district.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13) (status 500)
+caused by: Error: Failed to load url /src/routes/_authenticated/district.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/district.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13)
+Error: Failed to load url /src/routes/_authenticated/district.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/district.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13) (status 500)
+caused by: Error: Failed to load url /src/routes/_authenticated/district.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/district.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13)
+[2m11:36:15 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/routeTree.gen.ts[22m
+[2m11:36:15 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routeTree.gen.ts[22m
+[2m11:36:15 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m11:39:27 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/scheduling.tsx[22m
+[2m11:39:27 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/scheduling.tsx[22m
+[2m11:39:27 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m11:39:27 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/edu/district.$districtId.tsx[22m
+[2m11:39:27 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/edu/district.$districtId.tsx[22m
+[2m11:39:27 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/edu/index.tsx[22m
+[2m11:39:27 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/edu/index.tsx[22m
+[2m11:39:27 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/edu/route.tsx[22m
+[2m11:39:27 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/edu/route.tsx[22m
+[2m11:39:27 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/edu/school.$schoolId.tsx[22m
+[2m11:39:27 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/edu/school.$schoolId.tsx[22m
+[2m11:39:27 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/edu/student.$userId.tsx[22m
+[2m11:39:27 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/edu/student.$userId.tsx[22m
+Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13) (status 500)
+caused by: Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13)
+Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13) (status 500)
+caused by: Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13)
+Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13) (status 500)
+caused by: Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13)
+Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13) (status 500)
+caused by: Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13)
+Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13) (status 500)
+caused by: Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13)
+Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13) (status 500)
+caused by: Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13)
+Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13) (status 500)
+caused by: Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13)
+Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13) (status 500)
+caused by: Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13)
+Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13) (status 500)
+caused by: Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13)
+Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13) (status 500)
+caused by: Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13)
+Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13) (status 500)
+caused by: Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13)
+Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13) (status 500)
+caused by: Error: Failed to load url /src/routes/_authenticated/edu/route.tsx (resolved id: D:/Projects/sticktime-fpv/src/routes/_authenticated/edu/route.tsx) in D:/Projects/sticktime-fpv/src/routeTree.gen.ts. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:20113:31)
+    at async fetchModule (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:33584:15)
+    at async handleInvoke (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26274:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/sticktime-fpv/node_modules/vite/dist/node/chunks/node.js:26329:13)
+[2m11:39:28 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/routeTree.gen.ts[22m
+[2m11:39:28 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routeTree.gen.ts[22m
+[2m11:39:28 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m11:44:25 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/sidebar.tsx[22m
+[2m11:44:26 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/scheduling.tsx[22m
+[2m11:44:26 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/scheduling.tsx[22m
+[2m11:44:26 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/edu/index.tsx[22m
+[2m11:44:26 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/edu/index.tsx[22m
+[2m11:44:26 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/edu/district.$districtId.tsx[22m
+[2m11:44:26 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/edu/district.$districtId.tsx[22m
+[2m11:44:26 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/edu/route.tsx[22m
+[2m11:44:26 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/edu/route.tsx[22m
+[2m11:44:26 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/edu/school.$schoolId.tsx[22m
+[2m11:44:26 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/edu/school.$schoolId.tsx[22m
+[2m11:44:26 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/edu/student.$userId.tsx[22m
+[2m11:44:26 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/edu/student.$userId.tsx[22m
+[2m11:44:26 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/district.tsx[22m
+[2m11:44:26 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/district.tsx[22m
+[2m11:44:26 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/squadron/$squadronId.scheduler.tsx[22m
+[2m11:44:26 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/squadron/$squadronId.scheduler.tsx[22m
+[2m11:44:26 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/routeTree.gen.ts[22m
+[2m11:44:26 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routeTree.gen.ts[22m
+[2m11:44:26 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m11:56:23 AM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/route.tsx, /src/routes/_authenticated/route.tsx?tsr-split=component[22m
+[2m11:56:23 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/route.tsx[22m
+[2m11:56:23 AM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m12:01:01 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/edu/student.$userId.tsx[22m
+[2m12:01:01 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/edu/student.$userId.tsx[22m
+[2m12:01:01 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m12:01:01 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/edu/route.tsx[22m
+[2m12:01:01 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/edu.ts[22m
+[2m12:01:01 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/district.tsx, /src/routes/_authenticated/district.tsx?tsr-split=component[22m
+[2m12:01:01 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/district.tsx[22m
+[2m12:01:01 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/edu/school.$schoolId.tsx[22m
+[2m12:01:01 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/edu/school.$schoolId.tsx[22m
+[2m12:01:01 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/edu/index.tsx[22m
+[2m12:01:01 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/edu/index.tsx[22m
+[2m12:01:01 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/edu/district.$districtId.tsx[22m
+[2m12:01:01 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/edu/district.$districtId.tsx[22m
+[2m12:01:01 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/routes/_authenticated/edu/route.tsx[22m Could not Fast Refresh ("useEduMemberships" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m12:01:01 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/edu/route.tsx[22m
+[2m12:12:29 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/squadron/$squadronId.tsx[22m
+[2m12:12:29 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/squadron/$squadronId.tsx[22m
+[2m12:12:29 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m12:20:42 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/enterprise/DistrictOverview.tsx[22m
+[2m12:25:17 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/sidebar.tsx[22m
+[2m12:25:17 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/squadron/$squadronId.scheduler.tsx, /src/routes/_authenticated/squadron/$squadronId.scheduler.tsx?tsr-split=component[22m
+[2m12:25:17 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/squadron/$squadronId.scheduler.tsx[22m
+[2m12:25:17 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m1:19:09 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/scheduling.tsx?tsr-split=component, /src/components/scheduling/booking-dialog.tsx[22m
+File D:\Projects\sticktime-fpv\src\routeTree.gen.ts was modified by another process during processing.
+[2m1:25:13 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/routeTree.gen.ts[22m
+[2m1:25:13 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routeTree.gen.ts[22m
+[2m1:25:13 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m1:25:19 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/clients.tsx[22m
+[2m1:25:19 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/clients.tsx[22m
+[2m1:25:19 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+File D:\Projects\sticktime-fpv\src\routeTree.gen.ts was modified by another process during processing.
+[2m1:25:29 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/routeTree.gen.ts[22m
+[2m1:25:29 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routeTree.gen.ts[22m
+[2m1:25:41 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/sidebar.tsx[22m
+[2m1:26:18 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/docs/$slug.tsx[22m
+[2m1:26:18 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mdocs/client-jobs.mdx[22m
+[2m1:26:36 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/docs/$slug.tsx[22m
+[2m1:26:36 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mdocs/docs.json[22m
+[2m1:26:36 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m1:28:10 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m1:28:58 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m1:29:18 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m1:29:18 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m1:29:18 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m1:29:18 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m1:29:18 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m1:29:18 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m1:46:52 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m1:46:52 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m1:50:05 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m1:51:46 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m1:51:46 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m1:54:11 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m1:54:11 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct[22m
+[2m1:57:38 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/terms.tsx[22m
+[2m1:57:38 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/terms.tsx[22m
+[2m1:57:38 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m1:58:45 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/state-panels.tsx[22m
+[2m1:59:06 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/state-panels.tsx[22m
+[2m1:59:06 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/entsched/schedule-board.tsx[22m
+[2m1:59:14 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/auth-modal.tsx[22m
+[2m1:59:14 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/auth-modal.tsx[22m
+[2m1:59:23 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/auth-modal.tsx[22m
+[2m1:59:23 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/auth-modal.tsx[22m
+[2m1:59:37 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/entsched/schedule-board.tsx[22m
+[2m1:59:37 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/entsched/ClientJobsPage.tsx[22m
+[2m1:59:38 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/entsched/schedule-board.tsx[22m Could not Fast Refresh (new export)
+[2m1:59:38 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/entsched/ClientJobsPage.tsx[22m
+[2m2:00:17 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/entsched/schedule-board.tsx[22m
+[2m2:02:54 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/auth-modal.tsx[22m
+[2m2:02:54 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/auth-modal.tsx[22m
+[2m2:02:54 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/terms.tsx[22m
+[2m2:02:54 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/terms.tsx[22m
+[2m2:02:54 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m2:03:10 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/docs/$slug.tsx[22m
+[2m2:03:10 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mdocs/docs.json[22m
+[2m2:03:10 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/sidebar.tsx[22m
+[2m2:03:10 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/state-panels.tsx[22m
+[2m2:03:10 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/auth-modal.tsx[22m
+[2m2:03:10 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/auth-modal.tsx[22m
+[2m2:03:10 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/routeTree.gen.ts[22m
+[2m2:03:10 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routeTree.gen.ts[22m
+[2m2:03:10 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/route.tsx, /src/routes/_authenticated/route.tsx?tsr-split=component[22m
+[2m2:03:10 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/route.tsx[22m
+[2m2:03:10 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/squadron/$squadronId.tsx[22m
+[2m2:03:10 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/squadron/$squadronId.tsx[22m
+[2m2:03:10 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/docs/$slug.tsx[22m
+[2m2:03:10 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/docs/$slug.tsx[22m
+[2m2:03:10 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/terms.tsx[22m
+[2m2:03:10 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/terms.tsx[22m
+[2m2:03:11 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/routeTree.gen.ts[22m
+[2m2:03:11 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routeTree.gen.ts[22m
+[2m2:03:40 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/docs/$slug.tsx[22m
+[2m2:03:40 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mdocs/docs.json[22m
+[2m2:03:40 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m program reload
+[2m2:03:40 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/auth-modal.tsx[22m
+[2m2:03:40 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/components/auth-modal.tsx[22m
+[2m2:03:40 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/sidebar.tsx[22m
+[2m2:03:40 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/state-panels.tsx[22m
+[2m2:03:40 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/routeTree.gen.ts[22m
+[2m2:03:40 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routeTree.gen.ts[22m
+[2m2:03:40 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/docs/$slug.tsx[22m
+[2m2:03:40 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/docs/$slug.tsx[22m
+[2m2:03:40 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/terms.tsx[22m
+[2m2:03:40 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/terms.tsx[22m
+[2m2:03:40 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/route.tsx, /src/routes/_authenticated/route.tsx?tsr-split=component[22m
+[2m2:03:40 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/route.tsx[22m
+[2m2:03:40 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/squadron/$squadronId.tsx[22m
+[2m2:03:40 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/_authenticated/squadron/$squadronId.tsx[22m
+[2m2:03:41 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/routeTree.gen.ts[22m
+[2m2:03:41 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routeTree.gen.ts[22m
+[2m2:06:07 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/entsched/schedule-board.tsx[22m
+[2m2:06:07 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/entsched/schedule-board.tsx[22m Could not Fast Refresh (export removed)
+[2m2:06:07 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/entsched/ClientJobsPage.tsx[22m
+[2m2:06:26 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/state-panels.tsx[22m
+[2m2:06:26 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/entsched/ClientJobsPage.tsx[22m
+[2m2:06:26 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/entsched/schedule-board.tsx[22m
+[2m2:06:26 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/entsched/schedule-board.tsx, /src/components/entsched/board-pieces.tsx[22m
+[2m2:07:33 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/entsched/ClientJobsPage.tsx[22m
+[2m2:14:54 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/components/sidebar.tsx[22m
+[2m2:28:27 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/scheduling.tsx?tsr-split=component[22m
+[2m4:34:57 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/scheduling.tsx?tsr-split=component, /src/components/scheduling/booking-dialog.tsx[22m

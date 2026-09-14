@@ -1,9 +1,11 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { PilotProfile } from "@/hooks/use-pilot";
 import {
   LayoutDashboard,
   Timer,
   Wrench,
+  CalendarClock,
   Boxes,
   CircleDollarSign,
   Users,
@@ -16,8 +18,11 @@ import {
   ChevronRight,
   ChevronsUpDown,
   Search,
+  Building2,
+  Briefcase,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { db_request } from "@/lib/db_request";
 import { useAuth } from "@/context/auth-context";
 import { DroneIcon } from "@/components/icons";
 
@@ -28,7 +33,18 @@ const PRIMARY_NAV = [
     label: "Overview",
     detail: "Fleet command",
   },
-  { to: "/log", icon: Timer, label: "Flight logs", detail: "Sessions & hours" },
+  {
+    to: "/log",
+    icon: Timer,
+    label: "Flight logs",
+    detail: "Sessions & hours",
+  },
+  {
+    to: "/scheduling",
+    icon: CalendarClock,
+    label: "Scheduling",
+    detail: "Dispatch board",
+  },
   {
     to: "/hanger",
     icon: Wrench,
@@ -91,6 +107,24 @@ export function SidebarNavigation({
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { signOut } = useAuth();
   const callsign = profile?.callsign || "Pilot";
+
+  // Enterprise members get the District HQ entry. Server-resolved: the
+  // discovery RPC returns rows only for enterprise org memberships, so
+  // non-enterprise users never see the item (and the route re-checks).
+  const { data: enterpriseMemberships } = useQuery({
+    queryKey: ["enterprises", "my-enterprises"],
+    staleTime: 60_000,
+    enabled: isClientReady,
+    queryFn: async (): Promise<unknown[]> => {
+      const res = await db_request({
+        mode: "rpc",
+        rpcFunction: "get_my_enterprises",
+      });
+      if (res.error) throw res.error;
+      return (res.data ?? []) as unknown[];
+    },
+  });
+  const showDistrictNav = (enterpriseMemberships?.length ?? 0) > 0;
   const navItem = (item: (typeof PRIMARY_NAV)[number]) => {
     const active = navMatch(item.to, pathname);
     const Icon = item.icon;
@@ -173,11 +207,50 @@ export function SidebarNavigation({
           ⌘K
         </kbd>
       </div>
-      <nav className="flex-1 space-y-1" aria-label="Main navigation">
+      <nav
+        className="min-h-0 flex-1 space-y-1 overflow-y-auto"
+        aria-label="Main navigation"
+      >
         <p className="mb-2 px-3 font-mono text-[9px] tracking-[0.18em] text-zinc-700">
           OPERATIONS
         </p>
         {PRIMARY_NAV.map(navItem)}
+        {isClientReady && showDistrictNav && (
+          <>
+            <Link
+              to="/district"
+              className={cn(
+                "group mt-4 flex items-center gap-3 rounded-lg border px-3 py-2.5",
+                pathname.startsWith("/district")
+                  ? "border-primary/20 bg-primary/[0.1] text-zinc-100"
+                  : "border-transparent text-zinc-500 hover:bg-white/[0.045] hover:text-zinc-200",
+              )}
+            >
+              <span className="grid h-8 w-8 place-items-center rounded-md border border-white/[0.08] bg-white/[0.025]">
+                <Building2 className="h-4 w-4" />
+              </span>
+              <span className="font-mono text-[10px] uppercase tracking-[0.12em]">
+                District HQ
+              </span>
+            </Link>
+            <Link
+              to="/clients"
+              className={cn(
+                "group flex items-center gap-3 rounded-lg border px-3 py-2.5",
+                pathname.startsWith("/clients")
+                  ? "border-primary/20 bg-primary/[0.1] text-zinc-100"
+                  : "border-transparent text-zinc-500 hover:bg-white/[0.045] hover:text-zinc-200",
+              )}
+            >
+              <span className="grid h-8 w-8 place-items-center rounded-md border border-white/[0.08] bg-white/[0.025]">
+                <Briefcase className="h-4 w-4" />
+              </span>
+              <span className="font-mono text-[10px] uppercase tracking-[0.12em]">
+                Client jobs
+              </span>
+            </Link>
+          </>
+        )}
         {isClientReady && effectiveAdmin && (
           <Link
             to="/admin"
@@ -197,7 +270,7 @@ export function SidebarNavigation({
           </Link>
         )}
       </nav>
-      <div className="space-y-1 border-t border-white/[0.08] pt-4">
+      <div className="shrink-0 space-y-1 border-t border-white/[0.08] pt-4">
         <Link
           to="/docs/$slug"
           params={{ slug: "introduction" }}

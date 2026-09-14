@@ -10,7 +10,7 @@ enabled = true
 port = 54321
 # Schemas to expose in your API. Tables, views and stored procedures in this schema will get API
 # endpoints. `public` and `graphql_public` schemas are included by default.
-schemas = ["public", "graphql_public", "personal_gear", "org_gear"]
+schemas = ["public", "graphql_public", "personal_gear", "org_gear", "edu", "ent_scheduling"]
 # Extra schemas to add to the search_path of every request.
 extra_search_path = ["public", "extensions"]
 # The maximum number of rows returns from a view, table, or stored procedure. Limits payload size
@@ -372,6 +372,12 @@ policy = "per_worker"
 inspector_port = 8083
 # The Deno major version to use.
 deno_version = 2
+
+# Client deliverables download — the link token IS the credential
+# (validated server-side against ent_scheduling.client_jobs); there is
+# no Supabase session on the public client page.
+[functions.client-job-download]
+verify_jwt = false
 
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"

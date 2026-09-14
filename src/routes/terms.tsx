@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { TopNav } from "@/components/top-nav";
+import { TOS_NONCOMMERCIAL_COPY, TOS_ANTI_SHARING_COPY } from "@/lib/tos";
 
 export const Route = createFileRoute("/terms")({
   head: () => ({
@@ -40,7 +41,9 @@ function Terms() {
               entirely responsible for maintaining the confidentiality of your
               account credentials and for all activities that occur under your
               account. You agree to notify us immediately of any unauthorized
-              use.
+              use. The non-commercial use and single-user access certifications
+              you affirm at signup are binding acknowledgments under Sections 6
+              and 7 and are recorded with your account.
             </p>
           </section>
 
@@ -125,7 +128,96 @@ function Terms() {
 
           <section className="mb-12">
             <h2 className="text-2xl font-semibold mb-4">
-              6. Disclaimers ("AS IS" and "AS AVAILABLE")
+              6. License Tier Restrictions; Non-Commercial Use (Pro/Hobbyist
+              Tier)
+            </h2>
+            <p className="text-zinc-300 leading-relaxed">
+              {TOS_NONCOMMERCIAL_COPY}
+            </p>
+            <ul className="list-disc list-inside text-zinc-300 leading-relaxed mt-4 space-y-2">
+              <li>
+                <strong>Scope of license:</strong> Your Pro (Hobbyist)
+                subscription is a personal, revocable license to use the
+                Platform for your own individual hobby, recreation, and skill
+                development. It does not grant any right to use the Platform on
+                behalf of, for the benefit of, or at the direction of any
+                business, employer, client, or paying third party.
+              </li>
+              <li>
+                <strong>Prohibited commercial use:</strong> Without limitation,
+                the following constitute commercial use and are strictly
+                forbidden on this tier: paid client work or services; footage,
+                data, or analytics produced for sale or license; promotional,
+                marketing, advertising, or monetized content production;
+                operations for any employer or business entity; and any use for
+                which you or a third party receive compensation, directly or
+                indirectly.
+              </li>
+              <li>
+                <strong>Material breach; termination:</strong> Any commercial
+                operation, client work, or business use of the Pro (Hobbyist)
+                tier constitutes a material breach of these Terms. Upon
+                detection, your account is subject to immediate termination
+                without refund of the then-current billing period, and you
+                remain liable for fees equal to the difference between what you
+                paid and the commercial tier you should have held for the period
+                of misuse.
+              </li>
+              <li>
+                <strong>Commercial tiers:</strong> Commercial use requires a
+                Solo Commercial, School, or Enterprise tier, each of which is
+                verified and provisioned server-side. Self-reporting a
+                non-commercial status you do not hold is itself a material
+                breach.
+              </li>
+            </ul>
+          </section>
+
+          <section className="mb-12">
+            <h2 className="text-2xl font-semibold mb-4">
+              7. Single-User Accounts; No Credential Sharing or Seat Pooling
+            </h2>
+            <p className="text-zinc-300 leading-relaxed">
+              {TOS_ANTI_SHARING_COPY}
+            </p>
+            <ul className="list-disc list-inside text-zinc-300 leading-relaxed mt-4 space-y-2">
+              <li>
+                <strong>One human, one account:</strong> Each account may be
+                used only by the individual who registered it. You may not share
+                your login credentials with any other person, allow any other
+                person to operate under your account (concurrently or
+                otherwise), or pool multiple individual accounts for use by a
+                group, household, classroom, team, or organization.
+              </li>
+              <li>
+                <strong>Per-seat licensing:</strong> Every individual pilot,
+                student, or operator who accesses the Platform must maintain
+                their own authorized, paid seat, or be provisioned with their
+                own school-managed profile by an authorized administrator.
+                Circumventing per-seat licensing through credential sharing,
+                simulated or parallel sessions, or account pooling is strictly
+                prohibited.
+              </li>
+              <li>
+                <strong>Enforcement:</strong> We monitor for concurrent and
+                anomalous session activity consistent with single-user
+                licensing. Violations may result in immediate suspension or
+                termination of the shared account, termination of all accounts
+                participating in the pool, and a per-seat true-up charge for the
+                full period of misuse.
+              </li>
+              <li>
+                <strong>Organizations:</strong> Schools and enterprises must
+                provision each member individually through their administration
+                tooling and remain responsible for seat-count accuracy under
+                their agreement.
+              </li>
+            </ul>
+          </section>
+
+          <section className="mb-12">
+            <h2 className="text-2xl font-semibold mb-4">
+              8. Disclaimers ("AS IS" and "AS AVAILABLE")
             </h2>
             <p className="text-zinc-300 leading-relaxed">
               YOUR USE OF THE PLATFORM IS AT YOUR SOLE RISK. THE PLATFORM AND
@@ -143,7 +235,7 @@ function Terms() {
 
           <section className="mb-12">
             <h2 className="text-2xl font-semibold mb-4">
-              7. Limitation of Liability
+              9. Limitation of Liability
             </h2>
             <p className="text-zinc-300 leading-relaxed">
               TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT
@@ -167,7 +259,7 @@ function Terms() {
           </section>
 
           <section className="mb-12">
-            <h2 className="text-2xl font-semibold mb-4">8. Indemnification</h2>
+            <h2 className="text-2xl font-semibold mb-4">10. Indemnification</h2>
             <p className="text-zinc-300 leading-relaxed">
               You agree to defend, indemnify, and hold harmless StickTime FPV,
               its affiliates, licensors, and service providers, and its and
@@ -186,7 +278,7 @@ function Terms() {
 
           <section className="mb-12">
             <h2 className="text-2xl font-semibold mb-4">
-              9. Class Action and Jury Trial Waiver
+              11. Class Action and Jury Trial Waiver
             </h2>
             <p className="text-zinc-300 leading-relaxed">
               You agree that any dispute resolution proceedings will be
@@ -199,7 +291,7 @@ function Terms() {
 
           <section className="mb-12">
             <h2 className="text-2xl font-semibold mb-4">
-              10. Governing Law and Jurisdiction
+              12. Governing Law and Jurisdiction
             </h2>
             <p className="text-zinc-300 leading-relaxed">
               These Terms shall be governed by and construed in accordance with
@@ -214,7 +306,7 @@ function Terms() {
 
           <section className="mb-12">
             <h2 className="text-2xl font-semibold mb-4">
-              11. Changes to Terms
+              13. Changes to Terms
             </h2>
             <p className="text-zinc-300 leading-relaxed">
               We reserve the right to modify these Terms at any time. We will

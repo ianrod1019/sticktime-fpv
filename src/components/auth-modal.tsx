@@ -1,15 +1,75 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Plane, X, AlertCircle, Wrench, CheckCircle2 } from "lucide-react";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import {
+  AFFIRMATION_NONCOMMERCIAL,
+  AFFIRMATION_SINGLE_SEAT,
+  TOS_CURRENT_VERSION,
+  signupAffirmationSchema,
+} from "@/lib/tos";
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialMode: "login" | "signup";
+}
+
+/**
+ * Records the signup TOS affirmations server-side via the
+ * record_signup_affirmations RPC (see supabase/migrations/
+ * 20260914010000_tos_affirmations_and_seat_rules.sql). The RPC rejects
+ * any call where either affirmation is not literally true, so a tampered
+ * client cannot skip the certifications. Best-effort at signup time: a
+ * missed call leaves the account marked unaffirmed in profiles for the
+ * compliance sweep, and no tier privileges are granted from it.
+ */
+async function recordTosAcceptance(): Promise<void> {
+  const { error } = await supabase.rpc("record_signup_affirmations", {
+    p_non_commercial: true,
+    p_single_seat: true,
+    p_tos_version: TOS_CURRENT_VERSION,
+  });
+  if (error) {
+    // Never block account creation on the audit write — but leave a trace.
+    console.warn("TOS acceptance not recorded:", error.message);
+  }
+}
+
+/** One mandatory, unchecked-by-default TOS affirmation row. */
+function AffirmationRow({
+  checked,
+  onCheckedChange,
+  label,
+}: {
+  checked: boolean | "indeterminate";
+  onCheckedChange: (checked: boolean | "indeterminate") => void;
+  label: string;
+}) {
+  return (
+    <label className="flex cursor-pointer items-start gap-2.5 text-xs leading-relaxed text-zinc-300">
+      <Checkbox
+        checked={checked}
+        onCheckedChange={onCheckedChange}
+        className="mt-0.5"
+        aria-required="true"
+      />
+      <span>
+        {label}{" "}
+        <Link
+          to="/terms"
+          target="_blank"
+          className="font-medium text-primary underline-offset-2 hover:underline"
+        >
+          Terms of Service
+        </Link>
+      </span>
+    </label>
+  );
 }
 
 export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
@@ -19,7 +79,15 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
   const [loading, setLoading] = useState(false);
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
   const [isTriggerError, setIsTriggerError] = useState(false);
+  const [nonCommercialAffirmed, setNonCommercialAffirmed] = useState(false);
+  const [singleSeatAffirmed, setSingleSeatAffirmed] = useState(false);
+  const [affirmationError, setAffirmationError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  // Affirmations are collected and enforced in signup mode only; the
+  // submit button is also disabled until both are checked.
+  const showAffirmations = mode === "signup";
+  const affirmationsComplete = nonCommercialAffirmed && singleSeatAffirmed;
 
   if (!isOpen) return null;
 
@@ -86,15 +154,46 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
       return;
     }
 
+    // Mandatory TOS affirmations (TOS §6 and §7). The submit button is
+    // already gated on both checkboxes, but never trust the UI path alone:
+    // the zod schema requires both values to be literally true.
+    if (mode === "signup") {
+      const parsed = signupAffirmationSchema.safeParse({
+        nonCommercialAffirmed,
+        singleSeatAffirmed,
+      });
+      if (!parsed.success) {
+        setAffirmationError(
+          "Both certification statements must be checked to create an account.",
+        );
+        toast.error(
+          "Please affirm the non-commercial use and single-user access statements.",
+        );
+        return;
+      }
+      setAffirmationError(null);
+    }
+
     setLoading(true);
     setErrorDetails(null);
     setIsTriggerError(false);
     try {
       if (mode === "signup") {
-        // 1. Attempt standard sign up
+        // 1. Attempt standard sign up. Affirmation state rides along as
+        // user metadata for the audit trail ONLY — the database never
+        // trusts signup metadata for privileges (see 20260917000000
+        // security hardening); the authoritative record is written by the
+        // record_signup_affirmations RPC below.
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            data: {
+              tos_version: TOS_CURRENT_VERSION,
+              non_commercial_affirmed: nonCommercialAffirmed,
+              single_seat_affirmed: singleSeatAffirmed,
+            },
+          },
         });
 
         if (error) {
@@ -105,6 +204,11 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
             setIsTriggerError(true);
           }
           throw error;
+        }
+
+        // 1b. Persist the binding affirmations server-side.
+        if (data.user) {
+          await recordTosAcceptance();
         }
 
         // 2. If Supabase requires email confirmation, data.session will be null.
@@ -317,7 +421,30 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
               />
             </div>
           )}
-          <Button type="submit" className="w-full" disabled={loading}>
+          {showAffirmations && (
+            <div className="space-y-3 rounded-lg border border-white/10 bg-white/[0.025] p-3">
+              <AffirmationRow
+                checked={nonCommercialAffirmed}
+                onCheckedChange={(v) => setNonCommercialAffirmed(v === true)}
+                label={AFFIRMATION_NONCOMMERCIAL}
+              />
+              <AffirmationRow
+                checked={singleSeatAffirmed}
+                onCheckedChange={(v) => setSingleSeatAffirmed(v === true)}
+                label={AFFIRMATION_SINGLE_SEAT}
+              />
+              {affirmationError && (
+                <p className="text-xs font-medium text-destructive">
+                  {affirmationError}
+                </p>
+              )}
+            </div>
+          )}
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={loading || (showAffirmations && !affirmationsComplete)}
+          >
             {loading
               ? "Processing..."
               : mode === "forgot"
@@ -353,6 +480,7 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
                   setMode(mode === "login" ? "signup" : "login");
                   setErrorDetails(null);
                   setIsTriggerError(false);
+                  setAffirmationError(null);
                 }}
               >
                 {mode === "login" ? "Sign up" : "Log in"}

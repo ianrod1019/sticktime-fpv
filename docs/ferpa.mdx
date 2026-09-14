@@ -1,0 +1,74 @@
+---
+title: "FERPA & Student Privacy"
+description: "How the Classroom (institutional) plane protects student educational records."
+icon: "shield"
+---
+
+StickTime's **Classroom** workspace is built for schools and districts. It is
+a separate data plane from your personal logbook, designed around FERPA
+principles: minimum necessary data, strict tenant isolation, and an
+auditable trail for every record access.
+
+## What we collect (and what we don't)
+
+**Collected — the operational minimum:**
+
+| Data | Why |
+| --- | --- |
+| Account username / callsign | To display you in rosters (never derived from your email) |
+| School-issued email | Enrollment matching only; staged temporarily, deleted once linked |
+| Flight sessions | The educational record — sim and real stick time |
+| Equipment check-outs | Squadron gear accountability |
+| Instructor assignments | Who may view a student's record |
+
+**Never collected:** off-duty location data, personal contact details,
+birthdates, discipline records, or any non-educational metadata. Personal
+squadron/gear data lives on a separate plane that institutional roles cannot
+enumerate.
+
+## Tenancy isolation
+
+Districts → schools → memberships. Every institutional row carries its
+district, and PostgreSQL Row-Level Security reduces each access check to a
+single comparison: **same district, or no access**. A District A user —
+student, instructor, or admin — cannot query, view, or touch District B
+records. This is enforced at the database layer, not the app layer, so a
+bug in the UI cannot leak across tenants.
+
+## Role matrix
+
+| Role | Can do |
+| --- | --- |
+| Student | View and log their own flights and gear only |
+| Instructor | View the students assigned to them (view-only) |
+| School Admin | Manage their school's roster, queue enrollments |
+| District Admin | Create schools, assign staff, archive members, aggregate dashboards |
+
+District admin dashboards are **aggregate-only** — counts and totals, never
+per-student rows. Opening an individual student record is a deliberate,
+separately-audited action.
+
+## Every record access is logged
+
+When staff open a student's educational record, the access is written to an
+append-only audit trail: who, which student, the relationship that
+authorized it, and when. The trail cannot be edited or deleted by any
+client-facing role; even identity severing (for erasure requests) is
+restricted to platform staff. Audit access is restricted to security review.
+
+## Records lifecycle
+
+- **Export** — a student's educational record (sessions, stats, checkouts)
+  can be assembled into a structured export on district request.
+- **Archive** — ending a membership preserves the record (FERPA retention)
+  while ending all access.
+- **Contract termination / year rollover** — district data can be purged;
+  identities are pseudonymized before deletion so no backup snapshot ever
+  contains a usable student identity.
+
+## Encryption & residency
+
+Data is encrypted in transit (TLS 1.3) and at rest (AES-256). Databases and
+object storage are hosted in U.S. regions; backups remain within U.S.
+residency boundaries. Region pinning is verified at the infrastructure
+project level.

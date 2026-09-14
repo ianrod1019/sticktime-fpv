@@ -1,0 +1,54 @@
+---
+title: "Enterprise & districts"
+description: "Standard Squadron and Multi-Squadron District plans — multi-squadron management, account lockdowns, and the team meetup scheduler."
+icon: "building-2"
+---
+
+Enterprise unlocks the top of the org chart: a **district** (parent
+organization) that manages several **sub-squadrons**, database-enforced
+account lockdowns, and a team meetup scheduler.
+
+## The tiers
+
+| | Standard Squadron | Multi-Squadron District |
+| --- | --- | --- |
+| Annual floor | $960 | $2,400+ |
+| Organizations | 1 (up to 25 seats) | Unlimited sub-squadrons |
+| Shared team hangar | ✓ | ✓ |
+| Meetup scheduler | ✓ | ✓ |
+| Account lockdowns & policy controls | ✓ | ✓ |
+| Cross-squadron reporting | — | ✓ |
+| Centralized billing | Per org | District-wide |
+
+## District HQ
+
+District admins manage the whole org chart from **District HQ**:
+aggregate metrics across every sub-squadron (active pilots, combined
+fleet, flight hours) and a card grid that drills into each sub-team's
+hangar and roster. Metrics are aggregate-only — a district admin sees
+counts, not other squads' rosters.
+
+## Account lockdowns
+
+Squadron and district admins can enforce compliance rules per squadron:
+
+- **Lock profile settings** — pilots cannot edit their callsign, bio,
+  or weekly goal.
+- **Require pre-flight checklist** — flight logging stays locked until
+  the session's checklist is complete.
+- **Enforce minimum firmware** — sessions require hull firmware at or
+  above the squadron minimum.
+- **Lock team inventory** — pilots cannot modify the shared hangar.
+
+The lock is **database-enforced**, not a UI hint: writes that break an
+active policy are rejected by the server even outside the app. Pilots
+see which enforcements are active on their squadron's **Policy status**
+tab.
+
+## Meetup scheduler
+
+Each squadron gets an agenda of upcoming practice sessions, race days,
+and build workshops. Squadron admins schedule events; members RSVP
+(attending / declined). After the event, logging the flight from the
+meetup card ties the session back to the meetup for streamlined team
+tracking.

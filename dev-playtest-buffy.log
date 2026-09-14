@@ -1,0 +1,20 @@
+
+> dev
+> vite dev -- --port 8123 --strictPort --host 0.0.0.0
+
+[33mThe plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the [1mresolve.tsconfigPaths[22m option. You can remove the plugin and set [1mresolve.tsconfigPaths: true[22m in your Vite config instead.[39m
+Port 8080 is in use, trying another one...
+Port 8081 is in use, trying another one...
+Port 8082 is in use, trying another one...
+
+  [32m[1mVITE[22m v8.1.5[39m  [2mready in [0m[1m32143[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m8083[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.0.167:[1m8083[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://172.22.160.1:[1m8083[22m/[39m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m
+[2m4:06:16 PM[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m connected.
+(node:49500) [THREE_CJS_DEPRECATED] DeprecationWarning: `require("three")` is deprecated and will be removed.
+Replace `const THREE = require("three")` with `import * as THREE from "three"`.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2m4:34:57 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/styles.css?direct, /src/routes/_authenticated/scheduling.tsx?tsr-split=component, /src/components/scheduling/booking-dialog.tsx[22m

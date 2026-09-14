@@ -27,6 +27,46 @@
 -- Personal:  dd000000-0000-4000-8000-0000000000xx
 
 -- ---------------------------------------------------------------------------
+-- 0b. Suspend tier/financial guard triggers for the fixture's duration.
+--
+-- enforce_money_locks() and assert_pro_for_part_installs() resolve the
+-- caller through auth.uid(), which is NULL during migration execution
+-- (no JWT) — so this fixture could never pass those gates even though it
+-- only seeds dev data. Disable the triggers while the fixture runs,
+-- re-enable at the end. Migration runs are transactional: a failure
+-- rolls the DISABLEs back with everything else. Runtime enforcement for
+-- real users is unaffected.
+-- ---------------------------------------------------------------------------
+DO $suspend$
+DECLARE r record;
+BEGIN
+  FOR r IN
+    SELECT * FROM (VALUES
+      ('org_gear', 'drones',               'money_lock'),
+      ('org_gear', 'batteries',            'money_lock'),
+      ('org_gear', 'transmitters',         'money_lock'),
+      ('org_gear', 'goggles',              'money_lock'),
+      ('org_gear', 'other_gear',           'money_lock'),
+      ('org_gear', 'drone_parts',          'money_lock'),
+      ('org_gear', 'maintenance_logs',     'money_lock'),
+      ('org_gear', 'squadron_gear',        'money_lock'),
+      ('personal_gear', 'drone_part_installs', 'part_installs_pro_gate_insert'),
+      ('personal_gear', 'drone_part_installs', 'part_installs_pro_gate_update'),
+      ('personal_gear', 'drone_part_installs', 'part_installs_pro_gate_delete')
+    ) AS v(sch, tbl, trg)
+  LOOP
+    IF EXISTS (
+      SELECT 1 FROM pg_trigger
+      WHERE tgrelid = format('%I.%I', r.sch, r.tbl)::regclass
+        AND tgname = r.trg AND NOT tgisinternal
+    ) THEN
+      EXECUTE format('ALTER TABLE %I.%I DISABLE TRIGGER %I', r.sch, r.tbl, r.trg);
+    END IF;
+  END LOOP;
+END
+$suspend$;
+
+-- ---------------------------------------------------------------------------
 -- 1. Squadron (org) fleet gear — the shared hanger
 -- ---------------------------------------------------------------------------
 INSERT INTO org_gear.drones (id, team_id, user_id, name, brand, service_interval_minutes,
@@ -405,3 +445,35 @@ FROM (VALUES
   ('aa000000-0000-4000-8000-000000000006'::uuid, 'admin', 'enterprise')
 ) AS v(id, role, tier)
 WHERE p.id = v.id;
+
+-- ---------------------------------------------------------------------------
+-- 8. Re-arm the guard triggers (see 0b).
+-- ---------------------------------------------------------------------------
+DO $resume$
+DECLARE r record;
+BEGIN
+  FOR r IN
+    SELECT * FROM (VALUES
+      ('org_gear', 'drones',               'money_lock'),
+      ('org_gear', 'batteries',            'money_lock'),
+      ('org_gear', 'transmitters',         'money_lock'),
+      ('org_gear', 'goggles',              'money_lock'),
+      ('org_gear', 'other_gear',           'money_lock'),
+      ('org_gear', 'drone_parts',          'money_lock'),
+      ('org_gear', 'maintenance_logs',     'money_lock'),
+      ('org_gear', 'squadron_gear',        'money_lock'),
+      ('personal_gear', 'drone_part_installs', 'part_installs_pro_gate_insert'),
+      ('personal_gear', 'drone_part_installs', 'part_installs_pro_gate_update'),
+      ('personal_gear', 'drone_part_installs', 'part_installs_pro_gate_delete')
+    ) AS v(sch, tbl, trg)
+  LOOP
+    IF EXISTS (
+      SELECT 1 FROM pg_trigger
+      WHERE tgrelid = format('%I.%I', r.sch, r.tbl)::regclass
+        AND tgname = r.trg AND NOT tgisinternal
+    ) THEN
+      EXECUTE format('ALTER TABLE %I.%I ENABLE TRIGGER %I', r.sch, r.tbl, r.trg);
+    END IF;
+  END LOOP;
+END
+$resume$;

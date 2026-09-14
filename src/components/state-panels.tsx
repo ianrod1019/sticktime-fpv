@@ -13,9 +13,11 @@ export function LoadingPanel({ label = "Loading..." }: { label?: string }) {
 
 export function ErrorPanel({
   message,
+  detail,
   onRetry,
 }: {
   message: string;
+  detail?: string;
   onRetry?: () => void;
 }) {
   return (
@@ -24,6 +26,11 @@ export function ErrorPanel({
         <AlertCircle className="h-6 w-6" aria-hidden />
       </div>
       <p className="text-sm text-muted-foreground">{message}</p>
+      {detail && (
+        <p className="mx-auto max-w-sm font-mono text-[11px] leading-relaxed text-muted-foreground/70">
+          {detail}
+        </p>
+      )}
       {onRetry && (
         <Button variant="outline" size="sm" onClick={onRetry}>
           Try again
