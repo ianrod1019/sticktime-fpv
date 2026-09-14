@@ -9,7 +9,6 @@ const LEVEL_STYLE = [
   "bg-primary/55 border border-primary/60 shadow-[0_0_8px_-2px_var(--color-primary)]",
   "bg-primary border border-primary/80 shadow-[0_0_14px_-3px_var(--color-primary)]",
 ];
-const WEEKDAYS = ["S", "M", "T", "W", "T", "F", "S"];
 
 type Day = { date: string; minutes: number; sessions: SessionRow[] };
 type Month = { key: string; label: string; days: Day[]; total: number };
@@ -70,19 +69,8 @@ export function Heatmap({ sessions }: { sessions: SessionRow[] }) {
   const selected =
     months.find((month) => month.key === activeMonth) ??
     months[months.length - 1];
-  const selectedMax = selected
-    ? Math.max(0, ...selected.days.map((day) => day.minutes))
-    : 0;
-  const selectedStart = selected
-    ? new Date(`${selected.key}-01T00:00:00`).getDay()
-    : 0;
-  const selectedCells = selected
-    ? [...Array.from({ length: selectedStart }, () => null), ...selected.days]
-    : [];
-  while (selectedCells.length % 7 !== 0) selectedCells.push(null);
-
   return (
-    <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
+    <div className="space-y-4">
       <div className="min-w-0 overflow-x-auto pb-1">
         <div className="flex min-w-[700px] items-stretch gap-1.5">
           {months.map((month) => {
@@ -118,8 +106,20 @@ export function Heatmap({ sessions }: { sessions: SessionRow[] }) {
                   {month.days.map((day) => (
                     <span
                       key={day.date}
-                      className={`h-1.5 rounded-[1px] ${LEVEL_STYLE[levelFor(day.minutes, maxMinutes)]}`}
-                    />
+                      onMouseEnter={() => isActive && setHoveredDay(day)}
+                      className={`relative flex rounded-[1px] ${isActive ? "h-7 cursor-help items-center justify-center text-[8px]" : "h-1.5"} ${LEVEL_STYLE[levelFor(day.minutes, maxMinutes)]}`}
+                      title={
+                        isActive
+                          ? `${day.date}: ${formatHours(day.minutes)}`
+                          : undefined
+                      }
+                    >
+                      {isActive && (
+                        <span className="font-mono text-zinc-400">
+                          {Number(day.date.slice(-2))}
+                        </span>
+                      )}
+                    </span>
                   ))}
                 </div>
                 <AnimatePresence initial={false}>
@@ -171,7 +171,7 @@ export function Heatmap({ sessions }: { sessions: SessionRow[] }) {
             <div className="flex items-start justify-between">
               <div>
                 <div className="label-mono text-primary">
-                  {selected.label} // DAILY DETAIL
+                  {selected.label} // HOVERED DAY DETAIL
                 </div>
                 <div className="mt-1 font-display text-xl font-semibold tracking-[-0.03em] text-zinc-100">
                   {formatHours(selected.total)}
@@ -181,32 +181,6 @@ export function Heatmap({ sessions }: { sessions: SessionRow[] }) {
                 {selected.days.filter((day) => day.minutes > 0).length} ACTIVE
                 DAYS
               </div>
-            </div>
-            <div className="mt-5 grid grid-cols-7 gap-1 text-center font-mono text-[8px] text-zinc-600">
-              {WEEKDAYS.map((day, index) => (
-                <span key={`${day}-${index}`}>{day}</span>
-              ))}
-            </div>
-            <div className="mt-2 grid grid-cols-7 gap-1">
-              {selectedCells.map((day, index) =>
-                day ? (
-                  <button
-                    key={day.date}
-                    type="button"
-                    onMouseEnter={() => setHoveredDay(day)}
-                    onFocus={() => setHoveredDay(day)}
-                    onMouseLeave={() => setHoveredDay(null)}
-                    className={`relative aspect-square rounded-[3px] text-[8px] transition-all hover:ring-1 hover:ring-primary ${LEVEL_STYLE[levelFor(day.minutes, selectedMax)]}`}
-                    aria-label={`${day.date}: ${day.minutes} minutes`}
-                  >
-                    <span className="absolute inset-0 grid place-items-center font-mono text-zinc-400">
-                      {Number(day.date.slice(-2))}
-                    </span>
-                  </button>
-                ) : (
-                  <span key={`empty-${index}`} />
-                ),
-              )}
             </div>
             <div className="mt-4 min-h-16 border-t border-white/[0.08] pt-3">
               {hoveredDay ? (
