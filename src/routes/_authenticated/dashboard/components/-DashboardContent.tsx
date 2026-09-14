@@ -17,6 +17,7 @@ import { RatioBar } from "./-RatioBar";
 import { QuickAddSessionLogger } from "./-QuickAddSessionLogger";
 import { MonthlyVolumeChart, ChartTooltip } from "./-MonthlyVolumeChart";
 import { FlightReadiness } from "./-FlightReadiness";
+import { FleetViewport } from "@/components/three/fleet-viewport";
 
 interface DashboardContentProps {
   simMinutes: number;
@@ -106,6 +107,73 @@ export function DashboardContent({
           </button>
         }
       />
+
+      <div className="mb-4 grid gap-4 2xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
+        <FleetViewport />
+        <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-1">
+          <div className="rounded-2xl border border-white/[0.09] bg-[#121215] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.035)]">
+            <div className="flex items-center justify-between">
+              <span className="label-mono">Mission brief</span>
+              <span className="font-mono text-[9px] text-emerald-400">
+                READY
+              </span>
+            </div>
+            <h2 className="mt-5 font-display text-2xl font-semibold tracking-[-0.04em] text-zinc-100">
+              Keep the fleet
+              <br />
+              in the green.
+            </h2>
+            <p className="mt-3 text-sm leading-6 text-zinc-500">
+              The viewport is a live operational model of your airframes. Select
+              a rig to inspect readiness, utilization, and next action.
+            </p>
+            <div className="mt-6 grid grid-cols-2 gap-2">
+              <div className="border border-white/[0.08] bg-white/[0.025] p-3">
+                <div className="font-mono text-[9px] tracking-[0.14em] text-zinc-600">
+                  NEXT SERVICE
+                </div>
+                <div className="mt-2 font-mono text-sm text-primary">
+                  STK-02 / 04h
+                </div>
+              </div>
+              <div className="border border-white/[0.08] bg-white/[0.025] p-3">
+                <div className="font-mono text-[9px] tracking-[0.14em] text-zinc-600">
+                  RISK FLAGS
+                </div>
+                <div className="mt-2 font-mono text-sm text-emerald-400">
+                  00 OPEN
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-white/[0.09] bg-[#101014] p-5">
+            <div className="flex items-center justify-between">
+              <span className="label-mono">Ops pulse</span>
+              <span className="font-mono text-[9px] text-zinc-600">
+                LAST 30 DAYS
+              </span>
+            </div>
+            <div className="mt-5 flex items-end gap-1.5">
+              {[42, 58, 51, 74, 64, 80, 71, 88, 78, 94, 83, 96].map(
+                (height, i) => (
+                  <span
+                    key={i}
+                    className="flex-1 rounded-t-sm bg-gradient-to-t from-primary/25 to-primary"
+                    style={{
+                      height: `${height / 1.5}px`,
+                      opacity: 0.4 + i / 22,
+                    }}
+                  />
+                ),
+              )}
+            </div>
+            <div className="mt-4 flex justify-between font-mono text-[9px] text-zinc-600">
+              <span>12.4H FLIGHT TIME</span>
+              <span className="text-primary">+18.4%</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
         <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-4">

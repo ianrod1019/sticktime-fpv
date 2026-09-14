@@ -77,6 +77,78 @@ function Stack() {
           />
         </mesh>
       </group>
+      <BatteryPack />
+      <GpsMast />
+    </group>
+  );
+}
+
+/** Battery brick and retention straps — the part pilots actually service. */
+function BatteryPack() {
+  return (
+    <group position={[0, -0.13, -0.18]}>
+      <RoundedBox args={[0.72, 0.18, 0.72]} radius={0.04} smoothness={4}>
+        <meshStandardMaterial
+          color="#242428"
+          metalness={0.35}
+          roughness={0.62}
+        />
+      </RoundedBox>
+      {[-0.24, 0.24].map((x) => (
+        <mesh key={x} position={[x, 0.1, 0]}>
+          <boxGeometry args={[0.08, 0.035, 0.78]} />
+          <meshStandardMaterial
+            color={EMBER}
+            emissive={EMBER}
+            emissiveIntensity={0.18}
+          />
+        </mesh>
+      ))}
+      <mesh position={[0.48, 0.02, -0.13]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.025, 0.025, 0.24, 10]} />
+        <meshStandardMaterial
+          color="#d4d4d8"
+          metalness={0.7}
+          roughness={0.25}
+        />
+      </mesh>
+    </group>
+  );
+}
+
+/** Small GPS/telemetry mast gives the craft a fleet-grade sensor silhouette. */
+function GpsMast() {
+  const beaconRef = useRef<Mesh>(null);
+  useFrame(({ clock }) => {
+    if (beaconRef.current) {
+      const material = beaconRef.current.material as {
+        emissiveIntensity?: number;
+      };
+      if (material.emissiveIntensity !== undefined) {
+        material.emissiveIntensity =
+          1.2 + Math.sin(clock.getElapsedTime() * 2.8) * 0.35;
+      }
+    }
+  });
+  return (
+    <group position={[0, 0.22, -0.42]}>
+      <mesh position={[0, 0.11, 0]}>
+        <cylinderGeometry args={[0.014, 0.014, 0.22, 8]} />
+        <meshStandardMaterial
+          color={SCENE_COLORS.steel}
+          metalness={0.65}
+          roughness={0.35}
+        />
+      </mesh>
+      <mesh ref={beaconRef} position={[0, 0.24, 0]}>
+        <sphereGeometry args={[0.045, 12, 12]} />
+        <meshStandardMaterial
+          color={SCENE_COLORS.sim}
+          emissive={SCENE_COLORS.sim}
+          emissiveIntensity={1.2}
+          toneMapped={false}
+        />
+      </mesh>
     </group>
   );
 }

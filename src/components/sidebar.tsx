@@ -11,47 +11,70 @@ import {
   ShieldCheck,
   Settings,
   LogOut,
+  BookOpen,
+  Radio,
+  Command,
+  ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/auth-context";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-  TooltipProvider,
-} from "@/components/ui/tooltip";
 import { DroneIcon } from "@/components/icons";
 
-const BASE_NAV = [
-  { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { to: "/log", icon: Timer, label: "Flight Logs" },
-  { to: "/hanger", icon: Wrench, label: "Gear Hanger" },
-  { to: "/gear/inventory", icon: Boxes, label: "Bench Inventory" },
-  { to: "/ledger", icon: CircleDollarSign, label: "Cost Ledger" },
-  { to: "/analytics", icon: ActivitySquare, label: "Failure Analytics" },
-  { to: "/squadron", icon: Users, label: "Squadrons" },
+const PRIMARY_NAV = [
+  {
+    to: "/dashboard",
+    icon: LayoutDashboard,
+    label: "Overview",
+    detail: "Fleet command",
+  },
+  { to: "/log", icon: Timer, label: "Flight logs", detail: "Sessions & hours" },
+  {
+    to: "/hanger",
+    icon: Wrench,
+    label: "Fleet hanger",
+    detail: "Airframes & service",
+  },
+  {
+    to: "/gear/inventory",
+    icon: Boxes,
+    label: "Bench inventory",
+    detail: "Parts & stock",
+  },
+  {
+    to: "/analytics",
+    icon: ActivitySquare,
+    label: "Analytics",
+    detail: "Failure intelligence",
+  },
+  {
+    to: "/ledger",
+    icon: CircleDollarSign,
+    label: "Cost ledger",
+    detail: "Spend & utilization",
+  },
+  {
+    to: "/squadron",
+    icon: Users,
+    label: "Squadrons",
+    detail: "People & permissions",
+  },
 ] as const;
 
-/**
- * A nav item is active on its own path or any child page — including
- * squadron-scoped children (e.g. /squadron/:id/inventory highlights both
- * Bench Inventory and Squadrons).
- */
 function navMatch(to: string, pathname: string): boolean {
-  if (pathname === to) return true;
-  if (pathname.startsWith(`${to}/`)) return true;
-  if (to === "/squadron") {
-    return (
-      pathname.startsWith("/squadron/") &&
-      (pathname.endsWith("/inventory") || pathname.endsWith("/analytics"))
-    );
-  }
-  if (to === "/gear/inventory" && pathname.endsWith("/inventory")) {
-    return pathname.startsWith("/squadron/");
-  }
-  if (to === "/analytics" && pathname.endsWith("/analytics")) {
-    return pathname.startsWith("/squadron/");
-  }
+  if (pathname === to || pathname.startsWith(`${to}/`)) return true;
+  if (to === "/squadron" && pathname.startsWith("/squadron/")) return true;
+  if (
+    to === "/gear/inventory" &&
+    pathname.startsWith("/squadron/") &&
+    pathname.endsWith("/inventory")
+  )
+    return true;
+  if (
+    to === "/analytics" &&
+    pathname.startsWith("/squadron/") &&
+    pathname.endsWith("/analytics")
+  )
+    return true;
   return false;
 }
 
@@ -66,117 +89,137 @@ export function SidebarNavigation({
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { signOut } = useAuth();
+  const callsign = profile?.callsign || "Pilot";
+  const navItem = (item: (typeof PRIMARY_NAV)[number]) => {
+    const active = navMatch(item.to, pathname);
+    const Icon = item.icon;
+    return (
+      <Link
+        key={item.to}
+        to={item.to}
+        aria-current={active ? "page" : undefined}
+        className={cn(
+          "group relative flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-200",
+          active
+            ? "border border-primary/20 bg-primary/[0.1] text-zinc-100 shadow-[0_0_22px_-14px_var(--primary)]"
+            : "text-zinc-500 hover:bg-white/[0.045] hover:text-zinc-200",
+        )}
+      >
+        <span
+          className={cn(
+            "grid h-8 w-8 shrink-0 place-items-center rounded-md border",
+            active
+              ? "border-primary/25 bg-primary/10 text-primary"
+              : "border-white/[0.08] bg-white/[0.025] text-zinc-500 group-hover:text-zinc-300",
+          )}
+        >
+          <Icon className="h-4 w-4" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-mono text-[10px] font-medium uppercase tracking-[0.12em]">
+            {item.label}
+          </span>
+          <span className="mt-0.5 block truncate text-[10px] text-zinc-600">
+            {item.detail}
+          </span>
+        </span>
+        {active && <ChevronRight className="h-3.5 w-3.5 text-primary" />}
+      </Link>
+    );
+  };
 
   return (
-    <TooltipProvider delayDuration={200}>
-      <div className="flex h-full flex-col overflow-hidden">
-        <Link to="/" className="mb-8 flex items-center justify-center px-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary border border-primary/20">
-            <DroneIcon className="h-5 w-5" aria-hidden />
-          </div>
-        </Link>
-
-        <nav
-          className="flex flex-1 flex-col gap-1"
-          aria-label="Main navigation"
-        >
-          {BASE_NAV.map(({ to, icon: Icon, label }) => (
-            <Tooltip key={to}>
-              <TooltipTrigger asChild>
-                <Link
-                  to={to}
-                  aria-label={label}
-                  aria-current={navMatch(to, pathname) ? "page" : undefined}
-                  className={cn(
-                    "relative flex items-center justify-center rounded-md px-3 py-2 transition-colors duration-200",
-                    navMatch(to, pathname)
-                      ? "bg-sidebar-accent text-primary font-semibold shadow-[inset_0_0_0_1px_oklch(0.72_0.19_35/0.18),0_0_12px_-4px_var(--primary)]"
-                      : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/60",
-                  )}
-                >
-                  <Icon className="h-4 w-4 shrink-0" aria-hidden />
-                  {navMatch(to, pathname) && (
-                    <span
-                      className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-[2px] rounded-full bg-primary"
-                      aria-hidden
-                    />
-                  )}
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">{label}</TooltipContent>
-            </Tooltip>
-          ))}
-
-          {isClientReady && effectiveAdmin && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  to="/admin"
-                  aria-label="Admin"
-                  aria-current={pathname === "/admin" ? "page" : undefined}
-                  className={cn(
-                    "relative flex items-center justify-center rounded-md px-3 py-2 transition-colors duration-200",
-                    pathname === "/admin"
-                      ? "bg-sidebar-accent text-primary font-semibold shadow-[inset_0_0_0_1px_oklch(0.72_0.19_35/0.18),0_0_12px_-4px_var(--primary)]"
-                      : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/60",
-                  )}
-                >
-                  <ShieldCheck className="h-4 w-4 shrink-0" aria-hidden />
-                  {pathname === "/admin" && (
-                    <span
-                      className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-[2px] rounded-full bg-primary"
-                      aria-hidden
-                    />
-                  )}
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">Admin</TooltipContent>
-            </Tooltip>
-          )}
-        </nav>
-
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Link
-              to="/settings"
-              aria-label="Settings"
-              aria-current={pathname === "/settings" ? "page" : undefined}
-              className={cn(
-                "relative flex items-center justify-center rounded-md px-3 py-2 transition-colors duration-200",
-                pathname === "/settings"
-                  ? "bg-sidebar-accent text-primary shadow-[inset_0_0_0_1px_oklch(0.72_0.19_35/0.18),0_0_12px_-4px_var(--primary)]"
-                  : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/60",
-              )}
-            >
-              <Settings className="h-4 w-4 shrink-0" aria-hidden />
-              {pathname === "/settings" && (
-                <span
-                  className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-[2px] rounded-full bg-primary"
-                  aria-hidden
-                />
-              )}
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent side="right">Settings</TooltipContent>
-        </Tooltip>
-
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              type="button"
-              className="mt-2 flex items-center justify-center rounded-md px-3 py-2 text-sm transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              aria-label="Sign out"
-              onClick={() => signOut()}
-            >
-              <LogOut
-                className="h-4 w-4 shrink-0 text-sidebar-foreground/70"
-                aria-hidden
-              />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="right">Sign out</TooltipContent>
-        </Tooltip>
+    <aside className="flex h-full flex-col">
+      <Link to="/" className="mb-7 flex items-center gap-3 px-2">
+        <span className="grid h-9 w-9 place-items-center rounded-lg border border-primary/25 bg-primary/10 text-primary">
+          <DroneIcon className="h-5 w-5" />
+        </span>
+        <span>
+          <span className="block font-display text-base font-semibold tracking-[-0.04em] text-zinc-100">
+            StickTime
+          </span>
+          <span className="mt-0.5 block font-mono text-[8px] tracking-[0.18em] text-primary">
+            FLIGHT OPS
+          </span>
+        </span>
+      </Link>
+      <div className="mb-5 flex items-center gap-2 rounded-lg border border-emerald-400/15 bg-emerald-400/[0.04] px-3 py-2">
+        <Radio className="h-3.5 w-3.5 text-emerald-400" />
+        <span className="font-mono text-[9px] tracking-[0.14em] text-emerald-400">
+          OPS ONLINE
+        </span>
+        <span className="ml-auto h-1.5 w-1.5 rounded-full bg-emerald-400" />
       </div>
-    </TooltipProvider>
+      <nav className="flex-1 space-y-1" aria-label="Main navigation">
+        <p className="mb-2 px-3 font-mono text-[9px] tracking-[0.18em] text-zinc-700">
+          OPERATIONS
+        </p>
+        {PRIMARY_NAV.map(navItem)}
+        {isClientReady && effectiveAdmin && (
+          <Link
+            to="/admin"
+            className={cn(
+              "group mt-4 flex items-center gap-3 rounded-lg border px-3 py-2.5",
+              pathname.startsWith("/admin")
+                ? "border-primary/20 bg-primary/[0.1] text-zinc-100"
+                : "border-transparent text-zinc-500 hover:bg-white/[0.045] hover:text-zinc-200",
+            )}
+          >
+            <span className="grid h-8 w-8 place-items-center rounded-md border border-white/[0.08] bg-white/[0.025]">
+              <ShieldCheck className="h-4 w-4" />
+            </span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.12em]">
+              Admin console
+            </span>
+          </Link>
+        )}
+      </nav>
+      <div className="space-y-1 border-t border-white/[0.08] pt-4">
+        <Link
+          to="/docs/$slug"
+          params={{ slug: "introduction" }}
+          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-zinc-500 transition-colors hover:bg-white/[0.045] hover:text-zinc-200"
+        >
+          <span className="grid h-8 w-8 place-items-center rounded-md border border-white/[0.08] bg-white/[0.025]">
+            <BookOpen className="h-4 w-4" />
+          </span>
+          <span className="font-mono text-[10px] uppercase tracking-[0.12em]">
+            Operations docs
+          </span>
+        </Link>
+        <Link
+          to="/settings"
+          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-zinc-500 transition-colors hover:bg-white/[0.045] hover:text-zinc-200"
+        >
+          <span className="grid h-8 w-8 place-items-center rounded-md border border-white/[0.08] bg-white/[0.025]">
+            <Settings className="h-4 w-4" />
+          </span>
+          <span className="font-mono text-[10px] uppercase tracking-[0.12em]">
+            Settings
+          </span>
+        </Link>
+        <div className="mt-3 flex items-center gap-3 rounded-lg border border-white/[0.08] bg-white/[0.025] px-3 py-3">
+          <span className="grid h-8 w-8 place-items-center rounded-full bg-primary/15 font-mono text-xs text-primary">
+            {callsign.slice(0, 1).toUpperCase()}
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-xs font-medium text-zinc-300">
+              {callsign}
+            </span>
+            <span className="mt-0.5 block font-mono text-[8px] tracking-[0.12em] text-zinc-600">
+              PILOT ACCOUNT
+            </span>
+          </span>
+          <button
+            type="button"
+            onClick={() => signOut()}
+            aria-label="Sign out"
+            className="text-zinc-600 transition-colors hover:text-primary"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+    </aside>
   );
 }

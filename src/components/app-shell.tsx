@@ -1,14 +1,16 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { Menu, Search, X } from "lucide-react";
 import { usePilot } from "@/hooks/use-pilot";
 import { useAuth } from "@/context/auth-context";
-import { cn } from "@/lib/utils";
 import { purgePersistedCache } from "@/lib/query-client";
 import { useRealtimeInvalidation } from "@/lib/realtime-invalidation";
 import { SidebarNavigation } from "@/components/sidebar";
 import { AmbientBackdrop } from "@/components/three/ambient-backdrop";
+import { Button } from "@/components/ui/button";
+import { DroneIcon } from "@/components/icons";
 
 export function PageHeader({
   title,
@@ -20,17 +22,20 @@ export function PageHeader({
   action?: ReactNode;
 }) {
   return (
-    <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div className="mb-7 flex flex-col gap-4 border-b border-white/[0.08] pb-6 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl text-foreground">
+        <div className="mb-2 font-mono text-[9px] tracking-[0.2em] text-primary">
+          FLIGHT OPERATIONS / LIVE WORKSPACE
+        </div>
+        <h1 className="font-display text-2xl font-semibold tracking-[-0.045em] text-zinc-100 sm:text-3xl">
           {title}
         </h1>
         {subtitle && (
-          <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
+          <p className="mt-2 max-w-2xl text-sm text-zinc-500">{subtitle}</p>
         )}
       </div>
       {action && (
-        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+        <div className="flex shrink-0 items-center gap-2 self-start sm:self-auto">
           {action}
         </div>
       )}
@@ -44,62 +49,100 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { user, signOut: authSignOut } = useAuth();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-
-  // Live catch-up: realtime events invalidate affected caches app-wide.
+  const [mobileNav, setMobileNav] = useState(false);
   useRealtimeInvalidation(user?.id ?? profile?.id ?? null);
-
   const isAdminRoute = pathname.startsWith("/admin");
-
-  // Single source of truth for admin status: usePilot (JWT claims, falling
-  // back to the profiles-backed role verification). No separate fetch here.
   const effectiveAdmin = isAdminOrDev;
 
   useEffect(() => {
-    if (isAdminRoute && !!user && !effectiveAdmin) {
+    if (isAdminRoute && !!user && !effectiveAdmin)
       navigate({ to: "/dashboard", replace: true });
-    }
   }, [isAdminRoute, user, effectiveAdmin, navigate]);
 
   async function signOut() {
-    // Purge the local caches (persisted storage + memory) so the next user
-    // on this machine can never see the previous one's data.
     purgePersistedCache();
     queryClient.clear();
     await authSignOut();
     navigate({ to: "/", replace: true });
   }
 
-  if (isAdminRoute && !user) {
+  if (isAdminRoute && !user)
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-          <p className="font-mono text-xs text-muted-foreground tracking-wider uppercase">
-            Verifying Security Clearance...
+        <div className="text-center">
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <p className="mt-3 font-mono text-xs uppercase tracking-wider text-muted-foreground">
+            Verifying security clearance...
           </p>
         </div>
       </div>
     );
-  }
 
   return (
-    <div className="min-h-screen md:flex relative">
-      {/* Ambient WebGL depth behind everything; demand-rendered, -z-10 */}
+    <div className="min-h-screen bg-[#08080a] md:pl-[248px]">
       <AmbientBackdrop />
-
-      <div className="fixed left-0 inset-y-0 w-20 bg-sidebar/85 backdrop-blur-md border-r border-sidebar-border p-4 z-20">
+      <div className="fixed inset-y-0 left-0 z-30 hidden w-[248px] border-r border-white/[0.08] bg-[#0b0b0e]/92 px-4 py-5 backdrop-blur-xl md:block">
         <SidebarNavigation
           isClientReady={true}
           effectiveAdmin={effectiveAdmin}
           profile={profile}
         />
       </div>
-
-      <div className="flex-1 pl-20">
-        <main className="mx-auto w-full max-w-7xl px-4 py-6 md:px-8 md:py-10">
-          {children}
-        </main>
+      <div className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-white/[0.08] bg-[#0b0b0e]/88 px-4 backdrop-blur-xl md:hidden">
+        <button
+          type="button"
+          onClick={() => setMobileNav(true)}
+          className="rounded-md border border-white/[0.1] p-2 text-zinc-400"
+          aria-label="Open navigation"
+        >
+          <Menu className="h-4 w-4" />
+        </button>
+        <Link to="/" className="flex items-center gap-2">
+          <span className="grid h-8 w-8 place-items-center rounded-md border border-primary/25 bg-primary/10 text-primary">
+            <DroneIcon className="h-4 w-4" />
+          </span>
+          <span className="font-display font-semibold text-zinc-100">
+            StickTime
+          </span>
+        </Link>
+        <button
+          type="button"
+          className="rounded-md border border-white/[0.1] p-2 text-zinc-400"
+          aria-label="Search workspace"
+        >
+          <Search className="h-4 w-4" />
+        </button>
       </div>
+      {mobileNav && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <button
+            type="button"
+            aria-label="Close navigation"
+            onClick={() => setMobileNav(false)}
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+          />
+          <div className="relative h-full w-[290px] border-r border-white/[0.1] bg-[#0b0b0e] px-4 py-5">
+            <div className="mb-4 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setMobileNav(false)}
+                className="rounded-md p-2 text-zinc-500 hover:text-zinc-100"
+                aria-label="Close navigation"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <SidebarNavigation
+              isClientReady={true}
+              effectiveAdmin={effectiveAdmin}
+              profile={profile}
+            />
+          </div>
+        </div>
+      )}
+      <main className="relative mx-auto w-full max-w-[1480px] px-4 py-6 sm:px-6 md:px-8 md:py-8">
+        {children}
+      </main>
     </div>
   );
 }
