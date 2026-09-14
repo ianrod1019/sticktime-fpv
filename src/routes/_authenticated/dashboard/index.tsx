@@ -4,7 +4,7 @@ import { DashboardContent } from "./components/-DashboardContent";
 import {
   useDashboardTotals,
   useDashboardMonthlyVolume,
-  useDashboardHeatmap,
+  useDashboardCalendarSessions,
   useRecentSessions,
   useActiveRigs,
   useRigUsage,
@@ -40,7 +40,7 @@ function Dashboard() {
 
   const { data: totalsData } = useDashboardTotals(user ?? null);
   const { data: monthlyData } = useDashboardMonthlyVolume(user ?? null);
-  const { data: heatmapData } = useDashboardHeatmap(user ?? null);
+  const { data: calendarSessions } = useDashboardCalendarSessions(user ?? null);
   const { data: recentSessionsData } = useRecentSessions(user ?? null);
   const { data: activeRigCount } = useActiveRigs(user ?? null);
   const { data: rigUsage } = useRigUsage(user ?? null);
@@ -72,9 +72,9 @@ function Dashboard() {
       }
 
       return results.flatMap((result, i) =>
-        (result.data ?? []).map((item: Record<string, any>) => ({
+        (result.data ?? []).map((item: Record<string, unknown>) => ({
           ...item,
-          is_as_needed: item["service_interval_minutes"] <= 0,
+          is_as_needed: Number(item["service_interval_minutes"] ?? 0) <= 0,
           gear_type: gearTypes[i],
         })),
       );
@@ -105,7 +105,7 @@ function Dashboard() {
       totalPacks={totalPacks}
       gear={gear}
       recentSessions={recentSessions}
-      heatmapData={heatmapData ?? []}
+      calendarSessions={(calendarSessions ?? []) as SessionRow[]}
       monthlyData={monthlyData ?? []}
       rigUsage={rigUsageData}
       activeRigs={activeRigs}

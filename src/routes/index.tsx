@@ -6,6 +6,7 @@ import { useAuth } from "@/context/auth-context";
 import { TopNav } from "@/components/top-nav";
 import { LandingHero } from "@/pages/landing/-hero";
 import { BentoFeatures } from "@/pages/landing/-bento-features";
+import { FeatureFlightLab } from "@/pages/landing/-feature-flight-lab";
 
 const authSchema = z.object({
   showAuth: z.boolean().optional(),
@@ -48,6 +49,7 @@ function Landing() {
       <div className="relative min-h-screen pt-20">
         <LandingHero />
         <BentoFeatures />
+        <FeatureFlightLab />
 
         <footer className="border-t border-border px-6 py-8 text-center font-mono text-xs text-muted-foreground">
           StickTime FPV — built for the quad-obsessed.

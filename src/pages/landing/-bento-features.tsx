@@ -11,8 +11,6 @@ import {
   TimerReset,
 } from "lucide-react";
 
-const cellTrace = [32, 37, 34, 42, 48, 46, 58, 62, 58, 70, 74, 80];
-
 function SectionHeading() {
   return (
     <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
@@ -75,7 +73,9 @@ export function BentoFeatures() {
                   Open flight log <ArrowUpRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
-              <FlightTrace />
+              <RecordedFields
+                fields={["mode", "duration", "airframe", "packs", "notes"]}
+              />
             </div>
           </div>
         </motion.article>
@@ -103,7 +103,15 @@ export function BentoFeatures() {
               Watch internal resistance, cell variance and lifetime reserve move
               from raw readings into usable maintenance signals.
             </p>
-            <CellHealth />
+            <RecordedFields
+              fields={[
+                "cycle count",
+                "cell variance",
+                "internal resistance",
+                "service state",
+              ]}
+              tone="sky"
+            />
           </div>
         </motion.article>
 
@@ -117,19 +125,19 @@ export function BentoFeatures() {
         >
           <CardEyebrow
             icon={ShieldCheck}
-            title="Fleet readiness"
-            status="AUDIT READY"
+            title="Operational history"
+            status="TRACEABLE"
             tone="emerald"
           />
           <h3 className="mt-8 font-display text-2xl font-semibold tracking-[-0.04em] text-zinc-100">
-            Compliance that ships with the sortie.
+            Context that ships with the sortie.
           </h3>
           <p className="mt-3 text-sm leading-6 text-zinc-400">
-            Capture airframe history, pilot activity and operational proof in a
-            format your fleet can trust.
+            Capture airframe history, pilot activity and service context in a
+            timeline your fleet can actually inspect.
           </p>
           <div className="mt-7 flex items-center gap-2 font-mono text-[10px] tracking-[0.16em] text-emerald-400">
-            <CheckCircle2 className="h-4 w-4" /> PART 107 WORKFLOW READY
+            <CheckCircle2 className="h-4 w-4" /> HISTORY LINKED TO HOURS
           </div>
         </motion.article>
 
@@ -234,45 +242,26 @@ function CardEyebrow({
   );
 }
 
-function FlightTrace() {
-  const bars = [28, 46, 35, 58, 49, 69, 56, 80, 64, 91, 74, 88];
+function RecordedFields({
+  fields,
+  tone = "orange",
+}: {
+  fields: string[];
+  tone?: "orange" | "sky";
+}) {
   return (
     <div className="rounded-lg border border-white/[0.08] bg-[#09090b]/80 p-4 backdrop-blur-sm">
-      <div className="flex items-center justify-between font-mono text-[9px] tracking-[0.14em] text-zinc-500">
-        <span>SESSION VOLUME</span>
-        <span className="text-primary">+18.4%</span>
+      <div className="font-mono text-[9px] tracking-[0.14em] text-zinc-600">
+        WHAT STICKTIME RECORDS
       </div>
-      <div className="mt-5 flex h-28 items-end gap-1.5">
-        {bars.map((height, index) => (
-          <span
-            key={index}
-            className="flex-1 rounded-t-sm bg-gradient-to-t from-primary/30 to-orange-300"
-            style={{ height: `${height}%`, opacity: 0.45 + index / 22 }}
-          />
-        ))}
-      </div>
-      <div className="mt-3 flex justify-between font-mono text-[9px] text-zinc-600">
-        <span>MON</span>
-        <span>SUN</span>
-      </div>
-    </div>
-  );
-}
-
-function CellHealth() {
-  return (
-    <div className="mt-auto rounded-lg border border-white/[0.08] bg-black/20 p-4">
-      <div className="mb-4 flex items-center justify-between font-mono text-[9px] tracking-[0.14em] text-zinc-500">
-        <span>CELL BALANCE</span>
-        <span className="text-sky-300">0.002V Δ</span>
-      </div>
-      <div className="flex h-16 items-end gap-1.5">
-        {cellTrace.map((height, index) => (
-          <span
-            key={index}
-            className="flex-1 rounded-sm bg-gradient-to-t from-sky-500/25 to-sky-200"
-            style={{ height: `${height}%`, opacity: 0.55 + index / 35 }}
-          />
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        {fields.map((field) => (
+          <div
+            key={field}
+            className={`border px-2.5 py-2 font-mono text-[9px] uppercase tracking-[0.1em] ${tone === "sky" ? "border-sky-400/15 text-sky-300/80" : "border-primary/15 text-primary/80"}`}
+          >
+            {field}
+          </div>
         ))}
       </div>
     </div>

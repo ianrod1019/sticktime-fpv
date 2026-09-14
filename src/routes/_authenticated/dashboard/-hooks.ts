@@ -71,6 +71,34 @@ export function useDashboardHeatmap(userId: string | null) {
   });
 }
 
+/** Detailed sessions for the interactive 12-month calendar. */
+export function useDashboardCalendarSessions(userId: string | null) {
+  return useQuery({
+    queryKey: ["calendar-sessions", userId],
+    queryFn: async () => {
+      if (!userId) return [];
+      const start = new Date();
+      start.setFullYear(start.getFullYear() - 1);
+      const result = await db_request({
+        mode: "query",
+        table: "sessions",
+        selectColumns:
+          "id,session_type,flown_on,duration_minutes,packs_flown,drone_id,notes",
+        filters: {
+          user_id: userId,
+          flown_on: { $gte: start.toISOString().slice(0, 10) },
+        },
+        orderBy: { column: "flown_on", ascending: false },
+        limit: 2000,
+      });
+      if (result.error) throw result.error;
+      return result.data ?? [];
+    },
+    enabled: !!userId,
+    staleTime: 60_000,
+  });
+}
+
 export function useRecentSessions(userId: string | null) {
   return useQuery({
     queryKey: ["recent-sessions", userId],

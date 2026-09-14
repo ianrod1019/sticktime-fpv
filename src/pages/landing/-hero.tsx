@@ -1,14 +1,7 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion, useReducedMotion } from "framer-motion";
-import {
-  ArrowUpRight,
-  CircleCheck,
-  Gauge,
-  Radio,
-  ShieldCheck,
-  TimerReset,
-} from "lucide-react";
+import { ArrowUpRight, Database, Layers3, ScanLine } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // The 3D scene remains code-split so the product story can paint before WebGL.
@@ -20,18 +13,23 @@ const DroneHeroScene = lazy(() =>
 
 const flightReadouts = [
   {
-    label: "SYSTEM",
-    value: "NOMINAL",
-    icon: CircleCheck,
+    label: "SESSION RECORDS",
+    value: "SIM + REAL",
+    icon: Layers3,
     tone: "text-emerald-400",
   },
   {
-    label: "UPLINK",
-    value: "ENCRYPTED",
-    icon: ShieldCheck,
+    label: "TIME BLOCKS",
+    value: "5 MIN PRECISION",
+    icon: ScanLine,
     tone: "text-primary",
   },
-  { label: "PACKS", value: "06 / 24", icon: TimerReset, tone: "text-sky-400" },
+  {
+    label: "DATA MODEL",
+    value: "PILOT → FLEET",
+    icon: Database,
+    tone: "text-sky-400",
+  },
 ] as const;
 
 const transition = { type: "spring", stiffness: 180, damping: 22 } as const;
@@ -43,6 +41,14 @@ const transition = { type: "spring", stiffness: 180, damping: 22 } as const;
  */
 export function LandingHero() {
   const reduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (reduceMotion) return;
+    const timer = window.setTimeout(() => {
+      void import("@/components/three/drone-hero-scene");
+    }, 80);
+    return () => window.clearTimeout(timer);
+  }, [reduceMotion]);
 
   return (
     <section className="relative isolate overflow-hidden">
@@ -176,41 +182,49 @@ export function LandingHero() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ ...transition, delay: 0.3 }}
               className="relative ml-auto hidden w-full max-w-sm self-end pb-14 lg:block"
-              aria-label="Live flight telemetry preview"
+              aria-label="StickTime product model"
             >
               <div className="telemetry-panel overflow-hidden">
                 <div className="flex items-center justify-between border-b border-white/[0.08] px-5 py-3">
                   <div className="flex items-center gap-2">
-                    <Radio className="h-3.5 w-3.5 text-primary" />
+                    <ScanLine className="h-3.5 w-3.5 text-primary" />
                     <span className="font-mono text-[10px] tracking-[0.18em] text-zinc-300">
-                      LIVE TELEMETRY
+                      PRODUCT MODEL
                     </span>
                   </div>
-                  <span className="font-mono text-[9px] text-emerald-400">
-                    LINK STABLE
+                  <span className="font-mono text-[9px] text-zinc-500">
+                    DEMO DATA
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-px bg-white/[0.07]">
                   <Readout
-                    label="PACK VOLTAGE"
-                    value="24.7V"
-                    hint="6S // 98%"
+                    label="FLIGHT LOGS"
+                    value="SIM + REAL"
+                    hint="ONE TIMELINE"
                   />
-                  <Readout label="MOTOR TEMP" value="41°" hint="WITHIN LIMIT" />
                   <Readout
-                    label="FLIGHT TIME"
-                    value="04:28"
-                    hint="SESSION 127"
+                    label="AIRFRAME HEALTH"
+                    value="TRACKED"
+                    hint="SERVICE HISTORY"
                   />
-                  <Readout label="CONTROL LINK" value="99%" hint="-56 DBM" />
+                  <Readout
+                    label="BATTERY DATA"
+                    value="CYCLES + IR"
+                    hint="EARLY WARNINGS"
+                  />
+                  <Readout
+                    label="FLEET ACCESS"
+                    value="ROLE BASED"
+                    hint="SQUADRON READY"
+                  />
                 </div>
                 <div className="border-t border-white/[0.08] px-5 py-4">
                   <div className="mb-2 flex justify-between font-mono text-[9px] tracking-[0.14em] text-zinc-500">
-                    <span>ENERGY RESERVE</span>
-                    <span className="text-primary">82%</span>
+                    <span>DATA FLOW</span>
+                    <span className="text-primary">STRUCTURED</span>
                   </div>
                   <div className="h-1 overflow-hidden rounded-full bg-white/[0.08]">
-                    <div className="h-full w-[82%] rounded-full bg-gradient-to-r from-orange-500 to-orange-300 shadow-[0_0_12px_rgba(249,115,22,0.8)]" />
+                    <div className="h-full w-full rounded-full bg-gradient-to-r from-orange-500 to-orange-300 shadow-[0_0_12px_rgba(249,115,22,0.8)]" />
                   </div>
                 </div>
               </div>
