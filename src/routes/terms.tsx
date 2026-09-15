@@ -128,47 +128,83 @@ function Terms() {
 
           <section className="mb-12">
             <h2 className="text-2xl font-semibold mb-4">
-              6. License Tier Restrictions; Non-Commercial Use (Pro/Hobbyist
-              Tier)
+              6. License Tier Restrictions; Scope of Use by Tier
             </h2>
             <p className="text-zinc-300 leading-relaxed">
               {TOS_NONCOMMERCIAL_COPY}
             </p>
             <ul className="list-disc list-inside text-zinc-300 leading-relaxed mt-4 space-y-2">
               <li>
-                <strong>Scope of license:</strong> Your Pro (Hobbyist)
-                subscription is a personal, revocable license to use the
-                Platform for your own individual hobby, recreation, and skill
-                development. It does not grant any right to use the Platform on
-                behalf of, for the benefit of, or at the direction of any
-                business, employer, client, or paying third party.
+                <strong>Free, Pro, and Squad (Hobbyist) scope:</strong> Your
+                Free, Pro, or Squad subscription is a personal, revocable
+                license to use the Platform for your own individual hobby,
+                recreation, and skill development. It does not grant any right
+                to use the Platform on behalf of, for the benefit of, or at the
+                direction of any business, employer, client, or paying third
+                party.
+              </li>
+              <li>
+                <strong>Squad scope:</strong> A Squad subscription bundles
+                between five (5) and ten (10) individually named hobbyist
+                pilots under a single group price for shared club rosters,
+                joint flight logs, and a group activity feed. Every pilot on
+                the squad must still hold their own authorized profile under
+                §7 — Squad pricing changes only how the group is billed, not
+                the non-commercial restriction, which applies in full to every
+                pilot on the squad individually.
               </li>
               <li>
                 <strong>Prohibited commercial use:</strong> Without limitation,
                 the following constitute commercial use and are strictly
-                forbidden on this tier: paid client work or services; footage,
-                data, or analytics produced for sale or license; promotional,
-                marketing, advertising, or monetized content production;
-                operations for any employer or business entity; and any use for
-                which you or a third party receive compensation, directly or
-                indirectly.
+                forbidden on the Free, Pro, and Squad tiers: paid client work
+                or services; footage, data, or analytics produced for sale or
+                license; promotional, marketing, advertising, or monetized
+                content production; operations for any employer or business
+                entity; and any use for which you or a third party receive
+                compensation, directly or indirectly.
               </li>
               <li>
                 <strong>Material breach; termination:</strong> Any commercial
-                operation, client work, or business use of the Pro (Hobbyist)
-                tier constitutes a material breach of these Terms. Upon
-                detection, your account is subject to immediate termination
-                without refund of the then-current billing period, and you
-                remain liable for fees equal to the difference between what you
-                paid and the commercial tier you should have held for the period
-                of misuse.
+                operation, client work, or business use of a Free, Pro, or
+                Squad account constitutes a material breach of these Terms.
+                Upon detection, your account (and, for Squad, the offending
+                pilot's seat) is subject to immediate termination without
+                refund of the then-current billing period, and you remain
+                liable for fees equal to the difference between what you paid
+                and the commercial tier you should have held for the period of
+                misuse.
               </li>
               <li>
-                <strong>Commercial tiers:</strong> Commercial use requires a
-                Solo Commercial, School, or Enterprise tier, each of which is
-                verified and provisioned server-side. Self-reporting a
-                non-commercial status you do not hold is itself a material
-                breach.
+                <strong>Solo Commercial scope:</strong> A Solo Commercial
+                subscription licenses exactly one (1) individual commercial
+                pilot for their own paid drone operations. It does not extend
+                to any other operator, employee, contractor, or business
+                entity — a business with more than one commercial pilot
+                requires an Enterprise agreement covering its full roster.
+              </li>
+              <li>
+                <strong>School scope:</strong> A School subscription licenses
+                one (1) educational institution for use by its enrolled
+                students and authorized staff, each provisioned their own
+                school-managed profile by an administrator. It covers
+                institutional, instructional use only and is not a substitute
+                for an Enterprise agreement if the institution also conducts
+                commercial drone operations outside its educational program.
+              </li>
+              <li>
+                <strong>Enterprise scope:</strong> An Enterprise subscription
+                licenses the specific business entity and seat count set out in
+                its order or agreement. Use beyond the contracted seat count,
+                or by any entity other than the contracting business and its
+                authorized personnel, requires a seat true-up or a separate
+                agreement.
+              </li>
+              <li>
+                <strong>Verification:</strong> Every commercial tier (Solo
+                Commercial, School, and Enterprise) is verified and provisioned
+                server-side. Self-reporting a non-commercial status you do not
+                hold, or a tier scope broader than what you actually hold, is
+                itself a material breach.
               </li>
             </ul>
           </section>

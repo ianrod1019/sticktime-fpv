@@ -72,7 +72,7 @@ export function Heatmap({ sessions }: { sessions: SessionRow[] }) {
   return (
     <div className="space-y-4">
       <div className="min-w-0 overflow-x-auto pb-1">
-        <div className="flex min-w-[700px] items-stretch gap-1.5">
+        <div className="flex min-w-202.5 items-stretch gap-1.5">
           {months.map((month) => {
             const isActive = month.key === activeMonth;
             return (
@@ -82,12 +82,13 @@ export function Heatmap({ sessions }: { sessions: SessionRow[] }) {
                 onMouseEnter={() => setActiveMonth(month.key)}
                 onFocus={() => setActiveMonth(month.key)}
                 onClick={() => setActiveMonth(month.key)}
+                initial={{ flexBasis: "60px" }}
                 animate={{
                   flexGrow: isActive ? 5 : 1,
-                  flexBasis: isActive ? "150px" : "50px",
+                  flexBasis: isActive ? "150px" : "60px",
                 }}
                 transition={{ duration: 0.22, ease: [0.23, 1, 0.32, 1] }}
-                className={`group relative min-w-[50px] overflow-hidden rounded-lg border p-2 text-left ${isActive ? "z-10 -translate-y-1 border-primary/45 bg-primary/[0.08] shadow-[0_16px_28px_-18px_var(--primary)]" : "border-white/[0.07] bg-white/[0.015] hover:-translate-y-0.5 hover:border-primary/25"}`}
+                className={`group relative min-w-15 overflow-hidden rounded-lg border p-2 text-left ${isActive ? "z-10 -translate-y-1 border-primary/45 bg-primary/[0.08] shadow-[0_16px_28px_-18px_var(--primary)]" : "border-white/[0.07] bg-white/[0.015] hover:-translate-y-0.5 hover:border-primary/25"}`}
                 aria-label={`Inspect ${month.label}`}
               >
                 <div className="flex items-start justify-between gap-2">

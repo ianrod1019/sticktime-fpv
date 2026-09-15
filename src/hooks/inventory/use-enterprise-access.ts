@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { usePilot } from "@/hooks/use-pilot";
+import { useQaMode } from "@/hooks/use-qa-mode";
 
 export interface EnterpriseAccessResult {
   /** True when the user's tier is 'enterprise' (or they are admin/dev). */
@@ -17,6 +18,7 @@ export interface EnterpriseAccessResult {
  */
 export function useEnterpriseAccess(): EnterpriseAccessResult {
   const { profile } = usePilot();
+  const qaMode = useQaMode();
 
   const query = useQuery({
     queryKey: ["enterprise-access", profile?.id],
@@ -36,7 +38,8 @@ export function useEnterpriseAccess(): EnterpriseAccessResult {
 
   // Profile-based signal resolves instantly; RPC confirms/corrects it.
   const optimistic = profileSaysEnterprise || isElevated;
-  const hasEnterpriseAccess = query.data ?? optimistic;
+  // QA mode opens every tier gate — fixtures, no real data at risk.
+  const hasEnterpriseAccess = qaMode || (query.data ?? optimistic);
 
   return {
     hasEnterpriseAccess,

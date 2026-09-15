@@ -1,0 +1,201 @@
+# Firmware, Configuration & Electronic Component Version Control
+
+**Module spec — StickTime FPV enterprise tier**
+Status: implemented (this document describes the shipped system, not a proposal).
+Schema: `firmware` (migrations `20260930000000`, `20260930000100`, `20260930000200`).
+UI: `/firmware` (five tabs), sidebar entry **Firmware**.
+
+The module is the single source of truth for airworthiness: what firmware and
+configuration every airframe runs, whether that state matches the approved
+baseline, and whether the aircraft may fly. It enforces its decisions at the
+database layer so no client, seat, or workflow can bypass them.
+
+---
+
+## 1. Relational schema & architecture
+
+All tables live in the `firmware` schema. Tenant isolation follows the house
+model: every table carries `org_id` + `team_id`, RLS renders from the
+enterprise role plane (`public.ent_*`), and an org/team pairing trigger
+rejects mismatched rows.
+
+### Registry & taxonomy (`20260930000000`)
+
+| Table | Purpose |
+| --- | --- |
+| `manufacturers` | Vendor taxonomy (name, support URL). |
+| `families` | Firmware families per manufacturer (Betaflight, ArduPilot Copter, DJI OEM…). |
+| `hardware_targets` | Flashable boards per family (`stm32f722`, `matekh743`, `o3_air_unit`…). |
+| `firmware_releases` | Versioned releases per target with `release_status` (`approved | provisional | restricted | blacklisted`), `certified` flag, SHA-256, release URL, and a `version_sort_key numeric[]` so ordering never does string comparison. |
+| `release_capabilities` | Capability map per release (`gps_rescue`, `fence`, `rtl`, `telemetry`, `hd_link`…). |
+
+Registry reads require org membership or site staff
+(`firmware.can_read_registry()`).
+
+### Fleet, configuration state & drift (`20260930000100`)
+
+| Table | Purpose |
+| --- | --- |
+| `airframes` | Airworthiness master: serial, chassis, FAA registration (+expiry), `lifecycle_status` (`active | maintenance | grounded | decommissioned`), `grounded_reason` (required when grounded — enforced by CHECK). |
+| `airframe_components` | Modular inventory: class (`flight_controller`, `esc`, `vtx_digital_video`, `radio_receiver`, `motor`, `gps_module`, `other`), slot label, manufacturer/model/serial, `installed_release_id` FK, `capability_map jsonb`, lifecycle. Singleton classes enforced per airframe via partial unique index. |
+| `config_snapshots` | Immutable ingestion records: source (`cli_export | gcs_params | api_sync | bench_flash | manual_edit`), format (`betaflight_cli | ardupilot_params | json`), kind (`golden | baseline_candidate | observed | rollback_reference`), storage object key, SHA-256 of the raw dump, normalized JSONB, field count. Mutation-proof (no grants + trigger). |
+| `config_revisions` | Monotonic revision counter per (airframe, component) — the version-controlled history. |
+| `severity_rules` | Per-org drift classification matrix (below). |
+| `drift_events` | One row per drifted field per scope; open rows are upserted (no duplicates), resolved rows are history. |
+| `compliance_events` | The tamper-evident audit chain (pillar 3). |
+
+Raw dumps live in the private **`firmware-configs`** storage bucket with the
+path contract `<team_id>/<airframe_id>/<uuid>-<name>`; access is decided by
+`firmware.storage_access()` (org member or officer of the owning airframe).
+
+### Workflows & interlocks (`20260930000200`)
+
+| Table | Purpose |
+| --- | --- |
+| `work_orders` | Sign-off containers: kind (`firmware_flash | component_replacement | config_change | rollback`), status machine, technician assignment, justification. Clients get SELECT only — writes flow exclusively through RPCs (trigger-enforced). |
+| `work_order_steps` | Ordered steps (`technician_attest → evidence_upload → safety_audit → final_release`) with `required_role`; the sequence trigger forbids out-of-order or two-approval shortcuts. |
+| `airworthiness_directives` | Org-scoped or platform-wide ADs / manufacturer bulletins with active flag and effective time. |
+| `airworthiness_directive_matches` | Scope rules: `manufacturer`, `family`, `target`, `component_class`, `firmware_release`, `serial_prefix`. |
+| `flash_records` | Every flash: from/to release, outcome (`succeeded | failed | bricked | rolled_back`), performer, notes. |
+
+### Component ↔ log association
+
+Changes never float free: flashes write `flash_records`, replacements and
+config changes open `work_orders`, and every work order lands in
+`compliance_events` with actor, before/after hashes and justification. The
+audit trail *is* the association layer.
+
+---
+
+## 2. Ingestion, normalization & drift detection
+
+**Transport.** The UI uploads the raw dump to `firmware-configs`, then calls
+`public.firmware_ingest_config_snapshot(p_org, p_airframe, p_component,
+p_source, p_format, p_raw, p_object_path, p_kind, p_captured_at)`. The RPC
+validates membership, ownership, size (≤ 400 KB) and the storage path
+contract, then does everything below in one transaction.
+
+**Normalization** (`firmware.normalize_dump`): Betaflight CLI (`set k = v`),
+ArduPilot parameter files (`k,v` lines), and JSON all reduce to a flat JSONB
+object keyed by lowercased field name. Values that parse as numerics are
+stored as numbers (so `45` and `"45"` compare equal after normalization);
+everything else stays a string. Comments and section banners are dropped.
+
+**Diff.** The active golden baseline is the latest `snapshot_kind='golden'`
+row for the same (airframe, component) scope. The RPC walks the union of
+baseline/observed keys and emits added / removed / changed fields.
+
+**Severity matrix** (`firmware.resolve_severity`, per org, most specific
+rule wins):
+
+| Tier | Examples | Default rule |
+| --- | --- | --- |
+| `critical_safety` | failsafe, RTH/RTL, arming, geofence, max altitude | seeded per-org rules (`firmware_ensure_default_matrix`), exact-match first |
+| `operational` | PIDs, filters, rates, aux switch mapping | wildcard prefixes (`p_`, `pid_`, `filter_`, `rate_`); a `max_alt`-style rule only fires when the field name matches exactly AND the value is numeric |
+| `informational` | LED, OSD layout, naming | fallthrough default |
+
+**Automated interlocks.** Any critical drift → the RPC grounds the airframe
+(`lifecycle_status='grounded'` + reason) and the scheduler trigger
+`firmware.gate_schedules_for_grounding()` on `edu.schedules` rejects every
+booking touching that airframe — the block is immediate, fleet-wide, and
+independent of which seat tries it. Symmetrically, a re-ingested config that
+matches the golden baseline auto-clears stale drift and re-airs the airframe
+when no other blocker remains.
+
+---
+
+## 3. Safety-manager workflows & enforcement
+
+**Airworthiness directives.**
+`public.firmware_publish_directive` (safety officers; site staff for
+platform-wide) stores the notice plus matcher rules. `firmware.grounding_blockers()`
+evaluates matches live against every active component — the moment an AD
+publishes, every matching airframe reports a grounding blocker, across all
+seats. Deactivation is its own audited RPC.
+
+**Sign-off chain of custody** (auto-created by a successful
+`firmware_record_flash` version change):
+
+1. `technician_attest` — the flashing technician signs.
+2. `evidence_upload` — post-flash config dump ingested and attached.
+3. `safety_audit` — a safety officer reviews the diff.
+4. `final_release` — approval clears the lifecycle blocker (only remaining
+   blockers can veto) and re-airs the airframe, with an `interlock_release`
+   audit row.
+
+Only the RPCs write work orders (`firmware.system_write` context flag);
+the step-sequence trigger makes out-of-order approvals impossible.
+
+**Immutable audit trail.** `compliance_events` is append-only (no grants,
+trigger-rejected mutations). Each row records: monotonic `seq`, actor, event
+type, airframe/component, snapshot and drift links, before/after SHA-256 of
+the configuration, justification, and `prev_row_sha256` — a per-org hash
+chain. `public.firmware_verify_audit_chain(p_org)` recomputes the whole
+chain and reports the exact sequence where tampering would have occurred.
+The `/firmware` header shows a live **Audit chain** metric (`n ok` / `BROKEN`).
+
+---
+
+## 4. Dashboard architecture
+
+`/firmware` is org-scoped (multi-org users get tabs) with five views:
+
+- **Fleet compliance** — metric row (airframes, grounded, critical drift,
+  audit chain) over a per-airframe matrix row: lifecycle badge, critical-drift
+  and open-work-order flags, registration, and per-component firmware with
+  blacklisted versions flagged inline.
+- **Digital twin** — per-airframe component tree: hardware identity, serial,
+  installed release with status/certified badges, configuration history
+  (latest 5 snapshots with kind, SHA prefix, field count), plus the flash and
+  ingest panels in context.
+- **Drift queue** — severity-filtered open drift with field, old → new value,
+  and acknowledge (any member) / clear / suppress (safety officers) actions;
+  clearing the last blocker releases the airframe.
+- **Work orders** — the sign-off stepper with role-aware actions; the final
+  approval performs the release.
+- **Directives** — active/expired ADs and the publish form (officers only).
+
+**Pilot pre-flight interlock.** Pilots see the same compliance truth. A
+grounded airframe shows its lifecycle badge, the human-readable
+`grounded_reason`, and — in scheduling — the booking is rejected
+server-side by the `edu.schedules` trigger with the blocker list, so the
+pilot sees *why* (drift, AD, open work order) rather than a generic error.
+
+---
+
+## 5. Edge cases, offline syncing & security
+
+**Rollback.** `firmware_record_flash(..., 'rolled_back')` records the
+outcome; `rollback_reference` snapshots preserve the last known-good
+configuration for re-ingest. A bricked flash marks the component `failed`
+and grounds the airframe pending replacement.
+
+**Offline field operations (roadmap seam).** Ingestion is idempotent at the
+field level: snapshots are content-hashed, re-ingesting the same dump is a
+no-op on drift, and the open-drift upsert dedupes. A field client can queue
+ingest calls offline and replay them on reconnect — the server, not the
+client, decides severity and grounding, so replay order cannot manufacture
+a different outcome.
+
+**Multi-tenant security.** Tenant isolation is entirely row-level: RLS on
+every table renders from `public.ent_*`; grants are minimal (SELECT on
+tenant tables, no direct writes to workflow tables at all); RPCs re-check
+membership server-side and run as definer only to write the audit row.
+Raw dumps are private-bucket objects behind the path contract. The audit
+chain makes post-hoc edits detectable, and `compliance_events` rows cannot
+be updated or deleted by any role.
+
+---
+
+## RPC surface (browser-facing)
+
+| RPC | Who | Effect |
+| --- | --- | --- |
+| `firmware_ingest_config_snapshot` | members | upload → normalize → diff → (ground) |
+| `firmware_resolve_drift` | member / officer | acknowledge / clear / suppress (+release) |
+| `firmware_record_flash` | members | flash record, component state, WO creation, brick grounding |
+| `firmware_advance_work_order` | member / officer | sign / reject / cancel steps (+release) |
+| `firmware_publish_directive` | officers / site | AD + matches (grounds matches) |
+| `firmware_deactivate_directive` | publishing tier | retire an AD |
+| `firmware_request_override` | members | audited override request |
+| `firmware_verify_audit_chain` | members | tamper-evidence verification |

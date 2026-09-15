@@ -13,28 +13,37 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as DocsRouteImport } from './routes/docs'
 import { Route as FeaturesRouteImport } from './routes/features'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as UpdatePasswordRouteImport } from './routes/update-password'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedAnalyticsRouteImport } from './routes/_authenticated/analytics'
 import { Route as AuthenticatedClientsRouteImport } from './routes/_authenticated/clients'
+import { Route as AuthenticatedDevRouteRouteImport } from './routes/_authenticated/dev/route'
 import { Route as AuthenticatedDistrictRouteImport } from './routes/_authenticated/district'
 import { Route as AuthenticatedEduRouteRouteImport } from './routes/_authenticated/edu/route'
+import { Route as AuthenticatedFirmwareRouteImport } from './routes/_authenticated/firmware'
 import { Route as AuthenticatedHangerRouteImport } from './routes/_authenticated/hanger'
+import { Route as AuthenticatedJhaRouteImport } from './routes/_authenticated/jha'
 import { Route as AuthenticatedLedgerRouteImport } from './routes/_authenticated/ledger'
 import { Route as AuthenticatedLogRouteImport } from './routes/_authenticated/log'
+import { Route as AuthenticatedPortalsRouteImport } from './routes/_authenticated/portals'
 import { Route as AuthenticatedSchedulingRouteImport } from './routes/_authenticated/scheduling'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedSmsRouteImport } from './routes/_authenticated/sms'
 import { Route as AuthenticatedTeamsRouteImport } from './routes/_authenticated/teams'
+import { Route as AuthenticatedVaultRouteImport } from './routes/_authenticated/vault'
 import { Route as ClientTokenRouteImport } from './routes/client.$token'
 import { Route as DocsIndexRouteImport } from './routes/docs/index'
 import { Route as DocsSlugRouteImport } from './routes/docs/$slug'
+import { Route as PortalTokenRouteImport } from './routes/portal.$token'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdmin_lookupUuidRouteImport } from './routes/_authenticated/admin_lookup.$uuid'
 import { Route as AuthenticatedAnalyticsIndexRouteImport } from './routes/_authenticated/analytics.index'
 import { Route as AuthenticatedAnalyticsPersonalRouteImport } from './routes/_authenticated/analytics.personal'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
+import { Route as AuthenticatedDevIndexRouteImport } from './routes/_authenticated/dev/index'
 import { Route as AuthenticatedDroneUuidRouteImport } from './routes/_authenticated/drone/$uuid'
 import { Route as AuthenticatedEduIndexRouteImport } from './routes/_authenticated/edu/index'
 import { Route as AuthenticatedGearIndexRouteImport } from './routes/_authenticated/gear/index'
@@ -82,6 +91,11 @@ const FeaturesRoute = FeaturesRouteImport.update({
   path: '/features',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -112,6 +126,11 @@ const AuthenticatedClientsRoute = AuthenticatedClientsRouteImport.update({
   path: '/clients',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDevRouteRoute = AuthenticatedDevRouteRouteImport.update({
+  id: '/dev',
+  path: '/dev',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDistrictRoute = AuthenticatedDistrictRouteImport.update({
   id: '/district',
   path: '/district',
@@ -122,9 +141,19 @@ const AuthenticatedEduRouteRoute = AuthenticatedEduRouteRouteImport.update({
   path: '/edu',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedFirmwareRoute = AuthenticatedFirmwareRouteImport.update({
+  id: '/firmware',
+  path: '/firmware',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedHangerRoute = AuthenticatedHangerRouteImport.update({
   id: '/hanger',
   path: '/hanger',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedJhaRoute = AuthenticatedJhaRouteImport.update({
+  id: '/jha',
+  path: '/jha',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedLedgerRoute = AuthenticatedLedgerRouteImport.update({
@@ -137,6 +166,11 @@ const AuthenticatedLogRoute = AuthenticatedLogRouteImport.update({
   path: '/log',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPortalsRoute = AuthenticatedPortalsRouteImport.update({
+  id: '/portals',
+  path: '/portals',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSchedulingRoute = AuthenticatedSchedulingRouteImport.update({
   id: '/scheduling',
   path: '/scheduling',
@@ -147,9 +181,19 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSmsRoute = AuthenticatedSmsRouteImport.update({
+  id: '/sms',
+  path: '/sms',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedTeamsRoute = AuthenticatedTeamsRouteImport.update({
   id: '/teams',
   path: '/teams',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedVaultRoute = AuthenticatedVaultRouteImport.update({
+  id: '/vault',
+  path: '/vault',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const ClientTokenRoute = ClientTokenRouteImport.update({
@@ -166,6 +210,11 @@ const DocsSlugRoute = DocsSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => DocsRoute,
+} as any)
+const PortalTokenRoute = PortalTokenRouteImport.update({
+  id: '/portal/$token',
+  path: '/portal/$token',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
@@ -196,6 +245,11 @@ const AuthenticatedDashboardIndexRoute =
     path: '/dashboard/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedDevIndexRoute = AuthenticatedDevIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedDevRouteRoute,
+} as any)
 const AuthenticatedDroneUuidRoute = AuthenticatedDroneUuidRouteImport.update({
   id: '/drone/$uuid',
   path: '/drone/$uuid',
@@ -359,22 +413,30 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/docs': typeof DocsRouteWithChildren
   '/features': typeof FeaturesRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/update-password': typeof UpdatePasswordRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/dev': typeof AuthenticatedDevRouteRouteWithChildren
   '/edu': typeof AuthenticatedEduRouteRouteWithChildren
   '/analytics': typeof AuthenticatedAnalyticsRouteWithChildren
   '/clients': typeof AuthenticatedClientsRoute
   '/district': typeof AuthenticatedDistrictRoute
+  '/firmware': typeof AuthenticatedFirmwareRoute
   '/hanger': typeof AuthenticatedHangerRouteWithChildren
+  '/jha': typeof AuthenticatedJhaRoute
   '/ledger': typeof AuthenticatedLedgerRouteWithChildren
   '/log': typeof AuthenticatedLogRoute
+  '/portals': typeof AuthenticatedPortalsRoute
   '/scheduling': typeof AuthenticatedSchedulingRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/sms': typeof AuthenticatedSmsRoute
   '/teams': typeof AuthenticatedTeamsRouteWithChildren
+  '/vault': typeof AuthenticatedVaultRoute
   '/client/$token': typeof ClientTokenRoute
   '/docs/$slug': typeof DocsSlugRoute
+  '/portal/$token': typeof PortalTokenRoute
   '/docs/': typeof DocsIndexRoute
   '/admin_lookup/$uuid': typeof AuthenticatedAdmin_lookupUuidRoute
   '/analytics/personal': typeof AuthenticatedAnalyticsPersonalRoute
@@ -388,6 +450,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/analytics/': typeof AuthenticatedAnalyticsIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/dev/': typeof AuthenticatedDevIndexRoute
   '/edu/': typeof AuthenticatedEduIndexRoute
   '/gear/': typeof AuthenticatedGearIndexRoute
   '/hanger/': typeof AuthenticatedHangerIndexRoute
@@ -412,17 +475,24 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/features': typeof FeaturesRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/update-password': typeof UpdatePasswordRoute
   '/clients': typeof AuthenticatedClientsRoute
   '/district': typeof AuthenticatedDistrictRoute
+  '/firmware': typeof AuthenticatedFirmwareRoute
+  '/jha': typeof AuthenticatedJhaRoute
   '/log': typeof AuthenticatedLogRoute
+  '/portals': typeof AuthenticatedPortalsRoute
   '/scheduling': typeof AuthenticatedSchedulingRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/sms': typeof AuthenticatedSmsRoute
   '/teams': typeof AuthenticatedTeamsRouteWithChildren
+  '/vault': typeof AuthenticatedVaultRoute
   '/client/$token': typeof ClientTokenRoute
   '/docs/$slug': typeof DocsSlugRoute
+  '/portal/$token': typeof PortalTokenRoute
   '/docs': typeof DocsIndexRoute
   '/admin_lookup/$uuid': typeof AuthenticatedAdmin_lookupUuidRoute
   '/analytics/personal': typeof AuthenticatedAnalyticsPersonalRoute
@@ -434,6 +504,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/analytics': typeof AuthenticatedAnalyticsIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
+  '/dev': typeof AuthenticatedDevIndexRoute
   '/edu': typeof AuthenticatedEduIndexRoute
   '/gear': typeof AuthenticatedGearIndexRoute
   '/hanger': typeof AuthenticatedHangerIndexRoute
@@ -461,22 +532,30 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/docs': typeof DocsRouteWithChildren
   '/features': typeof FeaturesRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/update-password': typeof UpdatePasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/_authenticated/dev': typeof AuthenticatedDevRouteRouteWithChildren
   '/_authenticated/edu': typeof AuthenticatedEduRouteRouteWithChildren
   '/_authenticated/analytics': typeof AuthenticatedAnalyticsRouteWithChildren
   '/_authenticated/clients': typeof AuthenticatedClientsRoute
   '/_authenticated/district': typeof AuthenticatedDistrictRoute
+  '/_authenticated/firmware': typeof AuthenticatedFirmwareRoute
   '/_authenticated/hanger': typeof AuthenticatedHangerRouteWithChildren
+  '/_authenticated/jha': typeof AuthenticatedJhaRoute
   '/_authenticated/ledger': typeof AuthenticatedLedgerRouteWithChildren
   '/_authenticated/log': typeof AuthenticatedLogRoute
+  '/_authenticated/portals': typeof AuthenticatedPortalsRoute
   '/_authenticated/scheduling': typeof AuthenticatedSchedulingRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/sms': typeof AuthenticatedSmsRoute
   '/_authenticated/teams': typeof AuthenticatedTeamsRouteWithChildren
+  '/_authenticated/vault': typeof AuthenticatedVaultRoute
   '/client/$token': typeof ClientTokenRoute
   '/docs/$slug': typeof DocsSlugRoute
+  '/portal/$token': typeof PortalTokenRoute
   '/docs/': typeof DocsIndexRoute
   '/_authenticated/admin_lookup/$uuid': typeof AuthenticatedAdmin_lookupUuidRoute
   '/_authenticated/analytics/personal': typeof AuthenticatedAnalyticsPersonalRoute
@@ -490,6 +569,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/analytics/': typeof AuthenticatedAnalyticsIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/_authenticated/dev/': typeof AuthenticatedDevIndexRoute
   '/_authenticated/edu/': typeof AuthenticatedEduIndexRoute
   '/_authenticated/gear/': typeof AuthenticatedGearIndexRoute
   '/_authenticated/hanger/': typeof AuthenticatedHangerIndexRoute
@@ -517,22 +597,30 @@ export interface FileRouteTypes {
     | '/'
     | '/docs'
     | '/features'
+    | '/pricing'
     | '/privacy'
     | '/terms'
     | '/update-password'
     | '/admin'
+    | '/dev'
     | '/edu'
     | '/analytics'
     | '/clients'
     | '/district'
+    | '/firmware'
     | '/hanger'
+    | '/jha'
     | '/ledger'
     | '/log'
+    | '/portals'
     | '/scheduling'
     | '/settings'
+    | '/sms'
     | '/teams'
+    | '/vault'
     | '/client/$token'
     | '/docs/$slug'
+    | '/portal/$token'
     | '/docs/'
     | '/admin_lookup/$uuid'
     | '/analytics/personal'
@@ -546,6 +634,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/analytics/'
     | '/dashboard/'
+    | '/dev/'
     | '/edu/'
     | '/gear/'
     | '/hanger/'
@@ -570,17 +659,24 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/features'
+    | '/pricing'
     | '/privacy'
     | '/terms'
     | '/update-password'
     | '/clients'
     | '/district'
+    | '/firmware'
+    | '/jha'
     | '/log'
+    | '/portals'
     | '/scheduling'
     | '/settings'
+    | '/sms'
     | '/teams'
+    | '/vault'
     | '/client/$token'
     | '/docs/$slug'
+    | '/portal/$token'
     | '/docs'
     | '/admin_lookup/$uuid'
     | '/analytics/personal'
@@ -592,6 +688,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/analytics'
     | '/dashboard'
+    | '/dev'
     | '/edu'
     | '/gear'
     | '/hanger'
@@ -618,22 +715,30 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/docs'
     | '/features'
+    | '/pricing'
     | '/privacy'
     | '/terms'
     | '/update-password'
     | '/_authenticated/admin'
+    | '/_authenticated/dev'
     | '/_authenticated/edu'
     | '/_authenticated/analytics'
     | '/_authenticated/clients'
     | '/_authenticated/district'
+    | '/_authenticated/firmware'
     | '/_authenticated/hanger'
+    | '/_authenticated/jha'
     | '/_authenticated/ledger'
     | '/_authenticated/log'
+    | '/_authenticated/portals'
     | '/_authenticated/scheduling'
     | '/_authenticated/settings'
+    | '/_authenticated/sms'
     | '/_authenticated/teams'
+    | '/_authenticated/vault'
     | '/client/$token'
     | '/docs/$slug'
+    | '/portal/$token'
     | '/docs/'
     | '/_authenticated/admin_lookup/$uuid'
     | '/_authenticated/analytics/personal'
@@ -647,6 +752,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/'
     | '/_authenticated/analytics/'
     | '/_authenticated/dashboard/'
+    | '/_authenticated/dev/'
     | '/_authenticated/edu/'
     | '/_authenticated/gear/'
     | '/_authenticated/hanger/'
@@ -674,10 +780,12 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   DocsRoute: typeof DocsRouteWithChildren
   FeaturesRoute: typeof FeaturesRoute
+  PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
   UpdatePasswordRoute: typeof UpdatePasswordRoute
   ClientTokenRoute: typeof ClientTokenRoute
+  PortalTokenRoute: typeof PortalTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -708,6 +816,13 @@ declare module '@tanstack/react-router' {
       path: '/features'
       fullPath: '/features'
       preLoaderRoute: typeof FeaturesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -752,6 +867,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/dev': {
+      id: '/_authenticated/dev'
+      path: '/dev'
+      fullPath: '/dev'
+      preLoaderRoute: typeof AuthenticatedDevRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/district': {
       id: '/_authenticated/district'
       path: '/district'
@@ -766,11 +888,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEduRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/firmware': {
+      id: '/_authenticated/firmware'
+      path: '/firmware'
+      fullPath: '/firmware'
+      preLoaderRoute: typeof AuthenticatedFirmwareRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/hanger': {
       id: '/_authenticated/hanger'
       path: '/hanger'
       fullPath: '/hanger'
       preLoaderRoute: typeof AuthenticatedHangerRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/jha': {
+      id: '/_authenticated/jha'
+      path: '/jha'
+      fullPath: '/jha'
+      preLoaderRoute: typeof AuthenticatedJhaRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/ledger': {
@@ -787,6 +923,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLogRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/portals': {
+      id: '/_authenticated/portals'
+      path: '/portals'
+      fullPath: '/portals'
+      preLoaderRoute: typeof AuthenticatedPortalsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/scheduling': {
       id: '/_authenticated/scheduling'
       path: '/scheduling'
@@ -801,11 +944,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/sms': {
+      id: '/_authenticated/sms'
+      path: '/sms'
+      fullPath: '/sms'
+      preLoaderRoute: typeof AuthenticatedSmsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/teams': {
       id: '/_authenticated/teams'
       path: '/teams'
       fullPath: '/teams'
       preLoaderRoute: typeof AuthenticatedTeamsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/vault': {
+      id: '/_authenticated/vault'
+      path: '/vault'
+      fullPath: '/vault'
+      preLoaderRoute: typeof AuthenticatedVaultRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/client/$token': {
@@ -828,6 +985,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/docs/$slug'
       preLoaderRoute: typeof DocsSlugRouteImport
       parentRoute: typeof DocsRoute
+    }
+    '/portal/$token': {
+      id: '/portal/$token'
+      path: '/portal/$token'
+      fullPath: '/portal/$token'
+      preLoaderRoute: typeof PortalTokenRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
@@ -863,6 +1027,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/'
       preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/dev/': {
+      id: '/_authenticated/dev/'
+      path: '/'
+      fullPath: '/dev/'
+      preLoaderRoute: typeof AuthenticatedDevIndexRouteImport
+      parentRoute: typeof AuthenticatedDevRouteRoute
     }
     '/_authenticated/drone/$uuid': {
       id: '/_authenticated/drone/$uuid'
@@ -1070,6 +1241,19 @@ const AuthenticatedAdminRouteRouteWithChildren =
     AuthenticatedAdminRouteRouteChildren,
   )
 
+interface AuthenticatedDevRouteRouteChildren {
+  AuthenticatedDevIndexRoute: typeof AuthenticatedDevIndexRoute
+}
+
+const AuthenticatedDevRouteRouteChildren: AuthenticatedDevRouteRouteChildren = {
+  AuthenticatedDevIndexRoute: AuthenticatedDevIndexRoute,
+}
+
+const AuthenticatedDevRouteRouteWithChildren =
+  AuthenticatedDevRouteRoute._addFileChildren(
+    AuthenticatedDevRouteRouteChildren,
+  )
+
 interface AuthenticatedEduRouteRouteChildren {
   AuthenticatedEduIndexRoute: typeof AuthenticatedEduIndexRoute
   AuthenticatedEduDistrictDistrictIdRoute: typeof AuthenticatedEduDistrictDistrictIdRoute
@@ -1192,16 +1376,22 @@ const AuthenticatedSquadronSquadronIdRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
+  AuthenticatedDevRouteRoute: typeof AuthenticatedDevRouteRouteWithChildren
   AuthenticatedEduRouteRoute: typeof AuthenticatedEduRouteRouteWithChildren
   AuthenticatedAnalyticsRoute: typeof AuthenticatedAnalyticsRouteWithChildren
   AuthenticatedClientsRoute: typeof AuthenticatedClientsRoute
   AuthenticatedDistrictRoute: typeof AuthenticatedDistrictRoute
+  AuthenticatedFirmwareRoute: typeof AuthenticatedFirmwareRoute
   AuthenticatedHangerRoute: typeof AuthenticatedHangerRouteWithChildren
+  AuthenticatedJhaRoute: typeof AuthenticatedJhaRoute
   AuthenticatedLedgerRoute: typeof AuthenticatedLedgerRouteWithChildren
   AuthenticatedLogRoute: typeof AuthenticatedLogRoute
+  AuthenticatedPortalsRoute: typeof AuthenticatedPortalsRoute
   AuthenticatedSchedulingRoute: typeof AuthenticatedSchedulingRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedSmsRoute: typeof AuthenticatedSmsRoute
   AuthenticatedTeamsRoute: typeof AuthenticatedTeamsRouteWithChildren
+  AuthenticatedVaultRoute: typeof AuthenticatedVaultRoute
   AuthenticatedAdmin_lookupUuidRoute: typeof AuthenticatedAdmin_lookupUuidRoute
   AuthenticatedDroneUuidRoute: typeof AuthenticatedDroneUuidRoute
   AuthenticatedGearInventoryRoute: typeof AuthenticatedGearInventoryRouteWithChildren
@@ -1217,16 +1407,22 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
+  AuthenticatedDevRouteRoute: AuthenticatedDevRouteRouteWithChildren,
   AuthenticatedEduRouteRoute: AuthenticatedEduRouteRouteWithChildren,
   AuthenticatedAnalyticsRoute: AuthenticatedAnalyticsRouteWithChildren,
   AuthenticatedClientsRoute: AuthenticatedClientsRoute,
   AuthenticatedDistrictRoute: AuthenticatedDistrictRoute,
+  AuthenticatedFirmwareRoute: AuthenticatedFirmwareRoute,
   AuthenticatedHangerRoute: AuthenticatedHangerRouteWithChildren,
+  AuthenticatedJhaRoute: AuthenticatedJhaRoute,
   AuthenticatedLedgerRoute: AuthenticatedLedgerRouteWithChildren,
   AuthenticatedLogRoute: AuthenticatedLogRoute,
+  AuthenticatedPortalsRoute: AuthenticatedPortalsRoute,
   AuthenticatedSchedulingRoute: AuthenticatedSchedulingRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedSmsRoute: AuthenticatedSmsRoute,
   AuthenticatedTeamsRoute: AuthenticatedTeamsRouteWithChildren,
+  AuthenticatedVaultRoute: AuthenticatedVaultRoute,
   AuthenticatedAdmin_lookupUuidRoute: AuthenticatedAdmin_lookupUuidRoute,
   AuthenticatedDroneUuidRoute: AuthenticatedDroneUuidRoute,
   AuthenticatedGearInventoryRoute: AuthenticatedGearInventoryRouteWithChildren,
@@ -1261,10 +1457,12 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   DocsRoute: DocsRouteWithChildren,
   FeaturesRoute: FeaturesRoute,
+  PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,
   UpdatePasswordRoute: UpdatePasswordRoute,
   ClientTokenRoute: ClientTokenRoute,
+  PortalTokenRoute: PortalTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

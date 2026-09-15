@@ -10,7 +10,8 @@ import { useRealtimeInvalidation } from "@/lib/realtime-invalidation";
 import { SidebarNavigation } from "@/components/sidebar";
 import { AmbientBackdrop } from "@/components/three/ambient-backdrop";
 import { Button } from "@/components/ui/button";
-
+import { useQaMode } from "@/hooks/use-qa-mode";
+import { clearQaMode } from "@/lib/qa-mode";
 export function PageHeader({
   title,
   subtitle,
@@ -52,6 +53,11 @@ export function AppShell({ children }: { children: ReactNode }) {
   useRealtimeInvalidation(user?.id ?? profile?.id ?? null);
   const isAdminRoute = pathname.startsWith("/admin");
   const effectiveAdmin = isAdminOrDev;
+  // The /dev route admits admin/dev/tester; the sidebar link must match or
+  // testers who can reach the console by URL get no visible entry point.
+  const canAccessDevConsole =
+    effectiveAdmin || profile?.role === "tester";
+  const qaMode = useQaMode();
 
   useEffect(() => {
     if (isAdminRoute && !!user && !effectiveAdmin)
@@ -61,6 +67,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   async function signOut() {
     purgePersistedCache();
     queryClient.clear();
+    clearQaMode();
     await authSignOut();
     navigate({ to: "/", replace: true });
   }
@@ -79,12 +86,17 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-[#08080a] md:pl-[232px]">
+      {qaMode && (
+        <div className="pointer-events-none fixed inset-x-0 top-0 z-[60] h-0.5 bg-warning/70" />
+      )}
       <AmbientBackdrop />
       <div className="fixed inset-y-0 left-0 z-30 hidden w-[232px] border-r border-white/[0.08] bg-[#0b0b0e]/92 px-3 py-4 backdrop-blur-xl md:block">
         <SidebarNavigation
           isClientReady={true}
           effectiveAdmin={effectiveAdmin}
+          canAccessDevConsole={canAccessDevConsole}
           profile={profile}
+          qaMode={qaMode}
         />
       </div>
       <div className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-white/[0.08] bg-[#0b0b0e]/88 px-4 backdrop-blur-xl md:hidden">
@@ -134,7 +146,9 @@ export function AppShell({ children }: { children: ReactNode }) {
             <SidebarNavigation
               isClientReady={true}
               effectiveAdmin={effectiveAdmin}
+              canAccessDevConsole={canAccessDevConsole}
               profile={profile}
+              qaMode={qaMode}
             />
           </div>
         </div>

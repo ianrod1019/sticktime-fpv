@@ -10,7 +10,7 @@ enabled = true
 port = 54321
 # Schemas to expose in your API. Tables, views and stored procedures in this schema will get API
 # endpoints. `public` and `graphql_public` schemas are included by default.
-schemas = ["public", "graphql_public", "personal_gear", "org_gear", "edu", "ent_scheduling"]
+schemas = ["public", "graphql_public", "personal_gear", "org_gear", "edu", "ent_scheduling", "certs", "sms", "portals", "jha"]
 # Extra schemas to add to the search_path of every request.
 extra_search_path = ["public", "extensions"]
 # The maximum number of rows returns from a view, table, or stored procedure. Limits payload size
@@ -377,6 +377,12 @@ deno_version = 2
 # (validated server-side against ent_scheduling.client_jobs); there is
 # no Supabase session on the public client page.
 [functions.client-job-download]
+verify_jwt = false
+
+# Delivery portal download — same shape: the access_token IS the
+# credential (validated server-side against portals.deliveries,
+# expiration included); no Supabase session on the public portal page.
+[functions.portal-download]
 verify_jwt = false
 
 # [edge_runtime.secrets]

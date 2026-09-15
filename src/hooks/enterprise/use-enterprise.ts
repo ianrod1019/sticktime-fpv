@@ -8,6 +8,9 @@
  */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { db_request } from "@/lib/db_request";
+import { useQaMode } from "@/hooks/use-qa-mode";
+import { QA_MEMBERSHIPS, QA_METRICS } from "@/lib/qa-fixtures";
+import { QaWriteBlockedError } from "@/lib/qa-fixtures";
 import {
   type EnterpriseMetrics,
   type MeetupDraft,
@@ -18,12 +21,17 @@ import {
   type SquadronMeetup,
 } from "@/types/enterprise";
 
-/** All enterprise memberships of the caller (district + org roles). */
+/**
+ * All enterprise memberships of the caller (district + org roles).
+ * QA mode returns the fixture orgs so the gated surfaces render.
+ */
 export function useMyEnterprises() {
+  const qaMode = useQaMode();
   return useQuery({
-    queryKey: ["enterprises", "my-enterprises"],
+    queryKey: ["enterprises", "my-enterprises", qaMode ? "qa" : "live"],
     staleTime: 60_000,
     queryFn: async (): Promise<MyEnterpriseMembership[]> => {
+      if (qaMode) return QA_MEMBERSHIPS;
       const { data, error } = await db_request({
         mode: "rpc",
         rpcFunction: "get_my_enterprises",
@@ -34,13 +42,15 @@ export function useMyEnterprises() {
   });
 }
 
-/** Aggregate metrics across a district's sub-squadrons. */
+/** Aggregate metrics across a district's sub-squadrons. QA: fixtures. */
 export function useEnterpriseMetrics(enterpriseId: string | null) {
+  const qaMode = useQaMode();
   return useQuery({
-    queryKey: ["enterprises", "metrics", enterpriseId],
+    queryKey: ["enterprises", "metrics", enterpriseId, qaMode ? "qa" : "live"],
     enabled: !!enterpriseId,
     staleTime: 60_000,
     queryFn: async (): Promise<EnterpriseMetrics | null> => {
+      if (qaMode) return QA_METRICS;
       const { data, error } = await db_request({
         mode: "rpc",
         rpcFunction: "get_enterprise_metrics",
@@ -72,8 +82,10 @@ export function useOrgPolicies(orgId: string | null) {
 
 export function useSetOrgPolicies(orgId: string) {
   const queryClient = useQueryClient();
+  const qaMode = useQaMode();
   return useMutation({
     mutationFn: async (patches: PolicyPatch[]) => {
+      if (qaMode) throw new QaWriteBlockedError();
       const { error } = await db_request({
         mode: "rpc",
         rpcFunction: "set_org_policies",
@@ -108,8 +120,10 @@ export function useOrgMeetups(orgId: string | null) {
 
 export function useCreateMeetup(orgId: string) {
   const queryClient = useQueryClient();
+  const qaMode = useQaMode();
   return useMutation({
     mutationFn: async (draft: MeetupDraft) => {
+      if (qaMode) throw new QaWriteBlockedError();
       const { data, error } = await db_request({
         mode: "rpc",
         rpcFunction: "create_meetup",
@@ -135,8 +149,10 @@ export function useCreateMeetup(orgId: string) {
 
 export function useDeleteMeetup(orgId: string) {
   const queryClient = useQueryClient();
+  const qaMode = useQaMode();
   return useMutation({
     mutationFn: async (meetupId: string) => {
+      if (qaMode) throw new QaWriteBlockedError();
       const { error } = await db_request({
         mode: "rpc",
         rpcFunction: "delete_meetup",
@@ -154,6 +170,7 @@ export function useDeleteMeetup(orgId: string) {
 
 export function useRespondToMeetup(orgId: string) {
   const queryClient = useQueryClient();
+  const qaMode = useQaMode();
   return useMutation({
     mutationFn: async ({
       meetupId,
@@ -162,6 +179,7 @@ export function useRespondToMeetup(orgId: string) {
       meetupId: string;
       response: MeetupResponse;
     }) => {
+      if (qaMode) throw new QaWriteBlockedError();
       const { error } = await db_request({
         mode: "rpc",
         rpcFunction: "respond_to_meetup",
@@ -184,6 +202,7 @@ export function useRespondToMeetup(orgId: string) {
  */
 export function useLinkMeetupSession(orgId: string) {
   const queryClient = useQueryClient();
+  const qaMode = useQaMode();
   return useMutation({
     mutationFn: async ({
       meetupId,
@@ -192,6 +211,7 @@ export function useLinkMeetupSession(orgId: string) {
       meetupId: string;
       sessionId: string;
     }) => {
+      if (qaMode) throw new QaWriteBlockedError();
       const { error } = await db_request({
         mode: "rpc",
         rpcFunction: "link_meetup_session",

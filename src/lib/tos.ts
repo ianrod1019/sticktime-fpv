@@ -17,14 +17,16 @@ import { z } from "zod";
 export const TOS_CURRENT_VERSION = "2026-09-noncommercial";
 
 /**
- * §6 — Non-Commercial License Restriction (Pro/Hobbyist tier).
+ * §6 — Non-Commercial License Restriction (Pro/Squad/Hobbyist tiers).
  * The signup checkbox #1 must match the substance of this clause.
  */
 export const TOS_NONCOMMERCIAL_COPY =
-  "The Pro (Hobbyist) tier is licensed strictly for personal, non-commercial, " +
-  "non-monetized use. Any commercial operation, client work, or business use " +
-  "constitutes a material breach of these Terms and will result in immediate " +
-  "account termination. Commercial use requires a Solo Commercial, School, or " +
+  "The Free, Pro, and Squad (Hobbyist) tiers are licensed strictly for " +
+  "personal, non-commercial, non-monetized use — Squad's bundled group " +
+  "pricing does not change that restriction for any pilot on the squad. " +
+  "Any commercial operation, client work, or business use constitutes a " +
+  "material breach of these Terms and will result in immediate account " +
+  "termination. Commercial use requires a Solo Commercial, School, or " +
   "Enterprise tier.";
 
 /**
@@ -76,4 +78,4 @@ export const COMMERCIAL_TIERS = [
 ] as const;
 
 /** Tiers restricted to personal, non-commercial use (TOS §6). */
-export const NONCOMMERCIAL_TIERS = ["free", "pro"] as const;
+export const NONCOMMERCIAL_TIERS = ["free", "pro", "squad"] as const;

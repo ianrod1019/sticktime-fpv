@@ -9,6 +9,7 @@ import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { db_request } from "@/lib/db_request";
 import { purgePersistedCache } from "@/lib/query-client";
+import { clearQaMode } from "@/lib/qa-mode";
 import { useQueryClient } from "@tanstack/react-query";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -175,6 +176,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // nothing of this user behind on the machine.
       purgePersistedCache();
       queryClient.clear();
+      clearQaMode();
       await supabase.auth.signOut();
     } catch (err) {
       console.error("Error signing out:", err);

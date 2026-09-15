@@ -7,7 +7,7 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
-import { Flame, Timer, Gauge, Battery, Cpu, Plus } from "lucide-react";
+import { Flame, Timer, Battery, Cpu, Plus } from "lucide-react";
 import { useState } from "react";
 import { Heatmap } from "@/components/heatmap";
 import { PageHeader } from "@/components/app-shell";
@@ -16,7 +16,6 @@ import { StatCard } from "./-StatCard";
 import { RatioBar } from "./-RatioBar";
 import { QuickAddSessionLogger } from "./-QuickAddSessionLogger";
 import { MonthlyVolumeChart, ChartTooltip } from "./-MonthlyVolumeChart";
-import { FlightReadiness } from "./-FlightReadiness";
 
 interface DashboardContentProps {
   simMinutes: number;
@@ -59,9 +58,6 @@ export function DashboardContent({
   profile,
   streak,
 }: DashboardContentProps) {
-  const goalHours = profile?.weekly_goal_hours ?? 5;
-  // Removed weekly goal calculations and UI since they are not needed.
-
   const packs = totalPacks;
   const activeDrones = activeRigs;
 
@@ -91,41 +87,32 @@ export function DashboardContent({
         }
       />
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
-        <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-4">
-          <StatCard
-            icon={Timer}
-            label="Total airtime"
-            value={formatHours(totalMinutes)}
-            hint={`${totalSessions} sessions logged`}
-          />
-          <StatCard
-            icon={Flame}
-            label="Current streak"
-            value={`${streak.combined} ${streak.combined === 1 ? "day" : "days"}`}
-            hint={`Sim: ${streak.sim}d, Real: ${streak.real}d`}
-          />
-          <StatCard
-            icon={Battery}
-            label="Packs flown"
-            value={String(packs)}
-            hint="Real-world packs"
-          />
-          <StatCard
-            icon={Cpu}
-            label="Active rigs"
-            value={String(activeDrones)}
-            hint="Unique drones flown last 30d"
-          />
-        </div>
-        <FlightReadiness
-          activeDrones={activeDrones}
-          totalMinutes={totalMinutes}
-          packs={packs}
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard
+          icon={Timer}
+          label="Total airtime"
+          value={formatHours(totalMinutes)}
+          hint={`${totalSessions} sessions logged`}
+        />
+        <StatCard
+          icon={Flame}
+          label="Current streak"
+          value={`${streak.combined} ${streak.combined === 1 ? "day" : "days"}`}
+          hint={`Sim: ${streak.sim}d, Real: ${streak.real}d`}
+        />
+        <StatCard
+          icon={Battery}
+          label="Packs flown"
+          value={String(packs)}
+          hint="Real-world packs"
+        />
+        <StatCard
+          icon={Cpu}
+          label="Active rigs"
+          value={String(activeDrones)}
+          hint="Unique drones flown last 30d"
         />
       </div>
-
-      {/* Weekly goal section removed */}
 
       <div className="mt-4 hud-panel p-5">
         <span className="label-mono">Consistency grid — last 12 months</span>
@@ -156,12 +143,6 @@ export function DashboardContent({
           </div>
 
           <div className="w-full">
-            <span className="text-primary text-lg font-bold">
-              {formatHours(totalMinutes)}
-            </span>
-          </div>
-
-          <div className="w-full">
             <span className="label-mono">Monthly volume (hours)</span>
             <div className="mt-2">
               {monthlyData.length > 0 ? (
@@ -187,13 +168,20 @@ export function DashboardContent({
         <div className="flex items-center justify-between">
           <span className="label-mono">Rig usage (hours)</span>
         </div>
-        <div className="mt-4 h-64">
+        <div className="mt-4">
           {rigUsage.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              Log a session against a rig to see usage here.
-            </p>
+            <div className="grid min-h-40 place-items-center rounded-lg border border-dashed border-white/[0.1] bg-white/[0.015] px-5 text-center">
+              <div>
+                <p className="font-mono text-[10px] tracking-[0.14em] text-zinc-500">
+                  NO RIG USAGE YET
+                </p>
+                <p className="mt-2 text-xs text-zinc-600">
+                  Log a session against a rig to see usage here.
+                </p>
+              </div>
+            </div>
           ) : (
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={256}>
               <BarChart data={rigUsage} layout="vertical" margin={{ left: 24 }}>
                 <defs>
                   <linearGradient id="rig-bar-grad" x1="0" y1="0" x2="1" y2="0">

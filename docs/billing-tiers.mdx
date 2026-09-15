@@ -1,32 +1,59 @@
 ---
 title: "Billing & tiers"
-description: "Free, Pro and Enterprise — what each tier unlocks, and the current invite-only status of paid tiers."
+description: "Free, Pro, Solo Commercial, School and Enterprise — what each tier unlocks, and the current invite-only status of paid tiers."
 icon: "credit-card"
 ---
 
 {/* billing:status */}
 <Note>
 **Billing is not live yet.** Paid tiers arrive with the Stripe billing
-launch. Until then, Pro and Enterprise access is **invite-only**, granted
-manually by StickTime. Upgrade buttons appear in the
-app, but public checkout is disabled.
+launch. Until then, Pro, Solo Commercial, and Enterprise access is
+**invite-only**, granted manually by StickTime. Upgrade buttons appear in
+the app, but public checkout is disabled.
 </Note>
 
 ## The tiers
 
-| | Free | Pro | Enterprise |
-| --- | --- | --- | --- |
-| Flight logging (sim + real) | ✓ | ✓ | ✓ |
-| Dashboard, heatmap & streaks | ✓ | ✓ | ✓ |
-| Personal gear hanger | ✓ | ✓ | ✓ |
-| Personal cost ledger | ✓ | ✓ | ✓ |
-| CSV export of your logbook | ✓ | ✓ | ✓ |
-| Full JSON export | ✓ | ✓ | ✓ |
-| Master parts inventory & builds | Limited | ✓ | ✓ |
-| Create squadrons | — | ✓ | ✓ |
-| Squadron shared gear & checkouts | — | ✓ | ✓ |
-| Squadron ledger & failure analytics | — | ✓ | ✓ |
-| Organization-level fleet (multi-squadron) | — | — | ✓ |
+Squad sits alongside Pro: the same hobbyist feature set and the same strict
+non-commercial restriction, just bundled group billing for a 5–10 pilot
+club or racing squad instead of one price per pilot. It unlocks nothing a
+Pro pilot doesn't already have — it only changes how a group pays.
+
+Solo Commercial and School sit between Pro/Squad and Enterprise: everything
+Pro unlocks, plus the Certification & Compliance Vault, for a single
+commercial pilot or a single educational institution. Enterprise gets the
+same compliance stack org-wide, on top of its multi-squadron controls.
+Creating a squadron is free at every tier — it's just a roster; the paid
+gate is what you can *do* with it (shared gear, ledger, fleet analytics).
+
+Everything from the Compliance Vault down is org-gated — it only exists
+for an organization on a paid plan (Solo Commercial, School, or
+Enterprise), which is also why Free/Pro/Squad squadrons never see it.
+
+| | Free | Pro | Squad | Solo Commercial | School | Enterprise |
+| --- | --- | --- | --- | --- | --- | --- |
+| Flight logging (sim + real) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Dashboard, heatmap & streaks | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Personal gear hanger | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Personal cost ledger | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| CSV export of your logbook | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Full JSON export | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Master parts inventory & builds | Limited | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Create a squadron (roster) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Squadron shared gear & checkouts | — | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Squadron ledger & failure analytics | — | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Bundled group billing (one price for a 5–10 pilot squad) | — | — | ✓ | — | — | — |
+| Certification & Compliance Vault (Part 107, waivers, medical, training) | — | — | — | ✓ | ✓ | ✓ |
+| Automated no-fly / no-schedule compliance enforcement | — | — | — | ✓ | ✓ | ✓ |
+| Safety incident logging (SMS) | — | — | — | ✓ | ✓ | ✓ |
+| Job Hazard Analysis (JHA) pre-flight checklists | — | — | — | ✓ | ✓ | ✓ |
+| Firmware & configuration version control, airworthiness gating | — | — | — | ✓ | ✓ | ✓ |
+| Client-job CRM (booking, deliverables, client links) | — | — | — | ✓ | ✓ | ✓ |
+| White-labeled client delivery portals | — | — | — | ✓ | ✓ | ✓ |
+| Scheduling & dispatch calendar (double-booking prevention) | — | — | — | ✓ | Add-on | ✓ |
+| Fleet-wide policy lockdowns (firmware floor, preflight checklist, inventory lock) | — | — | — | — | ✓ | ✓ |
+| Squadron meetups & RSVP | — | — | — | — | ✓ | ✓ |
+| Organization-level fleet (multi-squadron district rollup) | — | — | — | — | — | ✓ |
 
 ## How gating works
 

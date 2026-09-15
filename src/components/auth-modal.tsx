@@ -2,9 +2,14 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Plane, X, AlertCircle, Wrench, CheckCircle2 } from "lucide-react";
+import { Plane, AlertCircle, Wrench } from "lucide-react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
   AFFIRMATION_NONCOMMERCIAL,
@@ -88,8 +93,6 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
   // submit button is also disabled until both are checked.
   const showAffirmations = mode === "signup";
   const affirmationsComplete = nonCommercialAffirmed && singleSeatAffirmed;
-
-  if (!isOpen) return null;
 
   const handleGoogleAuth = async () => {
     setLoading(true);
@@ -288,27 +291,20 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="relative w-full max-w-md rounded-xl bg-background p-6 shadow-2xl border">
-        <button
-          onClick={onClose}
-          className="absolute right-4 top-4 text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <X className="h-5 w-5" />
-        </button>
-
-        <div className="mb-6 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-            <Plane className="h-6 w-6 text-primary" />
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-md">
+        <div className="mb-2 text-center sm:text-center">
+          <div className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-lg border border-primary/25 bg-primary/10 text-primary">
+            <Plane className="h-5 w-5" aria-hidden />
           </div>
-          <h2 className="text-2xl font-bold tracking-tight">
+          <DialogTitle className="font-display text-2xl font-semibold tracking-[-0.03em]">
             {mode === "forgot"
               ? "Reset your password"
               : mode === "login"
-                ? "Welcome Back"
-                : "Create an Account"}
-          </h2>
-          <p className="text-sm text-muted-foreground">
+                ? "Welcome back"
+                : "Create an account"}
+          </DialogTitle>
+          <p className="mt-1 text-sm text-muted-foreground">
             {mode === "forgot"
               ? "We'll email you a recovery link — it expires in 30 minutes."
               : mode === "login"
@@ -321,7 +317,7 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
           <div className="mb-4 p-4 text-sm bg-destructive/10 border border-destructive/20 text-destructive rounded-lg space-y-2">
             <div className="flex items-start gap-2">
               <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
-              <div className="flex-1 break-words font-medium">
+              <div className="flex-1 wrap-break-word font-medium">
                 {errorDetails}
               </div>
             </div>
@@ -372,12 +368,12 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
             Continue with Google
           </Button>
 
-          <div className="relative flex py-2 items-center">
-            <div className="flex-grow border-t border-muted"></div>
-            <span className="flex-shrink mx-4 text-xs uppercase text-muted-foreground">
+          <div className="relative flex items-center py-2">
+            <div className="grow border-t border-border"></div>
+            <span className="label-mono shrink-0 px-4">
               Or continue with email
             </span>
-            <div className="flex-grow border-t border-muted"></div>
+            <div className="grow border-t border-border"></div>
           </div>
         </div>
 
@@ -422,7 +418,7 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
             </div>
           )}
           {showAffirmations && (
-            <div className="space-y-3 rounded-lg border border-white/10 bg-white/[0.025] p-3">
+            <div className="space-y-3 rounded-lg border border-white/10 bg-white/2.5 p-3">
               <AffirmationRow
                 checked={nonCommercialAffirmed}
                 onCheckedChange={(v) => setNonCommercialAffirmed(v === true)}
@@ -488,7 +484,7 @@ export function AuthModal({ isOpen, onClose, initialMode }: AuthModalProps) {
             </p>
           </div>
         )}
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

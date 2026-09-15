@@ -13,6 +13,7 @@ import { useAuth } from "@/context/auth-context";
 
 const NAV_LINKS = [
   { to: "/features", label: "Platform" },
+  { to: "/pricing", label: "Pricing" },
   { to: "/docs", label: "Resources" },
   { to: "/privacy", label: "Security" },
 ] as const;

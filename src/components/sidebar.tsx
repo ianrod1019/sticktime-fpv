@@ -21,6 +21,9 @@ import {
   Building2,
   Briefcase,
   Orbit,
+  FlaskConical,
+  CircuitBoard,
+  ClipboardCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { db_request } from "@/lib/db_request";
@@ -75,6 +78,18 @@ const PRIMARY_NAV = [
     label: "Squadrons",
     detail: "People & permissions",
   },
+  {
+    to: "/jha",
+    icon: ClipboardCheck,
+    label: "Pre-flight JHA",
+    detail: "Hazard checklist",
+  },
+  {
+    to: "/firmware",
+    icon: CircuitBoard,
+    label: "Firmware",
+    detail: "Config & airworthiness",
+  },
 ] as const;
 
 function navMatch(to: string, pathname: string): boolean {
@@ -98,11 +113,18 @@ function navMatch(to: string, pathname: string): boolean {
 export function SidebarNavigation({
   isClientReady,
   effectiveAdmin,
+  canAccessDevConsole,
   profile,
+  qaMode = false,
 }: {
   isClientReady: boolean;
+  /** admin/dev only — gates the Admin console link. */
   effectiveAdmin: boolean;
+  /** admin/dev/tester — matches the /dev route's access check. */
+  canAccessDevConsole: boolean;
   profile: PilotProfile | null | undefined;
+  /** QA mode active — show the badge so testers never mistake fixtures for real data. */
+  qaMode?: boolean;
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { signOut } = useAuth();
@@ -269,6 +291,24 @@ export function SidebarNavigation({
             </span>
           </Link>
         )}
+        {isClientReady && canAccessDevConsole && (
+          <Link
+            to="/dev"
+            className={cn(
+              "group flex items-center gap-3 rounded-lg border px-3 py-2.5",
+              pathname.startsWith("/dev")
+                ? "border-primary/20 bg-primary/[0.1] text-zinc-100"
+                : "border-transparent text-zinc-500 hover:bg-white/[0.045] hover:text-zinc-200",
+            )}
+          >
+            <span className="grid h-8 w-8 place-items-center rounded-md border border-white/[0.08] bg-white/[0.025]">
+              <FlaskConical className="h-4 w-4" />
+            </span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.12em]">
+              Dev & QA console
+            </span>
+          </Link>
+        )}
       </nav>
       <div className="shrink-0 space-y-1 border-t border-white/[0.08] pt-4">
         <Link
@@ -303,7 +343,13 @@ export function SidebarNavigation({
               {callsign}
             </span>
             <span className="mt-0.5 block font-mono text-[8px] tracking-[0.12em] text-zinc-600">
-              PILOT ACCOUNT
+              {qaMode ? (
+                <span className="font-mono text-[8px] tracking-[0.12em] text-warning">
+                  QA MODE — FAKE DATA
+                </span>
+              ) : (
+                "PILOT ACCOUNT"
+              )}
             </span>
           </span>
           <button

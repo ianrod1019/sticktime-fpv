@@ -3,11 +3,14 @@ import {
   ArrowRight,
   BarChart3,
   BatteryCharging,
+  Briefcase,
   Check,
   CircleDollarSign,
   FileCheck2,
+  FileLock2,
   Gauge,
   LayoutDashboard,
+  Minus,
   ShieldCheck,
   Timer,
   Users,
@@ -15,7 +18,16 @@ import {
 } from "lucide-react";
 import { TopNav } from "@/components/top-nav";
 import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { BILLING_LIVE } from "@/lib/billing-status";
+import { TIER_MATRIX, TIER_ORDER } from "@/lib/pricing-tiers";
 
 export const Route = createFileRoute("/features")({
   head: () => ({
@@ -128,6 +140,18 @@ const MODULES = [
       "Security and audit context",
     ],
   },
+  {
+    icon: FileLock2,
+    label: "Cert & waiver vault",
+    title: "Compliance you can prove, not just promise.",
+    copy: "Part 107 certificates, trust documents, and parental/liability waivers in one auditable vault, with expiration badges that warn — never a lockout that keeps you from booking a flight.",
+    details: [
+      "Part 107, trust & waiver storage",
+      "Org-wide verification and audit",
+      "Expiring/expired badges, never blocks",
+      "Solo Commercial & Enterprise",
+    ],
+  },
 ] as const;
 
 function FeaturesPage() {
@@ -186,7 +210,10 @@ function FeaturesPage() {
             <div className="grid gap-px border border-border bg-border md:grid-cols-2">
               {MODULES.map(
                 ({ icon: Icon, label, title, copy, details }, index) => (
-                  <article key={label} className="bg-card p-6 sm:p-8">
+                  <article
+                    key={label}
+                    className={`bg-card p-6 sm:p-8 ${index === MODULES.length - 1 && MODULES.length % 2 === 1 ? "md:col-span-2" : ""}`}
+                  >
                     <div className="flex items-start justify-between gap-4">
                       <div className="grid h-10 w-10 place-items-center border border-primary/25 bg-primary/10 text-primary">
                         <Icon className="h-5 w-5" aria-hidden />
@@ -260,7 +287,7 @@ function FeaturesPage() {
             </div>
           </section>
 
-          <section className="grid gap-px border border-border bg-border py-14 sm:grid-cols-3 sm:py-20">
+          <section className="grid gap-px border border-border bg-border py-14 sm:grid-cols-2 sm:py-20 lg:grid-cols-3 xl:grid-cols-6">
             <PlanCard
               title="Pilot"
               subtitle="For the serious solo operator"
@@ -280,7 +307,37 @@ function FeaturesPage() {
                 "Parts install history",
                 "Personal failure analytics",
               ]}
+            />
+            <PlanCard
+              title="Squad"
+              subtitle="Hobbyist squads & clubs, non-commercial"
+              icon={Users}
+              items={[
+                "Everything in Pro, per pilot",
+                "Shared club roster & flight logs",
+                "One bundled price, 5–10 pilots",
+              ]}
+            />
+            <PlanCard
+              title="Solo Commercial"
+              subtitle="For the single commercial pilot"
+              icon={Briefcase}
+              items={[
+                "Everything in Pro",
+                "Cert & Waiver Vault",
+                "Audit-ready compliance record",
+              ]}
               accent
+            />
+            <PlanCard
+              title="School"
+              subtitle="For educational drone programs"
+              icon={ShieldCheck}
+              items={[
+                "Institution-wide roster",
+                "Cert & Waiver Vault",
+                "Student & staff profiles",
+              ]}
             />
             <PlanCard
               title="Enterprise"
@@ -289,7 +346,7 @@ function FeaturesPage() {
               items={[
                 "Squadron controls and roles",
                 "Fleet failure analytics",
-                "Cost and audit context",
+                "Cert & Waiver Vault, org-wide",
               ]}
             />
           </section>
@@ -298,11 +355,73 @@ function FeaturesPage() {
             <div className="mt-10 border border-primary/25 bg-primary/[0.05] p-5">
               <p className="label-mono text-primary">BILLING STATUS</p>
               <p className="mt-2 text-sm text-muted-foreground">
-                Pro and Enterprise are invite-only while billing completes
-                flight testing.
+                Pro, Squad, Solo Commercial, School, and Enterprise are invite-only
+                while billing completes flight testing.
               </p>
             </div>
           )}
+
+          <div className="mt-6 flex justify-end">
+            <Link
+              to="/pricing"
+              className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+            >
+              See full pricing <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+          </div>
+
+          <section className="py-14 sm:py-20">
+            <p className="label-mono text-primary">COMPARE PLANS</p>
+            <h2 className="mt-3 font-display text-3xl font-semibold tracking-[-0.05em] sm:text-4xl">
+              What you get, tier by tier.
+            </h2>
+            <div className="mt-8 overflow-x-auto border border-border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Capability</TableHead>
+                    {TIER_ORDER.map((tier) => (
+                      <TableHead key={tier} className="text-center">
+                        {tier}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {TIER_MATRIX.map((row) => (
+                    <TableRow key={row.capability}>
+                      <TableCell className="font-medium">
+                        {row.capability}
+                      </TableCell>
+                      {TIER_ORDER.map((tier) => (
+                        <TableCell key={tier} className="text-center">
+                          {row.access[tier] === "limited" ? (
+                            <span className="text-xs text-muted-foreground">
+                              Limited
+                            </span>
+                          ) : row.access[tier] === "addon" ? (
+                            <span className="text-xs text-muted-foreground">
+                              Add-on
+                            </span>
+                          ) : row.access[tier] ? (
+                            <Check
+                              className="mx-auto h-4 w-4 text-primary"
+                              aria-hidden
+                            />
+                          ) : (
+                            <Minus
+                              className="mx-auto h-4 w-4 text-muted-foreground/40"
+                              aria-hidden
+                            />
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </section>
         </div>
       </main>
     </>

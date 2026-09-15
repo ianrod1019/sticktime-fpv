@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { usePilot } from "@/hooks/use-pilot";
+import { useQaMode } from "@/hooks/use-qa-mode";
 
 export interface ProAccessResult {
   /** True when the user's tier is 'pro' (or they are admin/dev). */
@@ -17,6 +18,7 @@ export interface ProAccessResult {
  */
 export function useProAccess(): ProAccessResult {
   const { profile } = usePilot();
+  const qaMode = useQaMode();
 
   const query = useQuery({
     queryKey: ["pro-access", profile?.id],
@@ -35,7 +37,8 @@ export function useProAccess(): ProAccessResult {
 
   // Profile-based signal resolves instantly; RPC confirms/corrects it.
   const optimistic = profileSaysPro || isElevated;
-  const hasProAccess = query.data ?? optimistic;
+  // QA mode opens every tier gate — fixtures, no real data at risk.
+  const hasProAccess = qaMode || (query.data ?? optimistic);
 
   return {
     hasProAccess,

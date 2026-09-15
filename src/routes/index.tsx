@@ -214,8 +214,13 @@ function Landing() {
                 BUILT FOR ACCOUNTABILITY
               </p>
               <h2 className="mt-3 font-display text-2xl font-semibold tracking-[-0.04em]">
-                One record for every flight decision.
+                One record for every flight decision — compliance included.
               </h2>
+              <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
+                Solo Commercial, School, and Enterprise add the Cert & Waiver
+                Vault: Part 107 certs and waivers in one auditable place, with
+                expiration badges that warn, never lock you out.
+              </p>
             </div>
             <Link
               to="/features"
@@ -223,6 +228,25 @@ function Landing() {
             >
               See every capability{" "}
               <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-5 pb-16 sm:px-8 sm:pb-20">
+          <div className="flex flex-col justify-between gap-6 border border-border bg-card p-6 sm:flex-row sm:items-center sm:p-8">
+            <div>
+              <p className="label-mono text-primary">PRICING</p>
+              <h2 className="mt-3 font-display text-2xl font-semibold tracking-[-0.04em]">
+                Free for hobbyists. Priced for the rest.
+              </h2>
+            </div>
+            <Link to="/pricing">
+              <Button
+                variant="outline"
+                className="inline-flex shrink-0 items-center gap-2 border-border"
+              >
+                See pricing <ArrowRight className="h-4 w-4" aria-hidden />
+              </Button>
             </Link>
           </div>
         </section>

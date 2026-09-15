@@ -92,6 +92,10 @@
         "pages": ["client-jobs"]
       },
       {
+        "group": "Fleet compliance",
+        "pages": ["firmware-config-control"]
+      },
+      {
         "group": "Account & billing",
         "pages": ["settings", "exports", "billing-tiers", "account-deletion"]
       },
