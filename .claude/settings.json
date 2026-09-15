@@ -1,0 +1,32 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Grep",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "C:/Users/alexr/.local/bin/graphify.EXE hook-guard search"
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "C:/Users/alexr/.local/bin/graphify.EXE hook-guard read"
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "claude-md-management@claude-plugins-official": true,
+    "remember@claude-plugins-official": true,
+    "huggingface-skills@claude-plugins-official": true,
+    "mintlify@claude-plugins-official": true,
+    "superdesign@claude-plugins-official": true,
+    "hyperframes@claude-plugins-official": true
+  }
+}
