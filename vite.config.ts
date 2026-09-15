@@ -25,7 +25,10 @@ export default defineConfig({
       },
     ],
     server: {
-      allowedHosts: ["5173-idwunrvrravx2hwdvlh6h-a5496ad8.us1.manus.computer"],
+      allowedHosts: [
+        "5173-idwunrvrravx2hwdvlh6h-a5496ad8.us1.manus.computer",
+        "4174-iofx06ra8ttqlolcjmo5u-d0c581e4.us4.manus.computer",
+      ],
     },
   },
   tanstackStart: {
