@@ -20,11 +20,11 @@ import {
   Search,
   Building2,
   Briefcase,
+  Orbit,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { db_request } from "@/lib/db_request";
 import { useAuth } from "@/context/auth-context";
-import { DroneIcon } from "@/components/icons";
 
 const PRIMARY_NAV = [
   {
@@ -170,7 +170,7 @@ export function SidebarNavigation({
         className="mb-3 flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-white/[0.04]"
       >
         <span className="grid h-9 w-9 place-items-center rounded-lg border border-primary/25 bg-primary/10 text-primary">
-          <DroneIcon className="h-5 w-5" />
+          <Orbit className="h-5 w-5" />
         </span>
         <span>
           <span className="block font-display text-base font-semibold tracking-[-0.04em] text-zinc-100">

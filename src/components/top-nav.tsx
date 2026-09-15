@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Menu, Radio, X } from "lucide-react";
+import { Menu, Orbit, Radio, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -9,7 +9,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { DroneIcon } from "@/components/icons";
 import { useAuth } from "@/context/auth-context";
 
 const NAV_LINKS = [
@@ -40,7 +39,7 @@ export function TopNav() {
             aria-label="StickTime home"
           >
             <span className="grid h-8 w-8 place-items-center rounded-md border border-primary/25 bg-primary/10 text-primary transition-colors duration-200 group-hover:border-primary/50 group-hover:bg-primary/15">
-              <DroneIcon className="h-[18px] w-[18px]" aria-hidden />
+              <Orbit className="h-[18px] w-[18px]" aria-hidden />
             </span>
             <span className="font-display text-base font-semibold tracking-[-0.04em] text-zinc-100">
               StickTime
@@ -64,11 +63,12 @@ export function TopNav() {
             <Radio className="h-3 w-3 text-primary" /> OPS ONLINE
           </div>
           {!mounted || loading ? (
-            <div
-              className="h-7 w-7 animate-spin rounded-full border border-primary border-t-transparent"
+            <span
+              className="hidden font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground sm:inline"
               role="status"
-              aria-label="Loading"
-            />
+            >
+              Checking session
+            </span>
           ) : user ? (
             <Link to="/dashboard">
               <Button size="sm" className="h-8 rounded-md px-3 text-xs">
@@ -109,7 +109,7 @@ export function TopNav() {
                 >
                   <SheetHeader className="flex h-16 flex-row items-center justify-between border-b border-white/[0.08] px-5">
                     <SheetTitle className="flex items-center gap-2 font-display text-base text-zinc-100">
-                      <DroneIcon className="h-5 w-5 text-primary" /> StickTime
+                      <Orbit className="h-5 w-5 text-primary" /> StickTime
                     </SheetTitle>
                     <button
                       type="button"

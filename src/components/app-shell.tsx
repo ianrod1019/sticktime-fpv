@@ -2,7 +2,7 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Menu, Search, X } from "lucide-react";
+import { Menu, Orbit, Search, X } from "lucide-react";
 import { usePilot } from "@/hooks/use-pilot";
 import { useAuth } from "@/context/auth-context";
 import { purgePersistedCache } from "@/lib/query-client";
@@ -10,7 +10,6 @@ import { useRealtimeInvalidation } from "@/lib/realtime-invalidation";
 import { SidebarNavigation } from "@/components/sidebar";
 import { AmbientBackdrop } from "@/components/three/ambient-backdrop";
 import { Button } from "@/components/ui/button";
-import { DroneIcon } from "@/components/icons";
 
 export function PageHeader({
   title,
@@ -99,19 +98,19 @@ export function AppShell({ children }: { children: ReactNode }) {
         </button>
         <Link to="/" className="flex items-center gap-2">
           <span className="grid h-8 w-8 place-items-center rounded-md border border-primary/25 bg-primary/10 text-primary">
-            <DroneIcon className="h-4 w-4" />
+            <Orbit className="h-4 w-4" />
           </span>
           <span className="font-display font-semibold text-zinc-100">
             StickTime
           </span>
         </Link>
-        <button
-          type="button"
-          className="rounded-md border border-white/[0.1] p-2 text-zinc-400"
-          aria-label="Search workspace"
+        <div
+          className="rounded-md border border-white/[0.1] p-2 text-zinc-600"
+          aria-label="Search workspace is available from the desktop sidebar"
+          role="status"
         >
           <Search className="h-4 w-4" />
-        </button>
+        </div>
       </div>
       {mobileNav && (
         <div className="fixed inset-0 z-50 md:hidden">
